@@ -10,11 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CartaoDeCreditoRouteImport } from './routes/cartao-de-credito'
 import { Route as ControleFinanceiroRouteImport } from './routes/controle-financeiro'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CartaoDeCreditoRoute = CartaoDeCreditoRouteImport.update({
+  id: '/cartao-de-credito',
+  path: '/cartao-de-credito',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ControleFinanceiroRoute = ControleFinanceiroRouteImport.update({
@@ -25,27 +31,31 @@ const ControleFinanceiroRoute = ControleFinanceiroRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/cartao-de-credito': typeof CartaoDeCreditoRoute
   '/controle-financeiro': typeof ControleFinanceiroRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/cartao-de-credito': typeof CartaoDeCreditoRoute
   '/controle-financeiro': typeof ControleFinanceiroRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/cartao-de-credito': typeof CartaoDeCreditoRoute
   '/controle-financeiro': typeof ControleFinanceiroRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/controle-financeiro'
+  fullPaths: '/' | '/cartao-de-credito' | '/controle-financeiro'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/controle-financeiro'
-  id: '__root__' | '/' | '/controle-financeiro'
+  to: '/' | '/cartao-de-credito' | '/controle-financeiro'
+  id: '__root__' | '/' | '/cartao-de-credito' | '/controle-financeiro'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CartaoDeCreditoRoute: typeof CartaoDeCreditoRoute
   ControleFinanceiroRoute: typeof ControleFinanceiroRoute
 }
 
@@ -56,6 +66,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cartao-de-credito': {
+      id: '/cartao-de-credito'
+      path: '/cartao-de-credito'
+      fullPath: '/cartao-de-credito'
+      preLoaderRoute: typeof CartaoDeCreditoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/controle-financeiro': {
@@ -70,6 +87,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CartaoDeCreditoRoute: CartaoDeCreditoRoute,
   ControleFinanceiroRoute: ControleFinanceiroRoute,
 }
 export const routeTree = rootRouteImport
