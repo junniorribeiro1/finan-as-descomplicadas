@@ -70,7 +70,7 @@ function NavItem({
   to: string;
   rotulo: string;
   Icone: typeof Wallet;
-  onClick?: () => void;
+  onClick?: (() => void) | undefined;
 }) {
   return (
     <Link
@@ -85,7 +85,7 @@ function NavItem({
   );
 }
 
-function NavConteudo({ onNavigate }: { onNavigate?: () => void }) {
+function NavConteudo({ onNavigate }: { onNavigate?: (() => void) | undefined }) {
   return (
     <>
       <nav className="space-y-1">
@@ -103,7 +103,7 @@ function NavConteudo({ onNavigate }: { onNavigate?: () => void }) {
   );
 }
 
-function RodapePerfil({ onNavigate }: { onNavigate?: () => void }) {
+function RodapePerfil({ onNavigate }: { onNavigate?: (() => void) | undefined }) {
   return (
     <div className="space-y-1 border-t border-border pt-4">
       <Link
