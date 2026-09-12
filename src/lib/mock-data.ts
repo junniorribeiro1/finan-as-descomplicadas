@@ -1,13 +1,13 @@
 // Dados fictícios usados apenas para apresentação visual.
 
 export const aluno = {
-  nome: "Keyla",
-  nomeCompleto: "Keyla Ribeiro Martins",
-  email: "keyla.martins@email.com",
+  nome: "Júnior",
+  nomeCompleto: "Júnior Ribeiro",
+  email: "junior.ribeiro@email.com",
   plano: "Plano Anual · Premium",
   status: "Conta ativa",
   desde: "12/03/2026",
-  iniciais: "KM",
+  iniciais: "JR",
 };
 
 export const brl = (valor: number) =>
@@ -168,7 +168,7 @@ export const alertas = [
 export const cartao = {
   banco: "Nubank",
   numero: "•••• 0911",
-  titular: "Keyla R. Martins",
+  titular: "Júnior Ribeiro",
   validade: "03/29",
   fatura: 1842.5,
   limiteTotal: 5000,
