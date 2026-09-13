@@ -245,11 +245,11 @@ export default function ImersaoPage() {
       <section className="relative z-20 w-full overflow-hidden">
         {/* ── IMAGEM DE FUNDO 3D (MOEDAS E GRÁFICO ASCENDENTE) ── */}
         <div className="pointer-events-none absolute inset-0 z-0">
-          {/* Imagem 3D posicionada e ancorada à direita */}
+          {/* Imagem 3D posicionada e ancorada à direita, com desvanecimento suave nas bordas */}
           <img
             src="/hero-coins-3d.jpg"
             alt=""
-            className="absolute right-0 top-1/2 -translate-y-1/2 h-[115%] sm:h-[110%] lg:h-full w-auto max-w-none lg:w-[60%] object-cover object-center opacity-65 lg:opacity-90"
+            className="absolute right-0 top-1/2 -translate-y-1/2 h-[115%] sm:h-[110%] lg:h-full w-auto max-w-none lg:w-[60%] object-cover object-center opacity-65 lg:opacity-90 [mask-image:linear-gradient(to_bottom,black_40%,rgba(0,0,0,0.8)_65%,transparent_95%)]"
           />
 
           {/* Degradê horizontal: Preto sólido e fosco à esquerda para contraste e legibilidade, transparente à direita */}
@@ -258,9 +258,11 @@ export default function ImersaoPage() {
           {/* Camada de blur suave focada onde ficam as informações de texto à esquerda */}
           <div className="absolute inset-y-0 left-0 w-full lg:w-[60%] backdrop-blur-[10px] [mask-image:linear-gradient(to_right,black_60%,transparent_100%)]" />
 
-          {/* Fusões suaves superior e inferior para harmonizar com toda a página */}
+          {/* Fusão suave superior */}
           <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-[#06080a] to-transparent" />
-          <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#06080a] via-[#06080a]/80 to-transparent" />
+
+          {/* Fusão profunda e contínua inferior para dissolver 100% na cor da página sem qualquer corte brusco */}
+          <div className="absolute inset-x-0 bottom-0 h-44 sm:h-60 md:h-80 bg-gradient-to-t from-[#06080a] from-20% via-[#06080a]/95 via-50% via-[#06080a]/40 via-75% to-transparent" />
         </div>
 
         {/* ── CONTEÚDO DA HERO ── */}
