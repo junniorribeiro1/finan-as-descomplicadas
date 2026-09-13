@@ -203,7 +203,7 @@ export default function ImersaoPage() {
           <div className="flex shrink-0 items-center gap-6 whitespace-nowrap text-[0.72rem] md:text-xs font-black tracking-widest uppercase pr-6">
             <span className="flex items-center gap-1.5">
               <Flame className="h-3.5 w-3.5 fill-stone-950 text-stone-950" />
-              1ª EDIÇÃO DA IMERSÃO EDUCAÇÃO FINANCEIRA PF E PJ
+              IMERSÃO EDUCAÇÃO FINANCEIRA PF E PJ - 1ª EDIÇÃO
             </span>
             <span>•</span>
             <span className="font-extrabold text-stone-900">
@@ -220,7 +220,7 @@ export default function ImersaoPage() {
             <span>•</span>
             <span className="flex items-center gap-1.5">
               <Flame className="h-3.5 w-3.5 fill-stone-950 text-stone-950" />
-              1ª EDIÇÃO DA IMERSÃO EDUCAÇÃO FINANCEIRA PF E PJ
+              IMERSÃO EDUCAÇÃO FINANCEIRA PF E PJ - 1ª EDIÇÃO
             </span>
             <span>•</span>
             <span className="font-extrabold text-stone-900">
@@ -244,7 +244,7 @@ export default function ImersaoPage() {
           >
             <span className="flex items-center gap-1.5">
               <Flame className="h-3.5 w-3.5 fill-stone-950 text-stone-950" />
-              1ª EDIÇÃO DA IMERSÃO EDUCAÇÃO FINANCEIRA PF E PJ
+              IMERSÃO EDUCAÇÃO FINANCEIRA PF E PJ - 1ª EDIÇÃO
             </span>
             <span>•</span>
             <span className="font-extrabold text-stone-900">
@@ -261,7 +261,7 @@ export default function ImersaoPage() {
             <span>•</span>
             <span className="flex items-center gap-1.5">
               <Flame className="h-3.5 w-3.5 fill-stone-950 text-stone-950" />
-              1ª EDIÇÃO DA IMERSÃO EDUCAÇÃO FINANCEIRA PF E PJ
+              IMERSÃO EDUCAÇÃO FINANCEIRA PF E PJ - 1ª EDIÇÃO
             </span>
             <span>•</span>
             <span className="font-extrabold text-stone-900">
