@@ -1,4 +1,4 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import {
   LayoutGrid,
   Receipt,
@@ -20,9 +20,11 @@ import {
   Sparkles,
   Menu,
   X,
+  LogOut,
 } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/lib/auth-context";
 
 export const menuItens = [
   { rotulo: "Dashboard", to: "/app", icone: LayoutGrid },
@@ -137,10 +139,53 @@ export function AppShell({
   descricao?: string;
   children: ReactNode;
 }) {
+  const { user, session, loading, signOut } = useAuth();
+  const navigate = useNavigate();
+
   const [aberto, setAberto] = useState(false);
   const [tipoConta, setTipoConta] = useState<"pessoal" | "empresa">("pessoal");
   const [mes, setMes] = useState("Este mês");
   const [ano, setAno] = useState("2026");
+
+  // Proteção de rota: Redireciona para /login se não estiver autenticado
+  useEffect(() => {
+    if (!loading && !session) {
+      const currentPath =
+        typeof window !== "undefined" ? window.location.pathname : "/app";
+      navigate({ to: "/login", search: { redirect: currentPath } });
+    }
+  }, [loading, session, navigate]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0d0d0d] flex flex-col items-center justify-center">
+        <div className="relative flex h-14 w-14 items-center justify-center animate-pulse">
+          <img
+            src="/logo.png"
+            alt="OrganizAI"
+            className="h-14 w-14 object-contain drop-shadow-[0_0_25px_rgba(249,115,22,0.4)]"
+          />
+        </div>
+        <p className="mt-4 text-xs text-stone-400 font-medium">
+          Carregando Organiz<span className="text-[#F97316] font-bold">AI</span>...
+        </p>
+      </div>
+    );
+  }
+
+  if (!session) {
+    return null;
+  }
+
+  const inicial = (
+    user?.user_metadata?.full_name?.[0] ||
+    user?.email?.[0] ||
+    "U"
+  ).toUpperCase();
+  const nomeUsuario =
+    user?.user_metadata?.full_name ||
+    user?.email?.split("@")[0] ||
+    "Usuário";
 
   return (
     <div className="min-h-screen bg-[#0d0d0d] text-foreground font-sans">
@@ -155,6 +200,38 @@ export function AppShell({
           </nav>
         </div>
         <VeraAjudaCard />
+
+        {/* Card do Usuário Logado & Logout */}
+        <div className="mt-3 pt-3 border-t border-white/[0.06] flex items-center justify-between px-1">
+          <Link
+            to="/perfil"
+            className="flex items-center gap-2.5 min-w-0 hover:opacity-80 transition-opacity"
+            title="Ver meu perfil"
+          >
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-orange-500/50 bg-[#1c120c] text-xs font-bold text-orange-400">
+              {inicial}
+            </div>
+            <div className="min-w-0 text-left">
+              <p className="text-xs font-medium text-stone-200 truncate max-w-[130px]">
+                {nomeUsuario}
+              </p>
+              <p className="text-[10px] text-stone-500 truncate max-w-[130px]">
+                {user?.email}
+              </p>
+            </div>
+          </Link>
+          <button
+            type="button"
+            onClick={async () => {
+              await signOut();
+              navigate({ to: "/login" });
+            }}
+            title="Sair da conta"
+            className="grid h-8 w-8 place-items-center rounded-lg text-stone-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+          >
+            <LogOut className="h-4 w-4" />
+          </button>
+        </div>
       </aside>
 
       {/* Drawer Mobile */}
@@ -190,6 +267,39 @@ export function AppShell({
               </nav>
             </div>
             <VeraAjudaCard onNavigate={() => setAberto(false)} />
+
+            {/* Card do Usuário Logado & Logout Mobile */}
+            <div className="mt-3 pt-3 border-t border-white/[0.06] flex items-center justify-between px-1">
+              <Link
+                to="/perfil"
+                onClick={() => setAberto(false)}
+                className="flex items-center gap-2.5 min-w-0 hover:opacity-80 transition-opacity"
+              >
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-orange-500/50 bg-[#1c120c] text-xs font-bold text-orange-400">
+                  {inicial}
+                </div>
+                <div className="min-w-0 text-left">
+                  <p className="text-xs font-medium text-stone-200 truncate max-w-[130px]">
+                    {nomeUsuario}
+                  </p>
+                  <p className="text-[10px] text-stone-500 truncate max-w-[130px]">
+                    {user?.email}
+                  </p>
+                </div>
+              </Link>
+              <button
+                type="button"
+                onClick={async () => {
+                  setAberto(false);
+                  await signOut();
+                  navigate({ to: "/login" });
+                }}
+                title="Sair da conta"
+                className="grid h-8 w-8 place-items-center rounded-lg text-stone-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+              >
+                <LogOut className="h-4 w-4" />
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -295,14 +405,18 @@ export function AppShell({
                 <Bell className="h-4 w-4" />
               </button>
 
-              {/* Avatar com Letra "V" e Chevron */}
+              {/* Avatar do Usuário */}
               <Link
                 to="/perfil"
-                className="flex items-center gap-1.5 pl-1.5 py-1 text-stone-300 hover:text-white transition-colors"
+                className="flex items-center gap-2 pl-1.5 py-1 text-stone-300 hover:text-white transition-colors"
+                title="Meu perfil"
               >
-                <div className="flex h-8 w-8 items-center justify-center rounded-full border border-orange-500 bg-transparent text-xs font-bold text-orange-400 shadow-sm shadow-orange-950/50">
-                  V
+                <div className="flex h-8 w-8 items-center justify-center rounded-full border border-orange-500 bg-[#1c120c] text-xs font-bold text-orange-400 shadow-sm shadow-orange-950/50">
+                  {inicial}
                 </div>
+                <span className="hidden sm:inline text-xs font-medium text-stone-300 truncate max-w-[100px]">
+                  {nomeUsuario}
+                </span>
                 <ChevronDown className="h-3.5 w-3.5 text-stone-400" />
               </Link>
             </div>

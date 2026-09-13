@@ -22,6 +22,7 @@ import { Route as GastosVariaveisRouteImport } from './routes/gastos-variaveis'
 import { Route as ImersaoefpfjRouteImport } from './routes/imersaoefpfj'
 import { Route as ImportarDadosRouteImport } from './routes/importar-dados'
 import { Route as InvestimentosRouteImport } from './routes/investimentos'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as PassoAPassoRouteImport } from './routes/passo-a-passo'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as RecebimentosRouteImport } from './routes/recebimentos'
@@ -94,6 +95,11 @@ const InvestimentosRoute = InvestimentosRouteImport.update({
   path: '/investimentos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PassoAPassoRoute = PassoAPassoRouteImport.update({
   id: '/passo-a-passo',
   path: '/passo-a-passo',
@@ -139,6 +145,7 @@ export interface FileRoutesByFullPath {
   '/imersaoefpfj': typeof ImersaoefpfjRoute
   '/importar-dados': typeof ImportarDadosRoute
   '/investimentos': typeof InvestimentosRoute
+  '/login': typeof LoginRoute
   '/passo-a-passo': typeof PassoAPassoRoute
   '/perfil': typeof PerfilRoute
   '/recebimentos': typeof RecebimentosRoute
@@ -160,6 +167,7 @@ export interface FileRoutesByTo {
   '/imersaoefpfj': typeof ImersaoefpfjRoute
   '/importar-dados': typeof ImportarDadosRoute
   '/investimentos': typeof InvestimentosRoute
+  '/login': typeof LoginRoute
   '/passo-a-passo': typeof PassoAPassoRoute
   '/perfil': typeof PerfilRoute
   '/recebimentos': typeof RecebimentosRoute
@@ -182,6 +190,7 @@ export interface FileRoutesById {
   '/imersaoefpfj': typeof ImersaoefpfjRoute
   '/importar-dados': typeof ImportarDadosRoute
   '/investimentos': typeof InvestimentosRoute
+  '/login': typeof LoginRoute
   '/passo-a-passo': typeof PassoAPassoRoute
   '/perfil': typeof PerfilRoute
   '/recebimentos': typeof RecebimentosRoute
@@ -205,6 +214,7 @@ export interface FileRouteTypes {
     | '/imersaoefpfj'
     | '/importar-dados'
     | '/investimentos'
+    | '/login'
     | '/passo-a-passo'
     | '/perfil'
     | '/recebimentos'
@@ -226,6 +236,7 @@ export interface FileRouteTypes {
     | '/imersaoefpfj'
     | '/importar-dados'
     | '/investimentos'
+    | '/login'
     | '/passo-a-passo'
     | '/perfil'
     | '/recebimentos'
@@ -247,6 +258,7 @@ export interface FileRouteTypes {
     | '/imersaoefpfj'
     | '/importar-dados'
     | '/investimentos'
+    | '/login'
     | '/passo-a-passo'
     | '/perfil'
     | '/recebimentos'
@@ -269,6 +281,7 @@ export interface RootRouteChildren {
   ImersaoefpfjRoute: typeof ImersaoefpfjRoute
   ImportarDadosRoute: typeof ImportarDadosRoute
   InvestimentosRoute: typeof InvestimentosRoute
+  LoginRoute: typeof LoginRoute
   PassoAPassoRoute: typeof PassoAPassoRoute
   PerfilRoute: typeof PerfilRoute
   RecebimentosRoute: typeof RecebimentosRoute
@@ -370,6 +383,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InvestimentosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/passo-a-passo': {
       id: '/passo-a-passo'
       path: '/passo-a-passo'
@@ -429,6 +449,7 @@ const rootRouteChildren: RootRouteChildren = {
   ImersaoefpfjRoute: ImersaoefpfjRoute,
   ImportarDadosRoute: ImportarDadosRoute,
   InvestimentosRoute: InvestimentosRoute,
+  LoginRoute: LoginRoute,
   PassoAPassoRoute: PassoAPassoRoute,
   PerfilRoute: PerfilRoute,
   RecebimentosRoute: RecebimentosRoute,
