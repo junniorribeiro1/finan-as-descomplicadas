@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, useRef, useEffect } from "react";
 import { AppShell } from "@/components/app/AppShell";
 import { Send, Sparkles } from "lucide-react";
+import { perguntarParaVera } from "@/lib/vera-ai";
 
 export const Route = createFileRoute("/vera-gerente")({
   head: () => ({
@@ -64,7 +65,7 @@ function VeraGerente() {
     rolarParaFim();
   }, [mensagens, carregando]);
 
-  const enviar = (textoParaEnviar?: string) => {
+  const enviar = async (textoParaEnviar?: string) => {
     const conteudo = (textoParaEnviar ?? input).trim();
     if (!conteudo || carregando) return;
 
@@ -85,24 +86,20 @@ function VeraGerente() {
     if (!textoParaEnviar) setInput("");
     setCarregando(true);
 
-    setTimeout(() => {
-      const respostaPersonalizada =
-        respostasInteligentes[conteudo] ||
-        `Entendi sua pergunta sobre "${conteudo}". Com base nas suas finanças do OrganizaMais+, analisei seu fluxo de caixa e seus hábitos recentes. Recomendo manter suas despesas variáveis sob controle para atingir suas metas do ano com tranquilidade!`;
+    const { texto: respostaTexto } = await perguntarParaVera(conteudo, mensagens);
 
-      const msgVera: Mensagem = {
-        id: "vera-" + Date.now(),
-        remetente: "vera",
-        texto: respostaPersonalizada,
-        hora: new Date().toLocaleTimeString("pt-BR", {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-      };
+    const msgVera: Mensagem = {
+      id: "vera-" + Date.now(),
+      remetente: "vera",
+      texto: respostaTexto,
+      hora: new Date().toLocaleTimeString("pt-BR", {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    };
 
-      setMensagens((prev) => [...prev, msgVera]);
-      setCarregando(false);
-    }, 900);
+    setMensagens((prev) => [...prev, msgVera]);
+    setCarregando(false);
   };
 
   return (
