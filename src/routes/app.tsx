@@ -1,7 +1,11 @@
-import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell } from "@/components/app/AppShell";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/lib/auth-context";
+import { PATENTES, getPatentePorNivel, EscudoPatente, PatenteInfo } from "@/lib/patentes";
+import { CelebracaoPatenteModal } from "@/components/app/CelebracaoPatenteModal";
+import { Trophy, ArrowRight, CheckCircle2, Sparkles, Shield } from "lucide-react";
 
 export const Route = createFileRoute("/app")({
   head: () => ({
@@ -75,12 +79,63 @@ const kpiCards = [
 ];
 
 function Dashboard() {
+  const { user, profile, refreshProfile } = useAuth();
   const [hoverDia, setHoverDia] = useState<number | null>(null);
   const [hoverMesComp, setHoverMesComp] = useState<number | null>(null);
   const [hoverMesRec, setHoverMesRec] = useState<number | null>(null);
+  const [patenteCelebrar, setPatenteCelebrar] = useState<PatenteInfo | null>(null);
+
+  const nomeExibicao =
+    profile?.preferred_name ||
+    user?.user_metadata?.full_name ||
+    user?.email?.split("@")[0] ||
+    "Usuário";
+
+  const nivelAtual = profile?.patente_nivel || 0;
+  const patenteAtual = getPatentePorNivel(nivelAtual);
+
+  // Listener para sincronizar alterações de patente
+  useEffect(() => {
+    const handler = () => {
+      refreshProfile();
+    };
+    window.addEventListener("organizai_patente_sync", handler);
+    return () => window.removeEventListener("organizai_patente_sync", handler);
+  }, [refreshProfile]);
+
+  // Celebração na primeira vez que abre o dashboard com nova patente
+  useEffect(() => {
+    if (!user?.id || !profile) return;
+    if (nivelAtual > 0) {
+      const storageKey = `organizai_patente_vista_${user.id}`;
+      const vista = Number(localStorage.getItem(storageKey) || "0");
+      if (nivelAtual > vista) {
+        const info = getPatentePorNivel(nivelAtual);
+        if (info) {
+          setPatenteCelebrar(info);
+        }
+      }
+    }
+  }, [user?.id, profile, nivelAtual]);
+
+  const handleFecharCelebracao = () => {
+    if (user?.id && nivelAtual > 0) {
+      localStorage.setItem(`organizai_patente_vista_${user.id}`, String(nivelAtual));
+    }
+    setPatenteCelebrar(null);
+  };
 
   return (
     <AppShell>
+      {/* Modal de Celebração de Nova Patente Conquistada */}
+      {patenteCelebrar && (
+        <CelebracaoPatenteModal
+          patente={patenteCelebrar}
+          nomeUsuario={nomeExibicao}
+          onFechar={handleFecharCelebracao}
+        />
+      )}
+
       {/* 1. Hero Banner de Boas-Vindas com Fluidez 3D */}
       <div className="relative min-h-[175px] sm:min-h-[190px] overflow-hidden rounded-3xl border border-white/[0.06] bg-[#0d0d0d] shadow-xl">
         {/* Imagem de Fundo com as Ondas Fluidas e Moedas 3D da Referência */}
@@ -96,12 +151,93 @@ function Dashboard() {
             ORGANIZAI
           </span>
           <h2 className="mt-1 font-display text-2xl font-bold tracking-tight text-white sm:text-3xl">
-            Bem-vindo(a) 👋
+            Bem-vindo(a), {nomeExibicao} 👋
           </h2>
           <p className="mt-1 text-xs text-stone-400 sm:text-sm">
             Aqui está o resumo das suas finanças.
           </p>
         </div>
+      </div>
+
+      {/* 2. Card de Patente Atual & Metas da Mentoria */}
+      <div className="mt-4 rounded-3xl border border-white/[0.08] bg-gradient-to-r from-[#18151f] via-[#141416] to-[#121214] p-5 sm:p-6 shadow-xl relative overflow-hidden">
+        {patenteAtual ? (
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
+            <div className="flex items-center gap-4 sm:gap-5">
+              <div className="shrink-0 transition-transform hover:scale-105 duration-200">
+                <EscudoPatente nivel={patenteAtual.nivel} tamanho="md" />
+              </div>
+
+              <div>
+                <div className="flex items-center gap-2.5 flex-wrap">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400/90 bg-amber-500/10 border border-amber-500/30 px-2.5 py-0.5 rounded-full">
+                    Patente Atual
+                  </span>
+                  <span className="text-xs font-semibold text-stone-400">
+                    Nível {patenteAtual.nivel} de 5
+                  </span>
+                </div>
+
+                <h3 className="mt-1 font-display text-lg sm:text-xl font-bold text-white">
+                  {patenteAtual.titulo}
+                </h3>
+                <p className="text-xs text-stone-300 mt-0.5 max-w-xl">
+                  {patenteAtual.descricao}
+                </p>
+
+                {/* Pílulas de Conquistas Alcançadas */}
+                <div className="mt-3 flex items-center gap-2 flex-wrap">
+                  {patenteAtual.conquistas.map((c) => (
+                    <span
+                      key={c.id}
+                      className="inline-flex items-center gap-1.5 rounded-full bg-white/[0.05] border border-white/10 px-3 py-1 text-[11px] font-medium text-stone-200"
+                    >
+                      <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+                      <span>{c.titulo}</span>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <Link
+              to="/perfil"
+              className="group inline-flex items-center justify-center gap-2 self-start md:self-auto rounded-xl bg-white/[0.06] hover:bg-white/10 border border-white/10 px-4 py-2.5 text-xs font-semibold text-stone-200 hover:text-white transition-all shrink-0"
+            >
+              <span>Ver todas as Metas</span>
+              <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+            </Link>
+          </div>
+        ) : (
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-400">
+                <Trophy className="h-6 w-6" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h4 className="text-sm font-bold text-white">
+                    Primeiros Passos na Mentoria
+                  </h4>
+                  <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-bold text-stone-300">
+                    Nível 0
+                  </span>
+                </div>
+                <p className="text-xs text-stone-400 mt-0.5">
+                  Complete os 7 passos do onboarding para desbloquear sua 1ª Patente: <strong>Organizador Aprendiz</strong>.
+                </p>
+              </div>
+            </div>
+
+            <Link
+              to="/perfil"
+              className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 px-4 py-2 text-xs font-bold text-white shadow-md shadow-orange-950/40 hover:brightness-110 transition-all shrink-0 self-start sm:self-auto"
+            >
+              <span>Conhecer as Metas</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+        )}
       </div>
 
       {/* 2. Top 5 KPI Cards em Linha Horizontal */}

@@ -22,6 +22,9 @@ export interface UserProfile {
   preferred_name?: string | null;
   vera_activated_at?: string | null;
   mentor_notes?: string | null;
+  patente_nivel?: number | null;
+  patente_atualizada_em?: string | null;
+  conquistas_desbloqueadas?: string[] | null;
   created_at: string;
   updated_at: string;
 }

@@ -13,6 +13,7 @@ import {
 import confetti from "canvas-confetti";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { supabase } from "@/lib/supabase";
 
 export interface PassoItem {
   id: string;
@@ -228,8 +229,41 @@ export function PassoAPassoWidget() {
   const isTudoConcluido = qtdConcluidos === totalPassos;
   const porcentagem = Math.round((qtdConcluidos / totalPassos) * 100);
 
+  const atribuirPrimeiraPatenteSeNecessario = async () => {
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("patente_nivel")
+        .eq("id", user.id)
+        .single();
+
+      if (!profile || (profile.patente_nivel || 0) < 1) {
+        await supabase
+          .from("profiles")
+          .update({
+            patente_nivel: 1,
+            patente_atualizada_em: new Date().toISOString(),
+            conquistas_desbloqueadas: ["passo_a_passo", "vera_ativada", "contas_iniciais"],
+          })
+          .eq("id", user.id);
+
+        window.dispatchEvent(new Event("organizai_patente_sync"));
+      }
+    } catch (err) {
+      console.error("Erro ao atribuir primeira patente:", err);
+    }
+  };
+
   const dispararCelebracao = () => {
     setShowCelebration(true);
+
+    // Atribui automaticamente a 1ª patente (Nível 1 - Organizador Aprendiz)
+    atribuirPrimeiraPatenteSeNecessario();
 
     // Canhões de confete multidirecionais
     try {
@@ -277,8 +311,8 @@ export function PassoAPassoWidget() {
       // Fallback gracioso caso canvas-confetti não esteja disponível
     }
 
-    toast.success("Parabéns! Você completou todos os 7 passos do OrganizAI!", {
-      duration: 5000,
+    toast.success("Parabéns! Você completou o passo a passo e desbloqueou sua 1ª Patente!", {
+      duration: 6000,
     });
 
     // Desaparece após a celebração (4.5 segundos)

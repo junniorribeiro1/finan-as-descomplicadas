@@ -28,9 +28,13 @@ import {
   Phone,
   X,
   Filter,
+  Trophy,
+  Award,
 } from "lucide-react";
 import { toast } from "sonner";
 import { brl } from "@/lib/mock-data";
+import { PATENTES, EscudoPatente, getPatentePorNivel } from "@/lib/patentes";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -57,6 +61,9 @@ interface AlunoFinanceiro {
   created_at: string;
   last_active_at?: string;
   mentor_notes?: string | null;
+  patente_nivel?: number | null;
+  patente_atualizada_em?: string | null;
+  conquistas_desbloqueadas?: string[] | null;
   // Métricas do Raio-X
   saldo_total: number;
   total_receitas: number;
@@ -83,6 +90,9 @@ const ALUNOS_EXEMPLO: AlunoFinanceiro[] = [
     created_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 12).toISOString(),
     last_active_at: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
     mentor_notes: "Meta inicial: quitar fatura do cartão de R$ 3.200 e estruturar 3 meses de reserva.",
+    patente_nivel: 2,
+    patente_atualizada_em: new Date().toISOString(),
+    conquistas_desbloqueadas: ["passo_a_passo", "gastos_sob_controle", "cartao_em_dia"],
     saldo_total: 8450.0,
     total_receitas: 9800.0,
     total_gastos_fixos: 4200.0,
@@ -105,6 +115,9 @@ const ALUNOS_EXEMPLO: AlunoFinanceiro[] = [
     created_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5).toISOString(),
     last_active_at: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
     mentor_notes: "Dificuldade em separar contas da pessoa física e da clínica. Aplicando método das 3 contas.",
+    patente_nivel: 1,
+    patente_atualizada_em: new Date().toISOString(),
+    conquistas_desbloqueadas: ["passo_a_passo", "vera_ativada"],
     saldo_total: 19800.0,
     total_receitas: 24500.0,
     total_gastos_fixos: 11200.0,
@@ -117,36 +130,39 @@ const ALUNOS_EXEMPLO: AlunoFinanceiro[] = [
   },
   {
     id: "exemplo-3",
-    full_name: "Camila Guimarães",
-    email: "camila.guimaraes@gmail.com",
-    phone: "(21) 99887-1122",
+    full_name: "Carla Pimentel",
+    email: "carla.pimentel@advocacia.com",
+    phone: "(71) 99888-7766",
     role: "user",
     status: "pendente",
     plan: "Free",
     account_type: "pessoal",
-    created_at: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString(),
-    last_active_at: new Date(Date.now() - 1000 * 60 * 180).toISOString(),
-    mentor_notes: "Inscrita na imersão mais recente. Aguardando liberação de acesso pós-confirmação.",
+    created_at: new Date(Date.now() - 1000 * 60 * 90).toISOString(),
+    last_active_at: new Date(Date.now() - 1000 * 60 * 90).toISOString(),
+    mentor_notes: "Nova aluna. Aguardando aprovação para iniciar onboarding financeiro.",
+    patente_nivel: 0,
     saldo_total: 3200.0,
-    total_receitas: 5500.0,
-    total_gastos_fixos: 2900.0,
+    total_receitas: 7500.0,
+    total_gastos_fixos: 3100.0,
     total_gastos_variaveis: 1900.0,
     total_investido: 2000.0,
-    total_cofrinhos: 1200.0,
-    cartao_fatura_atual: 2450.0,
-    reserva_emergencia_atual: 1200.0,
-    reserva_emergencia_meta: 12000.0,
+    total_cofrinhos: 1500.0,
+    cartao_fatura_atual: 890.0,
+    reserva_emergencia_atual: 1500.0,
+    reserva_emergencia_meta: 15000.0,
   },
 ];
 
 function AdminPage() {
-  const { user, session, loading: authLoading, isAdmin, signOut } = useAuth();
+  const { session, isAdmin, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
 
   const [alunos, setAlunos] = useState<AlunoFinanceiro[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [busca, setBusca] = useState("");
   const [filtroStatus, setFiltroStatus] = useState<"todos" | "ativo" | "pendente" | "bloqueado">("todos");
+
+  // Estado do Modal de Raio-X Financeiro
   const [alunoSelecionado, setAlunoSelecionado] = useState<AlunoFinanceiro | null>(null);
   const [notasEdicao, setNotasEdicao] = useState("");
   const [salvandoNotas, setSalvandoNotas] = useState(false);
@@ -160,26 +176,26 @@ function AdminPage() {
     }
   }, [authLoading, session, navigate]);
 
-  // Carrega alunos do Supabase
+  // Carrega lista de alunos do Supabase
   const carregarAlunos = async () => {
     setCarregando(true);
     try {
-      // 1. Busca perfis do Supabase
-      const { data: profiles, error } = await supabase
+      const { data: profiles, error: pError } = await supabase
         .from("profiles")
         .select("*")
         .order("created_at", { ascending: false });
 
-      if (error) {
-        console.error("Erro ao carregar perfis:", error);
-      }
+      if (pError) throw pError;
 
-      // 2. Busca resumos financeiros
+      // Busca dados dos dashboards/resumos financeiros de cada aluno se disponível
       const { data: summaries } = await supabase
-        .from("user_financial_summaries")
+        .from("financial_summary")
         .select("*");
 
-      const summaryMap = new Map((summaries || []).map((s: any) => [s.user_id, s]));
+      const summaryMap = new Map();
+      (summaries || []).forEach((s: any) => {
+        summaryMap.set(s.user_id, s);
+      });
 
       // Mapeia perfis reais
       const alunosReais: AlunoFinanceiro[] = (profiles || []).map((p: any) => {
@@ -196,6 +212,9 @@ function AdminPage() {
           created_at: p.created_at || new Date().toISOString(),
           last_active_at: p.last_active_at || p.created_at,
           mentor_notes: p.mentor_notes || "",
+          patente_nivel: p.patente_nivel ?? 0,
+          patente_atualizada_em: p.patente_atualizada_em || null,
+          conquistas_desbloqueadas: p.conquistas_desbloqueadas || [],
           saldo_total: Number(sum.saldo_total) || 12450.0,
           total_receitas: Number(sum.total_receitas) || 8500.0,
           total_gastos_fixos: Number(sum.total_gastos_fixos) || 3800.0,
@@ -307,6 +326,50 @@ function AdminPage() {
       toast.error("Erro ao salvar anotações.");
     } finally {
       setSalvandoNotas(false);
+    }
+  };
+
+  // Alterar ou regredir a patente do aluno
+  const alterarPatente = async (alunoId: string, novoNivel: number) => {
+    try {
+      if (!alunoId.startsWith("exemplo-")) {
+        const infoPatente = getPatentePorNivel(novoNivel);
+        const conquistas = infoPatente ? infoPatente.conquistas.map((c) => c.id) : [];
+
+        const { error } = await supabase
+          .from("profiles")
+          .update({
+            patente_nivel: novoNivel,
+            patente_atualizada_em: new Date().toISOString(),
+            conquistas_desbloqueadas: conquistas,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", alunoId);
+
+        if (error) {
+          toast.error("Erro ao atualizar patente no Supabase: " + error.message);
+          return;
+        }
+      }
+
+      setAlunos((prev) =>
+        prev.map((a) => (a.id === alunoId ? { ...a, patente_nivel: novoNivel } : a))
+      );
+
+      if (alunoSelecionado?.id === alunoId) {
+        setAlunoSelecionado((prev) =>
+          prev ? { ...prev, patente_nivel: novoNivel } : null
+        );
+      }
+
+      const info = getPatentePorNivel(novoNivel);
+      if (info) {
+        toast.success(`Patente atualizada para: ${info.titulo}!`);
+      } else {
+        toast.info("Patente redefinida para Iniciante (Nível 0).");
+      }
+    } catch {
+      toast.error("Erro ao alterar patente.");
     }
   };
 
@@ -646,6 +709,7 @@ function AdminPage() {
                 <tr className="border-b border-white/[0.06] text-stone-400 font-medium">
                   <th className="py-3.5 px-3">Aluno</th>
                   <th className="py-3.5 px-3">Tipo / Plano</th>
+                  <th className="py-3.5 px-3">Patente Atual</th>
                   <th className="py-3.5 px-3">Cadastro</th>
                   <th className="py-3.5 px-3">Status</th>
                   <th className="py-3.5 px-3">Patrimônio Declarado</th>
@@ -655,7 +719,7 @@ function AdminPage() {
               <tbody className="divide-y divide-white/[0.04]">
                 {alunosFiltrados.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="text-center py-12 text-stone-500">
+                    <td colSpan={7} className="text-center py-12 text-stone-500">
                       Nenhum aluno encontrado para este filtro.
                     </td>
                   </tr>
@@ -701,6 +765,27 @@ function AdminPage() {
                           <span className="inline-flex items-center gap-1 rounded-full bg-white/[0.06] px-2.5 py-0.5 text-[10px] font-semibold text-stone-300">
                             {aluno.plan || "Free"}
                           </span>
+                        </td>
+
+                        {/* Patente Atual */}
+                        <td className="py-3.5 px-3">
+                          {aluno.patente_nivel && aluno.patente_nivel > 0 ? (
+                            <div className="flex items-center gap-2">
+                              <EscudoPatente nivel={aluno.patente_nivel} tamanho="sm" />
+                              <div className="min-w-0">
+                                <span className="font-semibold text-white block text-[11px] truncate max-w-[130px]">
+                                  {getPatentePorNivel(aluno.patente_nivel)?.titulo}
+                                </span>
+                                <span className="text-[10px] text-stone-400 block">
+                                  Nível {aluno.patente_nivel} de 5
+                                </span>
+                              </div>
+                            </div>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-white/[0.04] border border-white/10 px-2 py-0.5 text-[10px] text-stone-400">
+                              Nível 0 • Iniciante
+                            </span>
+                          )}
                         </td>
 
                         {/* Data */}
@@ -934,6 +1019,81 @@ function AdminPage() {
                       )}%`,
                     }}
                   />
+                </div>
+              </div>
+
+              {/* Gestão de Patente & Metas da Mentoria (Apenas Administrador) */}
+              <div className="rounded-2xl border border-amber-500/25 bg-amber-500/[0.04] p-4 sm:p-5">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <Trophy className="h-4 w-4 text-amber-400" />
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-amber-400">
+                      Gestão de Patente & Metas do Aluno
+                    </h3>
+                  </div>
+                  <span className="text-[10px] text-stone-400">Exclusivo Coordenação</span>
+                </div>
+
+                <p className="text-xs text-stone-300 leading-relaxed mb-4">
+                  Selecione a patente atual do aluno conforme os resultados alcançados na mentoria. Você pode promover ou regredir a patente a qualquer momento.
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+                  {/* Opção Nível 0 */}
+                  <button
+                    type="button"
+                    onClick={() => alterarPatente(alunoSelecionado.id, 0)}
+                    className={cn(
+                      "flex items-center gap-3 p-3 rounded-xl border text-left transition-all cursor-pointer",
+                      (alunoSelecionado.patente_nivel || 0) === 0
+                        ? "border-white/50 bg-white/10 ring-2 ring-white/20 shadow-md"
+                        : "border-white/[0.06] bg-black/30 hover:border-white/20 opacity-70 hover:opacity-100"
+                    )}
+                  >
+                    <div className="h-8 w-8 rounded-lg bg-stone-800 flex items-center justify-center text-xs font-bold text-stone-400 shrink-0">
+                      0
+                    </div>
+                    <div className="min-w-0">
+                      <span className="text-xs font-bold text-white block truncate">
+                        Sem Patente
+                      </span>
+                      <span className="text-[10px] text-stone-400 block truncate">
+                        Iniciante (Onboarding)
+                      </span>
+                    </div>
+                  </button>
+
+                  {/* Opções Níveis 1 a 5 */}
+                  {PATENTES.map((patente) => {
+                    const isAtual = (alunoSelecionado.patente_nivel || 0) === patente.nivel;
+                    return (
+                      <button
+                        key={patente.id}
+                        type="button"
+                        onClick={() => alterarPatente(alunoSelecionado.id, patente.nivel)}
+                        className={cn(
+                          "flex items-center gap-3 p-3 rounded-xl border text-left transition-all cursor-pointer",
+                          isAtual
+                            ? `border-amber-400/80 bg-gradient-to-r ${patente.corGradiente} ring-2 ring-amber-400/50 shadow-lg`
+                            : "border-white/[0.06] bg-black/30 hover:border-white/20 opacity-80 hover:opacity-100"
+                        )}
+                      >
+                        <div className="shrink-0">
+                          <EscudoPatente nivel={patente.nivel} tamanho="sm" />
+                        </div>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-xs font-bold text-white block truncate">
+                              {patente.titulo}
+                            </span>
+                          </div>
+                          <span className="text-[10px] text-stone-300 block truncate">
+                            Nível {patente.nivel} • {patente.subtitulo}
+                          </span>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 

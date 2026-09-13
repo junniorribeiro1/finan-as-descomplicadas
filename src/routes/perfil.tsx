@@ -18,9 +18,12 @@ import {
   Lock,
   Sparkles,
   ShieldAlert,
+  Trophy,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/lib/supabase";
+import { PATENTES, EscudoPatente, getPatentePorNivel } from "@/lib/patentes";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
 
@@ -79,6 +82,9 @@ function Perfil() {
         year: "numeric",
       })
     : "2026";
+
+  const nivelAtual = profile?.patente_nivel || 0;
+  const patenteAtual = getPatentePorNivel(nivelAtual);
 
   const handleLogout = async () => {
     try {
@@ -242,7 +248,149 @@ function Perfil() {
           </div>
         </Panel>
 
-        {/* 2. CARD DE SEGURANÇA & ALTERAÇÃO DE SENHA */}
+        {/* 2. SEÇÃO METAS & ESCUDOS DA MENTORIA */}
+        <Panel id="metas" className="p-6 sm:p-8 relative overflow-hidden">
+          {/* Header da Seção */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/[0.08]">
+            <div className="flex items-start gap-4">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-400 shadow-md">
+                <Trophy className="h-6 w-6" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-lg sm:text-xl font-bold text-white">
+                    Metas & Patentes da Mentoria
+                  </h3>
+                  <span className="rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+                    Evolução
+                  </span>
+                </div>
+                <p className="text-xs text-stone-400 mt-1 max-w-xl leading-relaxed">
+                  Seu plano de evolução financeira. As metas e patentes são avaliadas e ativadas pelo administrador conforme seu desempenho. Escudos coloridos representam conquistas já batidas.
+                </p>
+              </div>
+            </div>
+
+            {/* Badge da Patente Atual */}
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-3 flex items-center gap-3 self-start sm:self-auto shrink-0">
+              <div className="shrink-0">
+                <EscudoPatente
+                  nivel={nivelAtual > 0 ? nivelAtual : 1}
+                  bloqueado={nivelAtual === 0}
+                  tamanho="sm"
+                />
+              </div>
+              <div>
+                <span className="text-[10px] uppercase font-bold text-stone-400 block">
+                  Sua Patente:
+                </span>
+                <span className="text-xs font-bold text-white block">
+                  {patenteAtual ? patenteAtual.titulo : "Iniciante (Nível 0)"}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Grade de Escudos e Metas em Sequência */}
+          <div className="mt-6 space-y-4">
+            {PATENTES.map((patente) => {
+              const alcancada = (profile?.patente_nivel || 0) >= patente.nivel;
+              const isProxima = (profile?.patente_nivel || 0) + 1 === patente.nivel;
+
+              return (
+                <div
+                  key={patente.id}
+                  className={cn(
+                    "relative rounded-2xl p-5 border transition-all duration-300",
+                    alcancada
+                      ? `border-white/15 bg-gradient-to-r ${patente.corGradiente} shadow-lg`
+                      : isProxima
+                      ? "border-white/10 bg-white/[0.02] ring-1 ring-white/10"
+                      : "border-white/[0.05] bg-white/[0.01] opacity-60"
+                  )}
+                >
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
+                    <div className="flex items-start sm:items-center gap-4 sm:gap-5">
+                      {/* Escudo Visual: Colorido se alcançada, Grayscale se bloqueada */}
+                      <div className="shrink-0 transition-transform hover:scale-105 duration-200">
+                        <EscudoPatente
+                          nivel={patente.nivel}
+                          bloqueado={!alcancada}
+                          tamanho="lg"
+                        />
+                      </div>
+
+                      <div>
+                        <div className="flex items-center gap-2.5 flex-wrap">
+                          <span className="text-xs font-bold text-white">
+                            Nível {patente.nivel}
+                          </span>
+                          <span className="text-xs text-stone-500">•</span>
+                          <h4 className="text-sm sm:text-base font-bold text-white">
+                            {patente.titulo}
+                          </h4>
+
+                          {alcancada ? (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/20 border border-emerald-500/40 px-2.5 py-0.5 text-[10px] font-bold text-emerald-300">
+                              <CheckCircle2 className="h-3 w-3" />
+                              ALCANÇADA
+                            </span>
+                          ) : isProxima ? (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 border border-amber-500/30 px-2.5 py-0.5 text-[10px] font-bold text-amber-400">
+                              <Sparkles className="h-3 w-3" />
+                              PRÓXIMA META
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-white/[0.06] border border-white/10 px-2.5 py-0.5 text-[10px] font-medium text-stone-400">
+                              <Lock className="h-3 w-3" />
+                              BLOQUEADA
+                            </span>
+                          )}
+                        </div>
+
+                        <p className="text-xs text-stone-300 mt-1 max-w-xl">
+                          {patente.descricao}
+                        </p>
+
+                        {/* Critério da Meta */}
+                        <div className="mt-3 rounded-xl bg-black/30 border border-white/[0.06] p-3 text-xs">
+                          <span className="font-semibold text-stone-300 block mb-0.5">
+                            Meta para esta patente:
+                          </span>
+                          <span className="text-stone-400">{patente.criterio}</span>
+                        </div>
+
+                        {/* Conquistas da Patente */}
+                        <div className="mt-3 flex items-center gap-2 flex-wrap">
+                          {patente.conquistas.map((conquista) => (
+                            <span
+                              key={conquista.id}
+                              className={cn(
+                                "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-medium border",
+                                alcancada
+                                  ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-300"
+                                  : "bg-white/[0.03] border-white/10 text-stone-500"
+                              )}
+                            >
+                              {alcancada ? (
+                                <CheckCircle2 className="h-3 w-3 text-emerald-400" />
+                              ) : (
+                                <Lock className="h-3 w-3 text-stone-500" />
+                              )}
+                              <span>{conquista.titulo}</span>
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </Panel>
+
+        {/* 3. CARD DE SEGURANÇA & ALTERAÇÃO DE SENHA */}
         <Panel className="p-6 sm:p-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-start gap-4">
