@@ -102,9 +102,9 @@ export default function ImersaoPage() {
   }, []);
 
   // 4. Typewriter effect in Dobra 2
-  const [typewriterText, setTypewriterText] = useState("");
   const fullText =
     "Você está prestes a transformar de vez a sua relação com o dinheiro pessoal e empresarial.";
+  const [typewriterText, setTypewriterText] = useState(fullText);
   const typewriterRef = useRef<HTMLDivElement>(null);
   const [hasTyped, setHasTyped] = useState(false);
 
@@ -148,18 +148,9 @@ export default function ImersaoPage() {
       {/* ── CSS FOR REVEAL-ON-SCROLL BLUR EFFECT ── */}
       <style>{`
         .reveal-on-scroll {
-          opacity: 0;
-          filter: blur(12px);
-          transform: translateY(28px);
-          transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-                      filter 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-                      transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-          will-change: opacity, filter, transform;
-        }
-        .reveal-on-scroll.is-revealed {
           opacity: 1;
-          filter: blur(0px);
-          transform: translateY(0);
+          transform: none;
+          transition: opacity 0.5s ease-out, transform 0.5s ease-out;
         }
         .delay-100 { transition-delay: 0.1s; }
         .delay-200 { transition-delay: 0.2s; }
@@ -411,7 +402,7 @@ export default function ImersaoPage() {
             </a>
 
             <a
-              href="#modulos"
+              href="#virada"
               className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-5 py-3 text-xs sm:text-sm font-semibold text-stone-300 backdrop-blur-md transition-colors hover:bg-white/10 hover:text-white"
             >
               <span>Saiba mais</span>
@@ -439,9 +430,9 @@ export default function ImersaoPage() {
       </section>
 
       {/* ═══════════════════════════════════════════════
-          DOBRA 2 — TYPEWRITER + TIMELINE DE TRANSFORMAÇÃO (COM BLUR IN EFFECT)
+          DOBRA 2 — TYPEWRITER + TIMELINE DE TRANSFORMAÇÃO (A VIRADA DE CHAVE)
       ═══════════════════════════════════════════════ */}
-      <section className="reveal-on-scroll relative z-20 mx-auto w-full max-w-5xl px-5 py-12 md:px-8">
+      <section id="virada" className="relative z-20 mx-auto w-full max-w-5xl px-5 py-12 md:px-8">
         <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-6 sm:p-10 md:p-14 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
           {/* Efeito Typewriter */}
           <div ref={typewriterRef} className="text-center min-h-[5rem] mb-10">
