@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/app/AppShell";
 import { cn } from "@/lib/utils";
@@ -74,6 +75,10 @@ const kpiCards = [
 ];
 
 function Dashboard() {
+  const [hoverDia, setHoverDia] = useState<number | null>(null);
+  const [hoverMesComp, setHoverMesComp] = useState<number | null>(null);
+  const [hoverMesRec, setHoverMesRec] = useState<number | null>(null);
+
   return (
     <AppShell>
       {/* 1. Hero Banner de Boas-Vindas com Fluidez 3D */}
@@ -154,17 +159,17 @@ function Dashboard() {
         {/* COLUNA DA ESQUERDA */}
         <div className="space-y-4">
           {/* Card: Evolução do Saldo */}
-          <div className="rounded-2xl border border-white/[0.06] bg-[#151515] p-5 shadow-sm">
+          <div className="rounded-2xl border border-white/[0.06] bg-[#151515] p-5 sm:p-6 shadow-sm flex flex-col justify-between min-h-[260px]">
             <div>
               <span className="text-xs text-stone-400">Evolução do saldo</span>
-              <h3 className="font-display text-lg font-bold text-white">R$ 0,00</h3>
+              <h3 className="font-display text-lg font-bold text-white leading-tight">R$ 0,00</h3>
             </div>
 
             {/* Gráfico de Linha do Saldo */}
             <div className="mt-4">
               <div className="relative h-44 w-full">
                 {/* Linhas de Grade e Eixo Y */}
-                <div className="flex h-full flex-col justify-between text-[10px] text-stone-500">
+                <div className="flex h-full flex-col justify-between text-[10px] text-stone-500 pointer-events-none">
                   <div className="flex items-center gap-3">
                     <span className="w-11 shrink-0 text-right">R$ 4,00</span>
                     <div className="h-px w-full bg-white/[0.04]" />
@@ -187,12 +192,66 @@ function Dashboard() {
                     <div className="h-[2px] w-full bg-[#F97316] shadow-sm shadow-orange-500/50" />
                   </div>
                 </div>
+
+                {/* Elementos Interativos de Hover */}
+                {hoverDia !== null && (
+                  <div className="pointer-events-none absolute inset-0 pl-14 z-10">
+                    {/* Linha vertical branca suave */}
+                    <div
+                      className="absolute top-0 bottom-0 w-[1px] bg-white/40"
+                      style={{
+                        left: `${((hoverDia - 0.5) / 30) * 100}%`,
+                      }}
+                    />
+                    {/* Ponto indicador com anel branco no valor */}
+                    <div
+                      className="absolute bottom-0 h-3 w-3 -translate-x-1/2 translate-y-1/2 rounded-full bg-[#F97316] ring-2 ring-white shadow-[0_0_8px_rgba(249,115,22,0.6)]"
+                      style={{
+                        left: `${((hoverDia - 0.5) / 30) * 100}%`,
+                      }}
+                    />
+                    {/* Tooltip Card flutuante escuro com borda suave */}
+                    <div
+                      className="absolute rounded-xl border border-white/10 bg-[#1a1a1a]/95 px-3.5 py-2.5 shadow-2xl backdrop-blur-md min-w-[110px]"
+                      style={{
+                        left: `clamp(60px, ${((hoverDia - 0.5) / 30) * 100}%, calc(100% - 60px))`,
+                        top: "40%",
+                        transform: "translate(-50%, -50%)",
+                      }}
+                    >
+                      <span className="block font-bold text-white text-sm leading-tight">
+                        {hoverDia}
+                      </span>
+                      <span className="mt-1 block text-xs font-semibold text-[#F97316] whitespace-nowrap">
+                        saldo : R$ 0,00
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Overlay de captura de hover para cada dia */}
+                <div className="absolute inset-0 pl-14 flex z-20">
+                  {diasMes.map((dia) => (
+                    <div
+                      key={dia}
+                      onMouseEnter={() => setHoverDia(dia)}
+                      onMouseLeave={() => setHoverDia(null)}
+                      className="flex-1 h-full cursor-pointer"
+                    />
+                  ))}
+                </div>
               </div>
 
               {/* Eixo X: Dias do Mês (1 a 30) */}
               <div className="mt-2 flex justify-between pl-14 text-[9px] text-stone-500">
                 {diasMes.map((dia) => (
-                  <span key={dia} className="w-3 text-center">
+                  <span
+                    key={dia}
+                    className={cn(
+                      "w-3 text-center transition-colors",
+                      hoverDia === dia ? "text-white font-bold" : "text-stone-500"
+                    )}
+                  >
                     {dia}
                   </span>
                 ))}
@@ -201,12 +260,13 @@ function Dashboard() {
           </div>
 
           {/* Card: Despesas x Receitas */}
-          <div className="rounded-2xl border border-white/[0.06] bg-[#151515] p-5 shadow-sm">
+          <div className="rounded-2xl border border-white/[0.06] bg-[#151515] p-5 sm:p-6 shadow-sm flex flex-col justify-between min-h-[250px]">
             <span className="text-xs text-stone-400">Despesas x Receitas</span>
 
             <div className="mt-4">
-              <div className="relative h-40 w-full">
-                <div className="flex h-full flex-col justify-between text-[10px] text-stone-500">
+              <div className="relative h-44 w-full">
+                {/* Linhas de Grade e Eixo Y */}
+                <div className="flex h-full flex-col justify-between text-[10px] text-stone-500 pointer-events-none">
                   <div className="flex items-center gap-3">
                     <span className="w-11 shrink-0 text-right">R$ 4,00</span>
                     <div className="h-px w-full bg-white/[0.04]" />
@@ -228,12 +288,63 @@ function Dashboard() {
                     <div className="h-px w-full bg-white/[0.06]" />
                   </div>
                 </div>
+
+                {/* Elementos de Hover: Coluna destacada e Tooltip */}
+                {hoverMesComp !== null && (
+                  <div className="pointer-events-none absolute inset-0 pl-14 z-10">
+                    {/* Faixa vertical cinza/branca translúcida exatamente como na referência */}
+                    <div
+                      className="absolute top-0 bottom-0 bg-white/20 rounded-t-sm transition-all duration-75"
+                      style={{
+                        left: `${(hoverMesComp / 12) * 100}%`,
+                        width: `${100 / 12}%`,
+                      }}
+                    />
+                    {/* Tooltip flutuante com Despesas e Receitas */}
+                    <div
+                      className="absolute rounded-xl border border-white/10 bg-[#1a1a1a]/95 px-3.5 py-2.5 shadow-2xl backdrop-blur-md min-w-[130px]"
+                      style={{
+                        left: `clamp(70px, ${((hoverMesComp + 0.5) / 12) * 100}%, calc(100% - 70px))`,
+                        top: "50%",
+                        transform: "translate(-50%, -50%)",
+                      }}
+                    >
+                      <span className="block font-bold text-white text-sm leading-tight">
+                        {mesesRotulos[hoverMesComp]}
+                      </span>
+                      <span className="mt-1 block text-xs font-medium text-[#f87171] whitespace-nowrap">
+                        Despesas : R$ 0,00
+                      </span>
+                      <span className="mt-0.5 block text-xs font-medium text-[#34d399] whitespace-nowrap">
+                        Receitas : R$ 0,00
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Overlay de captura de hover para cada mês */}
+                <div className="absolute inset-0 pl-14 flex z-20">
+                  {mesesRotulos.map((m, i) => (
+                    <div
+                      key={m}
+                      onMouseEnter={() => setHoverMesComp(i)}
+                      onMouseLeave={() => setHoverMesComp(null)}
+                      className="flex-1 h-full cursor-pointer"
+                    />
+                  ))}
+                </div>
               </div>
 
               {/* Eixo X: Meses Jan a Dez */}
               <div className="mt-2 flex justify-between pl-14 text-[10px] text-stone-500">
-                {mesesRotulos.map((m) => (
-                  <span key={m} className="w-6 text-center">
+                {mesesRotulos.map((m, i) => (
+                  <span
+                    key={m}
+                    className={cn(
+                      "w-6 text-center transition-colors",
+                      hoverMesComp === i ? "text-white font-bold" : "text-stone-500"
+                    )}
+                  >
                     {m}
                   </span>
                 ))}
@@ -242,21 +353,23 @@ function Dashboard() {
           </div>
 
           {/* Card: Gastos fixos do mês */}
-          <div className="rounded-2xl border border-white/[0.06] bg-[#151515] p-5 shadow-sm">
-            <div className="flex items-center justify-between border-b border-white/[0.04] pb-3">
-              <span className="text-xs font-semibold text-stone-300">Gastos fixos do mês</span>
-              <span className="font-display text-xs font-bold text-white">R$ 0,00</span>
+          <div className="rounded-2xl border border-white/[0.06] bg-[#151515] p-5 sm:p-6 shadow-sm flex flex-col justify-between min-h-[220px]">
+            <div>
+              <div className="flex items-center justify-between border-b border-white/[0.06] pb-3">
+                <span className="text-xs font-semibold text-stone-300">Gastos fixos do mês</span>
+                <span className="font-display text-xs font-bold text-white">R$ 0,00</span>
+              </div>
+              <p className="mt-4 text-xs text-stone-400">
+                Nenhum gasto fixo cadastrado ainda.
+              </p>
             </div>
-            <p className="mt-4 text-xs text-stone-400">
-              Nenhum gasto fixo cadastrado ainda.
-            </p>
           </div>
         </div>
 
         {/* COLUNA DA DIREITA */}
         <div className="space-y-4">
           {/* Card: Total de gastos por categoria */}
-          <div className="flex min-h-[200px] flex-col justify-between rounded-2xl border border-white/[0.06] bg-[#151515] p-5 shadow-sm">
+          <div className="flex flex-col justify-between rounded-2xl border border-white/[0.06] bg-[#151515] p-5 sm:p-6 shadow-sm min-h-[260px]">
             <span className="text-xs text-stone-400">Total de gastos por categoria</span>
             <div className="my-auto py-8 text-center">
               <p className="text-xs text-stone-400">Sem gastos cadastrados</p>
@@ -264,12 +377,12 @@ function Dashboard() {
           </div>
 
           {/* Card: Recebimentos por mês */}
-          <div className="rounded-2xl border border-white/[0.06] bg-[#151515] p-5 shadow-sm">
+          <div className="rounded-2xl border border-white/[0.06] bg-[#151515] p-5 sm:p-6 shadow-sm flex flex-col justify-between min-h-[250px]">
             <span className="text-xs text-stone-400">Recebimentos por mês</span>
 
             <div className="mt-4">
-              <div className="relative h-32 w-full">
-                <div className="flex h-full flex-col justify-between">
+              <div className="relative h-36 w-full">
+                <div className="flex h-full flex-col justify-between pointer-events-none">
                   <div className="h-px w-full bg-white/[0.04]" />
                   <div className="h-px w-full bg-white/[0.04]" />
                   <div className="h-px w-full bg-white/[0.04]" />
@@ -286,12 +399,66 @@ function Dashboard() {
                     </div>
                   </div>
                 </div>
+
+                {/* Elementos de Hover: Guia vertical, Ponto em anel branco e Tooltip */}
+                {hoverMesRec !== null && (
+                  <div className="pointer-events-none absolute inset-0 z-10">
+                    {/* Linha vertical branca */}
+                    <div
+                      className="absolute top-0 bottom-0 w-[1px] bg-white/40"
+                      style={{
+                        left: `${(hoverMesRec / (mesesRecebimentos.length - 1)) * 100}%`,
+                      }}
+                    />
+                    {/* Ponto destacado com anel branco no valor */}
+                    <div
+                      className="absolute bottom-0 h-3 w-3 -translate-x-1/2 translate-y-1/2 rounded-full bg-[#3B82F6] ring-2 ring-white shadow-[0_0_8px_rgba(59,130,246,0.6)]"
+                      style={{
+                        left: `${(hoverMesRec / (mesesRecebimentos.length - 1)) * 100}%`,
+                      }}
+                    />
+                    {/* Tooltip flutuante escuro com valor em azul */}
+                    <div
+                      className="absolute rounded-xl border border-white/10 bg-[#1a1a1a]/95 px-3.5 py-2.5 shadow-2xl backdrop-blur-md min-w-[110px]"
+                      style={{
+                        left: `clamp(65px, ${(hoverMesRec / (mesesRecebimentos.length - 1)) * 100}%, calc(100% - 65px))`,
+                        top: "40%",
+                        transform: "translate(-50%, -50%)",
+                      }}
+                    >
+                      <span className="block font-bold text-white text-sm leading-tight">
+                        {mesesRecebimentos[hoverMesRec]}
+                      </span>
+                      <span className="mt-1 block text-xs font-semibold text-[#3B82F6] whitespace-nowrap">
+                        valor : R$ 0,00
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Overlay de captura de hover para cada mês */}
+                <div className="absolute inset-0 flex z-20">
+                  {mesesRecebimentos.map((m, i) => (
+                    <div
+                      key={m}
+                      onMouseEnter={() => setHoverMesRec(i)}
+                      onMouseLeave={() => setHoverMesRec(null)}
+                      className="flex-1 h-full cursor-pointer"
+                    />
+                  ))}
+                </div>
               </div>
 
               {/* Eixo X: Fev a Dez */}
               <div className="mt-2 flex justify-between text-[10px] text-stone-500">
-                {mesesRecebimentos.map((m) => (
-                  <span key={m} className="w-5 text-center">
+                {mesesRecebimentos.map((m, i) => (
+                  <span
+                    key={m}
+                    className={cn(
+                      "w-5 text-center transition-colors",
+                      hoverMesRec === i ? "text-white font-bold" : "text-stone-500"
+                    )}
+                  >
                     {m}
                   </span>
                 ))}
@@ -300,28 +467,30 @@ function Dashboard() {
           </div>
 
           {/* Card: RENDIMENTO DE INVESTIMENTO (Gradiente Coral para Magenta) */}
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#FF5E43] via-[#D83672] to-[#B0288E] p-5 text-white shadow-lg shadow-pink-950/20">
-            <span className="text-[10px] font-black uppercase tracking-wider text-white/90">
-              RENDIMENTO DE INVESTIMENTO
-            </span>
-            <h3 className="mt-1 font-display text-2xl font-bold tracking-tight text-white">
-              R$ 0,00
-            </h3>
-            <p className="text-[11px] text-white/80">Ganhos acumulados na carteira</p>
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#FF5E43] via-[#D83672] to-[#B0288E] p-5 sm:p-6 text-white shadow-lg shadow-pink-950/20 flex flex-col justify-between min-h-[120px]">
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-wider text-white/90">
+                RENDIMENTO DE INVESTIMENTO
+              </span>
+              <h3 className="mt-1 font-display text-2xl font-bold tracking-tight text-white leading-tight">
+                R$ 0,00
+              </h3>
+              <p className="text-[11px] text-white/80">Ganhos acumulados na carteira</p>
+            </div>
 
-            <div className="mt-4 flex items-center justify-between text-xs pt-1">
+            <div className="mt-3 flex items-center justify-between text-xs pt-1 border-t border-white/10">
               <span className="text-[11px] text-white/85">Rentabilidade média</span>
               <span className="font-bold text-white text-xs">0,0% a.a.</span>
             </div>
           </div>
 
           {/* Card: Cofrinhos Vazio */}
-          <div className="flex flex-col items-center justify-center rounded-2xl border border-white/[0.06] bg-[#151515] p-6 text-center shadow-sm">
-            <div className="relative h-20 w-20 overflow-hidden rounded-2xl shadow-xl shadow-amber-950/30">
+          <div className="flex flex-col items-center justify-center rounded-2xl border border-white/[0.06] bg-[#151515] p-6 text-center shadow-sm min-h-[185px]">
+            <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl overflow-hidden shadow-lg shadow-black/60 border border-white/[0.08] bg-[#1a1a1a]">
               <img
-                src="/vault-empty.jpg"
+                src="/cofrinho-icon.png"
                 alt="Cofrinhos"
-                className="h-full w-full object-cover"
+                className="h-full w-full object-cover select-none pointer-events-none"
               />
             </div>
             <h4 className="mt-3 text-sm font-semibold text-white">
