@@ -331,7 +331,7 @@ export default function ImersaoPage() {
           Informações posicionadas mais abaixo, proporções refinadas
           e fundo limpo com o degradê natural
       ═══════════════════════════════════════════════ */}
-      <section className="relative z-20 mx-auto w-full max-w-5xl px-5 pt-32 sm:pt-48 md:pt-60 lg:pt-72 pb-16 md:pb-24">
+      <section className="relative z-20 mx-auto w-full max-w-5xl px-5 pt-12 sm:pt-16 md:pt-20 lg:pt-24 pb-14 md:pb-20">
         <div className="flex flex-col items-start text-left gap-4">
           {/* TAGS DE EVENTO NO TOPO (CLEAN E COMPACTAS) */}
           <div className="flex flex-wrap items-center gap-2">
