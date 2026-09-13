@@ -30,6 +30,7 @@ interface AuthContextType {
   profile: UserProfile | null;
   loading: boolean;
   isAdmin: boolean;
+  isPending: boolean;
   isBlocked: boolean;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
@@ -43,6 +44,7 @@ const AuthContext = createContext<AuthContextType>({
   profile: null,
   loading: true,
   isAdmin: false,
+  isPending: false,
   isBlocked: false,
   signOut: async () => {},
   refreshProfile: async () => {},
@@ -128,7 +130,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const isEmailAdmin = !!user?.email && ADMIN_FALLBACK_EMAILS.includes(user.email.toLowerCase());
   const isAdmin = isEmailAdmin || profile?.role === "admin";
-  const isBlocked = profile?.status === "bloqueado";
+  const isPending = !isAdmin && profile?.status === "pendente";
+  const isBlocked = !isAdmin && profile?.status === "bloqueado";
 
   return (
     <AuthContext.Provider
@@ -138,6 +141,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         profile,
         loading,
         isAdmin,
+        isPending,
         isBlocked,
         signOut,
         refreshProfile,

@@ -546,6 +546,33 @@ function AdminPage() {
           </div>
         </div>
 
+        {/* Alerta de Cadastros Aguardando Aprovação Manual */}
+        {metricas.pendentes > 0 && (
+          <div className="flex items-center justify-between gap-4 rounded-2xl border border-amber-500/30 bg-gradient-to-r from-amber-950/40 via-amber-900/20 to-transparent p-4 sm:p-5 shadow-lg">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/20 text-amber-400">
+                <Clock className="h-5 w-5 animate-pulse" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-white">
+                  {metricas.pendentes} {metricas.pendentes === 1 ? "aluno aguardando aprovação" : "alunos aguardando aprovação"}
+                </h4>
+                <p className="text-xs text-stone-300">
+                  Novos cadastros entram como pendentes. Clique em "Aprovar Acesso" na tabela abaixo para liberar o OrganizAI.
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setFiltroStatus("pendente")}
+              className="hidden sm:inline-flex items-center gap-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 px-4 py-2 text-xs font-bold text-black transition-colors"
+            >
+              Ver Pendentes
+            </button>
+          </div>
+        )}
+
         {/* Tabela de Gestão de Alunos com Busca e Filtros */}
         <div className="rounded-3xl border border-white/[0.08] bg-[#121215] p-6 sm:p-7 shadow-xl">
           {/* Barra de Ações: Busca + Filtros de Status */}
@@ -708,17 +735,31 @@ function AdminPage() {
                               Raio-X
                             </button>
 
-                            {/* Alternar Ativo/Bloquear */}
-                            {aluno.status !== "ativo" ? (
+                            {/* Botões de Ação Dinâmicos */}
+                            {aluno.status === "pendente" && (
                               <button
                                 type="button"
                                 onClick={() => alterarStatus(aluno.id, "ativo")}
-                                title="Aprovar e Ativar Acesso"
+                                title="Aprovar Cadastro do Aluno"
+                                className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 text-xs font-bold text-white shadow-md shadow-emerald-950/40 transition-all hover:scale-105"
+                              >
+                                <CheckCircle2 className="h-3.5 w-3.5" />
+                                Aprovar Acesso
+                              </button>
+                            )}
+
+                            {aluno.status === "bloqueado" && (
+                              <button
+                                type="button"
+                                onClick={() => alterarStatus(aluno.id, "ativo")}
+                                title="Desbloquear Acesso"
                                 className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1.5 text-xs font-bold text-emerald-400 hover:bg-emerald-500/20 transition-colors"
                               >
-                                Aprovar
+                                Desbloquear
                               </button>
-                            ) : (
+                            )}
+
+                            {aluno.status === "ativo" && (
                               <button
                                 type="button"
                                 onClick={() => alterarStatus(aluno.id, "bloqueado")}

@@ -23,6 +23,7 @@ import {
   LogOut,
   ShieldAlert,
   ShieldCheck,
+  Clock,
 } from "lucide-react";
 import { useState, useEffect, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
@@ -141,7 +142,7 @@ export function AppShell({
   descricao?: string;
   children: ReactNode;
 }) {
-  const { user, session, profile, loading, isAdmin, isBlocked, signOut } = useAuth();
+  const { user, session, profile, loading, isAdmin, isPending, isBlocked, signOut } = useAuth();
   const navigate = useNavigate();
 
   const [aberto, setAberto] = useState(false);
@@ -177,6 +178,53 @@ export function AppShell({
 
   if (!session) {
     return null;
+  }
+
+  // Se o aluno estiver com cadastro pendente de aprovação pela administradora
+  if (isPending) {
+    return (
+      <div className="min-h-screen bg-[#09090b] flex flex-col items-center justify-center p-6 text-center text-white selection:bg-amber-500/30">
+        <div className="max-w-md w-full rounded-3xl border border-amber-500/25 bg-[#141311] p-8 sm:p-10 shadow-2xl shadow-amber-950/20">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-400 mb-6 shadow-lg shadow-amber-950/40">
+            <Clock className="h-8 w-8 animate-pulse" />
+          </div>
+          <h2 className="text-2xl font-bold text-white tracking-tight">
+            Cadastro em Análise
+          </h2>
+          <p className="mt-3 text-xs text-stone-300 leading-relaxed">
+            Olá, <strong className="text-white">{user?.email}</strong>! Sua conta no OrganizAI foi criada com sucesso e está aguardando a liberação da mentoria.
+          </p>
+          <div className="mt-4 rounded-xl bg-white/[0.04] border border-white/[0.06] p-3 text-left">
+            <span className="text-[11px] text-[#F97316] font-bold block mb-1">
+              Status do seu acesso:
+            </span>
+            <p className="text-[11px] text-stone-400 leading-snug">
+              A aprovação é feita manualmente pela equipe da Natalia Rodolfo para garantir o acompanhamento individualizado. Assim que liberado no painel, seu acesso será ativado.
+            </p>
+          </div>
+          <div className="mt-6 flex flex-col gap-3">
+            <a
+              href="https://wa.me/5577981381477?text=Ol%C3%A1!%20Acabei%20de%20me%20cadastrar%20no%20OrganizAI%20e%20gostaria%20de%20solicitar%20a%20aprova%C3%A7%C3%A3o%20do%20meu%20acesso."
+              target="_blank"
+              rel="noreferrer"
+              className="w-full flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 py-3 text-xs font-bold text-white shadow-lg shadow-emerald-950/40 transition-colors"
+            >
+              Avisar a Mentoria no WhatsApp
+            </a>
+            <button
+              type="button"
+              onClick={async () => {
+                await signOut();
+                navigate({ to: "/login" });
+              }}
+              className="w-full rounded-xl border border-white/10 hover:bg-white/5 py-2.5 text-xs font-semibold text-stone-300 transition-colors"
+            >
+              Encerrar Sessão
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   // Se o aluno estiver com status bloqueado pela coordenação

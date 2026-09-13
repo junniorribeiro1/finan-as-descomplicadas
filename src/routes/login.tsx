@@ -135,11 +135,13 @@ function LoginPage() {
       }
 
       if (data.session) {
-        toast.success("Conta criada com sucesso! Acessando o OrganizAI...");
+        toast.success(
+          "Conta criada com sucesso! Seu acesso está em análise e aguarda aprovação da mentoria."
+        );
         navigate({ to: redirect || "/app" });
       } else {
         toast.success(
-          "Conta criada! Caso a confirmação de e-mail esteja ativada, verifique sua caixa de entrada."
+          "Conta criada com sucesso! Seu acesso está em análise e aguarda aprovação da mentoria."
         );
         setModo("login");
       }
