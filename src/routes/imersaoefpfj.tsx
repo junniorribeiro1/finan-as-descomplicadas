@@ -228,56 +228,51 @@ export default function ImersaoPage() {
 
       {/* ═══════════════════════════════════════════════
           DOBRA 1 — HERO SECTION DE ALTO IMPACTO (SEM EXPERT LATERAL)
-          Preparada para receber vídeo/background ao fundo, 
-          com tipografia imponente e informações diretas como a referência
+          Informações posicionadas mais abaixo, proporções refinadas
+          e fundo limpo com o degradê natural
       ═══════════════════════════════════════════════ */}
-      <section className="relative z-20 mx-auto w-full max-w-5xl px-5 pt-8 pb-16 md:px-8 md:pt-12 md:pb-24">
-        {/* Background container reservado para vídeo ou ambientação */}
-        <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#06080a]/60 to-[#06080a]" />
-        </div>
-
-        <div className="flex flex-col items-start text-left gap-6">
-          {/* TAGS DE EVENTO NO TOPO (ÚNICA MENÇÃO A CERTIFICAÇÃO, SEM DUPLICAÇÃO) */}
-          <div className="flex flex-wrap items-center gap-2.5">
-            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-950/50 px-4 py-1.5 text-xs font-semibold text-emerald-300 backdrop-blur-md">
+      <section className="relative z-20 mx-auto w-full max-w-5xl px-5 pt-20 sm:pt-28 md:pt-36 pb-20 md:pb-28">
+        <div className="flex flex-col items-start text-left gap-5">
+          {/* TAGS DE EVENTO NO TOPO */}
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-950/50 px-3.5 py-1 text-[0.72rem] sm:text-xs font-semibold text-emerald-300 backdrop-blur-md">
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" />
               </span>
-              <Calendar className="h-3.5 w-3.5 text-emerald-400 ml-0.5" />
+              <Calendar className="h-3 w-3 text-emerald-400 ml-0.5" />
               <span>25 de Outubro</span>
               <span className="text-emerald-500/60">•</span>
-              <Video className="h-3.5 w-3.5 text-emerald-400" />
+              <Video className="h-3 w-3 text-emerald-400" />
               <span>Ao vivo no Zoom</span>
             </div>
 
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/40 bg-amber-500/10 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-amber-300">
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/40 bg-amber-500/10 px-3 py-1 text-[0.72rem] sm:text-xs font-bold uppercase tracking-wider text-amber-300">
               <Sparkles className="h-3 w-3" />
               <span>1ª Edição</span>
             </div>
 
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/40 bg-emerald-500/20 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-emerald-300 backdrop-blur-md shadow-[0_0_12px_rgba(16,185,129,0.2)]">
-              <BadgeCheck className="h-3.5 w-3.5 text-emerald-400" />
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/40 bg-emerald-500/20 px-3 py-1 text-[0.72rem] sm:text-xs font-bold uppercase tracking-wider text-emerald-300 backdrop-blur-md shadow-[0_0_12px_rgba(16,185,129,0.2)]">
+              <BadgeCheck className="h-3 w-3 text-emerald-400" />
               <span>Com Certificação</span>
             </div>
           </div>
 
-          {/* TÍTULO PRINCIPAL (AUMENTADO EM ESCALA MONUMENTAL) */}
+          {/* TÍTULO PRINCIPAL (TAMANHO EQUILIBRADO E ELEGANTE) */}
           <div className="mt-1 w-full">
-            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] font-black tracking-tight leading-[0.96] text-white">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.6rem] font-black tracking-tight leading-[1.08] text-white">
               EDUCAÇÃO
-              <span className="block bg-gradient-to-r from-[#ffe494] via-[#f59e0b] to-[#d97706] bg-clip-text text-transparent drop-shadow-[0_6px_36px_rgba(245,158,11,0.4)] mt-1">
+              <span className="block bg-gradient-to-r from-[#ffe494] via-[#f59e0b] to-[#d97706] bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(245,158,11,0.35)] mt-1">
                 FINANCEIRA
               </span>
-              <span className="block text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-[0.22em] text-stone-200 uppercase mt-4">
+              <span className="block text-sm sm:text-base md:text-lg lg:text-xl font-bold tracking-[0.18em] text-stone-300 uppercase mt-2.5">
                 PARA PESSOAS FÍSICA E JURÍDICA
               </span>
             </h1>
           </div>
 
-          {/* SUBTÍTULO */}
-          <p className="text-base sm:text-lg md:text-xl font-normal leading-relaxed text-stone-300 max-w-2xl">
+          {/* SUBTÍTULO REFINADO */}
+          <p className="text-sm sm:text-base md:text-[1.05rem] font-normal leading-relaxed text-stone-300/90 max-w-xl">
             Aprenda a organizar seu dinheiro,{" "}
             <strong className="font-bold text-white underline decoration-amber-400 decoration-2 underline-offset-4">
               sair do vermelho
@@ -286,18 +281,18 @@ export default function ImersaoPage() {
           </p>
 
           {/* SELETOR DOS 3 LOTES NO HERO (VALORES: 27,00 | 57,00 | 97,00) */}
-          <div className="mt-2 flex flex-col gap-2 w-full max-w-md">
-            <span className="text-[0.72rem] font-bold uppercase tracking-wider text-stone-400">
+          <div className="mt-1 flex flex-col gap-2 w-full max-w-md">
+            <span className="text-[0.7rem] font-bold uppercase tracking-wider text-stone-400">
               Selecione seu lote de entrada:
             </span>
-            <div className="grid grid-cols-3 gap-2 sm:gap-2.5">
+            <div className="grid grid-cols-3 gap-2">
               {/* Lote 1 Ativo - R$ 27,00 */}
               <button
                 type="button"
                 onClick={() => setSelectedLot(1)}
-                className={`relative flex flex-col items-center justify-center p-3 rounded-xl border transition-all text-center ${
+                className={`relative flex flex-col items-center justify-center p-2.5 rounded-xl border transition-all text-center ${
                   selectedLot === 1
-                    ? "border-amber-400 bg-amber-500/15 shadow-[0_0_18px_rgba(245,158,11,0.3)] ring-2 ring-amber-400/60"
+                    ? "border-amber-400 bg-amber-500/15 shadow-[0_0_16px_rgba(245,158,11,0.25)] ring-2 ring-amber-400/60"
                     : "border-white/10 bg-white/[0.02] hover:bg-white/[0.05]"
                 }`}
               >
@@ -305,10 +300,10 @@ export default function ImersaoPage() {
                 <span className="font-mono text-[0.65rem] sm:text-[0.7rem] font-bold text-amber-400 uppercase tracking-widest mb-0.5">
                   LOTE 1
                 </span>
-                <span className="text-base sm:text-lg font-black text-white tracking-tight leading-tight">
+                <span className="text-sm sm:text-base font-black text-white tracking-tight leading-tight">
                   R$ 27,00
                 </span>
-                <span className="inline-flex items-center gap-1 text-[0.65rem] font-extrabold text-emerald-400 mt-1">
+                <span className="inline-flex items-center gap-1 text-[0.62rem] font-extrabold text-emerald-400 mt-0.5">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
                   Ativo
                 </span>
@@ -318,7 +313,7 @@ export default function ImersaoPage() {
               <button
                 type="button"
                 onClick={() => setSelectedLot(2)}
-                className={`relative flex flex-col items-center justify-center p-3 rounded-xl border transition-all text-center opacity-75 ${
+                className={`relative flex flex-col items-center justify-center p-2.5 rounded-xl border transition-all text-center opacity-75 ${
                   selectedLot === 2
                     ? "border-amber-400 bg-amber-500/15 ring-2 ring-amber-400/60 opacity-100"
                     : "border-white/10 bg-white/[0.02]"
@@ -327,10 +322,10 @@ export default function ImersaoPage() {
                 <span className="font-mono text-[0.65rem] sm:text-[0.7rem] font-medium text-stone-400 uppercase tracking-widest mb-0.5">
                   LOTE 2
                 </span>
-                <span className="text-base sm:text-lg font-bold text-stone-300 tracking-tight leading-tight">
+                <span className="text-sm sm:text-base font-bold text-stone-300 tracking-tight leading-tight">
                   R$ 57,00
                 </span>
-                <span className="text-[0.65rem] text-stone-500 mt-1">
+                <span className="text-[0.62rem] text-stone-500 mt-0.5">
                   Em breve
                 </span>
               </button>
@@ -339,7 +334,7 @@ export default function ImersaoPage() {
               <button
                 type="button"
                 onClick={() => setSelectedLot(3)}
-                className={`relative flex flex-col items-center justify-center p-3 rounded-xl border transition-all text-center opacity-65 ${
+                className={`relative flex flex-col items-center justify-center p-2.5 rounded-xl border transition-all text-center opacity-65 ${
                   selectedLot === 3
                     ? "border-amber-400 bg-amber-500/15 ring-2 ring-amber-400/60 opacity-100"
                     : "border-white/10 bg-white/[0.02]"
@@ -348,10 +343,10 @@ export default function ImersaoPage() {
                 <span className="font-mono text-[0.65rem] sm:text-[0.7rem] font-medium text-stone-400 uppercase tracking-widest mb-0.5">
                   LOTE 3
                 </span>
-                <span className="text-base sm:text-lg font-bold text-stone-300 tracking-tight leading-tight">
+                <span className="text-sm sm:text-base font-bold text-stone-300 tracking-tight leading-tight">
                   R$ 97,00
                 </span>
-                <span className="text-[0.65rem] text-stone-500 mt-1">Final</span>
+                <span className="text-[0.62rem] text-stone-500 mt-0.5">Final</span>
               </button>
             </div>
           </div>
@@ -362,18 +357,18 @@ export default function ImersaoPage() {
               href={defaultWppUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative inline-flex items-center justify-center gap-2.5 overflow-hidden rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-orange-400 px-8 py-4 text-sm font-black uppercase tracking-wider text-stone-950 shadow-[0_4px_32px_rgba(245,158,11,0.4)] transition-all duration-300 hover:scale-105 active:scale-95"
+              className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-orange-400 px-7 py-3.5 text-xs sm:text-sm font-black uppercase tracking-wider text-stone-950 shadow-[0_4px_28px_rgba(245,158,11,0.35)] transition-all duration-300 hover:scale-105 active:scale-95"
             >
               <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
-              <span>Garantir Meu Ingresso no Lote 1</span>
-              <ArrowRight className="h-4 w-4 stroke-[3] transition-transform group-hover:translate-x-1" />
+              <span>Garantir meu ingresso</span>
+              <ArrowRight className="h-4 w-4 stroke-[2.5] transition-transform group-hover:translate-x-1" />
             </a>
 
             <a
-              href="#cronograma"
-              className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-6 py-4 text-xs font-bold uppercase tracking-wider text-stone-300 backdrop-blur-md transition-colors hover:bg-white/10 hover:text-white"
+              href="#modulos"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-stone-300 backdrop-blur-md transition-colors hover:bg-white/10 hover:text-white"
             >
-              <span>Ver Cronograma</span>
+              <span>Saiba mais</span>
               <ChevronDown className="h-4 w-4 text-stone-400" />
             </a>
           </div>
