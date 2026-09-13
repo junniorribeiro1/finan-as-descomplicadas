@@ -44,11 +44,13 @@ export const menuItens = [
 function Marca() {
   return (
     <Link to="/" className="flex items-center gap-3 px-1 py-1 group">
-      {/* Emblema metálico OrganizAI */}
-      <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#9E4D1D] via-[#D97736] to-[#6E2E0A] shadow-md shadow-orange-950/50 ring-1 ring-[#F97316]/50 transition-transform group-hover:scale-105">
-        <div className="flex h-7 w-7 items-center justify-center rounded-full border border-orange-300/40 bg-gradient-to-br from-[#7C3612] to-[#3D1A07]">
-          <span className="text-[0.68rem] font-black tracking-tight text-orange-200 drop-shadow">AI</span>
-        </div>
+      {/* Moeda Dourada IA / Ícone da marca OrganizAI */}
+      <div className="relative flex h-10 w-10 shrink-0 items-center justify-center transition-transform duration-200 group-hover:scale-105">
+        <img
+          src="/logo.png"
+          alt="OrganizAI"
+          className="h-10 w-10 object-contain drop-shadow-[0_2px_10px_rgba(249,115,22,0.25)]"
+        />
       </div>
       <div className="flex flex-col leading-tight">
         <span className="font-display text-[1.12rem] font-bold tracking-tight text-white">
