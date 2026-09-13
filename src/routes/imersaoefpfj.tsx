@@ -298,10 +298,11 @@ export default function ImersaoPage() {
             </div>
           </div>
 
-          {/* TÍTULO PRINCIPAL — EDUCAÇÃO FINANCEIRA COM GRANDE DESTAQUE */}
+          {/* TÍTULO PRINCIPAL — IMERSÃO EDUCAÇÃO FINANCEIRA COM GRANDE DESTAQUE */}
           <div className="w-full">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.8rem] xl:text-[4.2rem] font-black tracking-tight leading-[1.06] text-white">
-              EDUCAÇÃO
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] xl:text-[3.9rem] font-black tracking-tight leading-[1.06] text-white">
+              IMERSÃO
+              <span className="block text-white mt-0.5">EDUCAÇÃO</span>
               <span className="block bg-gradient-to-r from-[#ffe494] via-[#f59e0b] to-[#d97706] bg-clip-text text-transparent drop-shadow-[0_4px_28px_rgba(245,158,11,0.35)] mt-0.5">
                 FINANCEIRA
               </span>
