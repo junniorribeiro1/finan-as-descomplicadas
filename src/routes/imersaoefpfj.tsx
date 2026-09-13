@@ -111,7 +111,7 @@ export default function ImersaoPage() {
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && !hasTyped) {
+        if (entries[0]?.isIntersecting && !hasTyped) {
           setHasTyped(true);
           let index = 0;
           const timer = setInterval(() => {
@@ -280,55 +280,9 @@ export default function ImersaoPage() {
         </div>
       </div>
 
-      {/* ── HEADER / TOPBAR (AUTÔNOMO DA IMERSÃO) ── */}
-      <header className="relative z-30 mx-auto flex w-full max-w-7xl items-center justify-between px-5 py-4 md:px-8">
-        <a
-          href="#"
-          className="group flex items-center gap-3 transition-opacity hover:opacity-90"
-          title="Imersão Educação Financeira PF e PJ"
-        >
-          <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-amber-500/40 bg-stone-900 p-0.5 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
-            <img
-              src="/natalia-profile.jpg"
-              alt="Natalia Rodolfo"
-              className="h-full w-full rounded-full object-cover object-center"
-            />
-          </div>
-          <div className="flex flex-col">
-            <span className="text-sm font-bold tracking-tight text-white group-hover:text-amber-300 transition-colors">
-              Natalia Rodolfo
-            </span>
-            <span className="text-[0.65rem] font-medium tracking-wider text-amber-400/90 uppercase">
-              Educação Financeira PF & PJ
-            </span>
-          </div>
-        </a>
-
-        <div className="flex items-center gap-3">
-          {/* Tag Data Live */}
-          <div className="hidden sm:inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-950/40 px-3.5 py-1.5 backdrop-blur-md">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" />
-            </span>
-            <span className="font-mono text-[0.7rem] font-bold tracking-wider text-emerald-300 uppercase">
-              25 de Outubro • Ao Vivo
-            </span>
-          </div>
-
-          <a
-            href="#preco"
-            className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 px-4 py-2 text-xs font-black uppercase tracking-wider text-stone-950 shadow-[0_0_20px_rgba(245,158,11,0.35)] transition-all duration-300 hover:scale-105 hover:from-amber-400 hover:to-orange-400 active:scale-95"
-          >
-            <span>Garantir Vaga</span>
-            <ArrowRight className="h-3.5 w-3.5 stroke-[3]" />
-          </a>
-        </div>
-      </header>
-
       {/* ═══════════════════════════════════════════════
           DOBRA 1 — HERO SECTION DE ALTO IMPACTO (SEM EXPERT LATERAL)
-          Informações posicionadas mais abaixo, proporções refinadas
+          Informações posicionadas com espaço padrão para landing pages
           e fundo limpo com o degradê natural
       ═══════════════════════════════════════════════ */}
       <section className="relative z-20 mx-auto w-full max-w-5xl px-5 pt-12 sm:pt-16 md:pt-20 lg:pt-24 pb-14 md:pb-20">
@@ -1363,7 +1317,7 @@ export default function ImersaoPage() {
             className="mt-5 inline-flex items-center gap-2 rounded-full bg-emerald-500 hover:bg-emerald-400 text-stone-950 px-6 py-3 text-xs font-black uppercase tracking-wider shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-transform hover:scale-105"
           >
             <MessageCircle className="h-4 w-4" />
-            <span>Chamar no WhatsApp (77) 98138-1477</span>
+            <span>Chamar no WhatsApp</span>
           </a>
         </div>
       </section>
