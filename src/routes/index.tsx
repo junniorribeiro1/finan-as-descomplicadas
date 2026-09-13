@@ -18,13 +18,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Educadora Financeira e Estrategista de Gestão. Conheça a Imersão Educação Financeira PF e PJ, a plataforma OrganiAI e canais oficiais.",
+          "Educadora Financeira e Estrategista de Gestão. Conheça a Imersão Educação Financeira PF e PJ, a plataforma OrganizAI e canais oficiais.",
       },
       { property: "og:title", content: "Natalia Rodolfo — Links Oficiais" },
       {
         property: "og:description",
         content:
-          "Educadora Financeira e Estrategista. Acesse a Imersão Educação Financeira PF e PJ, plataforma OrganiAI e canais de contato.",
+          "Educadora Financeira e Estrategista. Acesse a Imersão Educação Financeira PF e PJ, plataforma OrganizAI e canais de contato.",
       },
       { property: "og:image", content: "/natalia-profile.jpg" },
       { property: "og:type", content: "website" },
@@ -130,17 +130,17 @@ function NataliaLinksPage() {
             </p>
           </Link>
 
-          {/* LINK 2: OrganiAI (/app) */}
+          {/* LINK 2: OrganizAI (/app) */}
           <Link
             to="/app"
             className="group relative flex items-center justify-between gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.04] p-4 backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-orange-500/50 hover:bg-white/[0.07] hover:shadow-[0_4px_24px_rgba(249,115,22,0.15)] active:translate-y-0"
           >
             <div className="flex items-center gap-3.5 min-w-0 flex-1">
-              {/* Logo/Ícone do OrganiAI */}
+              {/* Logo/Ícone do OrganizAI */}
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-b from-[#2a170d] to-[#150e09] border border-orange-500/30 shadow-sm group-hover:border-orange-500/60 transition-colors">
                 <img
                   src="/logo.png"
-                  alt="OrganiAI"
+                  alt="OrganizAI"
                   className="h-6 w-6 object-contain drop-shadow"
                 />
               </div>
@@ -148,7 +148,7 @@ function NataliaLinksPage() {
               <div className="flex flex-col text-left min-w-0 flex-1">
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <span className="text-[0.925rem] font-semibold text-white group-hover:text-orange-300 transition-colors">
-                    OrganiAI
+                    OrganizAI
                   </span>
                   <span className="rounded bg-orange-500/10 px-1.5 py-0.5 text-[0.625rem] font-medium text-orange-400 border border-orange-500/20">
                     App
