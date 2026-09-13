@@ -167,7 +167,7 @@ function NataliaLinksPage() {
 
           {/* LINK 3: Instagram */}
           <a
-            href="https://instagram.com/nataliarodolfo"
+            href="https://www.instagram.com/nataliafinancas/"
             target="_blank"
             rel="noopener noreferrer"
             className="group relative flex items-center justify-between gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.04] p-4 backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-pink-500/40 hover:bg-gradient-to-r hover:from-purple-950/20 hover:to-pink-950/15 hover:shadow-[0_4px_24px_rgba(236,72,153,0.12)] active:translate-y-0"
@@ -194,7 +194,7 @@ function NataliaLinksPage() {
 
           {/* LINK 4: WhatsApp */}
           <a
-            href="https://wa.me/5511999999999?text=Ol%C3%A1%2C%20Natalia!%20Gostaria%20de%20informa%C3%A7%C3%B5es%20sobre%20a%20Imers%C3%A3o%20e%20mentorias."
+            href="https://wa.me/5577981381477?text=Ol%C3%A1%2C%20Natalia!%20Gostaria%20de%20informa%C3%A7%C3%B5es%20sobre%20a%20Imers%C3%A3o%20e%20mentorias."
             target="_blank"
             rel="noopener noreferrer"
             className="group relative flex items-center justify-between gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.04] p-4 backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-500/40 hover:bg-emerald-950/20 hover:shadow-[0_4px_24px_rgba(16,185,129,0.12)] active:translate-y-0"
