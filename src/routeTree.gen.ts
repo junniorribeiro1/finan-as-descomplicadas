@@ -10,12 +10,36 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AjudaRouteImport } from './routes/ajuda'
+import { Route as BancosRouteImport } from './routes/bancos'
 import { Route as CartaoDeCreditoRouteImport } from './routes/cartao-de-credito'
+import { Route as CategoriasRouteImport } from './routes/categorias'
+import { Route as CofrinhosRouteImport } from './routes/cofrinhos'
 import { Route as ControleFinanceiroRouteImport } from './routes/controle-financeiro'
+import { Route as GastosFixosRouteImport } from './routes/gastos-fixos'
+import { Route as GastosVariaveisRouteImport } from './routes/gastos-variaveis'
+import { Route as ImportarDadosRouteImport } from './routes/importar-dados'
+import { Route as InvestimentosRouteImport } from './routes/investimentos'
+import { Route as PassoAPassoRouteImport } from './routes/passo-a-passo'
+import { Route as PerfilRouteImport } from './routes/perfil'
+import { Route as RecebimentosRouteImport } from './routes/recebimentos'
+import { Route as ReservaDeEmergenciaRouteImport } from './routes/reserva-de-emergencia'
+import { Route as SegundoUsuarioRouteImport } from './routes/segundo-usuario'
+import { Route as VeraGerenteRouteImport } from './routes/vera-gerente'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AjudaRoute = AjudaRouteImport.update({
+  id: '/ajuda',
+  path: '/ajuda',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BancosRoute = BancosRouteImport.update({
+  id: '/bancos',
+  path: '/bancos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CartaoDeCreditoRoute = CartaoDeCreditoRouteImport.update({
@@ -23,40 +47,208 @@ const CartaoDeCreditoRoute = CartaoDeCreditoRouteImport.update({
   path: '/cartao-de-credito',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CategoriasRoute = CategoriasRouteImport.update({
+  id: '/categorias',
+  path: '/categorias',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CofrinhosRoute = CofrinhosRouteImport.update({
+  id: '/cofrinhos',
+  path: '/cofrinhos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ControleFinanceiroRoute = ControleFinanceiroRouteImport.update({
   id: '/controle-financeiro',
   path: '/controle-financeiro',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GastosFixosRoute = GastosFixosRouteImport.update({
+  id: '/gastos-fixos',
+  path: '/gastos-fixos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GastosVariaveisRoute = GastosVariaveisRouteImport.update({
+  id: '/gastos-variaveis',
+  path: '/gastos-variaveis',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ImportarDadosRoute = ImportarDadosRouteImport.update({
+  id: '/importar-dados',
+  path: '/importar-dados',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InvestimentosRoute = InvestimentosRouteImport.update({
+  id: '/investimentos',
+  path: '/investimentos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PassoAPassoRoute = PassoAPassoRouteImport.update({
+  id: '/passo-a-passo',
+  path: '/passo-a-passo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PerfilRoute = PerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecebimentosRoute = RecebimentosRouteImport.update({
+  id: '/recebimentos',
+  path: '/recebimentos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReservaDeEmergenciaRoute = ReservaDeEmergenciaRouteImport.update({
+  id: '/reserva-de-emergencia',
+  path: '/reserva-de-emergencia',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SegundoUsuarioRoute = SegundoUsuarioRouteImport.update({
+  id: '/segundo-usuario',
+  path: '/segundo-usuario',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VeraGerenteRoute = VeraGerenteRouteImport.update({
+  id: '/vera-gerente',
+  path: '/vera-gerente',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/ajuda': typeof AjudaRoute
+  '/bancos': typeof BancosRoute
   '/cartao-de-credito': typeof CartaoDeCreditoRoute
+  '/categorias': typeof CategoriasRoute
+  '/cofrinhos': typeof CofrinhosRoute
   '/controle-financeiro': typeof ControleFinanceiroRoute
+  '/gastos-fixos': typeof GastosFixosRoute
+  '/gastos-variaveis': typeof GastosVariaveisRoute
+  '/importar-dados': typeof ImportarDadosRoute
+  '/investimentos': typeof InvestimentosRoute
+  '/passo-a-passo': typeof PassoAPassoRoute
+  '/perfil': typeof PerfilRoute
+  '/recebimentos': typeof RecebimentosRoute
+  '/reserva-de-emergencia': typeof ReservaDeEmergenciaRoute
+  '/segundo-usuario': typeof SegundoUsuarioRoute
+  '/vera-gerente': typeof VeraGerenteRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/ajuda': typeof AjudaRoute
+  '/bancos': typeof BancosRoute
   '/cartao-de-credito': typeof CartaoDeCreditoRoute
+  '/categorias': typeof CategoriasRoute
+  '/cofrinhos': typeof CofrinhosRoute
   '/controle-financeiro': typeof ControleFinanceiroRoute
+  '/gastos-fixos': typeof GastosFixosRoute
+  '/gastos-variaveis': typeof GastosVariaveisRoute
+  '/importar-dados': typeof ImportarDadosRoute
+  '/investimentos': typeof InvestimentosRoute
+  '/passo-a-passo': typeof PassoAPassoRoute
+  '/perfil': typeof PerfilRoute
+  '/recebimentos': typeof RecebimentosRoute
+  '/reserva-de-emergencia': typeof ReservaDeEmergenciaRoute
+  '/segundo-usuario': typeof SegundoUsuarioRoute
+  '/vera-gerente': typeof VeraGerenteRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/ajuda': typeof AjudaRoute
+  '/bancos': typeof BancosRoute
   '/cartao-de-credito': typeof CartaoDeCreditoRoute
+  '/categorias': typeof CategoriasRoute
+  '/cofrinhos': typeof CofrinhosRoute
   '/controle-financeiro': typeof ControleFinanceiroRoute
+  '/gastos-fixos': typeof GastosFixosRoute
+  '/gastos-variaveis': typeof GastosVariaveisRoute
+  '/importar-dados': typeof ImportarDadosRoute
+  '/investimentos': typeof InvestimentosRoute
+  '/passo-a-passo': typeof PassoAPassoRoute
+  '/perfil': typeof PerfilRoute
+  '/recebimentos': typeof RecebimentosRoute
+  '/reserva-de-emergencia': typeof ReservaDeEmergenciaRoute
+  '/segundo-usuario': typeof SegundoUsuarioRoute
+  '/vera-gerente': typeof VeraGerenteRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/cartao-de-credito' | '/controle-financeiro'
+  fullPaths:
+    | '/'
+    | '/ajuda'
+    | '/bancos'
+    | '/cartao-de-credito'
+    | '/categorias'
+    | '/cofrinhos'
+    | '/controle-financeiro'
+    | '/gastos-fixos'
+    | '/gastos-variaveis'
+    | '/importar-dados'
+    | '/investimentos'
+    | '/passo-a-passo'
+    | '/perfil'
+    | '/recebimentos'
+    | '/reserva-de-emergencia'
+    | '/segundo-usuario'
+    | '/vera-gerente'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/cartao-de-credito' | '/controle-financeiro'
-  id: '__root__' | '/' | '/cartao-de-credito' | '/controle-financeiro'
+  to:
+    | '/'
+    | '/ajuda'
+    | '/bancos'
+    | '/cartao-de-credito'
+    | '/categorias'
+    | '/cofrinhos'
+    | '/controle-financeiro'
+    | '/gastos-fixos'
+    | '/gastos-variaveis'
+    | '/importar-dados'
+    | '/investimentos'
+    | '/passo-a-passo'
+    | '/perfil'
+    | '/recebimentos'
+    | '/reserva-de-emergencia'
+    | '/segundo-usuario'
+    | '/vera-gerente'
+  id:
+    | '__root__'
+    | '/'
+    | '/ajuda'
+    | '/bancos'
+    | '/cartao-de-credito'
+    | '/categorias'
+    | '/cofrinhos'
+    | '/controle-financeiro'
+    | '/gastos-fixos'
+    | '/gastos-variaveis'
+    | '/importar-dados'
+    | '/investimentos'
+    | '/passo-a-passo'
+    | '/perfil'
+    | '/recebimentos'
+    | '/reserva-de-emergencia'
+    | '/segundo-usuario'
+    | '/vera-gerente'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AjudaRoute: typeof AjudaRoute
+  BancosRoute: typeof BancosRoute
   CartaoDeCreditoRoute: typeof CartaoDeCreditoRoute
+  CategoriasRoute: typeof CategoriasRoute
+  CofrinhosRoute: typeof CofrinhosRoute
   ControleFinanceiroRoute: typeof ControleFinanceiroRoute
+  GastosFixosRoute: typeof GastosFixosRoute
+  GastosVariaveisRoute: typeof GastosVariaveisRoute
+  ImportarDadosRoute: typeof ImportarDadosRoute
+  InvestimentosRoute: typeof InvestimentosRoute
+  PassoAPassoRoute: typeof PassoAPassoRoute
+  PerfilRoute: typeof PerfilRoute
+  RecebimentosRoute: typeof RecebimentosRoute
+  ReservaDeEmergenciaRoute: typeof ReservaDeEmergenciaRoute
+  SegundoUsuarioRoute: typeof SegundoUsuarioRoute
+  VeraGerenteRoute: typeof VeraGerenteRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -68,11 +260,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ajuda': {
+      id: '/ajuda'
+      path: '/ajuda'
+      fullPath: '/ajuda'
+      preLoaderRoute: typeof AjudaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bancos': {
+      id: '/bancos'
+      path: '/bancos'
+      fullPath: '/bancos'
+      preLoaderRoute: typeof BancosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/cartao-de-credito': {
       id: '/cartao-de-credito'
       path: '/cartao-de-credito'
       fullPath: '/cartao-de-credito'
       preLoaderRoute: typeof CartaoDeCreditoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/categorias': {
+      id: '/categorias'
+      path: '/categorias'
+      fullPath: '/categorias'
+      preLoaderRoute: typeof CategoriasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cofrinhos': {
+      id: '/cofrinhos'
+      path: '/cofrinhos'
+      fullPath: '/cofrinhos'
+      preLoaderRoute: typeof CofrinhosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/controle-financeiro': {
@@ -82,13 +302,97 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ControleFinanceiroRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/gastos-fixos': {
+      id: '/gastos-fixos'
+      path: '/gastos-fixos'
+      fullPath: '/gastos-fixos'
+      preLoaderRoute: typeof GastosFixosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gastos-variaveis': {
+      id: '/gastos-variaveis'
+      path: '/gastos-variaveis'
+      fullPath: '/gastos-variaveis'
+      preLoaderRoute: typeof GastosVariaveisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/importar-dados': {
+      id: '/importar-dados'
+      path: '/importar-dados'
+      fullPath: '/importar-dados'
+      preLoaderRoute: typeof ImportarDadosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/investimentos': {
+      id: '/investimentos'
+      path: '/investimentos'
+      fullPath: '/investimentos'
+      preLoaderRoute: typeof InvestimentosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/passo-a-passo': {
+      id: '/passo-a-passo'
+      path: '/passo-a-passo'
+      fullPath: '/passo-a-passo'
+      preLoaderRoute: typeof PassoAPassoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/perfil': {
+      id: '/perfil'
+      path: '/perfil'
+      fullPath: '/perfil'
+      preLoaderRoute: typeof PerfilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recebimentos': {
+      id: '/recebimentos'
+      path: '/recebimentos'
+      fullPath: '/recebimentos'
+      preLoaderRoute: typeof RecebimentosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reserva-de-emergencia': {
+      id: '/reserva-de-emergencia'
+      path: '/reserva-de-emergencia'
+      fullPath: '/reserva-de-emergencia'
+      preLoaderRoute: typeof ReservaDeEmergenciaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/segundo-usuario': {
+      id: '/segundo-usuario'
+      path: '/segundo-usuario'
+      fullPath: '/segundo-usuario'
+      preLoaderRoute: typeof SegundoUsuarioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vera-gerente': {
+      id: '/vera-gerente'
+      path: '/vera-gerente'
+      fullPath: '/vera-gerente'
+      preLoaderRoute: typeof VeraGerenteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AjudaRoute: AjudaRoute,
+  BancosRoute: BancosRoute,
   CartaoDeCreditoRoute: CartaoDeCreditoRoute,
+  CategoriasRoute: CategoriasRoute,
+  CofrinhosRoute: CofrinhosRoute,
   ControleFinanceiroRoute: ControleFinanceiroRoute,
+  GastosFixosRoute: GastosFixosRoute,
+  GastosVariaveisRoute: GastosVariaveisRoute,
+  ImportarDadosRoute: ImportarDadosRoute,
+  InvestimentosRoute: InvestimentosRoute,
+  PassoAPassoRoute: PassoAPassoRoute,
+  PerfilRoute: PerfilRoute,
+  RecebimentosRoute: RecebimentosRoute,
+  ReservaDeEmergenciaRoute: ReservaDeEmergenciaRoute,
+  SegundoUsuarioRoute: SegundoUsuarioRoute,
+  VeraGerenteRoute: VeraGerenteRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

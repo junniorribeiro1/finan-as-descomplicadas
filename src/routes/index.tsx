@@ -1,251 +1,346 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
-import { ArrowUpRight, TrendingUp, TrendingDown, Clock, AlertCircle } from "lucide-react";
+import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/app/AppShell";
-import { Panel, PanelHead, Eyebrow, Money, Badge, StatusPill, SelectPill } from "@/components/app/kit";
-import { BarrasComparativas, Rosca } from "@/components/app/charts";
 import {
-  aluno,
-  resumoMes,
-  serieMensal,
-  categorias,
-  lancamentos,
-  alertas,
-} from "@/lib/mock-data";
+  Wallet,
+  ArrowDownToLine,
+  CheckCircle2,
+  Clock,
+  Landmark,
+} from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Visão Geral — Órbita Finanças" },
+      { title: "Dashboard — OrganizAI" },
       {
         name: "description",
-        content:
-          "Painel financeiro do estudante: saldo, receitas, despesas, categorias e lançamentos recentes em um só lugar.",
+        content: "OrganizAI — Sua vida financeira simplificada.",
       },
-      { property: "og:title", content: "Visão Geral — Órbita Finanças" },
+      { property: "og:title", content: "Dashboard — OrganizAI" },
       {
         property: "og:description",
-        content: "Painel financeiro premium para estudantes organizarem a vida financeira.",
+        content: "OrganizAI — Sua vida financeira simplificada.",
       },
     ],
   }),
   component: Dashboard,
 });
 
-const totalDespesas = categorias.reduce((s, c) => s + c.valor, 0);
+const mesesRotulos = [
+  "Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"
+];
+
+const mesesRecebimentos = [
+  "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"
+];
+
+const diasMes = Array.from({ length: 30 }, (_, i) => i + 1);
 
 function Dashboard() {
-  const [mes, setMes] = useState("Agosto");
-  const [ano, setAno] = useState("2026");
-
   return (
-    <AppShell titulo={`Olá, ${aluno.nome}`} descricao="Vamos organizar suas finanças.">
-      {/* Boas-vindas + período */}
-      <div className="grid grid-cols-1 items-end gap-4 sm:grid-cols-[minmax(0,1fr)_auto]">
-        <div className="min-w-0">
-          <Eyebrow>Visão geral</Eyebrow>
-          <h2 className="mt-2 text-2xl font-semibold sm:text-3xl">Olá, {aluno.nome} 👋</h2>
-          <p className="mt-1.5 text-sm text-muted-foreground">
-            Veja como estão suas finanças hoje.
+    <AppShell>
+      {/* 1. Hero Banner de Boas-Vindas */}
+      <div className="relative min-h-[170px] sm:min-h-[190px] overflow-hidden rounded-3xl border border-white/[0.06] bg-[#121212] shadow-xl">
+        {/* Imagem de Fundo 3D Luxo com Moedas e Ondas */}
+        <img
+          src="/hero-banner.jpg"
+          alt="Finanças OrganizAI"
+          className="absolute right-0 top-0 h-full w-full sm:w-[65%] object-cover object-center opacity-85"
+        />
+        {/* Degradê para fusão suave com o texto */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#121212] via-[#121212]/90 sm:via-[#121212]/75 to-transparent" />
+
+        {/* Textos do Banner */}
+        <div className="relative z-10 flex h-full flex-col justify-center p-6 sm:p-8">
+          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#F97316]">
+            ORGANIZAI
+          </span>
+          <h2 className="mt-1 font-display text-2xl font-bold tracking-tight text-white sm:text-3xl">
+            Bem-vindo(a) 👋
+          </h2>
+          <p className="mt-1 text-xs text-stone-400 sm:text-sm">
+            Aqui está o resumo das suas finanças.
           </p>
-        </div>
-        <div className="flex gap-2">
-          <SelectPill
-            valor={mes}
-            onChange={setMes}
-            opcoes={[
-              "Janeiro",
-              "Fevereiro",
-              "Março",
-              "Abril",
-              "Maio",
-              "Junho",
-              "Julho",
-              "Agosto",
-            ]}
-          />
-          <SelectPill valor={ano} onChange={setAno} opcoes={["2024", "2025", "2026"]} />
         </div>
       </div>
 
-      {/* Cards principais */}
-      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <div className="card-hover rounded-3xl bg-primary p-6 text-primary-foreground sm:col-span-2 xl:col-span-1">
-          <p className="text-[0.68rem] font-medium tracking-[0.16em] uppercase opacity-70">
-            Saldo atual
-          </p>
-          <p className="mt-6 text-3xl font-semibold sm:text-4xl">
-            <Money valor={resumoMes.saldo} />
-          </p>
-          <div className="mt-6 flex items-center justify-between border-t border-primary-foreground/15 pt-4 text-xs">
-            <span className="opacity-80">{mes} de {ano}</span>
-            <span className="inline-flex items-center gap-1 font-medium">
-              <TrendingUp className="h-3.5 w-3.5" /> +14% no mês
+      {/* 2. Top 5 KPI Cards em Linha Horizontal */}
+      <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        {/* Card 1: TOTAL DE GASTOS */}
+        <div className="relative flex flex-col justify-between rounded-2xl border border-white/[0.06] bg-[#151515] p-4 shadow-sm">
+          <div className="flex items-start justify-between">
+            <span className="text-[10px] font-bold tracking-wider text-stone-400 uppercase">
+              TOTAL DE GASTOS
             </span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#221c17] text-orange-400 shadow-inner">
+              <Wallet className="h-4 w-4" />
+            </div>
+          </div>
+          <div className="mt-3">
+            <span className="font-display text-xl font-bold tracking-tight text-white">
+              R$ 0,00
+            </span>
+            <p className="mt-0.5 text-[11px] text-stone-400">Fixos + variáveis</p>
           </div>
         </div>
 
-        <CardResumo
-          rotulo="Receitas"
-          valor={resumoMes.receitas}
-          nota="+ R$ 290,00 vs julho"
-          Icone={TrendingUp}
-          tom="positivo"
-        />
-        <CardResumo
-          rotulo="Despesas"
-          valor={resumoMes.despesas}
-          nota="− R$ 1.226,62 vs julho"
-          Icone={TrendingDown}
-          tom="neutro"
-        />
-        <CardResumo
-          rotulo="A pagar"
-          valor={resumoMes.aPagar}
-          nota="4 contas em aberto"
-          Icone={Clock}
-          tom="atencao"
-        />
-      </div>
-
-      {/* Gráficos */}
-      <div className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-[1.35fr_1fr]">
-        <Panel>
-          <PanelHead
-            titulo="Receitas x Despesas"
-            descricao="Comparativo dos últimos 8 meses"
-            acao={
-              <Link
-                to="/controle-financeiro"
-                className="grid h-9 w-9 place-items-center rounded-xl border border-border text-muted-foreground transition-colors hover:text-primary"
-                aria-label="Abrir controle financeiro"
-              >
-                <ArrowUpRight className="h-4 w-4" />
-              </Link>
-            }
-          />
-          <BarrasComparativas dados={serieMensal} />
-        </Panel>
-
-        <Panel>
-          <PanelHead titulo="Distribuição das despesas" descricao={`${mes} de ${ano}`} />
-          <Rosca dados={categorias} total={totalDespesas} />
-        </Panel>
-      </div>
-
-      {/* Lançamentos + atenção */}
-      <div className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-[1.35fr_1fr]">
-        <Panel>
-          <PanelHead
-            titulo="Últimos lançamentos"
-            descricao="Movimentações mais recentes da sua conta"
-            acao={
-              <Link
-                to="/controle-financeiro"
-                className="rounded-xl border border-border px-3 py-2 text-xs text-muted-foreground transition-colors hover:text-primary"
-              >
-                Ver tudo
-              </Link>
-            }
-          />
-          <ul className="divide-y divide-border border-t border-border">
-            {lancamentos.slice(0, 6).map((l) => (
-              <li
-                key={l.descricao}
-                className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-5 py-4 transition-colors hover:bg-surface-2/50 sm:px-6"
-              >
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-medium">{l.descricao}</p>
-                  <p className="mt-1 truncate text-xs text-muted-foreground">
-                    {l.categoria} · {l.data} · {l.pagamento}
-                  </p>
-                </div>
-                <div className="shrink-0 text-right">
-                  <p
-                    className={`num text-sm ${l.valor > 0 ? "text-primary" : "text-foreground"}`}
-                  >
-                    <Money valor={l.valor} sinal />
-                  </p>
-                  <div className="mt-1.5 flex justify-end">
-                    <StatusPill status={l.status} />
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </Panel>
-
-        <div className="space-y-4">
-          <Panel>
-            <PanelHead titulo="Precisa de atenção" descricao="Três pontos para revisar" />
-            <ul className="divide-y divide-border border-t border-border">
-              {alertas.map((a) => (
-                <li key={a.titulo} className="flex gap-3 px-5 py-4 sm:px-6">
-                  <AlertCircle
-                    className={`mt-0.5 h-4 w-4 shrink-0 ${a.tom === "atencao" ? "text-warning" : "text-primary"}`}
-                    strokeWidth={1.75}
-                  />
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium">{a.titulo}</p>
-                    <p className="mt-1 text-xs text-muted-foreground">{a.detalhe}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </Panel>
-
-          <Panel className="p-5 sm:p-6">
-            <Eyebrow>Reserva de emergência</Eyebrow>
-            <p className="num mt-4 text-2xl font-semibold">
-              <Money valor={6850} />
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              45,7% da meta de R$ 15.000,00
-            </p>
-            <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-surface-2">
-              <div className="h-full w-[45.7%] rounded-full bg-primary" />
+        {/* Card 2: TOTAL DE RECEBIMENTOS */}
+        <div className="relative flex flex-col justify-between rounded-2xl border border-white/[0.06] bg-[#151515] p-4 shadow-sm">
+          <div className="flex items-start justify-between">
+            <span className="text-[10px] font-bold tracking-wider text-stone-400 uppercase">
+              TOTAL DE RECEBIMENTOS
+            </span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#16221a] text-emerald-400 shadow-inner">
+              <ArrowDownToLine className="h-4 w-4" />
             </div>
-            <Link
-              to="/reserva-de-emergencia"
-              className="mt-5 inline-flex w-full items-center justify-center rounded-xl bg-surface-2 px-4 py-2.5 text-xs font-medium transition-colors hover:bg-primary hover:text-primary-foreground"
-            >
-              Acompanhar reserva
-            </Link>
-          </Panel>
+          </div>
+          <div className="mt-3">
+            <span className="font-display text-xl font-bold tracking-tight text-white">
+              R$ 0,00
+            </span>
+            <p className="mt-0.5 text-[11px] text-stone-400">Somatório do período</p>
+          </div>
+        </div>
+
+        {/* Card 3: TOTAL PAGO */}
+        <div className="relative flex flex-col justify-between rounded-2xl border border-white/[0.06] bg-[#151515] p-4 shadow-sm">
+          <div className="flex items-start justify-between">
+            <span className="text-[10px] font-bold tracking-wider text-stone-400 uppercase">
+              TOTAL PAGO
+            </span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#172221] text-teal-400 shadow-inner">
+              <CheckCircle2 className="h-4 w-4" />
+            </div>
+          </div>
+          <div className="mt-3">
+            <span className="font-display text-xl font-bold tracking-tight text-white">
+              R$ 0,00
+            </span>
+            <p className="mt-0.5 text-[11px] text-stone-400">0% das contas</p>
+          </div>
+        </div>
+
+        {/* Card 4: FALTA PAGAR */}
+        <div className="relative flex flex-col justify-between rounded-2xl border border-white/[0.06] bg-[#151515] p-4 shadow-sm">
+          <div className="flex items-start justify-between">
+            <span className="text-[10px] font-bold tracking-wider text-stone-400 uppercase">
+              FALTA PAGAR
+            </span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#241a1c] text-rose-400 shadow-inner">
+              <Clock className="h-4 w-4" />
+            </div>
+          </div>
+          <div className="mt-3">
+            <span className="font-display text-xl font-bold tracking-tight text-white">
+              R$ 0,00
+            </span>
+            <p className="mt-0.5 text-[11px] text-stone-400">Este mês</p>
+          </div>
+        </div>
+
+        {/* Card 5: SALDO DISPONÍVEL */}
+        <div className="relative flex flex-col justify-between rounded-2xl border border-white/[0.06] bg-[#151515] p-4 shadow-sm">
+          <div className="flex items-start justify-between">
+            <span className="text-[10px] font-bold tracking-wider text-stone-400 uppercase">
+              SALDO DISPONÍVEL
+            </span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#262017] text-amber-400 shadow-inner">
+              <Landmark className="h-4 w-4" />
+            </div>
+          </div>
+          <div className="mt-3">
+            <span className="font-display text-xl font-bold tracking-tight text-white">
+              R$ 0,00
+            </span>
+            <p className="mt-0.5 text-[11px] text-stone-400">Todos os bancos</p>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. Grid Principal em 2 Colunas */}
+      <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1.9fr)_minmax(0,1.1fr)]">
+        {/* COLUNA DA ESQUERDA */}
+        <div className="space-y-4">
+          {/* Card: Evolução do Saldo */}
+          <div className="rounded-2xl border border-white/[0.06] bg-[#151515] p-5 shadow-sm">
+            <div>
+              <span className="text-xs text-stone-400">Evolução do saldo</span>
+              <h3 className="font-display text-lg font-bold text-white">R$ 0,00</h3>
+            </div>
+
+            {/* Gráfico de Linha do Saldo */}
+            <div className="mt-4">
+              <div className="relative h-44 w-full">
+                {/* Linhas de Grade e Eixo Y */}
+                <div className="flex h-full flex-col justify-between text-[10px] text-stone-500">
+                  <div className="flex items-center gap-3">
+                    <span className="w-11 shrink-0 text-right">R$ 4,00</span>
+                    <div className="h-px w-full bg-white/[0.04]" />
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="w-11 shrink-0 text-right">R$ 3,00</span>
+                    <div className="h-px w-full bg-white/[0.04]" />
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="w-11 shrink-0 text-right">R$ 2,00</span>
+                    <div className="h-px w-full bg-white/[0.04]" />
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="w-11 shrink-0 text-right">R$ 1,00</span>
+                    <div className="h-px w-full bg-white/[0.04]" />
+                  </div>
+                  <div className="relative flex items-center gap-3">
+                    <span className="w-11 shrink-0 text-right">R$ 0,00</span>
+                    {/* Linha Laranja no R$ 0,00 */}
+                    <div className="h-[2px] w-full bg-[#F97316] shadow-sm shadow-orange-500/50" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Eixo X: Dias do Mês (1 a 30) */}
+              <div className="mt-2 flex justify-between pl-14 text-[9px] text-stone-500">
+                {diasMes.map((dia) => (
+                  <span key={dia} className="w-3 text-center">
+                    {dia}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Card: Despesas x Receitas */}
+          <div className="rounded-2xl border border-white/[0.06] bg-[#151515] p-5 shadow-sm">
+            <span className="text-xs text-stone-400">Despesas x Receitas</span>
+
+            <div className="mt-4">
+              <div className="relative h-40 w-full">
+                <div className="flex h-full flex-col justify-between text-[10px] text-stone-500">
+                  <div className="flex items-center gap-3">
+                    <span className="w-11 shrink-0 text-right">R$ 4,00</span>
+                    <div className="h-px w-full bg-white/[0.04]" />
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="w-11 shrink-0 text-right">R$ 3,00</span>
+                    <div className="h-px w-full bg-white/[0.04]" />
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="w-11 shrink-0 text-right">R$ 2,00</span>
+                    <div className="h-px w-full bg-white/[0.04]" />
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="w-11 shrink-0 text-right">R$ 1,00</span>
+                    <div className="h-px w-full bg-white/[0.04]" />
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="w-11 shrink-0 text-right">R$ 0,00</span>
+                    <div className="h-px w-full bg-white/[0.06]" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Eixo X: Meses Jan a Dez */}
+              <div className="mt-2 flex justify-between pl-14 text-[10px] text-stone-500">
+                {mesesRotulos.map((m) => (
+                  <span key={m} className="w-6 text-center">
+                    {m}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Card: Gastos fixos do mês */}
+          <div className="rounded-2xl border border-white/[0.06] bg-[#151515] p-5 shadow-sm">
+            <div className="flex items-center justify-between border-b border-white/[0.04] pb-3">
+              <span className="text-xs font-semibold text-stone-300">Gastos fixos do mês</span>
+              <span className="font-display text-xs font-bold text-white">R$ 0,00</span>
+            </div>
+            <p className="mt-4 text-xs text-stone-400">
+              Nenhum gasto fixo cadastrado ainda.
+            </p>
+          </div>
+        </div>
+
+        {/* COLUNA DA DIREITA */}
+        <div className="space-y-4">
+          {/* Card: Total de gastos por categoria */}
+          <div className="flex min-h-[200px] flex-col justify-between rounded-2xl border border-white/[0.06] bg-[#151515] p-5 shadow-sm">
+            <span className="text-xs text-stone-400">Total de gastos por categoria</span>
+            <div className="my-auto py-8 text-center">
+              <p className="text-xs text-stone-400">Sem gastos cadastrados</p>
+            </div>
+          </div>
+
+          {/* Card: Recebimentos por mês */}
+          <div className="rounded-2xl border border-white/[0.06] bg-[#151515] p-5 shadow-sm">
+            <span className="text-xs text-stone-400">Recebimentos por mês</span>
+
+            <div className="mt-4">
+              <div className="relative h-32 w-full">
+                <div className="flex h-full flex-col justify-between">
+                  <div className="h-px w-full bg-white/[0.04]" />
+                  <div className="h-px w-full bg-white/[0.04]" />
+                  <div className="h-px w-full bg-white/[0.04]" />
+                  {/* Linha Azul com Bolinhas */}
+                  <div className="relative flex items-center">
+                    <div className="h-[2px] w-full bg-[#3B82F6]" />
+                    <div className="absolute inset-0 flex justify-between">
+                      {mesesRecebimentos.map((_, i) => (
+                        <div
+                          key={i}
+                          className="h-2 w-2 -translate-y-[3px] rounded-full bg-[#3B82F6] ring-2 ring-[#151515]"
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Eixo X: Fev a Dez */}
+              <div className="mt-2 flex justify-between text-[10px] text-stone-500">
+                {mesesRecebimentos.map((m) => (
+                  <span key={m} className="w-5 text-center">
+                    {m}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Card: RENDIMENTO DE INVESTIMENTO (Gradiente Coral para Magenta) */}
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#FF5E43] via-[#D83672] to-[#B0288E] p-5 text-white shadow-lg shadow-pink-950/20">
+            <span className="text-[10px] font-black uppercase tracking-wider text-white/90">
+              RENDIMENTO DE INVESTIMENTO
+            </span>
+            <h3 className="mt-1 font-display text-2xl font-bold tracking-tight text-white">
+              R$ 0,00
+            </h3>
+            <p className="text-[11px] text-white/80">Ganhos acumulados na carteira</p>
+
+            <div className="mt-4 flex items-center justify-between text-xs pt-1">
+              <span className="text-[11px] text-white/85">Rentabilidade média</span>
+              <span className="font-bold text-white text-xs">0,0% a.a.</span>
+            </div>
+          </div>
+
+          {/* Card: Cofrinhos Vazio */}
+          <div className="flex flex-col items-center justify-center rounded-2xl border border-white/[0.06] bg-[#151515] p-6 text-center shadow-sm">
+            <div className="relative h-20 w-20 overflow-hidden rounded-2xl shadow-xl shadow-amber-950/30">
+              <img
+                src="/vault-empty.jpg"
+                alt="Cofrinhos"
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <h4 className="mt-3 text-sm font-semibold text-white">
+              Nenhum cofrinho ainda
+            </h4>
+            <p className="mt-1 text-xs text-stone-400 max-w-xs">
+              Crie sua primeira meta na aba Cofrinhos.
+            </p>
+          </div>
         </div>
       </div>
     </AppShell>
-  );
-}
-
-function CardResumo({
-  rotulo,
-  valor,
-  nota,
-  Icone,
-  tom,
-}: {
-  rotulo: string;
-  valor: number;
-  nota: string;
-  Icone: typeof TrendingUp;
-  tom: "positivo" | "neutro" | "atencao";
-}) {
-  return (
-    <div className="panel card-hover p-6">
-      <div className="flex items-center justify-between">
-        <Eyebrow>{rotulo}</Eyebrow>
-        <Icone
-          className={`h-4 w-4 ${tom === "positivo" ? "text-primary" : tom === "atencao" ? "text-warning" : "text-muted-foreground"}`}
-          strokeWidth={1.75}
-        />
-      </div>
-      <p className="mt-6 text-2xl font-semibold sm:text-3xl">
-        <Money valor={valor} />
-      </p>
-      <div className="mt-6 border-t border-border pt-4">
-        <Badge tom={tom}>{nota}</Badge>
-      </div>
-    </div>
   );
 }
