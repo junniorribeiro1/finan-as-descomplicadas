@@ -6,10 +6,7 @@ import {
   Video,
   Award,
   TrendingUp,
-  Coins,
-  PieChart,
   BarChart3,
-  FileText,
   CheckCircle2,
   ArrowRight,
   ChevronDown,
@@ -35,7 +32,7 @@ export default function ImersaoPage() {
   // 1. WhatsApp link
   const wppNumber = "5577981381477";
   const defaultWppUrl = `https://wa.me/${wppNumber}?text=${encodeURIComponent(
-    "Olá, Natalia! Gostaria de garantir minha vaga na 1ª Edição da Imersão Educação Financeira PF e PJ."
+    "Olá, Natalia! Gostaria de garantir minha vaga no 1º Lote (R$ 27,00) da Imersão Educação Financeira PF e PJ."
   )}`;
   const supportWppUrl = `https://wa.me/${wppNumber}?text=${encodeURIComponent(
     "Olá! Tenho uma dúvida sobre a Imersão Educação Financeira PF e PJ."
@@ -53,7 +50,7 @@ export default function ImersaoPage() {
         totalHeight > 0 ? (window.scrollY / totalHeight) * 100 : 0;
       setScrollProgress(currentProgress);
 
-      if (window.scrollY > 600) {
+      if (window.scrollY > 500) {
         setShowStickyBar(true);
       } else {
         setShowStickyBar(false);
@@ -64,7 +61,25 @@ export default function ImersaoPage() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // 3. Typewriter effect in Dobra 2
+  // 3. Reveal-on-scroll with blur effect
+  useEffect(() => {
+    const reveals = document.querySelectorAll(".reveal-on-scroll");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-revealed");
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+    );
+
+    reveals.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
+  // 4. Typewriter effect in Dobra 2
   const [typewriterText, setTypewriterText] = useState("");
   const fullText =
     "Você está prestes a transformar de vez a sua relação com o dinheiro pessoal e empresarial.";
@@ -84,7 +99,7 @@ export default function ImersaoPage() {
             } else {
               clearInterval(timer);
             }
-          }, 32);
+          }, 30);
         }
       },
       { threshold: 0.25 }
@@ -97,17 +112,38 @@ export default function ImersaoPage() {
     return () => observer.disconnect();
   }, [hasTyped]);
 
-  // 4. FAQ Accordion State
+  // 5. FAQ Accordion State
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const toggleFaq = (idx: number) => {
     setOpenFaq(openFaq === idx ? null : idx);
   };
 
-  // 5. Active Pricing Lot State
+  // 6. Active Pricing Lot State
   const [selectedLot, setSelectedLot] = useState<1 | 2 | 3>(1);
 
   return (
     <div className="relative min-h-screen w-full bg-[#06080a] text-stone-100 selection:bg-amber-400 selection:text-stone-950 font-sans antialiased overflow-x-hidden">
+      {/* ── CSS FOR REVEAL-ON-SCROLL BLUR EFFECT ── */}
+      <style>{`
+        .reveal-on-scroll {
+          opacity: 0;
+          filter: blur(12px);
+          transform: translateY(28px);
+          transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                      filter 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                      transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+          will-change: opacity, filter, transform;
+        }
+        .reveal-on-scroll.is-revealed {
+          opacity: 1;
+          filter: blur(0px);
+          transform: translateY(0);
+        }
+        .delay-100 { transition-delay: 0.1s; }
+        .delay-200 { transition-delay: 0.2s; }
+        .delay-300 { transition-delay: 0.3s; }
+      `}</style>
+
       {/* ── BARRA DE PROGRESSO DE SCROLL NO TOPO ── */}
       <div
         className="fixed top-0 left-0 h-[3px] bg-gradient-to-r from-amber-500 via-orange-400 to-emerald-400 z-50 transition-all duration-75 shadow-[0_0_12px_rgba(245,158,11,0.6)]"
@@ -135,7 +171,7 @@ export default function ImersaoPage() {
               </span>
               <span>•</span>
               <span className="rounded bg-stone-950 px-2 py-0.5 text-[0.65rem] font-bold text-amber-300">
-                LOTE 1 ATIVO
+                LOTE 1 ATIVO: R$ 27,00
               </span>
               <span>•</span>
               <span>VAGAS LIMITADAS COM CERTIFICAÇÃO OFICIAL</span>
@@ -191,291 +227,181 @@ export default function ImersaoPage() {
       </header>
 
       {/* ═══════════════════════════════════════════════
-          DOBRA 1 — HERO SECTION DE ALTO IMPACTO
+          DOBRA 1 — HERO SECTION DE ALTO IMPACTO (SEM EXPERT LATERAL)
+          Preparada para receber vídeo/background ao fundo, 
+          com tipografia imponente e informações diretas como a referência
       ═══════════════════════════════════════════════ */}
-      <section className="relative z-20 mx-auto w-full max-w-7xl px-5 pt-4 pb-16 md:px-8 md:pt-8 md:pb-24">
-        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-12">
-          {/* COLUNA ESQUERDA — COPYWRITING & OFERTA */}
-          <div className="flex flex-col gap-5 lg:col-span-7">
-            {/* Tag de Evento / Topo */}
-            <div className="flex flex-wrap items-center gap-2.5">
-              <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-950/40 px-3.5 py-1 text-xs font-semibold text-emerald-300 backdrop-blur-md">
-                <Calendar className="h-3.5 w-3.5 text-emerald-400" />
-                <span>25 de Outubro</span>
-                <span className="text-emerald-500/60">•</span>
-                <Video className="h-3.5 w-3.5 text-emerald-400" />
-                <span>Ao vivo no Zoom</span>
-              </div>
+      <section className="relative z-20 mx-auto w-full max-w-5xl px-5 pt-8 pb-16 md:px-8 md:pt-12 md:pb-24">
+        {/* Background container reservado para vídeo ou ambientação */}
+        <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#06080a]/60 to-[#06080a]" />
+        </div>
 
-              <div className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/40 bg-amber-500/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-amber-300">
-                <Sparkles className="h-3 w-3" />
-                <span>1ª Edição Oficial</span>
-              </div>
-
-              <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/30 bg-emerald-500/15 px-3 py-1 text-xs font-bold uppercase tracking-wider text-emerald-300">
-                <Award className="h-3 w-3" />
-                <span>Com Certificação</span>
-              </div>
-            </div>
-
-            {/* BADGES DA IMAGEM OFICIAL */}
-            <div className="flex flex-wrap items-center gap-2 mt-1">
-              <span className="rounded-full border border-white/20 bg-white/[0.04] px-3.5 py-1 text-[0.7rem] font-bold tracking-[0.2em] text-white uppercase backdrop-blur-md">
-                IMERSÃO
+        <div className="flex flex-col items-start text-left gap-6">
+          {/* TAGS DE EVENTO NO TOPO (ÚNICA MENÇÃO A CERTIFICAÇÃO, SEM DUPLICAÇÃO) */}
+          <div className="flex flex-wrap items-center gap-2.5">
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-950/50 px-4 py-1.5 text-xs font-semibold text-emerald-300 backdrop-blur-md">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" />
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/60 bg-emerald-900/60 px-3.5 py-1 text-[0.7rem] font-bold tracking-wider text-emerald-200 uppercase backdrop-blur-md">
-                <BadgeCheck className="h-3.5 w-3.5 text-emerald-400" />
-                COM CERTIFICAÇÃO
-              </span>
-              <span className="rounded-full bg-gradient-to-r from-amber-600 to-amber-500 px-3.5 py-1 text-[0.7rem] font-black tracking-wider text-stone-950 uppercase shadow-sm">
-                1ª EDIÇÃO
-              </span>
+              <Calendar className="h-3.5 w-3.5 text-emerald-400 ml-0.5" />
+              <span>25 de Outubro</span>
+              <span className="text-emerald-500/60">•</span>
+              <Video className="h-3.5 w-3.5 text-emerald-400" />
+              <span>Ao vivo no Zoom</span>
             </div>
 
-            {/* TÍTULO PRINCIPAL (IDÊNTICO À ARTE DO BANNER) */}
-            <div className="mt-2">
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[4rem] font-black tracking-tight leading-[1.05] text-white">
-                EDUCAÇÃO
-                <span className="block bg-gradient-to-r from-[#ffd977] via-[#f59e0b] to-[#d97706] bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(245,158,11,0.3)]">
-                  FINANCEIRA
-                </span>
-                <span className="block text-base sm:text-lg md:text-xl lg:text-2xl font-extrabold tracking-[0.18em] text-stone-300 uppercase mt-1">
-                  PARA PESSOAS FÍSICA E JURÍDICA
-                </span>
-              </h1>
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/40 bg-amber-500/10 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-amber-300">
+              <Sparkles className="h-3 w-3" />
+              <span>1ª Edição</span>
             </div>
 
-            {/* SUBTÍTULO DA IMAGEM */}
-            <p className="text-base sm:text-lg md:text-xl font-normal leading-relaxed text-stone-300 max-w-xl">
-              Aprenda a organizar seu dinheiro,{" "}
-              <strong className="font-bold text-white underline decoration-amber-400/60 decoration-2 underline-offset-4">
-                sair do vermelho
-              </strong>{" "}
-              e construir uma vida financeira leve e consciente.
-            </p>
-
-            {/* 4 PILARES DA IMAGEM OFICIAL (COM ÍCONES VERDES E DESTAQUE) */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2">
-              <div className="group flex flex-col items-center text-center p-3 rounded-xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-md transition-all duration-300 hover:border-emerald-500/40 hover:bg-emerald-950/20 hover:-translate-y-1">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 mb-2 group-hover:scale-110 transition-transform">
-                  <Coins className="h-5 w-5" />
-                </div>
-                <span className="text-xs font-bold text-white leading-tight">
-                  Organize
-                </span>
-                <span className="text-[0.7rem] text-stone-400">seu dinheiro</span>
-              </div>
-
-              <div className="group flex flex-col items-center text-center p-3 rounded-xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-md transition-all duration-300 hover:border-emerald-500/40 hover:bg-emerald-950/20 hover:-translate-y-1">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 mb-2 group-hover:scale-110 transition-transform">
-                  <PieChart className="h-5 w-5" />
-                </div>
-                <span className="text-xs font-bold text-white leading-tight">
-                  Controle
-                </span>
-                <span className="text-[0.7rem] text-stone-400">seus gastos</span>
-              </div>
-
-              <div className="group flex flex-col items-center text-center p-3 rounded-xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-md transition-all duration-300 hover:border-emerald-500/40 hover:bg-emerald-950/20 hover:-translate-y-1">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 mb-2 group-hover:scale-110 transition-transform">
-                  <TrendingUp className="h-5 w-5" />
-                </div>
-                <span className="text-xs font-bold text-white leading-tight">
-                  Planeje
-                </span>
-                <span className="text-[0.7rem] text-stone-400">seu futuro</span>
-              </div>
-
-              <div className="group flex flex-col items-center text-center p-3 rounded-xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-md transition-all duration-300 hover:border-emerald-500/40 hover:bg-emerald-950/20 hover:-translate-y-1">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 mb-2 group-hover:scale-110 transition-transform">
-                  <FileText className="h-5 w-5" />
-                </div>
-                <span className="text-xs font-bold text-white leading-tight">
-                  Tome decisões
-                </span>
-                <span className="text-[0.7rem] text-stone-400">mais conscientes</span>
-              </div>
-            </div>
-
-            {/* SELETOR DOS 3 LOTES NO HERO (INSPIRADO NA REFERÊNCIA) */}
-            <div className="mt-2 flex flex-col gap-2 max-w-md">
-              <span className="text-[0.72rem] font-bold uppercase tracking-wider text-stone-400">
-                Selecione seu lote de entrada:
-              </span>
-              <div className="grid grid-cols-3 gap-2">
-                {/* Lote 1 Ativo */}
-                <button
-                  type="button"
-                  onClick={() => setSelectedLot(1)}
-                  className={`relative flex flex-col items-center justify-center p-2.5 rounded-xl border transition-all text-center ${
-                    selectedLot === 1
-                      ? "border-amber-400 bg-amber-500/15 shadow-[0_0_15px_rgba(245,158,11,0.25)] ring-1 ring-amber-400/50"
-                      : "border-white/10 bg-white/[0.02] hover:bg-white/[0.05]"
-                  }`}
-                >
-                  <span className="font-mono text-[0.65rem] font-bold text-amber-400 uppercase tracking-wider">
-                    LOTE 1
-                  </span>
-                  <span className="text-sm font-black text-white">R$ 47,00</span>
-                  <span className="inline-flex items-center gap-1 text-[0.65rem] font-extrabold text-emerald-400 mt-0.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    Ativo
-                  </span>
-                </button>
-
-                {/* Lote 2 */}
-                <button
-                  type="button"
-                  onClick={() => setSelectedLot(2)}
-                  className={`relative flex flex-col items-center justify-center p-2.5 rounded-xl border transition-all text-center opacity-70 ${
-                    selectedLot === 2
-                      ? "border-amber-400 bg-amber-500/15 ring-1 ring-amber-400/50 opacity-100"
-                      : "border-white/10 bg-white/[0.02]"
-                  }`}
-                >
-                  <span className="font-mono text-[0.65rem] font-medium text-stone-400 uppercase tracking-wider">
-                    LOTE 2
-                  </span>
-                  <span className="text-sm font-bold text-stone-300">R$ 97,00</span>
-                  <span className="text-[0.65rem] text-stone-500 mt-0.5">Em breve</span>
-                </button>
-
-                {/* Lote 3 */}
-                <button
-                  type="button"
-                  onClick={() => setSelectedLot(3)}
-                  className={`relative flex flex-col items-center justify-center p-2.5 rounded-xl border transition-all text-center opacity-60 ${
-                    selectedLot === 3
-                      ? "border-amber-400 bg-amber-500/15 ring-1 ring-amber-400/50 opacity-100"
-                      : "border-white/10 bg-white/[0.02]"
-                  }`}
-                >
-                  <span className="font-mono text-[0.65rem] font-medium text-stone-400 uppercase tracking-wider">
-                    LOTE 3
-                  </span>
-                  <span className="text-sm font-bold text-stone-300">R$ 197</span>
-                  <span className="text-[0.65rem] text-stone-500 mt-0.5">Final</span>
-                </button>
-              </div>
-            </div>
-
-            {/* BOTÕES DE AÇÃO HERO */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
-              <a
-                href={defaultWppUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group relative inline-flex items-center justify-center gap-2.5 overflow-hidden rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-orange-400 px-8 py-4 text-sm font-black uppercase tracking-wider text-stone-950 shadow-[0_4px_32px_rgba(245,158,11,0.4)] transition-all duration-300 hover:scale-105 active:scale-95"
-              >
-                <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
-                <span>Garantir Meu Ingresso no Lote 1</span>
-                <ArrowRight className="h-4 w-4 stroke-[3] transition-transform group-hover:translate-x-1" />
-              </a>
-
-              <a
-                href="#cronograma"
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-6 py-4 text-xs font-bold uppercase tracking-wider text-stone-300 backdrop-blur-md transition-colors hover:bg-white/10 hover:text-white"
-              >
-                <span>Ver Cronograma</span>
-                <ChevronDown className="h-4 w-4 text-stone-400" />
-              </a>
-            </div>
-
-            {/* BARRA DE PROGRESSO DE VAGAS */}
-            <div className="flex flex-col gap-1.5 max-w-md pt-1">
-              <div className="h-2 w-full overflow-hidden rounded-full bg-white/10 border border-white/5">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-amber-500 to-emerald-400 shadow-[0_0_10px_#f59e0b] transition-all duration-1000"
-                  style={{ width: "94%" }}
-                />
-              </div>
-              <div className="flex items-center justify-between text-[0.72rem] text-stone-400">
-                <span className="flex items-center gap-1 text-emerald-400 font-semibold">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
-                  94% das vagas preenchidas no 1º Lote
-                </span>
-                <span className="font-mono text-stone-500">Últimas vagas</span>
-              </div>
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/40 bg-emerald-500/20 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-emerald-300 backdrop-blur-md shadow-[0_0_12px_rgba(16,185,129,0.2)]">
+              <BadgeCheck className="h-3.5 w-3.5 text-emerald-400" />
+              <span>Com Certificação</span>
             </div>
           </div>
 
-          {/* COLUNA DIREITA — CINEMA CARD VISUAL (INSPIRADO NA REFERÊNCIA) */}
-          <div className="relative flex items-center justify-center lg:col-span-5">
-            {/* Halo de Luz Posterior */}
-            <div className="absolute -inset-4 rounded-3xl bg-gradient-to-tr from-amber-500/20 via-orange-500/10 to-emerald-500/20 blur-2xl opacity-70" />
+          {/* TÍTULO PRINCIPAL (AUMENTADO EM ESCALA MONUMENTAL) */}
+          <div className="mt-1 w-full">
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] font-black tracking-tight leading-[0.96] text-white">
+              EDUCAÇÃO
+              <span className="block bg-gradient-to-r from-[#ffe494] via-[#f59e0b] to-[#d97706] bg-clip-text text-transparent drop-shadow-[0_6px_36px_rgba(245,158,11,0.4)] mt-1">
+                FINANCEIRA
+              </span>
+              <span className="block text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-[0.22em] text-stone-200 uppercase mt-4">
+                PARA PESSOAS FÍSICA E JURÍDICA
+              </span>
+            </h1>
+          </div>
 
-            {/* O CARD CINEMA 3D */}
-            <div className="relative w-full max-w-[440px] overflow-hidden rounded-3xl border border-white/[0.12] bg-[#0c0e14]/90 p-3 backdrop-blur-2xl shadow-[0_20px_60px_rgba(0,0,0,0.8)] transition-transform duration-500 hover:scale-[1.02]">
-              {/* Foto da Especialista */}
-              <div className="relative aspect-[4/4.5] w-full overflow-hidden rounded-2xl bg-stone-900">
-                <img
-                  src="/natalia-original.png"
-                  alt="Natalia Rodolfo — Educadora Financeira"
-                  className="h-full w-full object-cover object-top filter contrast-[1.05] brightness-95 transition-transform duration-700 hover:scale-105"
-                />
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0c0e14] via-[#0c0e14]/20 to-transparent" />
+          {/* SUBTÍTULO */}
+          <p className="text-base sm:text-lg md:text-xl font-normal leading-relaxed text-stone-300 max-w-2xl">
+            Aprenda a organizar seu dinheiro,{" "}
+            <strong className="font-bold text-white underline decoration-amber-400 decoration-2 underline-offset-4">
+              sair do vermelho
+            </strong>{" "}
+            e construir uma vida financeira leve e consciente.
+          </p>
 
-                {/* Selo no Topo da Imagem */}
-                <div className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full border border-amber-400/40 bg-stone-950/70 px-3 py-1 text-[0.65rem] font-bold text-amber-300 backdrop-blur-md">
-                  <Sparkles className="h-3 w-3" />
-                  <span>Mentora & Estrategista</span>
-                </div>
+          {/* SELETOR DOS 3 LOTES NO HERO (VALORES: 27,00 | 57,00 | 97,00) */}
+          <div className="mt-2 flex flex-col gap-2 w-full max-w-md">
+            <span className="text-[0.72rem] font-bold uppercase tracking-wider text-stone-400">
+              Selecione seu lote de entrada:
+            </span>
+            <div className="grid grid-cols-3 gap-2 sm:gap-2.5">
+              {/* Lote 1 Ativo - R$ 27,00 */}
+              <button
+                type="button"
+                onClick={() => setSelectedLot(1)}
+                className={`relative flex flex-col items-center justify-center p-3 rounded-xl border transition-all text-center ${
+                  selectedLot === 1
+                    ? "border-amber-400 bg-amber-500/15 shadow-[0_0_18px_rgba(245,158,11,0.3)] ring-2 ring-amber-400/60"
+                    : "border-white/10 bg-white/[0.02] hover:bg-white/[0.05]"
+                }`}
+              >
+                <div className="absolute top-0 right-0 w-6 h-6 bg-amber-400/10 rounded-full blur-sm pointer-events-none" />
+                <span className="font-mono text-[0.65rem] sm:text-[0.7rem] font-bold text-amber-400 uppercase tracking-widest mb-0.5">
+                  LOTE 1
+                </span>
+                <span className="text-base sm:text-lg font-black text-white tracking-tight leading-tight">
+                  R$ 27,00
+                </span>
+                <span className="inline-flex items-center gap-1 text-[0.65rem] font-extrabold text-emerald-400 mt-1">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  Ativo
+                </span>
+              </button>
 
-                {/* Card de Depoimento Flutuante Sobreposto (Efeito do site de referência) */}
-                <div className="absolute bottom-3 left-3 right-3 rounded-xl border border-white/10 bg-black/70 p-3.5 backdrop-blur-md">
-                  <p className="text-xs text-stone-200 leading-relaxed italic">
-                    "Você já perdeu tempo e dinheiro demais tentando resolver
-                    sozinho algo que vamos destravar juntos em 1 dia de imersão."
-                  </p>
-                  <div className="mt-2 flex items-center justify-between">
-                    <span className="font-mono text-[0.65rem] font-bold tracking-wider text-amber-400 uppercase">
-                      Natalia Rodolfo
-                    </span>
-                    <div className="flex gap-0.5 text-amber-400">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="h-3 w-3 fill-amber-400" />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
+              {/* Lote 2 - R$ 57,00 */}
+              <button
+                type="button"
+                onClick={() => setSelectedLot(2)}
+                className={`relative flex flex-col items-center justify-center p-3 rounded-xl border transition-all text-center opacity-75 ${
+                  selectedLot === 2
+                    ? "border-amber-400 bg-amber-500/15 ring-2 ring-amber-400/60 opacity-100"
+                    : "border-white/10 bg-white/[0.02]"
+                }`}
+              >
+                <span className="font-mono text-[0.65rem] sm:text-[0.7rem] font-medium text-stone-400 uppercase tracking-widest mb-0.5">
+                  LOTE 2
+                </span>
+                <span className="text-base sm:text-lg font-bold text-stone-300 tracking-tight leading-tight">
+                  R$ 57,00
+                </span>
+                <span className="text-[0.65rem] text-stone-500 mt-1">
+                  Em breve
+                </span>
+              </button>
 
-              {/* Strip de Estatísticas Rápidas Abaixo da Foto */}
-              <div className="grid grid-cols-3 gap-2 pt-3 text-center">
-                <div className="flex flex-col">
-                  <span className="text-base font-extrabold text-white">
-                    100%
-                  </span>
-                  <span className="text-[0.65rem] font-medium text-stone-400 uppercase tracking-wider">
-                    Ao Vivo no Zoom
-                  </span>
-                </div>
-                <div className="flex flex-col border-x border-white/10">
-                  <span className="text-base font-extrabold text-emerald-400">
-                    Oficial
-                  </span>
-                  <span className="text-[0.65rem] font-medium text-stone-400 uppercase tracking-wider">
-                    Certificação
-                  </span>
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-base font-extrabold text-amber-400">
-                    PF + PJ
-                  </span>
-                  <span className="text-[0.65rem] font-medium text-stone-400 uppercase tracking-wider">
-                    Sem Misturas
-                  </span>
-                </div>
-              </div>
+              {/* Lote 3 - R$ 97,00 */}
+              <button
+                type="button"
+                onClick={() => setSelectedLot(3)}
+                className={`relative flex flex-col items-center justify-center p-3 rounded-xl border transition-all text-center opacity-65 ${
+                  selectedLot === 3
+                    ? "border-amber-400 bg-amber-500/15 ring-2 ring-amber-400/60 opacity-100"
+                    : "border-white/10 bg-white/[0.02]"
+                }`}
+              >
+                <span className="font-mono text-[0.65rem] sm:text-[0.7rem] font-medium text-stone-400 uppercase tracking-widest mb-0.5">
+                  LOTE 3
+                </span>
+                <span className="text-base sm:text-lg font-bold text-stone-300 tracking-tight leading-tight">
+                  R$ 97,00
+                </span>
+                <span className="text-[0.65rem] text-stone-500 mt-1">Final</span>
+              </button>
+            </div>
+          </div>
+
+          {/* BOTÕES DE AÇÃO HERO */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2 w-full max-w-md">
+            <a
+              href={defaultWppUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative inline-flex items-center justify-center gap-2.5 overflow-hidden rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-orange-400 px-8 py-4 text-sm font-black uppercase tracking-wider text-stone-950 shadow-[0_4px_32px_rgba(245,158,11,0.4)] transition-all duration-300 hover:scale-105 active:scale-95"
+            >
+              <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+              <span>Garantir Meu Ingresso no Lote 1</span>
+              <ArrowRight className="h-4 w-4 stroke-[3] transition-transform group-hover:translate-x-1" />
+            </a>
+
+            <a
+              href="#cronograma"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-6 py-4 text-xs font-bold uppercase tracking-wider text-stone-300 backdrop-blur-md transition-colors hover:bg-white/10 hover:text-white"
+            >
+              <span>Ver Cronograma</span>
+              <ChevronDown className="h-4 w-4 text-stone-400" />
+            </a>
+          </div>
+
+          {/* BARRA DE PROGRESSO DE VAGAS */}
+          <div className="flex flex-col gap-1.5 w-full max-w-md pt-1">
+            <div className="h-2 w-full overflow-hidden rounded-full bg-white/10 border border-white/5">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-amber-500 to-emerald-400 shadow-[0_0_10px_#f59e0b] transition-all duration-1000"
+                style={{ width: "94%" }}
+              />
+            </div>
+            <div className="flex items-center justify-between text-[0.72rem] text-stone-400">
+              <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
+                94% dos ingressos vendidos a{" "}
+                <strong className="text-white font-bold">R$ 27,00</strong>
+              </span>
+              <span className="font-mono text-stone-500">Últimas vagas</span>
             </div>
           </div>
         </div>
       </section>
 
       {/* ═══════════════════════════════════════════════
-          DOBRA 2 — TYPEWRITER + TIMELINE DE TRANSFORMAÇÃO
+          DOBRA 2 — TYPEWRITER + TIMELINE DE TRANSFORMAÇÃO (COM BLUR IN EFFECT)
       ═══════════════════════════════════════════════ */}
-      <section className="relative z-20 mx-auto w-full max-w-5xl px-5 py-12 md:px-8">
+      <section className="reveal-on-scroll relative z-20 mx-auto w-full max-w-5xl px-5 py-12 md:px-8">
         <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-6 sm:p-10 md:p-14 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
           {/* Efeito Typewriter */}
           <div ref={typewriterRef} className="text-center min-h-[5rem] mb-10">
@@ -488,7 +414,7 @@ export default function ImersaoPage() {
             </h2>
           </div>
 
-          {/* Timeline de 3 Passos (idêntica ao layout da referência) */}
+          {/* Timeline de 3 Passos */}
           <div className="relative max-w-3xl mx-auto flex flex-col gap-10 md:gap-12 before:absolute before:left-4 md:before:left-1/2 before:top-4 before:bottom-4 before:w-[2px] before:bg-gradient-to-b before:from-amber-500 before:via-emerald-500 before:to-amber-500/20 before:-translate-x-1/2">
             {/* Passo 1 */}
             <div className="relative flex flex-col md:flex-row items-start md:items-center gap-6">
@@ -560,9 +486,9 @@ export default function ImersaoPage() {
       </section>
 
       {/* ═══════════════════════════════════════════════
-          DOBRA 3 — MÓDULOS DA IMERSÃO (O QUE VOCÊ VAI APRENDER)
+          DOBRA 3 — MÓDULOS DA IMERSÃO (COM BLUR IN EFFECT)
       ═══════════════════════════════════════════════ */}
-      <section id="modulos" className="relative z-20 mx-auto w-full max-w-7xl px-5 py-16 md:px-8">
+      <section id="modulos" className="reveal-on-scroll relative z-20 mx-auto w-full max-w-7xl px-5 py-16 md:px-8">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-emerald-400">
             Grade Curricular Completa
@@ -688,9 +614,9 @@ export default function ImersaoPage() {
       </section>
 
       {/* ═══════════════════════════════════════════════
-          DOBRA 4 — O DIAGNÓSTICO REAL (CHEGA DE FICAR PERDIDO)
+          DOBRA 4 — O DIAGNÓSTICO REAL (COM BLUR IN EFFECT)
       ═══════════════════════════════════════════════ */}
-      <section className="relative z-20 mx-auto w-full max-w-7xl px-5 py-16 md:px-8">
+      <section className="reveal-on-scroll relative z-20 mx-auto w-full max-w-7xl px-5 py-16 md:px-8">
         <div className="overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-[#12161f] via-[#0b0e14] to-[#07080a] p-8 md:p-14">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
             <div>
@@ -776,9 +702,9 @@ export default function ImersaoPage() {
       </section>
 
       {/* ═══════════════════════════════════════════════
-          DOBRA 5 — BÔNUS EXCLUSIVOS (AURORA CARD)
+          DOBRA 5 — BÔNUS EXCLUSIVOS (AURORA CARD COM BLUR IN EFFECT)
       ═══════════════════════════════════════════════ */}
-      <section className="relative z-20 mx-auto w-full max-w-5xl px-5 py-12 md:px-8">
+      <section className="reveal-on-scroll relative z-20 mx-auto w-full max-w-5xl px-5 py-12 md:px-8">
         <div className="relative overflow-hidden rounded-3xl border border-amber-500/30 bg-gradient-to-br from-[#1a120b] via-[#0d0a06] to-[#070503] p-8 md:p-14 shadow-[0_20px_60px_rgba(245,158,11,0.15)]">
           {/* Luzes de Aurora de Fundo */}
           <div className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full bg-amber-500/20 blur-[90px]" />
@@ -841,7 +767,7 @@ export default function ImersaoPage() {
       {/* ═══════════════════════════════════════════════
           DOBRA 6 — CRONOGRAMA DA IMERSÃO (25 DE OUTUBRO)
       ═══════════════════════════════════════════════ */}
-      <section id="cronograma" className="relative z-20 mx-auto w-full max-w-5xl px-5 py-16 md:px-8">
+      <section id="cronograma" className="reveal-on-scroll relative z-20 mx-auto w-full max-w-5xl px-5 py-16 md:px-8">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-950/40 px-3.5 py-1 text-xs font-bold text-emerald-300 uppercase tracking-wider mb-2">
             <Clock className="h-3.5 w-3.5" />
@@ -946,7 +872,7 @@ export default function ImersaoPage() {
       {/* ═══════════════════════════════════════════════
           DOBRA 7 — PARA QUEM É A IMERSÃO?
       ═══════════════════════════════════════════════ */}
-      <section className="relative z-20 mx-auto w-full max-w-7xl px-5 py-16 md:px-8">
+      <section className="reveal-on-scroll relative z-20 mx-auto w-full max-w-7xl px-5 py-16 md:px-8">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-amber-400">
             Público Ideal
@@ -1023,7 +949,7 @@ export default function ImersaoPage() {
           </div>
         </div>
 
-        {/* BOX DE GARANTIA INCONDICIONAL (DOBRA DA REFERÊNCIA) */}
+        {/* BOX DE GARANTIA INCONDICIONAL */}
         <div className="mt-12 max-w-4xl mx-auto rounded-3xl border border-emerald-500/30 bg-gradient-to-r from-emerald-950/30 via-[#0d1512] to-emerald-950/20 p-6 sm:p-10 backdrop-blur-xl flex flex-col md:flex-row items-center gap-6">
           <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
             <ShieldCheck className="h-8 w-8" />
@@ -1046,9 +972,9 @@ export default function ImersaoPage() {
       </section>
 
       {/* ═══════════════════════════════════════════════
-          DOBRA 8 — OFERTA / PREÇO (LOTE 1 ATIVO)
+          DOBRA 8 — OFERTA / PREÇO (VALORES: 27,00 | 57,00 | 97,00)
       ═══════════════════════════════════════════════ */}
-      <section id="preco" className="relative z-20 mx-auto w-full max-w-5xl px-5 py-16 md:px-8">
+      <section id="preco" className="reveal-on-scroll relative z-20 mx-auto w-full max-w-5xl px-5 py-16 md:px-8">
         <div className="rounded-3xl border border-amber-500/40 bg-gradient-to-b from-[#18120a] via-[#0f0c07] to-[#080808] p-8 md:p-14 shadow-[0_10px_60px_rgba(245,158,11,0.2)]">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             {/* Benefícios Inclusos */}
@@ -1092,23 +1018,42 @@ export default function ImersaoPage() {
                   </span>
                 </li>
               </ul>
+
+              {/* Comparativo dos 3 Lotes na Dobra de Oferta */}
+              <div className="mt-4 grid grid-cols-3 gap-2 border-t border-white/10 pt-4 max-w-sm">
+                <div className="flex flex-col p-2 rounded-lg bg-amber-500/10 border border-amber-400/30 text-center">
+                  <span className="font-mono text-[0.65rem] text-amber-400 font-bold uppercase">Lote 1</span>
+                  <span className="text-sm font-black text-white">R$ 27,00</span>
+                  <span className="text-[0.6rem] text-emerald-400 font-bold">Ativo</span>
+                </div>
+                <div className="flex flex-col p-2 rounded-lg bg-white/[0.02] border border-white/5 text-center opacity-60">
+                  <span className="font-mono text-[0.65rem] text-stone-400 font-bold uppercase">Lote 2</span>
+                  <span className="text-sm font-bold text-stone-300">R$ 57,00</span>
+                  <span className="text-[0.6rem] text-stone-500">Em breve</span>
+                </div>
+                <div className="flex flex-col p-2 rounded-lg bg-white/[0.02] border border-white/5 text-center opacity-50">
+                  <span className="font-mono text-[0.65rem] text-stone-400 font-bold uppercase">Lote 3</span>
+                  <span className="text-sm font-bold text-stone-300">R$ 97,00</span>
+                  <span className="text-[0.6rem] text-stone-500">Final</span>
+                </div>
+              </div>
             </div>
 
             {/* Box de Preço e CTA */}
             <div className="lg:col-span-5 flex flex-col items-center text-center rounded-2xl border border-white/10 bg-black/60 p-6 backdrop-blur-xl">
               <div className="inline-flex items-center gap-1 rounded-full bg-amber-500/10 border border-amber-500/30 px-3 py-0.5 text-xs font-bold text-amber-300 uppercase tracking-wider mb-2">
-                <span>1º Lote Exclusivo</span>
+                <span>1º Lote Ativo</span>
               </div>
 
               <span className="text-xs text-stone-400 line-through">
                 De R$ 197,00 por apenas
               </span>
 
-              {/* Valor do Lote */}
+              {/* Valor do Lote 1 Oficial: 27,00 */}
               <div className="flex items-baseline justify-center gap-1 my-2 text-white">
                 <span className="text-xl font-bold text-stone-400">R$</span>
                 <span className="text-5xl sm:text-6xl font-black tracking-tight text-white">
-                  47
+                  27
                 </span>
                 <span className="text-lg font-bold text-stone-400">,00</span>
               </div>
@@ -1123,7 +1068,7 @@ export default function ImersaoPage() {
                 rel="noopener noreferrer"
                 className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-orange-400 px-6 py-4 text-sm font-black uppercase tracking-wider text-stone-950 shadow-[0_4px_24px_rgba(245,158,11,0.35)] transition-all hover:scale-105 active:scale-95"
               >
-                <span>Garantir Vaga no Lote 1</span>
+                <span>Garantir Vaga no Lote 1 (R$ 27)</span>
                 <ArrowRight className="h-4 w-4 stroke-[3]" />
               </a>
 
@@ -1139,7 +1084,7 @@ export default function ImersaoPage() {
       {/* ═══════════════════════════════════════════════
           DOBRA 9 — CERTIFICADO OFICIAL
       ═══════════════════════════════════════════════ */}
-      <section className="relative z-20 mx-auto w-full max-w-5xl px-5 py-12 md:px-8">
+      <section className="reveal-on-scroll relative z-20 mx-auto w-full max-w-5xl px-5 py-12 md:px-8">
         <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-8 md:p-12 flex flex-col md:flex-row items-center gap-8">
           <div className="md:w-1/2">
             <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-300 uppercase tracking-wider mb-3">
@@ -1189,7 +1134,7 @@ export default function ImersaoPage() {
       {/* ═══════════════════════════════════════════════
           DOBRA 10 — SOBRE A ESPECIALISTA (NATALIA RODOLFO)
       ═══════════════════════════════════════════════ */}
-      <section className="relative z-20 mx-auto w-full max-w-5xl px-5 py-16 md:px-8">
+      <section className="reveal-on-scroll relative z-20 mx-auto w-full max-w-5xl px-5 py-16 md:px-8">
         <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-8 md:p-12 flex flex-col lg:flex-row items-center gap-10">
           <div className="lg:w-5/12">
             <div className="relative mx-auto aspect-[4/5] w-full max-w-sm overflow-hidden rounded-2xl border border-amber-500/30 bg-stone-900 shadow-xl">
@@ -1243,7 +1188,7 @@ export default function ImersaoPage() {
       {/* ═══════════════════════════════════════════════
           DOBRA 11 — FAQ (PERGUNTAS FREQUENTES)
       ═══════════════════════════════════════════════ */}
-      <section className="relative z-20 mx-auto w-full max-w-3xl px-5 py-16 md:px-8">
+      <section className="reveal-on-scroll relative z-20 mx-auto w-full max-w-3xl px-5 py-16 md:px-8">
         <div className="text-center mb-10">
           <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-amber-400">
             Tire Suas Dúvidas
@@ -1305,7 +1250,7 @@ export default function ImersaoPage() {
       {/* ═══════════════════════════════════════════════
           DOBRA 12 — SUPORTE DIRETO NO WHATSAPP
       ═══════════════════════════════════════════════ */}
-      <section className="relative z-20 mx-auto w-full max-w-xl px-5 py-12 md:px-8">
+      <section className="reveal-on-scroll relative z-20 mx-auto w-full max-w-xl px-5 py-12 md:px-8">
         <div className="rounded-3xl border border-emerald-500/30 bg-[#0b1410] p-8 text-center flex flex-col items-center shadow-lg">
           <div className="h-14 w-14 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 mb-4">
             <MessageCircle className="h-7 w-7" />
@@ -1345,7 +1290,7 @@ export default function ImersaoPage() {
         </div>
       </footer>
 
-      {/* ── STICKY BAR INFERIOR (SURGE NO SCROLL) ── */}
+      {/* ── STICKY BAR INFERIOR (SURGE NO SCROLL - LOTE 1: R$ 27,00) ── */}
       <div
         className={`fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[92vw] max-w-md rounded-full border border-white/15 bg-black/80 p-2 pl-4 backdrop-blur-xl shadow-[0_10px_40px_rgba(0,0,0,0.8)] transition-all duration-500 flex items-center justify-between ${
           showStickyBar
@@ -1358,7 +1303,7 @@ export default function ImersaoPage() {
             Imersão 25 de Outubro
           </span>
           <span className="text-[0.65rem] text-emerald-400 font-semibold">
-            Lote 1: Apenas R$ 47,00
+            Lote 1: Apenas R$ 27,00
           </span>
         </div>
         <a
