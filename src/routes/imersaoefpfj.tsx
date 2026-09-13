@@ -509,11 +509,12 @@ export default function ImersaoPage() {
                   Fase 01
                 </span>
                 <h3 className="text-lg md:text-xl font-bold text-white mt-1">
-                  Diagnóstico & Fim da Mistura
+                  Diagnóstico e Fim da Mistura e Saída do Vermelho e Construção de Reserva
                 </h3>
                 <p className="text-sm text-stone-300/80 mt-1 leading-relaxed">
-                  Você vai mapear exatamente onde o dinheiro está vazando e
-                  erguer o "muro de contenção" entre a conta física e jurídica.
+                  Você vai mapear exatamente onde o dinheiro está vazando, erguer
+                  o muro de separação entre as contas e traçar o plano prático
+                  para eliminar dívidas e construir sua reserva.
                 </p>
               </div>
 
@@ -655,9 +656,9 @@ export default function ImersaoPage() {
               Orçamento Inteligente & Ferramentas
             </h3>
             <p className="mt-2 text-xs sm:text-sm text-stone-400 leading-relaxed">
-              Apresentação de ferramentas práticas (planilhas descomplicadas e
-              métodos de automação inteligente) para organizar seus registros sem
-              tomar horas do seu dia.
+              Apresentação de ferramentas práticas e do Aplicativo OrganizAI
+              para organizar seus registros financeiros com agilidade sem tomar
+              horas do seu dia.
             </p>
           </div>
 
@@ -803,37 +804,38 @@ export default function ImersaoPage() {
             </div>
 
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white max-w-xl">
-              Kit de Ferramentas e Planilhas Oficiais de Diagnóstico
+              Acesso Exclusivo ao Aplicativo OrganizAI
             </h2>
             <p className="mt-3 text-sm sm:text-base text-stone-300 max-w-2xl leading-relaxed">
-              Você não vai sair da imersão apenas com anotações. Você receberá o
-              pacote completo de planilhas e templates prontos para uso que a
-              Natalia utiliza em suas consultorias individuais.
+              Você não vai sair da imersão apenas com anotações e teoria. Você
+              receberá o acesso ao nosso Aplicativo OrganizAI, a plataforma
+              completa de inteligência e gestão para organizar suas finanças
+              pessoais e jurídicas com máxima praticidade.
             </p>
 
             <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl">
               <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/40 p-3">
                 <CheckCircle2 className="h-5 w-5 text-amber-400 shrink-0" />
                 <span className="text-xs sm:text-sm text-stone-200">
-                  Planilha Master de Separação PF vs PJ
+                  Aplicativo com Separação Prática PF vs PJ
                 </span>
               </div>
               <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/40 p-3">
                 <CheckCircle2 className="h-5 w-5 text-amber-400 shrink-0" />
                 <span className="text-xs sm:text-sm text-stone-200">
-                  Simulador de Quitação Rápida de Dívidas
+                  Painel de Fluxo de Caixa e Controle de Gastos
                 </span>
               </div>
               <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/40 p-3">
                 <CheckCircle2 className="h-5 w-5 text-amber-400 shrink-0" />
                 <span className="text-xs sm:text-sm text-stone-200">
-                  Guia Prático de Cálculo de Pró-labore
+                  Módulo de Metas, Diagnóstico & Pró-labore
                 </span>
               </div>
               <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/40 p-3">
                 <CheckCircle2 className="h-5 w-5 text-amber-400 shrink-0" />
                 <span className="text-xs sm:text-sm text-stone-200">
-                  Acesso ao Grupo Exclusivo de Alunos
+                  Comunidade Exclusiva de Alunos e Suporte
                 </span>
               </div>
             </div>
@@ -860,7 +862,7 @@ export default function ImersaoPage() {
             <span>25 de Outubro • Cronograma Oficial</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
-            Um dia inteiro focado no seu futuro financeiro
+            Uma tarde inteira focada no seu futuro financeiro
           </h2>
           <p className="mt-2 text-sm text-stone-400">
             Encontro ao vivo via Zoom com tempo para perguntas, exercícios e
@@ -869,41 +871,44 @@ export default function ImersaoPage() {
         </div>
 
         <div className="flex flex-col gap-3 max-w-2xl mx-auto">
+          {/* 13h00 */}
           <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] p-4 transition-colors hover:border-amber-500/30 hover:bg-white/[0.04]">
             <div className="flex items-center gap-4">
               <span className="font-mono text-sm font-bold text-amber-400">
-                09h00
+                13h00
               </span>
               <span className="text-sm font-semibold text-white">
                 Abertura & Raio-X Financeiro (Diagnóstico Real)
               </span>
             </div>
             <span className="text-[0.65rem] font-bold text-stone-500 uppercase tracking-wider">
-              Manhã
+              Abertura
             </span>
           </div>
 
+          {/* 14h30 */}
           <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] p-4 transition-colors hover:border-amber-500/30 hover:bg-white/[0.04]">
             <div className="flex items-center gap-4">
               <span className="font-mono text-sm font-bold text-amber-400">
-                10h30
+                14h30
               </span>
               <span className="text-sm font-semibold text-white">
                 O Muro de Separação: Descomplicando PF e PJ
               </span>
             </div>
             <span className="text-[0.65rem] font-bold text-stone-500 uppercase tracking-wider">
-              Manhã
+              Tarde
             </span>
           </div>
 
+          {/* 15h30 */}
           <div className="flex items-center justify-between rounded-xl border border-white/5 bg-white/[0.01] p-4 opacity-70">
             <div className="flex items-center gap-4">
               <span className="font-mono text-sm font-bold text-stone-400">
-                12h00
+                15h30
               </span>
               <span className="text-sm font-medium text-stone-300">
-                Intervalo para Almoço e Descanso
+                Intervalo para Café
               </span>
             </div>
             <span className="text-[0.65rem] font-bold text-stone-500 uppercase tracking-wider">
@@ -911,10 +916,11 @@ export default function ImersaoPage() {
             </span>
           </div>
 
+          {/* 15h45 */}
           <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] p-4 transition-colors hover:border-emerald-500/30 hover:bg-white/[0.04]">
             <div className="flex items-center gap-4">
               <span className="font-mono text-sm font-bold text-emerald-400">
-                13h30
+                15h45
               </span>
               <span className="text-sm font-semibold text-white">
                 Mão na Massa: Fluxo de Caixa, Ferramentas & Pró-labore
@@ -925,10 +931,11 @@ export default function ImersaoPage() {
             </span>
           </div>
 
+          {/* 16h45 */}
           <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] p-4 transition-colors hover:border-emerald-500/30 hover:bg-white/[0.04]">
             <div className="flex items-center gap-4">
               <span className="font-mono text-sm font-bold text-emerald-400">
-                15h30
+                16h45
               </span>
               <span className="text-sm font-semibold text-white">
                 Plano de Saída do Vermelho & Reserva de Emergência
@@ -939,10 +946,11 @@ export default function ImersaoPage() {
             </span>
           </div>
 
+          {/* 17h30 */}
           <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] p-4 transition-colors hover:border-amber-500/30 hover:bg-white/[0.04]">
             <div className="flex items-center gap-4">
               <span className="font-mono text-sm font-bold text-amber-400">
-                17h00
+                17h30
               </span>
               <span className="text-sm font-semibold text-white">
                 Sessão de Mentorias, Dúvidas ao Vivo & Conclusão
@@ -1088,7 +1096,7 @@ export default function ImersaoPage() {
                 <li className="flex items-center gap-2.5">
                   <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
                   <span>
-                    Kit de Planilhas e Templates de Separação PF/PJ
+                    Acesso Exclusivo ao Aplicativo OrganizAI (Módulos PF & PJ)
                   </span>
                 </li>
                 <li className="flex items-center gap-2.5">
