@@ -15,6 +15,7 @@ import {
   Sun,
   Moon,
   ChevronDown,
+  ChevronUp,
   Sparkles,
   Menu,
   X,
@@ -22,6 +23,8 @@ import {
   ShieldAlert,
   ShieldCheck,
   Clock,
+  User,
+  KeyRound,
 } from "lucide-react";
 import { useState, useEffect, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
@@ -38,8 +41,6 @@ export const menuItens = [
   { rotulo: "Investimentos", to: "/investimentos", icone: TrendingUp },
   { rotulo: "Bancos", to: "/bancos", icone: Landmark },
   { rotulo: "Categorias", to: "/categorias", icone: Tag },
-  { rotulo: "Compartilhamento", to: "/segundo-usuario", icone: Users },
-  { rotulo: "Importar Dados", to: "/importar-dados", icone: Upload },
   { rotulo: "Ajuda", to: "/ajuda", icone: CircleHelp },
 ] as const;
 
@@ -143,6 +144,8 @@ export function AppShell({
   const navigate = useNavigate();
 
   const [aberto, setAberto] = useState(false);
+  const [menuUsuarioAberto, setMenuUsuarioAberto] = useState(false);
+  const [menuUsuarioMobileAberto, setMenuUsuarioMobileAberto] = useState(false);
   const [tipoConta, setTipoConta] = useState<"pessoal" | "empresa">("pessoal");
   const [mes, setMes] = useState("Este mês");
   const [ano, setAno] = useState("2026");
@@ -160,6 +163,19 @@ export function AppShell({
       localStorage.setItem("organizai_theme", novoTema);
     }
   };
+
+  // Fecha o menu de opções do usuário se clicar fora
+  useEffect(() => {
+    const handleClickFora = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest(".user-menu-container")) {
+        setMenuUsuarioAberto(false);
+        setMenuUsuarioMobileAberto(false);
+      }
+    };
+    window.addEventListener("click", handleClickFora);
+    return () => window.removeEventListener("click", handleClickFora);
+  }, []);
 
   // Proteção de rota: Redireciona para /login se não estiver autenticado
   useEffect(() => {
@@ -324,36 +340,100 @@ export function AppShell({
         </div>
         <VeraAjudaCard />
 
-        {/* Card do Usuário Logado & Logout */}
-        <div className="mt-3 pt-3 border-t border-white/[0.06] flex items-center justify-between px-1">
-          <Link
-            to="/perfil"
-            className="flex items-center gap-2.5 min-w-0 hover:opacity-80 transition-opacity"
-            title="Ver meu perfil"
-          >
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-orange-500/50 bg-[#1c120c] text-xs font-bold text-orange-400">
-              {inicial}
+        {/* Seção do Usuário no Rodapé da Sidebar */}
+        <div className="user-menu-container relative mt-3 pt-3 border-t border-white/[0.06]">
+          {/* Menu Popup do Usuário */}
+          {menuUsuarioAberto && (
+            <div className="absolute bottom-full left-0 right-0 mb-2 rounded-2xl border border-white/10 bg-[#161618] p-1.5 shadow-2xl backdrop-blur-md z-40 animate-in fade-in slide-in-from-bottom-2">
+              <Link
+                to="/perfil"
+                onClick={() => setMenuUsuarioAberto(false)}
+                className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-stone-200 hover:bg-white/[0.08] hover:text-white transition-colors"
+              >
+                <User className="h-4 w-4 text-orange-400" />
+                <span>Meu Perfil</span>
+              </Link>
+              <Link
+                to="/segundo-usuario"
+                onClick={() => setMenuUsuarioAberto(false)}
+                className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-stone-200 hover:bg-white/[0.08] hover:text-white transition-colors"
+              >
+                <Users className="h-4 w-4 text-purple-400" />
+                <span>Compartilhamento</span>
+              </Link>
+              <Link
+                to="/importar-dados"
+                onClick={() => setMenuUsuarioAberto(false)}
+                className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-stone-200 hover:bg-white/[0.08] hover:text-white transition-colors"
+              >
+                <Upload className="h-4 w-4 text-emerald-400" />
+                <span>Importar Dados</span>
+              </Link>
+              <Link
+                to="/perfil"
+                search={{ acao: "alterar-senha" }}
+                onClick={() => setMenuUsuarioAberto(false)}
+                className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-stone-200 hover:bg-white/[0.08] hover:text-white transition-colors"
+              >
+                <KeyRound className="h-4 w-4 text-amber-400" />
+                <span>Alterar Senha</span>
+              </Link>
+              <div className="my-1 border-t border-white/[0.06]" />
+              <button
+                type="button"
+                onClick={async () => {
+                  setMenuUsuarioAberto(false);
+                  await signOut();
+                  navigate({ to: "/login" });
+                }}
+                className="w-full flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
+              >
+                <LogOut className="h-4 w-4" />
+                <span>Sair da Conta</span>
+              </button>
             </div>
-            <div className="min-w-0 text-left">
-              <p className="text-xs font-medium text-stone-200 truncate max-w-[130px]">
-                {nomeUsuario}
-              </p>
-              <p className="text-[10px] text-stone-500 truncate max-w-[130px]">
-                {user?.email}
-              </p>
-            </div>
-          </Link>
-          <button
-            type="button"
-            onClick={async () => {
-              await signOut();
-              navigate({ to: "/login" });
-            }}
-            title="Sair da conta"
-            className="grid h-8 w-8 place-items-center rounded-lg text-stone-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
-          >
-            <LogOut className="h-4 w-4" />
-          </button>
+          )}
+
+          <div className="flex items-center justify-between px-1">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setMenuUsuarioAberto((prev) => !prev);
+              }}
+              className="flex items-center gap-2.5 min-w-0 flex-1 text-left hover:opacity-90 transition-opacity group cursor-pointer"
+              title="Opções do usuário"
+            >
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-orange-500/50 bg-[#1c120c] text-xs font-bold text-orange-400">
+                {inicial}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-medium text-stone-200 truncate max-w-[105px]">
+                  {nomeUsuario}
+                </p>
+                <p className="text-[10px] text-stone-500 truncate max-w-[105px]">
+                  {user?.email}
+                </p>
+              </div>
+              <ChevronUp
+                className={cn(
+                  "h-3.5 w-3.5 text-stone-400 transition-transform duration-200 shrink-0 mr-1",
+                  menuUsuarioAberto ? "rotate-180" : ""
+                )}
+              />
+            </button>
+            <button
+              type="button"
+              onClick={async () => {
+                await signOut();
+                navigate({ to: "/login" });
+              }}
+              title="Sair da conta"
+              className="grid h-8 w-8 place-items-center rounded-lg text-stone-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors shrink-0"
+            >
+              <LogOut className="h-4 w-4" />
+            </button>
+          </div>
         </div>
       </aside>
 
@@ -407,37 +487,113 @@ export function AppShell({
             </div>
             <VeraAjudaCard onNavigate={() => setAberto(false)} />
 
-            {/* Card do Usuário Logado & Logout Mobile */}
-            <div className="mt-3 pt-3 border-t border-white/[0.06] flex items-center justify-between px-1">
-              <Link
-                to="/perfil"
-                onClick={() => setAberto(false)}
-                className="flex items-center gap-2.5 min-w-0 hover:opacity-80 transition-opacity"
-              >
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-orange-500/50 bg-[#1c120c] text-xs font-bold text-orange-400">
-                  {inicial}
+            {/* Seção do Usuário Mobile */}
+            <div className="user-menu-container relative mt-3 pt-3 border-t border-white/[0.06]">
+              {menuUsuarioMobileAberto && (
+                <div className="absolute bottom-full left-0 right-0 mb-2 rounded-2xl border border-white/10 bg-[#161618] p-1.5 shadow-2xl backdrop-blur-md z-40 animate-in fade-in slide-in-from-bottom-2">
+                  <Link
+                    to="/perfil"
+                    onClick={() => {
+                      setMenuUsuarioMobileAberto(false);
+                      setAberto(false);
+                    }}
+                    className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-stone-200 hover:bg-white/[0.08] hover:text-white transition-colors"
+                  >
+                    <User className="h-4 w-4 text-orange-400" />
+                    <span>Meu Perfil</span>
+                  </Link>
+                  <Link
+                    to="/segundo-usuario"
+                    onClick={() => {
+                      setMenuUsuarioMobileAberto(false);
+                      setAberto(false);
+                    }}
+                    className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-stone-200 hover:bg-white/[0.08] hover:text-white transition-colors"
+                  >
+                    <Users className="h-4 w-4 text-purple-400" />
+                    <span>Compartilhamento</span>
+                  </Link>
+                  <Link
+                    to="/importar-dados"
+                    onClick={() => {
+                      setMenuUsuarioMobileAberto(false);
+                      setAberto(false);
+                    }}
+                    className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-stone-200 hover:bg-white/[0.08] hover:text-white transition-colors"
+                  >
+                    <Upload className="h-4 w-4 text-emerald-400" />
+                    <span>Importar Dados</span>
+                  </Link>
+                  <Link
+                    to="/perfil"
+                    search={{ acao: "alterar-senha" }}
+                    onClick={() => {
+                      setMenuUsuarioMobileAberto(false);
+                      setAberto(false);
+                    }}
+                    className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-stone-200 hover:bg-white/[0.08] hover:text-white transition-colors"
+                  >
+                    <KeyRound className="h-4 w-4 text-amber-400" />
+                    <span>Alterar Senha</span>
+                  </Link>
+                  <div className="my-1 border-t border-white/[0.06]" />
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      setMenuUsuarioMobileAberto(false);
+                      setAberto(false);
+                      await signOut();
+                      navigate({ to: "/login" });
+                    }}
+                    className="w-full flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    <span>Sair da Conta</span>
+                  </button>
                 </div>
-                <div className="min-w-0 text-left">
-                  <p className="text-xs font-medium text-stone-200 truncate max-w-[130px]">
-                    {nomeUsuario}
-                  </p>
-                  <p className="text-[10px] text-stone-500 truncate max-w-[130px]">
-                    {user?.email}
-                  </p>
-                </div>
-              </Link>
-              <button
-                type="button"
-                onClick={async () => {
-                  setAberto(false);
-                  await signOut();
-                  navigate({ to: "/login" });
-                }}
-                title="Sair da conta"
-                className="grid h-8 w-8 place-items-center rounded-lg text-stone-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
-              >
-                <LogOut className="h-4 w-4" />
-              </button>
+              )}
+
+              <div className="flex items-center justify-between px-1">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setMenuUsuarioMobileAberto((prev) => !prev);
+                  }}
+                  className="flex items-center gap-2.5 min-w-0 flex-1 text-left hover:opacity-90 transition-opacity group cursor-pointer"
+                  title="Opções do usuário"
+                >
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-orange-500/50 bg-[#1c120c] text-xs font-bold text-orange-400">
+                    {inicial}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-medium text-stone-200 truncate max-w-[105px]">
+                      {nomeUsuario}
+                    </p>
+                    <p className="text-[10px] text-stone-500 truncate max-w-[105px]">
+                      {user?.email}
+                    </p>
+                  </div>
+                  <ChevronUp
+                    className={cn(
+                      "h-3.5 w-3.5 text-stone-400 transition-transform duration-200 shrink-0 mr-1",
+                      menuUsuarioMobileAberto ? "rotate-180" : ""
+                    )}
+                  />
+                </button>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    setAberto(false);
+                    await signOut();
+                    navigate({ to: "/login" });
+                  }}
+                  title="Sair da conta"
+                  className="grid h-8 w-8 place-items-center rounded-lg text-stone-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors shrink-0"
+                >
+                  <LogOut className="h-4 w-4" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
