@@ -36,7 +36,11 @@ export async function perguntarParaVera(
 ): Promise<{ texto: string }> {
   const apiKey =
     (typeof import.meta !== "undefined" &&
-      import.meta.env?.["VITE_GROQ_API_KEY"]) ||
+      (import.meta.env?.["VITE_GROQ_API_KEY"] ||
+        import.meta.env?.["GROQ_API_KEY"])) ||
+    (typeof process !== "undefined" &&
+      (process.env?.["VITE_GROQ_API_KEY"] ||
+        process.env?.["GROQ_API_KEY"])) ||
     (typeof window !== "undefined" && localStorage.getItem("groq_api_key")) ||
     "";
 
