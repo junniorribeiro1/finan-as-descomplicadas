@@ -65,8 +65,8 @@ const passosIniciais: PassoItem[] = [
   {
     id: "passo-6",
     numero: "06",
-    titulo: "Convide um segundo usuário",
-    descricao: "Opcional. Compartilhe com quem organiza junto.",
+    titulo: "Compartilhamento",
+    descricao: "Opcional. Compartilhe o acesso com quem organiza junto.",
     link: "/segundo-usuario",
   },
   {

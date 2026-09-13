@@ -19,7 +19,7 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/segundo-usuario")({
   head: () => ({
     meta: [
-      { title: "Segundo Usuário — OrganizAI" },
+      { title: "Compartilhamento — OrganizAI" },
       {
         name: "description",
         content: "Compartilhe suas finanças com quem organiza junto. Gestão financeira compartilhada.",
@@ -99,7 +99,7 @@ function SegundoUsuario() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
-              Segundo Usuário
+              Compartilhamento
             </h1>
             <p className="mt-1 text-xs text-neutral-400 sm:text-sm">
               Compartilhe suas finanças com quem organiza junto.
@@ -134,7 +134,7 @@ function SegundoUsuario() {
                 className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 px-5 py-2.5 text-xs font-semibold text-white shadow-[0_4px_20px_rgba(249,115,22,0.35)] transition-all hover:from-orange-600 hover:to-amber-600 hover:shadow-[0_6px_25px_rgba(249,115,22,0.5)] active:scale-[0.98] sm:text-sm"
               >
                 <UserPlus className="h-4 w-4 transition-transform group-hover:scale-110" />
-                <span>Convidar segundo usuário</span>
+                <span>Convidar para compartilhar</span>
               </button>
             </div>
           </div>
@@ -143,7 +143,7 @@ function SegundoUsuario() {
           <div className="pointer-events-none absolute bottom-0 right-0 top-0 hidden h-full w-[45%] select-none sm:block">
             <img
               src="/icons/kpi/segundo-usuario-banner-art.png"
-              alt="Ilustração de Segundo Usuário"
+              alt="Ilustração de Compartilhamento"
               className="h-full w-full object-cover object-right"
             />
           </div>
@@ -258,7 +258,7 @@ function SegundoUsuario() {
                 </div>
                 <div>
                   <h3 className="text-base font-bold text-white">
-                    Convidar Segundo Usuário
+                    Convidar para Compartilhar
                   </h3>
                   <p className="text-xs text-neutral-400">
                     Acesso compartilhado às finanças
@@ -289,12 +289,12 @@ function SegundoUsuario() {
 
               <div>
                 <label className="block text-xs font-semibold text-neutral-300">
-                  E-mail do segundo usuário <span className="text-orange-400">*</span>
+                  E-mail do convidado <span className="text-orange-400">*</span>
                 </label>
                 <input
                   type="email"
                   required
-                  placeholder="segundo.usuario@email.com"
+                  placeholder="convidado@email.com"
                   value={emailConvite}
                   onChange={(e) => setEmailConvite(e.target.value)}
                   className="mt-1.5 w-full rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-2.5 text-sm text-white placeholder:text-neutral-500 focus:border-orange-500/50 focus:outline-none focus:ring-1 focus:ring-orange-500/50"

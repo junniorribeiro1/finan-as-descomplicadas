@@ -51,7 +51,7 @@ const faqList: FaqItem[] = [
     id: "faq-3",
     pergunta: "Posso compartilhar minha conta?",
     resposta:
-      "Sim! Na seção Segundo Usuário você pode convidar cônjuge, parceiro ou sócio por e-mail para acompanhar ou lançar transações juntos.",
+      "Sim! Na seção Compartilhamento você pode convidar cônjuge, parceiro ou sócio por e-mail para acompanhar ou lançar transações juntos.",
   },
   {
     id: "faq-4",

@@ -47,7 +47,7 @@ export const passosIniciais: PassoItem[] = [
   {
     id: "passo-4",
     numero: 4,
-    titulo: "Recebimentos",
+    titulo: "Entradas",
     descricao: "Anote seus salários, pró-labore e rendas extras",
     link: "/recebimentos",
   },

@@ -30,17 +30,17 @@ import { PassoAPassoWidget } from "@/components/app/PassoAPassoWidget";
 
 export const menuItens = [
   { rotulo: "Dashboard", to: "/app", icone: LayoutGrid },
-  { rotulo: "Gastos fixos", to: "/gastos-fixos", icone: Receipt },
-  { rotulo: "Gastos variáveis", to: "/gastos-variaveis", icone: ShoppingBag },
-  { rotulo: "Cartões de crédito", to: "/cartao-de-credito", icone: CreditCard },
-  { rotulo: "Recebimentos", to: "/recebimentos", icone: CircleArrowDown },
+  { rotulo: "Gastos Fixos", to: "/gastos-fixos", icone: Receipt },
+  { rotulo: "Gastos Variáveis", to: "/gastos-variaveis", icone: ShoppingBag },
+  { rotulo: "Cartões de Crédito", to: "/cartao-de-credito", icone: CreditCard },
+  { rotulo: "Entradas", to: "/recebimentos", icone: CircleArrowDown },
   { rotulo: "Cofrinhos", to: "/cofrinhos", icone: PiggyBank },
-  { rotulo: "Bancos", to: "/bancos", icone: Landmark },
   { rotulo: "Investimentos", to: "/investimentos", icone: TrendingUp },
+  { rotulo: "Bancos", to: "/bancos", icone: Landmark },
   { rotulo: "Categorias", to: "/categorias", icone: Tag },
-  { rotulo: "Segundo Usuário", to: "/segundo-usuario", icone: Users },
+  { rotulo: "Compartilhamento", to: "/segundo-usuario", icone: Users },
+  { rotulo: "Importar Dados", to: "/importar-dados", icone: Upload },
   { rotulo: "Ajuda", to: "/ajuda", icone: CircleHelp },
-  { rotulo: "Importar dados", to: "/importar-dados", icone: Upload },
 ] as const;
 
 function Marca() {

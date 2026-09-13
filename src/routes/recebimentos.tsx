@@ -8,8 +8,8 @@ import { ChevronDown, Plus, Calendar, Trash2 } from "lucide-react";
 export const Route = createFileRoute("/recebimentos")({
   head: () => ({
     meta: [
-      { title: "Recebimentos — OrganizAI" },
-      { name: "description", content: "Entradas · Pessoal." },
+      { title: "Entradas — OrganizAI" },
+      { name: "description", content: "Entradas e recebimentos · Pessoal." },
     ],
   }),
   component: Recebimentos,
@@ -99,10 +99,10 @@ function Recebimentos() {
         </div>
         <div>
           <h1 className="font-display text-2xl font-bold tracking-tight text-white leading-tight">
-            Recebimentos
+            Entradas
           </h1>
           <p className="text-xs text-stone-400 mt-0.5">
-            Entradas · Pessoal.
+            Recebimentos · Pessoal.
           </p>
         </div>
       </div>
