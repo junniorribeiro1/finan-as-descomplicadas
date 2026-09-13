@@ -231,11 +231,11 @@ export default function ImersaoPage() {
           Informações posicionadas mais abaixo, proporções refinadas
           e fundo limpo com o degradê natural
       ═══════════════════════════════════════════════ */}
-      <section className="relative z-20 mx-auto w-full max-w-5xl px-5 pt-20 sm:pt-28 md:pt-36 pb-20 md:pb-28">
-        <div className="flex flex-col items-start text-left gap-5">
-          {/* TAGS DE EVENTO NO TOPO */}
+      <section className="relative z-20 mx-auto w-full max-w-5xl px-5 pt-32 sm:pt-48 md:pt-60 lg:pt-72 pb-16 md:pb-24">
+        <div className="flex flex-col items-start text-left gap-4">
+          {/* TAGS DE EVENTO NO TOPO (CLEAN E COMPACTAS) */}
           <div className="flex flex-wrap items-center gap-2">
-            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-950/50 px-3.5 py-1 text-[0.72rem] sm:text-xs font-semibold text-emerald-300 backdrop-blur-md">
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-950/50 px-3 py-1 text-[0.68rem] sm:text-xs font-semibold text-emerald-300 backdrop-blur-md">
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" />
@@ -247,42 +247,37 @@ export default function ImersaoPage() {
               <span>Ao vivo no Zoom</span>
             </div>
 
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/40 bg-amber-500/10 px-3 py-1 text-[0.72rem] sm:text-xs font-bold uppercase tracking-wider text-amber-300">
-              <Sparkles className="h-3 w-3" />
-              <span>1ª Edição</span>
-            </div>
-
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/40 bg-emerald-500/20 px-3 py-1 text-[0.72rem] sm:text-xs font-bold uppercase tracking-wider text-emerald-300 backdrop-blur-md shadow-[0_0_12px_rgba(16,185,129,0.2)]">
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/40 bg-emerald-500/15 px-3 py-1 text-[0.68rem] sm:text-xs font-semibold text-emerald-300 backdrop-blur-md shadow-[0_0_12px_rgba(16,185,129,0.15)]">
               <BadgeCheck className="h-3 w-3 text-emerald-400" />
               <span>Com Certificação</span>
             </div>
           </div>
 
-          {/* TÍTULO PRINCIPAL (TAMANHO EQUILIBRADO E ELEGANTE) */}
-          <div className="mt-1 w-full">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.6rem] font-black tracking-tight leading-[1.08] text-white">
+          {/* TÍTULO PRINCIPAL (TAMANHO EQUILIBRADO, MAIS COMPACTO E ELEGANTE) */}
+          <div className="w-full">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.65rem] font-black tracking-tight leading-[1.1] text-white">
               EDUCAÇÃO
-              <span className="block bg-gradient-to-r from-[#ffe494] via-[#f59e0b] to-[#d97706] bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(245,158,11,0.35)] mt-1">
+              <span className="block bg-gradient-to-r from-[#ffe494] via-[#f59e0b] to-[#d97706] bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(245,158,11,0.3)] mt-0.5">
                 FINANCEIRA
               </span>
-              <span className="block text-sm sm:text-base md:text-lg lg:text-xl font-bold tracking-[0.18em] text-stone-300 uppercase mt-2.5">
+              <span className="block text-xs sm:text-sm md:text-base font-bold tracking-[0.14em] text-stone-300 uppercase mt-2">
                 PARA PESSOAS FÍSICA E JURÍDICA
               </span>
             </h1>
           </div>
 
-          {/* SUBTÍTULO REFINADO */}
-          <p className="text-sm sm:text-base md:text-[1.05rem] font-normal leading-relaxed text-stone-300/90 max-w-xl">
+          {/* SUBTÍTULO CONCISO E ENXUTO */}
+          <p className="text-xs sm:text-sm md:text-[0.95rem] font-normal leading-relaxed text-stone-300/80 max-w-lg">
             Aprenda a organizar seu dinheiro,{" "}
-            <strong className="font-bold text-white underline decoration-amber-400 decoration-2 underline-offset-4">
+            <strong className="font-semibold text-white underline decoration-amber-400 decoration-2 underline-offset-4">
               sair do vermelho
             </strong>{" "}
             e construir uma vida financeira leve e consciente.
           </p>
 
-          {/* SELETOR DOS 3 LOTES NO HERO (VALORES: 27,00 | 57,00 | 97,00) */}
-          <div className="mt-1 flex flex-col gap-2 w-full max-w-md">
-            <span className="text-[0.7rem] font-bold uppercase tracking-wider text-stone-400">
+          {/* SELETOR DOS 3 LOTES NO HERO (COMPACTO: 27,00 | 57,00 | 97,00) */}
+          <div className="mt-0.5 flex flex-col gap-1.5 w-full max-w-sm sm:max-w-md">
+            <span className="text-[0.65rem] sm:text-[0.68rem] font-bold uppercase tracking-wider text-stone-400">
               Selecione seu lote de entrada:
             </span>
             <div className="grid grid-cols-3 gap-2">
@@ -290,21 +285,21 @@ export default function ImersaoPage() {
               <button
                 type="button"
                 onClick={() => setSelectedLot(1)}
-                className={`relative flex flex-col items-center justify-center p-2.5 rounded-xl border transition-all text-center ${
+                className={`relative flex flex-col items-center justify-center p-2 rounded-xl border transition-all text-center ${
                   selectedLot === 1
-                    ? "border-amber-400 bg-amber-500/15 shadow-[0_0_16px_rgba(245,158,11,0.25)] ring-2 ring-amber-400/60"
+                    ? "border-amber-400 bg-amber-500/15 shadow-[0_0_16px_rgba(245,158,11,0.2)] ring-2 ring-amber-400/60"
                     : "border-white/10 bg-white/[0.02] hover:bg-white/[0.05]"
                 }`}
               >
-                <div className="absolute top-0 right-0 w-6 h-6 bg-amber-400/10 rounded-full blur-sm pointer-events-none" />
-                <span className="font-mono text-[0.65rem] sm:text-[0.7rem] font-bold text-amber-400 uppercase tracking-widest mb-0.5">
+                <div className="absolute top-0 right-0 w-5 h-5 bg-amber-400/10 rounded-full blur-sm pointer-events-none" />
+                <span className="font-mono text-[0.6rem] sm:text-[0.65rem] font-bold text-amber-400 uppercase tracking-widest mb-0.5">
                   LOTE 1
                 </span>
-                <span className="text-sm sm:text-base font-black text-white tracking-tight leading-tight">
+                <span className="text-xs sm:text-sm font-black text-white tracking-tight leading-tight">
                   R$ 27,00
                 </span>
-                <span className="inline-flex items-center gap-1 text-[0.62rem] font-extrabold text-emerald-400 mt-0.5">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="inline-flex items-center gap-1 text-[0.58rem] font-extrabold text-emerald-400 mt-0.5">
+                  <span className="h-1 w-1 rounded-full bg-emerald-400 animate-pulse" />
                   Ativo
                 </span>
               </button>
@@ -313,19 +308,19 @@ export default function ImersaoPage() {
               <button
                 type="button"
                 onClick={() => setSelectedLot(2)}
-                className={`relative flex flex-col items-center justify-center p-2.5 rounded-xl border transition-all text-center opacity-75 ${
+                className={`relative flex flex-col items-center justify-center p-2 rounded-xl border transition-all text-center opacity-75 ${
                   selectedLot === 2
                     ? "border-amber-400 bg-amber-500/15 ring-2 ring-amber-400/60 opacity-100"
                     : "border-white/10 bg-white/[0.02]"
                 }`}
               >
-                <span className="font-mono text-[0.65rem] sm:text-[0.7rem] font-medium text-stone-400 uppercase tracking-widest mb-0.5">
+                <span className="font-mono text-[0.6rem] sm:text-[0.65rem] font-medium text-stone-400 uppercase tracking-widest mb-0.5">
                   LOTE 2
                 </span>
-                <span className="text-sm sm:text-base font-bold text-stone-300 tracking-tight leading-tight">
+                <span className="text-xs sm:text-sm font-bold text-stone-300 tracking-tight leading-tight">
                   R$ 57,00
                 </span>
-                <span className="text-[0.62rem] text-stone-500 mt-0.5">
+                <span className="text-[0.58rem] text-stone-500 mt-0.5">
                   Em breve
                 </span>
               </button>
@@ -334,30 +329,30 @@ export default function ImersaoPage() {
               <button
                 type="button"
                 onClick={() => setSelectedLot(3)}
-                className={`relative flex flex-col items-center justify-center p-2.5 rounded-xl border transition-all text-center opacity-65 ${
+                className={`relative flex flex-col items-center justify-center p-2 rounded-xl border transition-all text-center opacity-65 ${
                   selectedLot === 3
                     ? "border-amber-400 bg-amber-500/15 ring-2 ring-amber-400/60 opacity-100"
                     : "border-white/10 bg-white/[0.02]"
                 }`}
               >
-                <span className="font-mono text-[0.65rem] sm:text-[0.7rem] font-medium text-stone-400 uppercase tracking-widest mb-0.5">
+                <span className="font-mono text-[0.6rem] sm:text-[0.65rem] font-medium text-stone-400 uppercase tracking-widest mb-0.5">
                   LOTE 3
                 </span>
-                <span className="text-sm sm:text-base font-bold text-stone-300 tracking-tight leading-tight">
+                <span className="text-xs sm:text-sm font-bold text-stone-300 tracking-tight leading-tight">
                   R$ 97,00
                 </span>
-                <span className="text-[0.62rem] text-stone-500 mt-0.5">Final</span>
+                <span className="text-[0.58rem] text-stone-500 mt-0.5">Final</span>
               </button>
             </div>
           </div>
 
           {/* BOTÕES DE AÇÃO HERO */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2 w-full max-w-md">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 pt-1 w-full max-w-sm sm:max-w-md">
             <a
               href={defaultWppUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-orange-400 px-7 py-3.5 text-xs sm:text-sm font-black uppercase tracking-wider text-stone-950 shadow-[0_4px_28px_rgba(245,158,11,0.35)] transition-all duration-300 hover:scale-105 active:scale-95"
+              className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-orange-400 px-6 py-3 text-xs sm:text-sm font-extrabold text-stone-950 shadow-[0_4px_24px_rgba(245,158,11,0.3)] transition-all duration-300 hover:scale-105 active:scale-95"
             >
               <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
               <span>Garantir meu ingresso</span>
@@ -366,7 +361,7 @@ export default function ImersaoPage() {
 
             <a
               href="#modulos"
-              className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-stone-300 backdrop-blur-md transition-colors hover:bg-white/10 hover:text-white"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-5 py-3 text-xs sm:text-sm font-semibold text-stone-300 backdrop-blur-md transition-colors hover:bg-white/10 hover:text-white"
             >
               <span>Saiba mais</span>
               <ChevronDown className="h-4 w-4 text-stone-400" />
@@ -374,18 +369,17 @@ export default function ImersaoPage() {
           </div>
 
           {/* BARRA DE PROGRESSO DE VAGAS */}
-          <div className="flex flex-col gap-1.5 w-full max-w-md pt-1">
-            <div className="h-2 w-full overflow-hidden rounded-full bg-white/10 border border-white/5">
+          <div className="flex flex-col gap-1 w-full max-w-sm sm:max-w-md pt-0.5">
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10 border border-white/5">
               <div
                 className="h-full rounded-full bg-gradient-to-r from-amber-500 to-emerald-400 shadow-[0_0_10px_#f59e0b] transition-all duration-1000"
                 style={{ width: "94%" }}
               />
             </div>
-            <div className="flex items-center justify-between text-[0.72rem] text-stone-400">
+            <div className="flex items-center justify-between text-[0.68rem] text-stone-400">
               <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
-                94% dos ingressos vendidos a{" "}
-                <strong className="text-white font-bold">R$ 27,00</strong>
+                94% das vagas preenchidas no 1º Lote
               </span>
               <span className="font-mono text-stone-500">Últimas vagas</span>
             </div>
