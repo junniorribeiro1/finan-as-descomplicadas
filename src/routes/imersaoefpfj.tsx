@@ -164,6 +164,24 @@ export default function ImersaoPage() {
         .delay-100 { transition-delay: 0.1s; }
         .delay-200 { transition-delay: 0.2s; }
         .delay-300 { transition-delay: 0.3s; }
+
+        @keyframes ticker-marquee {
+          0% {
+            transform: translate3d(0, 0, 0);
+          }
+          100% {
+            transform: translate3d(-50%, 0, 0);
+          }
+        }
+        .ticker-track {
+          display: flex;
+          width: max-content;
+          animation: ticker-marquee 32s linear infinite;
+          will-change: transform;
+        }
+        .ticker-track:hover {
+          animation-play-state: paused;
+        }
       `}</style>
 
       {/* ── BARRA DE PROGRESSO DE SCROLL NO TOPO ── */}
@@ -178,28 +196,87 @@ export default function ImersaoPage() {
       <div className="pointer-events-none fixed top-[35%] -left-40 h-[500px] w-[500px] rounded-full bg-amber-500/5 blur-[120px]" />
       <div className="pointer-events-none fixed top-[60%] -right-40 h-[500px] w-[500px] rounded-full bg-emerald-500/5 blur-[120px]" />
 
-      {/* ── 0. ANNOUNCEMENT TICKER MARQUEE ── */}
-      <div className="relative z-40 w-full overflow-hidden bg-gradient-to-r from-amber-500 via-amber-400 to-orange-500 py-2 text-stone-950 shadow-md">
-        <div className="flex w-max animate-marquee items-center gap-8 text-[0.72rem] md:text-xs font-black tracking-widest uppercase">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="flex items-center gap-6 whitespace-nowrap">
-              <span className="flex items-center gap-1.5">
-                <Flame className="h-3.5 w-3.5 fill-stone-950 text-stone-950" />
-                1ª EDIÇÃO DA IMERSÃO EDUCAÇÃO FINANCEIRA PF E PJ
-              </span>
-              <span>•</span>
-              <span className="font-extrabold text-stone-900">
-                25 DE OUTUBRO • 100% AO VIVO NO ZOOM
-              </span>
-              <span>•</span>
-              <span className="rounded bg-stone-950 px-2 py-0.5 text-[0.65rem] font-bold text-amber-300">
-                LOTE 1 ATIVO: R$ 27,00
-              </span>
-              <span>•</span>
-              <span>VAGAS LIMITADAS COM CERTIFICAÇÃO OFICIAL</span>
-              <span>•</span>
-            </div>
-          ))}
+      {/* ── 0. ANNOUNCEMENT TICKER MARQUEE (LOOP INFINITO: DIREITA -> ESQUERDA) ── */}
+      <div className="relative z-40 w-full overflow-hidden bg-gradient-to-r from-amber-500 via-amber-400 to-orange-500 py-2.5 text-stone-950 shadow-md">
+        <div className="ticker-track">
+          {/* TRACK 1 */}
+          <div className="flex shrink-0 items-center gap-6 whitespace-nowrap text-[0.72rem] md:text-xs font-black tracking-widest uppercase pr-6">
+            <span className="flex items-center gap-1.5">
+              <Flame className="h-3.5 w-3.5 fill-stone-950 text-stone-950" />
+              1ª EDIÇÃO DA IMERSÃO EDUCAÇÃO FINANCEIRA PF E PJ
+            </span>
+            <span>•</span>
+            <span className="font-extrabold text-stone-900">
+              25 DE OUTUBRO • 100% AO VIVO NO ZOOM
+            </span>
+            <span>•</span>
+            <span className="rounded bg-stone-950 px-2 py-0.5 text-[0.65rem] font-bold text-amber-300">
+              LOTE 1 ATIVO: R$ 27,00
+            </span>
+            <span>•</span>
+            <span>VAGAS LIMITADAS COM CERTIFICAÇÃO OFICIAL</span>
+            <span>•</span>
+            <span>DOMINE SEU FLUXO DE CAIXA E SAIA DO VERMELHO</span>
+            <span>•</span>
+            <span className="flex items-center gap-1.5">
+              <Flame className="h-3.5 w-3.5 fill-stone-950 text-stone-950" />
+              1ª EDIÇÃO DA IMERSÃO EDUCAÇÃO FINANCEIRA PF E PJ
+            </span>
+            <span>•</span>
+            <span className="font-extrabold text-stone-900">
+              25 DE OUTUBRO • 100% AO VIVO NO ZOOM
+            </span>
+            <span>•</span>
+            <span className="rounded bg-stone-950 px-2 py-0.5 text-[0.65rem] font-bold text-amber-300">
+              LOTE 1 ATIVO: R$ 27,00
+            </span>
+            <span>•</span>
+            <span>VAGAS LIMITADAS COM CERTIFICAÇÃO OFICIAL</span>
+            <span>•</span>
+            <span>DOMINE SEU FLUXO DE CAIXA E SAIA DO VERMELHO</span>
+            <span>•</span>
+          </div>
+
+          {/* TRACK 2 (RÉPLICA IDÊNTICA PARA GARANTIR LOOP 100% PERFEITO SEM CORTE) */}
+          <div
+            className="flex shrink-0 items-center gap-6 whitespace-nowrap text-[0.72rem] md:text-xs font-black tracking-widest uppercase pr-6"
+            aria-hidden="true"
+          >
+            <span className="flex items-center gap-1.5">
+              <Flame className="h-3.5 w-3.5 fill-stone-950 text-stone-950" />
+              1ª EDIÇÃO DA IMERSÃO EDUCAÇÃO FINANCEIRA PF E PJ
+            </span>
+            <span>•</span>
+            <span className="font-extrabold text-stone-900">
+              25 DE OUTUBRO • 100% AO VIVO NO ZOOM
+            </span>
+            <span>•</span>
+            <span className="rounded bg-stone-950 px-2 py-0.5 text-[0.65rem] font-bold text-amber-300">
+              LOTE 1 ATIVO: R$ 27,00
+            </span>
+            <span>•</span>
+            <span>VAGAS LIMITADAS COM CERTIFICAÇÃO OFICIAL</span>
+            <span>•</span>
+            <span>DOMINE SEU FLUXO DE CAIXA E SAIA DO VERMELHO</span>
+            <span>•</span>
+            <span className="flex items-center gap-1.5">
+              <Flame className="h-3.5 w-3.5 fill-stone-950 text-stone-950" />
+              1ª EDIÇÃO DA IMERSÃO EDUCAÇÃO FINANCEIRA PF E PJ
+            </span>
+            <span>•</span>
+            <span className="font-extrabold text-stone-900">
+              25 DE OUTUBRO • 100% AO VIVO NO ZOOM
+            </span>
+            <span>•</span>
+            <span className="rounded bg-stone-950 px-2 py-0.5 text-[0.65rem] font-bold text-amber-300">
+              LOTE 1 ATIVO: R$ 27,00
+            </span>
+            <span>•</span>
+            <span>VAGAS LIMITADAS COM CERTIFICAÇÃO OFICIAL</span>
+            <span>•</span>
+            <span>DOMINE SEU FLUXO DE CAIXA E SAIA DO VERMELHO</span>
+            <span>•</span>
+          </div>
         </div>
       </div>
 
