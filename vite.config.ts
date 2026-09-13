@@ -12,4 +12,14 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  nitro: {
+    preset: process.env.VERCEL ? "vercel" : undefined,
+    // @ts-expect-error vercel configuration forwarded to Nitro
+    vercel: {
+      functions: {
+        runtime: "nodejs22.x",
+      },
+    },
+  },
 });
+
