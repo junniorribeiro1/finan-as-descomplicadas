@@ -176,19 +176,19 @@
   color: #0f172a !important;
 }
 
-/* Sidebar & Navbar no Modo Claro */
+/* 1. Sidebar & Top Header no Modo Claro */
 .organizai-theme-light aside {
   background-color: #ffffff !important;
   border-color: rgba(0, 0, 0, 0.08) !important;
 }
 
 .organizai-theme-light header {
-  background-color: rgba(255, 255, 255, 0.94) !important;
+  background-color: rgba(255, 255, 255, 0.95) !important;
   border-color: rgba(0, 0, 0, 0.08) !important;
 }
 
 .organizai-theme-light header select,
-.organizai-theme-light header .rounded-full.bg-\[\#181818\] {
+.organizai-theme-light header [class*="bg-[#181818]"] {
   background-color: #f1f5f9 !important;
   border-color: rgba(0, 0, 0, 0.08) !important;
   color: #0f172a !important;
@@ -199,29 +199,113 @@
   color: #0f172a !important;
 }
 
-/* Tipografia e Textos */
-.organizai-theme-light .font-display.text-white,
-.organizai-theme-light h1.text-white,
-.organizai-theme-light h2.text-white,
-.organizai-theme-light h3.text-white,
-.organizai-theme-light h4.text-white,
-.organizai-theme-light span.text-white,
-.organizai-theme-light p.text-white,
-.organizai-theme-light strong.text-white {
+/* 2. Todos os Cards, Painéis e Caixas de Conteúdo do App */
+.organizai-theme-light .panel,
+.organizai-theme-light section.panel,
+.organizai-theme-light [class*="bg-[#151515]"],
+.organizai-theme-light [class*="bg-[#161618]"],
+.organizai-theme-light [class*="bg-[#1e1e1e]"],
+.organizai-theme-light [class*="bg-[#1a1a1a]"],
+.organizai-theme-light [class*="bg-[#181818]"],
+.organizai-theme-light [class*="bg-[#1c1c1f]"],
+.organizai-theme-light [class*="bg-[#111113]"],
+.organizai-theme-light [class*="bg-[#121214]"],
+.organizai-theme-light [class*="bg-[#141414]"],
+.organizai-theme-light [class*="bg-[#141418]"],
+.organizai-theme-light [class*="bg-[#131212]"],
+.organizai-theme-light [class*="bg-[#131313]"],
+.organizai-theme-light [class*="bg-[#161917]"],
+.organizai-theme-light [class*="bg-[#19191c]"],
+.organizai-theme-light [class*="bg-[#19191d]"],
+.organizai-theme-light [class*="bg-[#1a1a1c]"],
+.organizai-theme-light [class*="bg-[#1c1c1e]"],
+.organizai-theme-light [class*="bg-[#1e1e20]"],
+.organizai-theme-light [class*="bg-[#1f1f23]"],
+.organizai-theme-light [class*="bg-[#232328]"] {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02) !important;
   color: #0f172a !important;
 }
 
-.organizai-theme-light .text-stone-200,
-.organizai-theme-light .text-stone-300 {
-  color: #334155 !important;
+/* Evita que hover em KPI cards volte a ficar escuro */
+.organizai-theme-light [class*="hover:to-[#131212]"]:hover,
+.organizai-theme-light [class*="hover:from-[#241a14]"]:hover,
+.organizai-theme-light [class*="hover:from-[#13241b]"]:hover,
+.organizai-theme-light [class*="hover:from-[#122323]"]:hover,
+.organizai-theme-light [class*="hover:from-[#261913]"]:hover,
+.organizai-theme-light [class*="hover:from-[#261c12]"]:hover {
+  background-color: #ffffff !important;
+  background-image: none !important;
 }
 
+/* 3. Textos, Títulos e Informações Gerais no Modo Claro */
+.organizai-theme-light h1,
+.organizai-theme-light h2,
+.organizai-theme-light h3,
+.organizai-theme-light h4,
+.organizai-theme-light h5,
+.organizai-theme-light h6,
+.organizai-theme-light .font-display {
+  color: #0f172a !important;
+}
+
+/* Transforma classes text-white em texto legível escuro */
+.organizai-theme-light .text-white,
+.organizai-theme-light [class*="text-white"] {
+  color: #0f172a !important;
+}
+
+/* Mas mantém texto branco onde REALMENTE precisa ser branco: botões coloridos, gradientes, badges */
+.organizai-theme-light [class*="bg-[#F97316]"],
+.organizai-theme-light [class*="bg-[#F97316]"] *,
+.organizai-theme-light [class*="bg-[#ea580c]"] *,
+.organizai-theme-light [class*="bg-gradient-"] *,
+.organizai-theme-light [class*="bg-emerald-600"] *,
+.organizai-theme-light [class*="bg-emerald-500"] *,
+.organizai-theme-light [class*="bg-purple-600"] *,
+.organizai-theme-light [class*="bg-purple-700"] *,
+.organizai-theme-light [class*="bg-orange-500"] *,
+.organizai-theme-light [class*="bg-rose-500"] *,
+.organizai-theme-light button[type="submit"],
+.organizai-theme-light button[type="submit"] * {
+  color: #ffffff !important;
+}
+
+/* Textos secundários, legendas e descrições */
 .organizai-theme-light .text-stone-400,
-.organizai-theme-light .text-stone-500 {
+.organizai-theme-light .text-stone-500,
+.organizai-theme-light .text-neutral-400,
+.organizai-theme-light .text-neutral-500,
+.organizai-theme-light [class*="text-stone-400"],
+.organizai-theme-light [class*="text-stone-500"],
+.organizai-theme-light [class*="text-neutral-400"] {
   color: #64748b !important;
 }
 
-/* Links de Navegação da Barra Lateral */
+.organizai-theme-light .text-stone-200,
+.organizai-theme-light .text-stone-300,
+.organizai-theme-light .text-neutral-200,
+.organizai-theme-light .text-neutral-300,
+.organizai-theme-light [class*="text-stone-200"],
+.organizai-theme-light [class*="text-stone-300"] {
+  color: #334155 !important;
+}
+
+/* 4. Bordas e Divisores */
+.organizai-theme-light [class*="border-white/"],
+.organizai-theme-light [class*="border-white"],
+.organizai-theme-light [class*="divide-white/"] > * {
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+.organizai-theme-light [class*="bg-white/0"],
+.organizai-theme-light [class*="bg-white/[0.0"],
+.organizai-theme-light [class*="bg-white/5"] {
+  background-color: #f1f5f9 !important;
+}
+
+/* 5. Links de Navegação da Barra Lateral */
 .organizai-theme-light nav a {
   color: #334155 !important;
 }
@@ -236,49 +320,37 @@
   color: #ea580c !important;
 }
 
-/* Painéis, Cards e Caixas */
-.organizai-theme-light .panel,
-.organizai-theme-light section.panel {
+/* 6. Gráficos do Dashboard */
+.organizai-theme-light [class*="bg-[#1a1a1a]/95"],
+.organizai-theme-light [class*="bg-[#1a1a1a]"] {
   background-color: #ffffff !important;
-  border-color: rgba(0, 0, 0, 0.08) !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1) !important;
 }
 
-.organizai-theme-light .bg-\[\#0d0d0d\],
-.organizai-theme-light .bg-\[\#09090b\],
-.organizai-theme-light .bg-\[\#121214\],
-.organizai-theme-light .bg-\[\#141214\],
-.organizai-theme-light .bg-\[\#141311\],
-.organizai-theme-light .bg-\[\#141414\],
-.organizai-theme-light .bg-\[\#141418\],
-.organizai-theme-light .bg-\[\#161618\],
-.organizai-theme-light .bg-\[\#181818\],
-.organizai-theme-light .bg-\[\#19191d\],
-.organizai-theme-light .bg-\[\#1a1a1c\],
-.organizai-theme-light .bg-\[\#1e1e20\],
-.organizai-theme-light .bg-\[\#1f1f23\],
-.organizai-theme-light .bg-\[\#232328\] {
-  background-color: #ffffff !important;
-  border-color: rgba(0, 0, 0, 0.08) !important;
+.organizai-theme-light [class*="bg-[#1a1a1a]"] span {
   color: #0f172a !important;
 }
 
-.organizai-theme-light .border-white\/\[0\.04\],
-.organizai-theme-light .border-white\/\[0\.06\],
-.organizai-theme-light .border-white\/\[0\.08\],
-.organizai-theme-light .border-white\/10,
-.organizai-theme-light .border-white\/\[0\.1\] {
-  border-color: rgba(0, 0, 0, 0.08) !important;
+.organizai-theme-light .bg-white\/40,
+.organizai-theme-light .bg-white\/20 {
+  background-color: rgba(0, 0, 0, 0.12) !important;
 }
 
-.organizai-theme-light .bg-white\/\[0\.02\],
-.organizai-theme-light .bg-white\/\[0\.04\],
-.organizai-theme-light .bg-white\/\[0\.06\],
-.organizai-theme-light .bg-white\/5 {
-  background-color: #f8fafc !important;
+/* 7. Formulários, Inputs e Tabelas */
+.organizai-theme-light input,
+.organizai-theme-light select,
+.organizai-theme-light textarea {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.14) !important;
+  color: #0f172a !important;
 }
 
-/* Tabelas */
+.organizai-theme-light input::placeholder,
+.organizai-theme-light textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
 .organizai-theme-light table th {
   background-color: #f8fafc !important;
   color: #64748b !important;
@@ -286,24 +358,10 @@
 }
 
 .organizai-theme-light table td {
-  border-color: rgba(0, 0, 0, 0.05) !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
   color: #1e293b !important;
 }
 
 .organizai-theme-light table tr:hover {
   background-color: #f8fafc !important;
-}
-
-/* Inputs e Formulários */
-.organizai-theme-light input,
-.organizai-theme-light select,
-.organizai-theme-light textarea {
-  background-color: #f8fafc !important;
-  border-color: rgba(0, 0, 0, 0.12) !important;
-  color: #0f172a !important;
-}
-
-.organizai-theme-light input::placeholder,
-.organizai-theme-light textarea::placeholder {
-  color: #94a3b8 !important;
 }
