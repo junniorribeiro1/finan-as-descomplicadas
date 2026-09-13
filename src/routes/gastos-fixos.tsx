@@ -8,7 +8,7 @@ import { ChevronDown, Plus, Tag } from "lucide-react";
 export const Route = createFileRoute("/gastos-fixos")({
   head: () => ({
     meta: [
-      { title: "Gastos fixos — OrganizaMais+" },
+      { title: "Gastos fixos — OrganizAI" },
       { name: "description", content: "Contas recorrentes - Pessoal." },
     ],
   }),

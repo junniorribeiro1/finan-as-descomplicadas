@@ -15,7 +15,7 @@ import {
 export const Route = createFileRoute("/bancos")({
   head: () => ({
     meta: [
-      { title: "Bancos — OrganizaMais+" },
+      { title: "Bancos — OrganizAI" },
       {
         name: "description",
         content: "Todos os seus saldos em um lugar só.",

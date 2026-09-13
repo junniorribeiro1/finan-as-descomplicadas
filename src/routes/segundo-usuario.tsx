@@ -19,7 +19,7 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/segundo-usuario")({
   head: () => ({
     meta: [
-      { title: "Segundo Usuário — OrganizaMais+" },
+      { title: "Segundo Usuário — OrganizAI" },
       {
         name: "description",
         content: "Compartilhe suas finanças com quem organiza junto. Gestão financeira compartilhada.",

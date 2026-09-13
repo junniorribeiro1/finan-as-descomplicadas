@@ -93,7 +93,7 @@ function Dashboard() {
         {/* Textos do Banner */}
         <div className="relative z-10 flex h-full flex-col justify-center p-6 sm:p-8">
           <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#F97316]">
-            ORGANIZAMAIS+
+            ORGANIZAI
           </span>
           <h2 className="mt-1 font-display text-2xl font-bold tracking-tight text-white sm:text-3xl">
             Bem-vindo(a) 👋

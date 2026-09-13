@@ -27,7 +27,7 @@ import {
 export const Route = createFileRoute("/categorias")({
   head: () => ({
     meta: [
-      { title: "Categorias — OrganizaMais+" },
+      { title: "Categorias — OrganizAI" },
       {
         name: "description",
         content: "Categorias do escopo Pessoal. Alterne no topo para o outro.",

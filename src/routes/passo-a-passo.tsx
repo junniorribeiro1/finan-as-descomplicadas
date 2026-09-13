@@ -7,10 +7,10 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/passo-a-passo")({
   head: () => ({
     meta: [
-      { title: "Passo a passo — OrganizaMais+" },
+      { title: "Passo a passo — OrganizAI" },
       {
         name: "description",
-        content: "Complete estas etapas para tirar o máximo do OrganizaMais+.",
+        content: "Complete estas etapas para tirar o máximo do OrganizAI.",
       },
     ],
   }),
@@ -143,7 +143,7 @@ function PassoAPasso() {
               Passo a passo
             </h1>
             <p className="mt-1 text-xs text-neutral-400 sm:text-sm">
-              Complete estas etapas para tirar o máximo do OrganizaMais+.
+              Complete estas etapas para tirar o máximo do OrganizAI.
             </p>
           </div>
         </div>

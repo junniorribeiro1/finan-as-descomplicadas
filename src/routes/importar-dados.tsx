@@ -17,7 +17,7 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/importar-dados")({
   head: () => ({
     meta: [
-      { title: "Importar dados — OrganizaMais+" },
+      { title: "Importar dados — OrganizAI" },
       {
         name: "description",
         content: "Traga sua planilha do Excel, Google Sheets ou extrato do banco.",
@@ -352,7 +352,7 @@ function ImportarDados() {
                 <h2 className="text-xl font-bold text-white">Confirmar Importação</h2>
                 <p className="mt-1 text-xs text-neutral-400 leading-relaxed">
                   Pronto para consolidar os lançamentos do arquivo{" "}
-                  <strong className="text-white">{nomeArquivo}</strong> no seu OrganizaMais+.
+                  <strong className="text-white">{nomeArquivo}</strong> no seu OrganizAI.
                 </p>
 
                 <div className="mt-6 grid grid-cols-2 gap-3 text-left">

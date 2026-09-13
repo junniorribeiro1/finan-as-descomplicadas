@@ -18,7 +18,7 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/ajuda")({
   head: () => ({
     meta: [
-      { title: "Central de Ajuda — OrganizaMais+" },
+      { title: "Central de Ajuda — OrganizAI" },
       {
         name: "description",
         content: "Encontre respostas rápidas e tutoriais para organizar sua vida financeira.",
@@ -333,7 +333,7 @@ function CentralAjuda() {
 
               <div className="rounded-xl border border-white/10 bg-white/[0.02] p-3.5">
                 <h4 className="text-xs font-semibold text-white">E-mail de Suporte</h4>
-                <p className="text-xs text-neutral-400 mt-1">suporte@organizais.com</p>
+                <p className="text-xs text-neutral-400 mt-1">suporte@organizai.com</p>
                 <p className="text-[11px] text-neutral-500 mt-0.5">Tempo médio de resposta: até 24h</p>
               </div>
             </div>

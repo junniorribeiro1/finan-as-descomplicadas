@@ -11,7 +11,7 @@ export interface MensagemChat {
 
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
-const SYSTEM_PROMPT = `Você é a Vera, gerente financeira inteligente com inteligência artificial do OrganizaMais+.
+const SYSTEM_PROMPT = `Você é a Vera, gerente financeira inteligente com inteligência artificial do OrganizAI.
 Sua personalidade e diretrizes:
 - Calorosa, empática, prática, elegante e encorajadora.
 - Especialista em finanças pessoais, fluxo de caixa, cartões de crédito, cortes inteligentes de gastos, cofrinhos, reserva de emergência e investimentos no Brasil.
@@ -47,7 +47,7 @@ export async function perguntarParaVera(
   if (!apiKey) {
     const respostaFallback =
       RESPOSTAS_FALLBACK[pergunta] ||
-      `Entendi sua dúvida sobre "${pergunta}". Analisando seus dados no OrganizaMais+, você tem mantido seus gastos essenciais estáveis. Minha sugestão prática é focar no controle dos gastos variáveis desta semana para garantir sobra no fluxo de caixa e fortalecer seus cofrinhos!`;
+      `Entendi sua dúvida sobre "${pergunta}". Analisando seus dados no OrganizAI, você tem mantido seus gastos essenciais estáveis. Minha sugestão prática é focar no controle dos gastos variáveis desta semana para garantir sobra no fluxo de caixa e fortalecer seus cofrinhos!`;
     return { texto: respostaFallback };
   }
 
@@ -113,7 +113,7 @@ export async function perguntarParaVera(
   // Fallback local seguro e imediato
   const respostaFallback =
     RESPOSTAS_FALLBACK[pergunta] ||
-    `Entendi perfeitamente sua dúvida sobre "${pergunta}". Analisando seus dados no OrganizaMais+, você tem mantido seus gastos essenciais estáveis. Minha sugestão prática é focar no controle dos gastos variáveis desta semana para garantir sobra no fluxo de caixa e poder fortalecer seus cofrinhos!`;
+    `Entendi perfeitamente sua dúvida sobre "${pergunta}". Analisando seus dados no OrganizAI, você tem mantido seus gastos essenciais estáveis. Minha sugestão prática é focar no controle dos gastos variáveis desta semana para garantir sobra no fluxo de caixa e poder fortalecer seus cofrinhos!`;
 
   return { texto: respostaFallback };
 }

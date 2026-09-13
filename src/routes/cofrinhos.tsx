@@ -16,7 +16,7 @@ import {
 export const Route = createFileRoute("/cofrinhos")({
   head: () => ({
     meta: [
-      { title: "Cofrinhos — OrganizaMais+" },
+      { title: "Cofrinhos — OrganizAI" },
       {
         name: "description",
         content:

@@ -8,7 +8,7 @@ import { ChevronDown, Plus, Calendar, Trash2 } from "lucide-react";
 export const Route = createFileRoute("/gastos-variaveis")({
   head: () => ({
     meta: [
-      { title: "Gastos variáveis — OrganizaMais+" },
+      { title: "Gastos variáveis — OrganizAI" },
       { name: "description", content: "Compras avulsas · Pessoal." },
     ],
   }),

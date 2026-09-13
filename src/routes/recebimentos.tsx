@@ -8,7 +8,7 @@ import { ChevronDown, Plus, Calendar, Trash2 } from "lucide-react";
 export const Route = createFileRoute("/recebimentos")({
   head: () => ({
     meta: [
-      { title: "Recebimentos — OrganizaMais+" },
+      { title: "Recebimentos — OrganizAI" },
       { name: "description", content: "Entradas · Pessoal." },
     ],
   }),

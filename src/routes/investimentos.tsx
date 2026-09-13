@@ -15,7 +15,7 @@ import {
 export const Route = createFileRoute("/investimentos")({
   head: () => ({
     meta: [
-      { title: "Investimentos — OrganizaMais+" },
+      { title: "Investimentos — OrganizAI" },
       {
         name: "description",
         content: "Sua carteira completa com projeção de longo prazo.",

@@ -7,7 +7,7 @@ import { perguntarParaVera } from "@/lib/vera-ai";
 export const Route = createFileRoute("/vera-gerente")({
   head: () => ({
     meta: [
-      { title: "Vera | Gerente — OrganizaMais+" },
+      { title: "Vera | Gerente — OrganizAI" },
       {
         name: "description",
         content: "Sua gerente financeira com inteligência artificial.",
