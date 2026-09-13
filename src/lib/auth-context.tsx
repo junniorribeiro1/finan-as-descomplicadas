@@ -3,58 +3,146 @@ import {
   useContext,
   useEffect,
   useState,
+  useCallback,
   type ReactNode,
 } from "react";
 import type { User, Session } from "@supabase/supabase-js";
 import { supabase } from "./supabase";
 
+export interface UserProfile {
+  id: string;
+  full_name: string | null;
+  email: string | null;
+  role: "user" | "admin";
+  status: "ativo" | "pendente" | "bloqueado";
+  account_type?: string;
+  plan?: string;
+  avatar_url?: string | null;
+  phone?: string | null;
+  mentor_notes?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 interface AuthContextType {
   user: User | null;
   session: Session | null;
+  profile: UserProfile | null;
   loading: boolean;
+  isAdmin: boolean;
+  isBlocked: boolean;
   signOut: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
 }
+
+const ADMIN_FALLBACK_EMAILS = ["junniorribeiro1@gmail.com"];
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   session: null,
+  profile: null,
   loading: true,
+  isAdmin: false,
+  isBlocked: false,
   signOut: async () => {},
+  refreshProfile: async () => {},
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const fetchProfile = useCallback(async (userId: string, userEmail?: string | null) => {
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", userId)
+        .maybeSingle();
+
+      if (!error && data) {
+        setProfile(data as UserProfile);
+      } else if (userEmail && ADMIN_FALLBACK_EMAILS.includes(userEmail.toLowerCase())) {
+        // Fallback para admin imediato caso a tabela ainda esteja populando
+        setProfile({
+          id: userId,
+          full_name: "Administrador",
+          email: userEmail,
+          role: "admin",
+          status: "ativo",
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        });
+      }
+    } catch {
+      // Ignora erro silenciosamente
+    }
+  }, []);
+
+  const refreshProfile = useCallback(async () => {
+    if (user) {
+      await fetchProfile(user.id, user.email);
+    }
+  }, [user, fetchProfile]);
 
   useEffect(() => {
     // 1. Obter sessão inicial
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
-      setUser(session?.user ?? null);
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+      if (currentUser) {
+        await fetchProfile(currentUser.id, currentUser.email);
+      }
       setLoading(false);
     });
 
     // 2. Escutar mudanças de estado de autenticação
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session);
-      setUser(session?.user ?? null);
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+      if (currentUser) {
+        await fetchProfile(currentUser.id, currentUser.email);
+      } else {
+        setProfile(null);
+      }
       setLoading(false);
     });
 
     return () => {
       subscription.unsubscribe();
     };
-  }, []);
+  }, [fetchProfile]);
 
   const signOut = async () => {
     await supabase.auth.signOut();
+    setUser(null);
+    setSession(null);
+    setProfile(null);
   };
 
+  const isEmailAdmin = !!user?.email && ADMIN_FALLBACK_EMAILS.includes(user.email.toLowerCase());
+  const isAdmin = isEmailAdmin || profile?.role === "admin";
+  const isBlocked = profile?.status === "bloqueado";
+
   return (
-    <AuthContext.Provider value={{ user, session, loading, signOut }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        session,
+        profile,
+        loading,
+        isAdmin,
+        isBlocked,
+        signOut,
+        refreshProfile,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

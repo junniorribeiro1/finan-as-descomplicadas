@@ -21,6 +21,8 @@ import {
   Menu,
   X,
   LogOut,
+  ShieldAlert,
+  ShieldCheck,
 } from "lucide-react";
 import { useState, useEffect, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
@@ -139,7 +141,7 @@ export function AppShell({
   descricao?: string;
   children: ReactNode;
 }) {
-  const { user, session, loading, signOut } = useAuth();
+  const { user, session, profile, loading, isAdmin, isBlocked, signOut } = useAuth();
   const navigate = useNavigate();
 
   const [aberto, setAberto] = useState(false);
@@ -177,6 +179,45 @@ export function AppShell({
     return null;
   }
 
+  // Se o aluno estiver com status bloqueado pela coordenação
+  if (isBlocked) {
+    return (
+      <div className="min-h-screen bg-[#09090b] flex flex-col items-center justify-center p-6 text-center text-white selection:bg-rose-500/30">
+        <div className="max-w-md w-full rounded-3xl border border-rose-500/25 bg-[#141214] p-8 sm:p-10 shadow-2xl shadow-rose-950/30">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-400 mb-6 shadow-lg shadow-rose-950/40">
+            <ShieldAlert className="h-8 w-8" />
+          </div>
+          <h2 className="text-2xl font-bold text-white tracking-tight">
+            Acesso em Análise ou Suspenso
+          </h2>
+          <p className="mt-3 text-xs text-stone-400 leading-relaxed">
+            Olá, <strong className="text-white">{user?.email}</strong>. Seu acesso aos módulos do OrganizAI está temporariamente bloqueado ou aguardando aprovação da mentoria.
+          </p>
+          <div className="mt-8 flex flex-col gap-3">
+            <a
+              href="https://wa.me/5577981381477?text=Ol%C3%A1!%20Sou%20aluno(a)%20do%20OrganizAI%20e%20gostaria%20de%20verificar%20a%20libera%C3%A7%C3%A3o%20do%20meu%20acesso."
+              target="_blank"
+              rel="noreferrer"
+              className="w-full flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 py-3 text-xs font-bold text-white shadow-lg shadow-emerald-950/40 transition-colors"
+            >
+              Falar no WhatsApp da Mentoria
+            </a>
+            <button
+              type="button"
+              onClick={async () => {
+                await signOut();
+                navigate({ to: "/login" });
+              }}
+              className="w-full rounded-xl border border-white/10 hover:bg-white/5 py-2.5 text-xs font-semibold text-stone-300 transition-colors"
+            >
+              Encerrar Sessão
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const inicial = (
     user?.user_metadata?.full_name?.[0] ||
     user?.email?.[0] ||
@@ -192,6 +233,22 @@ export function AppShell({
       {/* Sidebar Desktop */}
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-[17rem] flex-col border-r border-white/[0.06] bg-[#0d0d0d] px-4 py-5 lg:flex">
         <Marca />
+
+        {/* Botão de Destaque para o Painel Admin (somente Administrador) */}
+        {isAdmin && (
+          <Link
+            to="/admin"
+            className="mt-3 flex items-center justify-between gap-2 rounded-xl bg-gradient-to-r from-amber-500/15 via-[#F97316]/15 to-transparent border border-[#F97316]/30 px-3 py-2 text-xs font-bold text-[#F97316] hover:brightness-125 transition-all shadow-sm shadow-orange-950/30"
+          >
+            <span className="flex items-center gap-2">
+              <ShieldCheck className="h-4 w-4" />
+              Painel Admin
+            </span>
+            <span className="text-[10px] bg-[#F97316] text-black px-1.5 py-0.5 rounded-md font-black tracking-wider">
+              GESTOR
+            </span>
+          </Link>
+        )}
         <div className="mt-6 flex-1 overflow-y-auto pr-1">
           <nav className="space-y-1">
             {menuItens.map((i) => (
@@ -253,6 +310,22 @@ export function AppShell({
                 <X className="h-4 w-4" />
               </button>
             </div>
+
+            {isAdmin && (
+              <Link
+                to="/admin"
+                onClick={() => setAberto(false)}
+                className="mt-3 flex items-center justify-between gap-2 rounded-xl bg-gradient-to-r from-amber-500/15 via-[#F97316]/15 to-transparent border border-[#F97316]/30 px-3 py-2 text-xs font-bold text-[#F97316]"
+              >
+                <span className="flex items-center gap-2">
+                  <ShieldCheck className="h-4 w-4" />
+                  Painel Admin
+                </span>
+                <span className="text-[10px] bg-[#F97316] text-black px-1.5 py-0.5 rounded-md font-black tracking-wider">
+                  GESTOR
+                </span>
+              </Link>
+            )}
             <div className="mt-6 flex-1 overflow-y-auto pr-1">
               <nav className="space-y-1">
                 {menuItens.map((i) => (
@@ -389,6 +462,18 @@ export function AppShell({
 
             {/* Lado Direito: Ações e Perfil */}
             <div className="flex items-center gap-2 sm:gap-3">
+              {/* Botão Atalho Painel Admin no Navbar */}
+              {isAdmin && (
+                <Link
+                  to="/admin"
+                  className="hidden sm:flex items-center gap-1.5 rounded-full bg-orange-500/15 border border-orange-500/30 px-3 py-1.5 text-xs font-bold text-[#F97316] hover:bg-orange-500/25 transition-colors"
+                  title="Acessar Gestão da Mentoria"
+                >
+                  <ShieldCheck className="h-3.5 w-3.5" />
+                  <span>Painel Admin</span>
+                </Link>
+              )}
+
               {/* Modo Claro/Escuro */}
               <button
                 className="grid h-9 w-9 place-items-center rounded-full text-stone-400 hover:text-white hover:bg-white/5 transition-colors"
