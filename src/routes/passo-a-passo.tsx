@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { AppShell } from "@/components/app/AppShell";
-import { Check, ArrowRight } from "lucide-react";
+import { Check, ArrowRight, RotateCcw } from "lucide-react";
+import confetti from "canvas-confetti";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/passo-a-passo")({
@@ -107,6 +108,16 @@ function PassoAPasso() {
       } else {
         const novos = [...prev, id];
         if (novos.length === passosIniciais.length) {
+          try {
+            confetti({
+              particleCount: 90,
+              spread: 80,
+              origin: { y: 0.6 },
+              colors: ["#F97316", "#10B981", "#8B5CF6", "#F59E0B", "#3B82F6"],
+            });
+          } catch {
+            // No-op
+          }
           toast.success("Parabéns! Você completou todos os 7 passos!");
         } else {
           toast.success(`"${titulo}" concluído!`);
@@ -129,23 +140,39 @@ function PassoAPasso() {
     <AppShell>
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
         {/* Header Superior com Ícone 3D de Prancheta */}
-        <div className="flex items-center gap-4">
-          <div className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-white/[0.08] bg-[#161618] p-1.5 shadow-xl shadow-black/50 sm:h-14 sm:w-14">
-            <img
-              src="/icons/kpi/passo-header@2x.png"
-              alt="Passo a passo"
-              className="h-full w-full object-contain drop-shadow-[0_2px_8px_rgba(249,115,22,0.25)]"
-            />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-white/[0.08] bg-[#161618] p-1.5 shadow-xl shadow-black/50 sm:h-14 sm:w-14">
+              <img
+                src="/icons/kpi/passo-header@2x.png"
+                alt="Passo a passo"
+                className="h-full w-full object-contain drop-shadow-[0_2px_8px_rgba(249,115,22,0.25)]"
+              />
+            </div>
+
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
+                Passo a passo
+              </h1>
+              <p className="mt-1 text-xs text-neutral-400 sm:text-sm">
+                Complete estas etapas para tirar o máximo do OrganizAI.
+              </p>
+            </div>
           </div>
 
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
-              Passo a passo
-            </h1>
-            <p className="mt-1 text-xs text-neutral-400 sm:text-sm">
-              Complete estas etapas para tirar o máximo do OrganizAI.
-            </p>
-          </div>
+          <button
+            type="button"
+            onClick={() => {
+              localStorage.removeItem("organizai_passos_dismissed_v1");
+              toast.success("Widget flutuante ativado no canto inferior direito!");
+              window.location.reload();
+            }}
+            className="self-start sm:self-auto inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 px-3 py-1.5 text-xs font-medium text-stone-300 transition-colors cursor-pointer"
+            title="Reativar widget flutuante no canto da tela"
+          >
+            <RotateCcw className="h-3.5 w-3.5" />
+            <span>Restaurar Widget Flutuante</span>
+          </button>
         </div>
 
         {/* Card de Progresso */}

@@ -172,7 +172,7 @@
   --border-strong: rgba(0, 0, 0, 0.16);
   --input: rgba(0, 0, 0, 0.12);
 
-  background-color: #f8f9fc !important;
+  background-color: #f8fafc !important;
   color: #0f172a !important;
 }
 
@@ -180,11 +180,13 @@
 .organizai-theme-light aside {
   background-color: #ffffff !important;
   border-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 1px 0 3px rgba(0, 0, 0, 0.03) !important;
 }
 
 .organizai-theme-light header {
   background-color: rgba(255, 255, 255, 0.95) !important;
   border-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03) !important;
 }
 
 .organizai-theme-light header select,
@@ -199,17 +201,40 @@
   color: #0f172a !important;
 }
 
-/* 2. Todos os Cards, Painéis e Caixas de Conteúdo do App */
+/* 2. Hero Banner no Modo Claro */
+.organizai-theme-light [class*="min-h-[175px]"][class*="bg-[#0d0d0d]"],
+.organizai-theme-light [class*="min-h-[190px]"][class*="bg-[#0d0d0d]"] {
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 50%, #fed7aa 100%) !important;
+  border-color: rgba(249, 115, 22, 0.2) !important;
+  box-shadow: 0 4px 20px -2px rgba(249, 115, 22, 0.1) !important;
+}
+
+.organizai-theme-light [class*="min-h-[175px]"] img,
+.organizai-theme-light [class*="min-h-[190px]"] img {
+  opacity: 0.85;
+  mix-blend-mode: multiply;
+}
+
+/* 3. Todos os Cards, Painéis e Caixas de Conteúdo do App */
 .organizai-theme-light .panel,
 .organizai-theme-light section.panel,
+.organizai-theme-light .rounded-2xl:not(button):not(a[class*="bg-"]):not([class*="bg-[#F97316]"]):not([class*="bg-orange-"]):not([class*="bg-emerald-"]):not([class*="bg-purple-"]):not([class*="bg-blue-"]):not([class*="bg-rose-"]):not([class*="bg-indigo-"]),
+.organizai-theme-light .rounded-3xl:not(button):not(a[class*="bg-"]):not([class*="bg-[#F97316]"]):not([class*="bg-orange-"]):not([class*="bg-emerald-"]):not([class*="bg-purple-"]):not([class*="bg-blue-"]):not([class*="bg-rose-"]):not([class*="bg-indigo-"]),
+.organizai-theme-light [class*="bg-[#0d0d0d]"]:not(header):not(aside),
+.organizai-theme-light [class*="bg-[#09090b]"],
+.organizai-theme-light [class*="bg-[#0a0a0c]"],
+.organizai-theme-light [class*="bg-[#0e0e10]"],
+.organizai-theme-light [class*="bg-[#101012]"],
+.organizai-theme-light [class*="bg-[#141416]"],
+.organizai-theme-light [class*="bg-[#18181b]"],
 .organizai-theme-light [class*="bg-[#151515]"],
 .organizai-theme-light [class*="bg-[#161618]"],
-.organizai-theme-light [class*="bg-[#1e1e1e]"],
-.organizai-theme-light [class*="bg-[#1a1a1a]"],
-.organizai-theme-light [class*="bg-[#181818]"],
-.organizai-theme-light [class*="bg-[#1c1c1f]"],
-.organizai-theme-light [class*="bg-[#111113]"],
-.organizai-theme-light [class*="bg-[#121214]"],
+.organizai-theme-light [class*="bg-[#1e1e1e]"]:not(input):not(button),
+.organizai-theme-light [class*="bg-[#1a1a1a]"]:not(button),
+.organizai-theme-light [class*="bg-[#181818]"]:not(button):not(header *),
+.organizai-theme-light [class*="bg-[#1c1c1f]"]:not(button),
+.organizai-theme-light [class*="bg-[#111113]"]:not(button),
+.organizai-theme-light [class*="bg-[#121214]"]:not(button),
 .organizai-theme-light [class*="bg-[#141414]"],
 .organizai-theme-light [class*="bg-[#141418]"],
 .organizai-theme-light [class*="bg-[#131212]"],
@@ -221,55 +246,48 @@
 .organizai-theme-light [class*="bg-[#1c1c1e]"],
 .organizai-theme-light [class*="bg-[#1e1e20]"],
 .organizai-theme-light [class*="bg-[#1f1f23]"],
-.organizai-theme-light [class*="bg-[#232328]"] {
+.organizai-theme-light [class*="bg-[#232328]"],
+.organizai-theme-light [class*="bg-[#252525]"] {
   background-color: #ffffff !important;
   border-color: rgba(0, 0, 0, 0.08) !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02) !important;
   color: #0f172a !important;
 }
 
-/* Evita que hover em KPI cards volte a ficar escuro */
+/* Modais e popups */
+.organizai-theme-light [class*="fixed"][class*="z-50"] [class*="bg-[#141416]"],
+.organizai-theme-light [class*="fixed"][class*="z-50"] [class*="bg-[#151515]"],
+.organizai-theme-light [class*="fixed"][class*="z-50"] [class*="bg-[#161618]"],
+.organizai-theme-light [class*="fixed"][class*="z-50"] [class*="bg-[#0e0e10]"] {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Evita que hover em cards escureça o fundo */
 .organizai-theme-light [class*="hover:to-[#131212]"]:hover,
 .organizai-theme-light [class*="hover:from-[#241a14]"]:hover,
 .organizai-theme-light [class*="hover:from-[#13241b]"]:hover,
 .organizai-theme-light [class*="hover:from-[#122323]"]:hover,
 .organizai-theme-light [class*="hover:from-[#261913]"]:hover,
-.organizai-theme-light [class*="hover:from-[#261c12]"]:hover {
-  background-color: #ffffff !important;
+.organizai-theme-light [class*="hover:from-[#261c12]"]:hover,
+.organizai-theme-light [class*="hover:bg-[#181818]"]:hover,
+.organizai-theme-light [class*="hover:bg-[#19191c]"]:hover {
+  background-color: #f8fafc !important;
   background-image: none !important;
 }
 
-/* 3. Textos, Títulos e Informações Gerais no Modo Claro */
+/* 4. Textos, Títulos e Informações no Modo Claro */
 .organizai-theme-light h1,
 .organizai-theme-light h2,
 .organizai-theme-light h3,
 .organizai-theme-light h4,
 .organizai-theme-light h5,
 .organizai-theme-light h6,
-.organizai-theme-light .font-display {
-  color: #0f172a !important;
-}
-
-/* Transforma classes text-white em texto legível escuro */
+.organizai-theme-light .font-display,
 .organizai-theme-light .text-white,
 .organizai-theme-light [class*="text-white"] {
   color: #0f172a !important;
-}
-
-/* Mas mantém texto branco onde REALMENTE precisa ser branco: botões coloridos, gradientes, badges */
-.organizai-theme-light [class*="bg-[#F97316]"],
-.organizai-theme-light [class*="bg-[#F97316]"] *,
-.organizai-theme-light [class*="bg-[#ea580c]"] *,
-.organizai-theme-light [class*="bg-gradient-"] *,
-.organizai-theme-light [class*="bg-emerald-600"] *,
-.organizai-theme-light [class*="bg-emerald-500"] *,
-.organizai-theme-light [class*="bg-purple-600"] *,
-.organizai-theme-light [class*="bg-purple-700"] *,
-.organizai-theme-light [class*="bg-orange-500"] *,
-.organizai-theme-light [class*="bg-rose-500"] *,
-.organizai-theme-light button[type="submit"],
-.organizai-theme-light button[type="submit"] * {
-  color: #ffffff !important;
 }
 
 /* Textos secundários, legendas e descrições */
@@ -279,7 +297,8 @@
 .organizai-theme-light .text-neutral-500,
 .organizai-theme-light [class*="text-stone-400"],
 .organizai-theme-light [class*="text-stone-500"],
-.organizai-theme-light [class*="text-neutral-400"] {
+.organizai-theme-light [class*="text-neutral-400"],
+.organizai-theme-light [class*="text-neutral-500"] {
   color: #64748b !important;
 }
 
@@ -288,11 +307,103 @@
 .organizai-theme-light .text-neutral-200,
 .organizai-theme-light .text-neutral-300,
 .organizai-theme-light [class*="text-stone-200"],
-.organizai-theme-light [class*="text-stone-300"] {
+.organizai-theme-light [class*="text-stone-300"],
+.organizai-theme-light [class*="text-neutral-200"],
+.organizai-theme-light [class*="text-neutral-300"] {
   color: #334155 !important;
 }
 
-/* 4. Bordas e Divisores */
+/* PRESERVAÇÃO ESTRITA: Cores dos botões de ação e seus textos */
+.organizai-theme-light button[class*="bg-[#F97316]"],
+.organizai-theme-light a[class*="bg-[#F97316]"],
+.organizai-theme-light button[class*="bg-[#F97316]"] *,
+.organizai-theme-light a[class*="bg-[#F97316]"] *,
+.organizai-theme-light [class*="bg-gradient-to-r"][class*="from-orange-"] *,
+.organizai-theme-light [class*="bg-gradient-to-r"][class*="from-purple-"] *,
+.organizai-theme-light button[class*="bg-emerald-"],
+.organizai-theme-light button[class*="bg-emerald-"] *,
+.organizai-theme-light button[class*="bg-purple-"],
+.organizai-theme-light button[class*="bg-purple-"] *,
+.organizai-theme-light button[type="submit"]:not([class*="bg-transparent"]):not([class*="bg-white"]),
+.organizai-theme-light button[type="submit"]:not([class*="bg-transparent"]):not([class*="bg-white"]) * {
+  color: #ffffff !important;
+}
+
+/* 5. Badges e Tags Coloridas */
+.organizai-theme-light [class*="bg-emerald-950"],
+.organizai-theme-light [class*="bg-emerald-500/10"],
+.organizai-theme-light [class*="bg-emerald-500/15"] {
+  background-color: #ecfdf5 !important;
+  border-color: #a7f3d0 !important;
+  color: #047857 !important;
+}
+.organizai-theme-light [class*="bg-emerald-950"] *,
+.organizai-theme-light [class*="bg-emerald-500/10"] * {
+  color: #047857 !important;
+}
+
+.organizai-theme-light [class*="bg-orange-950"],
+.organizai-theme-light [class*="bg-orange-500/10"],
+.organizai-theme-light [class*="bg-orange-500/15"] {
+  background-color: #fff7ed !important;
+  border-color: #fed7aa !important;
+  color: #c2410c !important;
+}
+.organizai-theme-light [class*="bg-orange-950"] *,
+.organizai-theme-light [class*="bg-orange-500/10"] * {
+  color: #c2410c !important;
+}
+
+.organizai-theme-light [class*="bg-amber-950"],
+.organizai-theme-light [class*="bg-amber-500/10"],
+.organizai-theme-light [class*="bg-amber-500/15"] {
+  background-color: #fefce8 !important;
+  border-color: #fef08a !important;
+  color: #b45309 !important;
+}
+.organizai-theme-light [class*="bg-amber-950"] *,
+.organizai-theme-light [class*="bg-amber-500/10"] * {
+  color: #b45309 !important;
+}
+
+.organizai-theme-light [class*="bg-purple-950"],
+.organizai-theme-light [class*="bg-purple-500/10"],
+.organizai-theme-light [class*="bg-purple-500/15"] {
+  background-color: #faf5ff !important;
+  border-color: #e9d5ff !important;
+  color: #7e22ce !important;
+}
+.organizai-theme-light [class*="bg-purple-950"] *,
+.organizai-theme-light [class*="bg-purple-500/10"] * {
+  color: #7e22ce !important;
+}
+
+.organizai-theme-light [class*="bg-rose-950"],
+.organizai-theme-light [class*="bg-rose-500/10"],
+.organizai-theme-light [class*="bg-rose-500/15"] {
+  background-color: #fff1f2 !important;
+  border-color: #fecdd3 !important;
+  color: #be123c !important;
+}
+
+/* 6. Formulários, Inputs e Caixas de Busca */
+.organizai-theme-light input,
+.organizai-theme-light select,
+.organizai-theme-light textarea,
+.organizai-theme-light [class*="bg-[#1e1e1e]"]:is(input, div:has(input)),
+.organizai-theme-light [class*="bg-[#111113]"]:is(input, form),
+.organizai-theme-light [class*="bg-[#181818]"]:is(input, div:has(input)) {
+  background-color: #f8fafc !important;
+  border-color: rgba(0, 0, 0, 0.12) !important;
+  color: #0f172a !important;
+}
+
+.organizai-theme-light input::placeholder,
+.organizai-theme-light textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* 7. Barras de Progresso, Linhas e Divisores */
 .organizai-theme-light [class*="border-white/"],
 .organizai-theme-light [class*="border-white"],
 .organizai-theme-light [class*="divide-white/"] > * {
@@ -301,11 +412,20 @@
 
 .organizai-theme-light [class*="bg-white/0"],
 .organizai-theme-light [class*="bg-white/[0.0"],
-.organizai-theme-light [class*="bg-white/5"] {
-  background-color: #f1f5f9 !important;
+.organizai-theme-light [class*="bg-white/5"],
+.organizai-theme-light [class*="bg-white/[0.07]"],
+.organizai-theme-light [class*="bg-white/[0.04]"],
+.organizai-theme-light [class*="bg-white/[0.06]"],
+.organizai-theme-light [class*="bg-neutral-800"] {
+  background-color: #e2e8f0 !important;
 }
 
-/* 5. Links de Navegação da Barra Lateral */
+.organizai-theme-light circle.stroke-neutral-800,
+.organizai-theme-light path.stroke-neutral-800 {
+  stroke: #e2e8f0 !important;
+}
+
+/* 8. Links de Navegação da Barra Lateral */
 .organizai-theme-light nav a {
   color: #334155 !important;
 }
@@ -320,11 +440,31 @@
   color: #ea580c !important;
 }
 
-/* 6. Gráficos do Dashboard */
+/* Card da Vera no Sidebar */
+.organizai-theme-light [class*="from-[#1f122c]"] {
+  background: linear-gradient(180deg, #faf5ff 0%, #f3e8ff 100%) !important;
+  border-color: rgba(168, 85, 247, 0.25) !important;
+  box-shadow: 0 4px 14px rgba(168, 85, 247, 0.08) !important;
+}
+.organizai-theme-light [class*="from-[#1f122c]"] h4 {
+  color: #581c87 !important;
+}
+.organizai-theme-light [class*="from-[#1f122c]"] p {
+  color: #7e22ce !important;
+}
+
+/* Card do Usuário no Sidebar */
+.organizai-theme-light [class*="bg-[#1c120c]"] {
+  background-color: #fff7ed !important;
+  border-color: #fed7aa !important;
+  color: #ea580c !important;
+}
+
+/* 9. Gráficos do Dashboard e Tooltips */
 .organizai-theme-light [class*="bg-[#1a1a1a]/95"],
 .organizai-theme-light [class*="bg-[#1a1a1a]"] {
   background-color: #ffffff !important;
-  border-color: rgba(0, 0, 0, 0.1) !important;
+  border-color: rgba(0, 0, 0, 0.12) !important;
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1) !important;
 }
 
@@ -334,23 +474,15 @@
 
 .organizai-theme-light .bg-white\/40,
 .organizai-theme-light .bg-white\/20 {
-  background-color: rgba(0, 0, 0, 0.12) !important;
+  background-color: rgba(0, 0, 0, 0.1) !important;
 }
 
-/* 7. Formulários, Inputs e Tabelas */
-.organizai-theme-light input,
-.organizai-theme-light select,
-.organizai-theme-light textarea {
-  background-color: #ffffff !important;
-  border-color: rgba(0, 0, 0, 0.14) !important;
-  color: #0f172a !important;
+/* Anéis de contraste nos gráficos */
+.organizai-theme-light [class*="ring-[#151515]"] {
+  --tw-ring-color: #ffffff !important;
 }
 
-.organizai-theme-light input::placeholder,
-.organizai-theme-light textarea::placeholder {
-  color: #94a3b8 !important;
-}
-
+/* 10. Tabelas */
 .organizai-theme-light table th {
   background-color: #f8fafc !important;
   color: #64748b !important;
@@ -365,3 +497,38 @@
 .organizai-theme-light table tr:hover {
   background-color: #f8fafc !important;
 }
+
+/* =========================================================
+ * ANIMAÇÕES DE CELEBRAÇÃO (BALÕES & CONFETES)
+ * ========================================================= */
+@keyframes balloonRise {
+  0% {
+    transform: translateY(110vh) scale(0.6) rotate(0deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-130vh) scale(1.05) rotate(15deg);
+    opacity: 0;
+  }
+}
+
+@keyframes balloonSway {
+  0%, 100% {
+    margin-left: 0;
+  }
+  50% {
+    margin-left: 35px;
+  }
+}
+
+.balloon-rise-animation {
+  animation: balloonRise var(--rise-duration, 5s) cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards,
+             balloonSway var(--sway-duration, 2.5s) ease-in-out infinite alternate;
+}
+

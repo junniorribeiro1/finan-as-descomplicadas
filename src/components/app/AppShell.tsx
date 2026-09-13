@@ -28,6 +28,7 @@ import {
 import { useState, useEffect, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
+import { PassoAPassoWidget } from "@/components/app/PassoAPassoWidget";
 
 export const menuItens = [
   { rotulo: "Dashboard", to: "/app", icone: LayoutGrid },
@@ -586,6 +587,10 @@ export function AppShell({
           {children}
         </main>
       </div>
+
+      {/* Widget Flutuante Passo a Passo com Pop-up e Celebração */}
+      <PassoAPassoWidget />
     </div>
   );
 }
+
