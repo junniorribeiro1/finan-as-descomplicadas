@@ -19,6 +19,7 @@ import { Route as CofrinhosRouteImport } from './routes/cofrinhos'
 import { Route as ControleFinanceiroRouteImport } from './routes/controle-financeiro'
 import { Route as GastosFixosRouteImport } from './routes/gastos-fixos'
 import { Route as GastosVariaveisRouteImport } from './routes/gastos-variaveis'
+import { Route as ImersaoefpfjRouteImport } from './routes/imersaoefpfj'
 import { Route as ImportarDadosRouteImport } from './routes/importar-dados'
 import { Route as InvestimentosRouteImport } from './routes/investimentos'
 import { Route as PassoAPassoRouteImport } from './routes/passo-a-passo'
@@ -78,6 +79,11 @@ const GastosVariaveisRoute = GastosVariaveisRouteImport.update({
   path: '/gastos-variaveis',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ImersaoefpfjRoute = ImersaoefpfjRouteImport.update({
+  id: '/imersaoefpfj',
+  path: '/imersaoefpfj',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ImportarDadosRoute = ImportarDadosRouteImport.update({
   id: '/importar-dados',
   path: '/importar-dados',
@@ -130,6 +136,7 @@ export interface FileRoutesByFullPath {
   '/controle-financeiro': typeof ControleFinanceiroRoute
   '/gastos-fixos': typeof GastosFixosRoute
   '/gastos-variaveis': typeof GastosVariaveisRoute
+  '/imersaoefpfj': typeof ImersaoefpfjRoute
   '/importar-dados': typeof ImportarDadosRoute
   '/investimentos': typeof InvestimentosRoute
   '/passo-a-passo': typeof PassoAPassoRoute
@@ -150,6 +157,7 @@ export interface FileRoutesByTo {
   '/controle-financeiro': typeof ControleFinanceiroRoute
   '/gastos-fixos': typeof GastosFixosRoute
   '/gastos-variaveis': typeof GastosVariaveisRoute
+  '/imersaoefpfj': typeof ImersaoefpfjRoute
   '/importar-dados': typeof ImportarDadosRoute
   '/investimentos': typeof InvestimentosRoute
   '/passo-a-passo': typeof PassoAPassoRoute
@@ -171,6 +179,7 @@ export interface FileRoutesById {
   '/controle-financeiro': typeof ControleFinanceiroRoute
   '/gastos-fixos': typeof GastosFixosRoute
   '/gastos-variaveis': typeof GastosVariaveisRoute
+  '/imersaoefpfj': typeof ImersaoefpfjRoute
   '/importar-dados': typeof ImportarDadosRoute
   '/investimentos': typeof InvestimentosRoute
   '/passo-a-passo': typeof PassoAPassoRoute
@@ -193,6 +202,7 @@ export interface FileRouteTypes {
     | '/controle-financeiro'
     | '/gastos-fixos'
     | '/gastos-variaveis'
+    | '/imersaoefpfj'
     | '/importar-dados'
     | '/investimentos'
     | '/passo-a-passo'
@@ -213,6 +223,7 @@ export interface FileRouteTypes {
     | '/controle-financeiro'
     | '/gastos-fixos'
     | '/gastos-variaveis'
+    | '/imersaoefpfj'
     | '/importar-dados'
     | '/investimentos'
     | '/passo-a-passo'
@@ -233,6 +244,7 @@ export interface FileRouteTypes {
     | '/controle-financeiro'
     | '/gastos-fixos'
     | '/gastos-variaveis'
+    | '/imersaoefpfj'
     | '/importar-dados'
     | '/investimentos'
     | '/passo-a-passo'
@@ -254,6 +266,7 @@ export interface RootRouteChildren {
   ControleFinanceiroRoute: typeof ControleFinanceiroRoute
   GastosFixosRoute: typeof GastosFixosRoute
   GastosVariaveisRoute: typeof GastosVariaveisRoute
+  ImersaoefpfjRoute: typeof ImersaoefpfjRoute
   ImportarDadosRoute: typeof ImportarDadosRoute
   InvestimentosRoute: typeof InvestimentosRoute
   PassoAPassoRoute: typeof PassoAPassoRoute
@@ -336,6 +349,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GastosVariaveisRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/imersaoefpfj': {
+      id: '/imersaoefpfj'
+      path: '/imersaoefpfj'
+      fullPath: '/imersaoefpfj'
+      preLoaderRoute: typeof ImersaoefpfjRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/importar-dados': {
       id: '/importar-dados'
       path: '/importar-dados'
@@ -406,6 +426,7 @@ const rootRouteChildren: RootRouteChildren = {
   ControleFinanceiroRoute: ControleFinanceiroRoute,
   GastosFixosRoute: GastosFixosRoute,
   GastosVariaveisRoute: GastosVariaveisRoute,
+  ImersaoefpfjRoute: ImersaoefpfjRoute,
   ImportarDadosRoute: ImportarDadosRoute,
   InvestimentosRoute: InvestimentosRoute,
   PassoAPassoRoute: PassoAPassoRoute,
