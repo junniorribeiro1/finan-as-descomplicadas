@@ -10,8 +10,6 @@ import {
   TrendingUp,
   Tag,
   Users,
-  Bot,
-  ListChecks,
   CircleHelp,
   Upload,
   Sun,
@@ -41,8 +39,6 @@ export const menuItens = [
   { rotulo: "Investimentos", to: "/investimentos", icone: TrendingUp },
   { rotulo: "Categorias", to: "/categorias", icone: Tag },
   { rotulo: "Segundo Usuário", to: "/segundo-usuario", icone: Users },
-  { rotulo: "Vera | Gerente", to: "/vera-gerente", icone: Bot },
-  { rotulo: "Passo a passo", to: "/passo-a-passo", icone: ListChecks },
   { rotulo: "Ajuda", to: "/ajuda", icone: CircleHelp },
   { rotulo: "Importar dados", to: "/importar-dados", icone: Upload },
 ] as const;
