@@ -100,7 +100,18 @@ export default function ImersaoPage() {
     reveals.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, []);
+  // 4. Progressão dinâmica de vagas preenchidas (inicia em 18% e cresce até 94% em poucos dias)
+  const [filledSpotsPercent] = useState(() => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const startDate = new Date(year, 8, 13, 0, 0, 0).getTime();
+    const diffDays = Math.floor((now.getTime() - startDate) / (1000 * 60 * 60 * 24));
+    const progression = [18, 29, 42, 56, 70, 81, 89, 94];
 
+    if (diffDays <= 0) return 18;
+    if (diffDays >= progression.length - 1) return 94;
+    return progression[diffDays] ?? 94;
+  });
 
   // 5. FAQ Accordion State
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -408,15 +419,17 @@ export default function ImersaoPage() {
                 <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10 border border-white/5">
                   <div
                     className="h-full rounded-full bg-gradient-to-r from-amber-500 to-emerald-400 shadow-[0_0_10px_#f59e0b] transition-all duration-1000"
-                    style={{ width: "94%" }}
+                    style={{ width: `${filledSpotsPercent}%` }}
                   />
                 </div>
                 <div className="flex items-center justify-between text-[0.68rem] text-stone-400">
                   <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
-                    94% das vagas preenchidas no 1º Lote
+                    {filledSpotsPercent}% das vagas preenchidas no 1º Lote
                   </span>
-                  <span className="font-mono text-stone-500">Últimas vagas</span>
+                  <span className="font-mono text-stone-500">
+                    {filledSpotsPercent >= 85 ? "Últimas vagas" : "Vagas limitadas"}
+                  </span>
                 </div>
               </div>
             </div>
