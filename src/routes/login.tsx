@@ -51,6 +51,8 @@ function LoginPage() {
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [carregando, setCarregando] = useState(false);
   const [recuperacaoEnviada, setRecuperacaoEnviada] = useState(false);
+  const [mensagemErro, setMensagemErro] = useState<string | null>(null);
+  const [mensagemSucesso, setMensagemSucesso] = useState<string | null>(null);
 
   // Se já estiver logado, redirecionar automaticamente para a página solicitada ou /app
   useEffect(() => {
@@ -59,10 +61,21 @@ function LoginPage() {
     }
   }, [session, authLoading, navigate, redirect]);
 
+  const alternarModo = (novoModo: "login" | "cadastro" | "recuperar") => {
+    setModo(novoModo);
+    setMensagemErro(null);
+    setMensagemSucesso(null);
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !senha) {
-      toast.error("Preencha todos os campos.");
+    setMensagemErro(null);
+    setMensagemSucesso(null);
+
+    if (!email.trim() || !senha) {
+      const msg = "Preencha todos os campos.";
+      setMensagemErro(msg);
+      toast.error(msg);
       return;
     }
 
@@ -74,13 +87,14 @@ function LoginPage() {
       });
 
       if (error) {
+        let msg = error.message;
         if (error.message.includes("Invalid login credentials")) {
-          toast.error("E-mail ou senha incorretos. Verifique e tente novamente.");
+          msg = "E-mail ou senha incorretos. Verifique e tente novamente.";
         } else if (error.message.includes("Email not confirmed")) {
-          toast.error("Por favor, confirme seu e-mail antes de fazer login.");
-        } else {
-          toast.error(error.message);
+          msg = "Por favor, confirme seu e-mail antes de fazer login.";
         }
+        setMensagemErro(msg);
+        toast.error(msg);
         return;
       }
 
@@ -89,7 +103,9 @@ function LoginPage() {
         navigate({ to: redirect || "/app" });
       }
     } catch (err: any) {
-      toast.error("Erro ao conectar ao servidor. Tente novamente.");
+      const msg = "Erro ao conectar ao servidor. Tente novamente.";
+      setMensagemErro(msg);
+      toast.error(msg);
     } finally {
       setCarregando(false);
     }
@@ -97,56 +113,95 @@ function LoginPage() {
 
   const handleCadastro = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!nome || !email || !senha) {
-      toast.error("Preencha todos os campos.");
+    setMensagemErro(null);
+    setMensagemSucesso(null);
+
+    if (!nome.trim() || !email.trim() || !senha) {
+      const msg = "Preencha todos os campos.";
+      setMensagemErro(msg);
+      toast.error(msg);
       return;
     }
 
     if (senha.length < 6) {
-      toast.error("A senha deve ter pelo menos 6 caracteres.");
+      const msg = "A senha deve ter pelo menos 6 caracteres.";
+      setMensagemErro(msg);
+      toast.error(msg);
       return;
     }
 
     if (senha !== confirmarSenha) {
-      toast.error("As senhas não conferem.");
+      const msg = "As senhas não conferem. Digite a mesma senha nos dois campos.";
+      setMensagemErro(msg);
+      toast.error(msg);
       return;
     }
 
     setCarregando(true);
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email: email.trim(),
-        password: senha,
-        options: {
-          data: {
-            full_name: nome.trim(),
-          },
-        },
-      });
+      // Chama RPC que cadastra diretamente sem esgotar cota de envio de email do Supabase
+      const { data: rpcResult, error: rpcError } = await supabase.rpc(
+        "create_student_account",
+        {
+          p_email: email.trim(),
+          p_password: senha,
+          p_full_name: nome.trim(),
+        }
+      );
 
-      if (error) {
-        if (error.message.includes("User already registered")) {
-          toast.error("Este e-mail já está cadastrado. Faça login.");
-          setModo("login");
-        } else {
-          toast.error(error.message);
+      if (rpcError) {
+        console.error("Erro ao chamar create_student_account:", rpcError);
+        const msg = rpcError.message || "Erro ao registrar conta no servidor.";
+        setMensagemErro(msg);
+        toast.error(msg);
+        return;
+      }
+
+      const res = rpcResult as {
+        success: boolean;
+        error?: string;
+        user_id?: string;
+        status?: string;
+      };
+
+      if (!res.success) {
+        const msg = res.error || "Não foi possível criar a conta.";
+        setMensagemErro(msg);
+        toast.error(msg);
+        if (res.error?.includes("já está cadastrado")) {
+          setTimeout(() => alternarModo("login"), 2000);
         }
         return;
       }
 
-      if (data.session) {
+      // Realiza login automático imediato com a senha fornecida
+      const { data: loginData, error: loginError } =
+        await supabase.auth.signInWithPassword({
+          email: email.trim(),
+          password: senha,
+        });
+
+      if (loginError) {
+        console.error("Erro no login automático:", loginError);
+        setMensagemSucesso(
+          "Conta criada com sucesso! Por favor, faça login com sua senha."
+        );
+        toast.success("Conta criada! Por favor, faça login.");
+        alternarModo("login");
+        return;
+      }
+
+      if (loginData?.session) {
         toast.success(
-          "Conta criada com sucesso! Seu acesso está em análise e aguarda aprovação da mentoria."
+          "Conta criada! Seu acesso foi enviado para análise e aprovação."
         );
         navigate({ to: redirect || "/app" });
-      } else {
-        toast.success(
-          "Conta criada com sucesso! Seu acesso está em análise e aguarda aprovação da mentoria."
-        );
-        setModo("login");
       }
     } catch (err: any) {
-      toast.error("Erro ao criar conta. Tente novamente.");
+      console.error("Erro inesperado no cadastro:", err);
+      const msg = "Erro ao conectar ao servidor. Tente novamente.";
+      setMensagemErro(msg);
+      toast.error(msg);
     } finally {
       setCarregando(false);
     }
@@ -248,7 +303,7 @@ function LoginPage() {
               <div className="grid grid-cols-2 rounded-2xl bg-[#1a1a1c] p-1 mb-6 border border-white/[0.06]">
                 <button
                   type="button"
-                  onClick={() => setModo("login")}
+                  onClick={() => alternarModo("login")}
                   className={`rounded-xl py-2 text-xs font-semibold transition-all ${
                     modo === "login"
                       ? "bg-[#F97316] text-white shadow-md shadow-orange-950/40"
@@ -259,7 +314,7 @@ function LoginPage() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setModo("cadastro")}
+                  onClick={() => alternarModo("cadastro")}
                   className={`rounded-xl py-2 text-xs font-semibold transition-all ${
                     modo === "cadastro"
                       ? "bg-[#F97316] text-white shadow-md shadow-orange-950/40"
@@ -268,6 +323,21 @@ function LoginPage() {
                 >
                   Criar conta
                 </button>
+              </div>
+            )}
+
+            {/* Mensagens de Alerta Inline */}
+            {mensagemErro && (
+              <div className="flex items-start gap-2.5 p-3.5 mb-5 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-200 text-xs shadow-lg shadow-rose-950/20 animate-in fade-in slide-in-from-top-1 duration-200">
+                <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-400" />
+                <span className="leading-relaxed font-medium">{mensagemErro}</span>
+              </div>
+            )}
+
+            {mensagemSucesso && (
+              <div className="flex items-start gap-2.5 p-3.5 mb-5 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-200 text-xs shadow-lg shadow-emerald-950/20 animate-in fade-in slide-in-from-top-1 duration-200">
+                <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-emerald-400" />
+                <span className="leading-relaxed font-medium">{mensagemSucesso}</span>
               </div>
             )}
 
@@ -298,7 +368,7 @@ function LoginPage() {
                     </label>
                     <button
                       type="button"
-                      onClick={() => setModo("recuperar")}
+                      onClick={() => alternarModo("recuperar")}
                       className="text-[11px] text-[#F97316] hover:underline"
                     >
                       Esqueci a senha
@@ -450,7 +520,7 @@ function LoginPage() {
                       type="button"
                       onClick={() => {
                         setRecuperacaoEnviada(false);
-                        setModo("login");
+                        alternarModo("login");
                       }}
                       className="mt-3 inline-flex items-center justify-center rounded-xl bg-white/[0.08] px-4 py-2 text-xs font-semibold text-white hover:bg-white/[0.14] transition-colors"
                     >
@@ -487,7 +557,7 @@ function LoginPage() {
                     <div className="text-center pt-2">
                       <button
                         type="button"
-                        onClick={() => setModo("login")}
+                        onClick={() => alternarModo("login")}
                         className="text-xs text-stone-400 hover:text-white transition-colors"
                       >
                         ← Voltar para o Login
