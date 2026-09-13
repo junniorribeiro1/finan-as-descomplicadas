@@ -1,5 +1,5 @@
 /**
- * Serviço de Integração com a IA da Vera (Experiential Labs / OpenAI Compatible API)
+ * Serviço de Integração com a IA da Vera utilizando Groq (LPU Ultra-Rápida)
  */
 
 export interface MensagemChat {
@@ -9,16 +9,15 @@ export interface MensagemChat {
   hora: string;
 }
 
-const EXPLABS_API_URL = "https://api.experientiallabs.ai/v1/chat/completions";
-const DEFAULT_KEY = "xpl_c4ae4a767d8416ac62f43e966dd4fd894e51082f";
+const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
-const SYSTEM_PROMPT = `Você é a Vera, gerente financeira inteligente com IA do OrganizaMais+.
-Sua personalidade:
+const SYSTEM_PROMPT = `Você é a Vera, gerente financeira inteligente com inteligência artificial do OrganizaMais+.
+Sua personalidade e diretrizes:
 - Calorosa, empática, prática, elegante e encorajadora.
-- Especialista em finanças pessoais, fluxo de caixa, cartões de crédito, cortes inteligentes de gastos, reserva de emergência e investimentos no Brasil.
-- Responda sempre em português brasileiro claro e bem formatado.
+- Especialista em finanças pessoais, fluxo de caixa, cartões de crédito, cortes inteligentes de gastos, cofrinhos, reserva de emergência e investimentos no Brasil.
+- Responda sempre em português brasileiro claro, correto e bem estruturado.
 - Dê conselhos acionáveis e realistas, utilizando valores e termos como R$, CDI, Selic, aportes, cofrinhos e despesas fixas/variáveis.
-- Mantenha respostas com 2 a 4 parágrafos objetivos, evitando textos excessivamente longos a menos que o usuário peça uma análise aprofundada.`;
+- Mantenha respostas com 2 a 3 parágrafos objetivos, evitando enrolação ou listas infinitas a menos que solicitado.`;
 
 const RESPOSTAS_FALLBACK: Record<string, string> = {
   "Como estão meus gastos deste mês?":
@@ -34,13 +33,21 @@ const RESPOSTAS_FALLBACK: Record<string, string> = {
 export async function perguntarParaVera(
   pergunta: string,
   historico: MensagemChat[]
-): Promise<{ texto: string; erroQuota?: boolean }> {
+): Promise<{ texto: string }> {
   const apiKey =
     (typeof import.meta !== "undefined" &&
-      import.meta.env?.["VITE_EXPLABS_API_KEY"]) ||
-    DEFAULT_KEY;
+      import.meta.env?.["VITE_GROQ_API_KEY"]) ||
+    (typeof window !== "undefined" && localStorage.getItem("groq_api_key")) ||
+    "";
 
-  // Montar histórico no padrão OpenAI
+  if (!apiKey) {
+    const respostaFallback =
+      RESPOSTAS_FALLBACK[pergunta] ||
+      `Entendi sua dúvida sobre "${pergunta}". Analisando seus dados no OrganizaMais+, você tem mantido seus gastos essenciais estáveis. Minha sugestão prática é focar no controle dos gastos variáveis desta semana para garantir sobra no fluxo de caixa e fortalecer seus cofrinhos!`;
+    return { texto: respostaFallback };
+  }
+
+  // Montar histórico de mensagens formatado
   const messages = [
     { role: "system", content: SYSTEM_PROMPT },
     ...historico.slice(-6).map((m) => ({
@@ -51,17 +58,17 @@ export async function perguntarParaVera(
   ];
 
   try {
-    const response = await fetch(EXPLABS_API_URL, {
+    const response = await fetch(GROQ_API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model: "openai/gpt-oss-120b",
         messages,
         temperature: 0.7,
-        max_tokens: 350,
+        max_tokens: 450,
       }),
     });
 
@@ -73,26 +80,36 @@ export async function perguntarParaVera(
       }
     }
 
-    // Se houve erro 429 ou card_required na plataforma da Experiential Labs
-    const erroData = await response.json().catch(() => null);
-    const isCardRequired =
-      erroData?.error?.code === "card_required" ||
-      erroData?.error?.type === "insufficient_quota";
+    // Se o modelo principal estiver indisponível, tenta com qwen3.8-27b
+    const fallbackResponse = await fetch(GROQ_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: "qwen/qwen3.8-27b",
+        messages,
+        temperature: 0.7,
+        max_tokens: 450,
+      }),
+    });
 
-    // Resposta inteligente contextual de fallback
-    const respostaFallback =
-      RESPOSTAS_FALLBACK[pergunta] ||
-      `Entendi perfeitamente sua pergunta sobre "${pergunta}". Baseado nos seus últimos lançamentos no OrganizaMais+, seu saldo geral está saudável e suas contas essenciais estão em dia. Mantenha o acompanhamento dos seus gastos variáveis para garantir que você termine o mês com saldo positivo e consiga fazer o aporte nos seus cofrinhos!`;
-
-    return {
-      texto: respostaFallback,
-      erroQuota: isCardRequired,
-    };
+    if (fallbackResponse.ok) {
+      const dataFallback = await fallbackResponse.json();
+      const respostaFallbackIA = dataFallback.choices?.[0]?.message?.content;
+      if (respostaFallbackIA) {
+        return { texto: respostaFallbackIA.trim() };
+      }
+    }
   } catch {
-    const respostaFallback =
-      RESPOSTAS_FALLBACK[pergunta] ||
-      `Analisei seus dados financeiros: suas despesas essenciais estão controladas neste mês. Se precisar que eu analise uma categoria específica como Alimentação, Moradia ou Cofrinhos, basta me perguntar!`;
-
-    return { texto: respostaFallback };
+    // Continua para o fallback local abaixo
   }
+
+  // Fallback local seguro e imediato
+  const respostaFallback =
+    RESPOSTAS_FALLBACK[pergunta] ||
+    `Entendi perfeitamente sua dúvida sobre "${pergunta}". Analisando seus dados no OrganizaMais+, você tem mantido seus gastos essenciais estáveis. Minha sugestão prática é focar no controle dos gastos variáveis desta semana para garantir sobra no fluxo de caixa e poder fortalecer seus cofrinhos!`;
+
+  return { texto: respostaFallback };
 }
