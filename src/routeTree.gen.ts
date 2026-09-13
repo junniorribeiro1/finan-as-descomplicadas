@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AjudaRouteImport } from './routes/ajuda'
+import { Route as AppRouteImport } from './routes/app'
 import { Route as BancosRouteImport } from './routes/bancos'
 import { Route as CartaoDeCreditoRouteImport } from './routes/cartao-de-credito'
 import { Route as CategoriasRouteImport } from './routes/categorias'
@@ -35,6 +36,11 @@ const IndexRoute = IndexRouteImport.update({
 const AjudaRoute = AjudaRouteImport.update({
   id: '/ajuda',
   path: '/ajuda',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BancosRoute = BancosRouteImport.update({
@@ -116,6 +122,7 @@ const VeraGerenteRoute = VeraGerenteRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ajuda': typeof AjudaRoute
+  '/app': typeof AppRoute
   '/bancos': typeof BancosRoute
   '/cartao-de-credito': typeof CartaoDeCreditoRoute
   '/categorias': typeof CategoriasRoute
@@ -135,6 +142,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ajuda': typeof AjudaRoute
+  '/app': typeof AppRoute
   '/bancos': typeof BancosRoute
   '/cartao-de-credito': typeof CartaoDeCreditoRoute
   '/categorias': typeof CategoriasRoute
@@ -155,6 +163,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/ajuda': typeof AjudaRoute
+  '/app': typeof AppRoute
   '/bancos': typeof BancosRoute
   '/cartao-de-credito': typeof CartaoDeCreditoRoute
   '/categorias': typeof CategoriasRoute
@@ -176,6 +185,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/ajuda'
+    | '/app'
     | '/bancos'
     | '/cartao-de-credito'
     | '/categorias'
@@ -195,6 +205,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/ajuda'
+    | '/app'
     | '/bancos'
     | '/cartao-de-credito'
     | '/categorias'
@@ -214,6 +225,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/ajuda'
+    | '/app'
     | '/bancos'
     | '/cartao-de-credito'
     | '/categorias'
@@ -234,6 +246,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AjudaRoute: typeof AjudaRoute
+  AppRoute: typeof AppRoute
   BancosRoute: typeof BancosRoute
   CartaoDeCreditoRoute: typeof CartaoDeCreditoRoute
   CategoriasRoute: typeof CategoriasRoute
@@ -265,6 +278,13 @@ declare module '@tanstack/react-router' {
       path: '/ajuda'
       fullPath: '/ajuda'
       preLoaderRoute: typeof AjudaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/bancos': {
@@ -378,6 +398,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AjudaRoute: AjudaRoute,
+  AppRoute: AppRoute,
   BancosRoute: BancosRoute,
   CartaoDeCreditoRoute: CartaoDeCreditoRoute,
   CategoriasRoute: CategoriasRoute,
