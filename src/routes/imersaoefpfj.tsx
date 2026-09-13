@@ -25,6 +25,28 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/imersaoefpfj")({
+  head: () => ({
+    meta: [
+      { title: "Imersão Educação Financeira PF e PJ — Natalia Rodolfo" },
+      {
+        name: "description",
+        content:
+          "Participe da Imersão Educação Financeira para Pessoas Física e Jurídica com Natalia Rodolfo. Aprenda a organizar suas finanças, sair do vermelho e ter fluxo de caixa previsível. 25 de Outubro, 100% ao vivo no Zoom.",
+      },
+      {
+        property: "og:title",
+        content: "Imersão Educação Financeira PF e PJ — Natalia Rodolfo",
+      },
+      {
+        property: "og:description",
+        content:
+          "Método definitivo para organizar as contas pessoais e da sua empresa. 25 de Outubro ao vivo no Zoom com certificado oficial. Ingressos do Lote 1 por R$ 27,00.",
+      },
+      { property: "og:image", content: "/imersao-banner.png" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: ImersaoPage,
 });
 
@@ -181,11 +203,12 @@ export default function ImersaoPage() {
         </div>
       </div>
 
-      {/* ── HEADER / TOPBAR ── */}
+      {/* ── HEADER / TOPBAR (AUTÔNOMO DA IMERSÃO) ── */}
       <header className="relative z-30 mx-auto flex w-full max-w-7xl items-center justify-between px-5 py-4 md:px-8">
-        <Link
-          to="/"
+        <a
+          href="#"
           className="group flex items-center gap-3 transition-opacity hover:opacity-90"
+          title="Imersão Educação Financeira PF e PJ"
         >
           <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-amber-500/40 bg-stone-900 p-0.5 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
             <img
@@ -202,7 +225,7 @@ export default function ImersaoPage() {
               Educação Financeira PF & PJ
             </span>
           </div>
-        </Link>
+        </a>
 
         <div className="flex items-center gap-3">
           {/* Tag Data Live */}
@@ -253,14 +276,14 @@ export default function ImersaoPage() {
             </div>
           </div>
 
-          {/* TÍTULO PRINCIPAL (TAMANHO EQUILIBRADO, MAIS COMPACTO E ELEGANTE) */}
+          {/* TÍTULO PRINCIPAL — EDUCAÇÃO FINANCEIRA COM GRANDE DESTAQUE */}
           <div className="w-full">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.65rem] font-black tracking-tight leading-[1.1] text-white">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.8rem] xl:text-[4.2rem] font-black tracking-tight leading-[1.06] text-white">
               EDUCAÇÃO
-              <span className="block bg-gradient-to-r from-[#ffe494] via-[#f59e0b] to-[#d97706] bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(245,158,11,0.3)] mt-0.5">
+              <span className="block bg-gradient-to-r from-[#ffe494] via-[#f59e0b] to-[#d97706] bg-clip-text text-transparent drop-shadow-[0_4px_28px_rgba(245,158,11,0.35)] mt-0.5">
                 FINANCEIRA
               </span>
-              <span className="block text-xs sm:text-sm md:text-base font-bold tracking-[0.14em] text-stone-300 uppercase mt-2">
+              <span className="block text-xs sm:text-sm md:text-base font-bold tracking-[0.14em] text-stone-300 uppercase mt-2.5">
                 PARA PESSOAS FÍSICA E JURÍDICA
               </span>
             </h1>
@@ -275,11 +298,8 @@ export default function ImersaoPage() {
             e construir uma vida financeira leve e consciente.
           </p>
 
-          {/* SELETOR DOS 3 LOTES NO HERO (COMPACTO: 27,00 | 57,00 | 97,00) */}
-          <div className="mt-0.5 flex flex-col gap-1.5 w-full max-w-sm sm:max-w-md">
-            <span className="text-[0.65rem] sm:text-[0.68rem] font-bold uppercase tracking-wider text-stone-400">
-              Selecione seu lote de entrada:
-            </span>
+          {/* 3 LOTES NO HERO (APENAS OS LOTES, SEM TEXTO SELECIONE) */}
+          <div className="mt-1 w-full max-w-sm sm:max-w-md">
             <div className="grid grid-cols-3 gap-2">
               {/* Lote 1 Ativo - R$ 27,00 */}
               <button
@@ -559,8 +579,8 @@ export default function ImersaoPage() {
             </h3>
             <p className="mt-2 text-xs sm:text-sm text-stone-400 leading-relaxed">
               Apresentação de ferramentas práticas (planilhas descomplicadas e
-              integração com sistemas como o OrganiAI) para automatizar seus
-              registros sem tomar horas do seu dia.
+              métodos de automação inteligente) para organizar seus registros sem
+              tomar horas do seu dia.
             </p>
           </div>
 
