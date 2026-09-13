@@ -44,17 +44,17 @@ export const menuItens = [
 function Marca() {
   return (
     <Link to="/" className="flex items-center gap-3 px-1 py-1 group">
-      {/* Moeda Dourada IA / Ícone da marca OrganizAI */}
+      {/* Moeda Dourada IA / Ícone da marca OrganizaMais+ */}
       <div className="relative flex h-10 w-10 shrink-0 items-center justify-center transition-transform duration-200 group-hover:scale-105">
         <img
           src="/logo.png"
-          alt="OrganizAI"
+          alt="OrganizaMais+"
           className="h-10 w-10 object-contain drop-shadow-[0_2px_10px_rgba(249,115,22,0.25)]"
         />
       </div>
       <div className="flex flex-col leading-tight">
         <span className="font-display text-[1.12rem] font-bold tracking-tight text-white">
-          Organiz<span className="text-[#F97316] font-black">AI</span>
+          Organiza<span className="text-[#F97316] font-black">Mais+</span>
         </span>
         <span className="text-[0.7rem] text-stone-400 font-normal tracking-normal">
           Sua vida financeira
