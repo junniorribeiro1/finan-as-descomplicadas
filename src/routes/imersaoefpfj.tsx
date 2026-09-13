@@ -804,11 +804,11 @@ export default function ImersaoPage() {
             </div>
 
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white max-w-xl">
-              Acesso Exclusivo ao Aplicativo OrganizAI
+              Acesso Exclusivo ao App OrganizAI
             </h2>
             <p className="mt-3 text-sm sm:text-base text-stone-300 max-w-2xl leading-relaxed">
               Você não vai sair da imersão apenas com anotações e teoria. Você
-              receberá o acesso ao nosso Aplicativo OrganizAI, a plataforma
+              receberá o acesso ao nosso App OrganizAI, a plataforma
               completa de inteligência e gestão para organizar suas finanças
               pessoais e jurídicas com máxima praticidade.
             </p>
@@ -1056,10 +1056,10 @@ export default function ImersaoPage() {
               Risco Zero para a sua Inscrição
             </h3>
             <p className="text-xs sm:text-sm text-stone-300 mt-1 leading-relaxed">
-              Participe da imersão. Se você assistir ao conteúdo e achar que o
-              método não agregou na sua organização financeira, basta enviar uma
-              mensagem e devolveremos 100% do valor do seu ingresso. Sem letras
-              miúdas.
+              Participe da imersão. Se você se arrepender até antes da data da
+              imersão e achar que o método não agrega em sua organização
+              financeira, basta enviar uma mensagem e devolveremos 100% do valor
+              do seu ingresso. Sem letras miúdas.
             </p>
           </div>
         </div>
@@ -1096,7 +1096,7 @@ export default function ImersaoPage() {
                 <li className="flex items-center gap-2.5">
                   <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
                   <span>
-                    Acesso Exclusivo ao Aplicativo OrganizAI (Módulos PF & PJ)
+                    Acesso Exclusivo ao App OrganizAI (Módulos PF & PJ)
                   </span>
                 </li>
                 <li className="flex items-center gap-2.5">
