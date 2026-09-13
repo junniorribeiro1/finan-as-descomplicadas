@@ -85,7 +85,7 @@ function NataliaLinksPage() {
           </div>
 
           {/* Bio Descritiva */}
-          <p className="mt-3.5 max-w-[370px] text-[0.925rem] leading-relaxed text-stone-300 text-balance">
+          <p className="mt-3.5 w-full max-w-sm text-[0.925rem] leading-relaxed text-stone-300">
             Especialista em organização e inteligência financeira para pessoas
             físicas e jurídicas. Transformando sua relação com o dinheiro
             através de método, clareza e previsibilidade.
@@ -125,7 +125,7 @@ function NataliaLinksPage() {
               </div>
             </div>
 
-            <p className="mt-2.5 text-[0.8rem] leading-relaxed text-stone-300/90 pl-14">
+            <p className="mt-2.5 text-[0.825rem] leading-relaxed text-stone-300/90 sm:pl-14">
               O método definitivo para dominar o fluxo de caixa, separar as contas pessoais das empresariais e construir patrimônio sólido.
             </p>
           </Link>
@@ -135,7 +135,7 @@ function NataliaLinksPage() {
             to="/app"
             className="group relative flex items-center justify-between gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.04] p-4 backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-orange-500/50 hover:bg-white/[0.07] hover:shadow-[0_4px_24px_rgba(249,115,22,0.15)] active:translate-y-0"
           >
-            <div className="flex items-center gap-3.5">
+            <div className="flex items-center gap-3.5 min-w-0 flex-1">
               {/* Logo/Ícone do OrganiAI */}
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-b from-[#2a170d] to-[#150e09] border border-orange-500/30 shadow-sm group-hover:border-orange-500/60 transition-colors">
                 <img
@@ -145,8 +145,8 @@ function NataliaLinksPage() {
                 />
               </div>
 
-              <div className="flex flex-col text-left">
-                <div className="flex items-center gap-1.5">
+              <div className="flex flex-col text-left min-w-0 flex-1">
+                <div className="flex items-center gap-1.5 flex-wrap">
                   <span className="text-[0.925rem] font-semibold text-white group-hover:text-orange-300 transition-colors">
                     OrganiAI
                   </span>
@@ -154,9 +154,9 @@ function NataliaLinksPage() {
                     App
                   </span>
                 </div>
-                <span className="text-[0.775rem] text-stone-400 line-clamp-1 mt-0.5">
+                <p className="text-[0.785rem] text-stone-400 leading-snug mt-0.5">
                   Acesse sua plataforma completa de controle orçamentário
-                </span>
+                </p>
               </div>
             </div>
 
@@ -172,18 +172,18 @@ function NataliaLinksPage() {
             rel="noopener noreferrer"
             className="group relative flex items-center justify-between gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.04] p-4 backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-pink-500/40 hover:bg-gradient-to-r hover:from-purple-950/20 hover:to-pink-950/15 hover:shadow-[0_4px_24px_rgba(236,72,153,0.12)] active:translate-y-0"
           >
-            <div className="flex items-center gap-3.5">
+            <div className="flex items-center gap-3.5 min-w-0 flex-1">
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-purple-600 via-pink-600 to-amber-500 text-white shadow-sm shadow-pink-950/30">
                 <Instagram className="h-5 w-5 stroke-[2.2]" />
               </div>
 
-              <div className="flex flex-col text-left">
+              <div className="flex flex-col text-left min-w-0 flex-1">
                 <span className="text-[0.925rem] font-semibold text-white group-hover:text-pink-300 transition-colors">
                   Instagram Oficial
                 </span>
-                <span className="text-[0.775rem] text-stone-400 line-clamp-1 mt-0.5">
+                <p className="text-[0.785rem] text-stone-400 leading-snug mt-0.5">
                   Conteúdos diários, análises financeiras e bastidores
-                </span>
+                </p>
               </div>
             </div>
 
@@ -199,18 +199,18 @@ function NataliaLinksPage() {
             rel="noopener noreferrer"
             className="group relative flex items-center justify-between gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.04] p-4 backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-500/40 hover:bg-emerald-950/20 hover:shadow-[0_4px_24px_rgba(16,185,129,0.12)] active:translate-y-0"
           >
-            <div className="flex items-center gap-3.5">
+            <div className="flex items-center gap-3.5 min-w-0 flex-1">
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white shadow-sm shadow-emerald-950/30">
                 <MessageCircle className="h-5 w-5 stroke-[2.2]" />
               </div>
 
-              <div className="flex flex-col text-left">
+              <div className="flex flex-col text-left min-w-0 flex-1">
                 <span className="text-[0.925rem] font-semibold text-white group-hover:text-emerald-300 transition-colors">
                   Fale no WhatsApp
                 </span>
-                <span className="text-[0.775rem] text-stone-400 line-clamp-1 mt-0.5">
+                <p className="text-[0.785rem] text-stone-400 leading-snug mt-0.5">
                   Atendimento direto para dúvidas, mentorias e eventos
-                </span>
+                </p>
               </div>
             </div>
 
