@@ -25,7 +25,7 @@ import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 export const menuItens = [
-  { rotulo: "Dashboard", to: "/", icone: LayoutGrid },
+  { rotulo: "Dashboard", to: "/app", icone: LayoutGrid },
   { rotulo: "Gastos fixos", to: "/gastos-fixos", icone: Receipt },
   { rotulo: "Gastos variáveis", to: "/gastos-variaveis", icone: ShoppingBag },
   { rotulo: "Cartões de crédito", to: "/cartao-de-credito", icone: CreditCard },
@@ -43,7 +43,7 @@ export const menuItens = [
 
 function Marca() {
   return (
-    <Link to="/" className="flex items-center gap-3 px-1 py-1 group">
+    <Link to="/app" className="flex items-center gap-3 px-1 py-1 group">
       {/* Moeda Dourada IA / Ícone da marca OrganizAI */}
       <div className="relative flex h-10 w-10 shrink-0 items-center justify-center transition-transform duration-200 group-hover:scale-105">
         <img
@@ -79,7 +79,7 @@ function NavItem({
     <Link
       to={to}
       onClick={onClick}
-      activeOptions={{ exact: to === "/" }}
+      activeOptions={{ exact: to === "/app" }}
       className="group flex items-center gap-3.5 rounded-2xl px-3.5 py-2.5 text-[0.875rem] font-medium text-stone-200 transition-all hover:bg-white/[0.06] hover:text-white data-[status=active]:bg-[#2c170d] data-[status=active]:text-[#f97316] data-[status=active]:font-semibold"
     >
       <Icone
