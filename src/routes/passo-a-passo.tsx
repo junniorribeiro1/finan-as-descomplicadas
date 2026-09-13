@@ -1,88 +1,277 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
 import { AppShell } from "@/components/app/AppShell";
-import { Panel, PanelHead, Eyebrow } from "@/components/app/kit";
-import { ListChecks, CheckCircle2, Circle, ArrowRight } from "lucide-react";
+import { Check, ArrowRight } from "lucide-react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/passo-a-passo")({
   head: () => ({
     meta: [
-      { title: "Passo a Passo — OrganizAI" },
-      { name: "description", content: "Guia passo a passo para colocar sua vida financeira em ordem." },
+      { title: "Passo a passo — OrganizaMais+" },
+      {
+        name: "description",
+        content: "Complete estas etapas para tirar o máximo do OrganizaMais+.",
+      },
     ],
   }),
   component: PassoAPasso,
 });
 
-const etapas = [
-  { id: 1, titulo: "Mapear Gastos Fixos", desc: "Liste aluguel, energia, internet e todas as contas essenciais.", concluido: true },
-  { id: 2, titulo: "Conectar Contas & Cartões", desc: "Vincule seus bancos para consolidar saldos e faturas.", concluido: true },
-  { id: 3, titulo: "Definir Tetos de Gastos Variáveis", desc: "Estipule um limite semanal para lazer, alimentação e compras.", concluido: false },
-  { id: 4, titulo: "Criar o Cofrinho de Reserva", desc: "Guarde os primeiros R$ 1.000 para imprevistos e emergências.", concluido: false },
-  { id: 5, titulo: "Começar a Investir", desc: "Dê o primeiro passo em ativos seguros com liquidez diária.", concluido: false },
+interface PassoItem {
+  id: string;
+  numero: string;
+  titulo: string;
+  descricao: string;
+  link: string;
+}
+
+const passosIniciais: PassoItem[] = [
+  {
+    id: "passo-1",
+    numero: "01",
+    titulo: "Cadastre seus recebimentos",
+    descricao: "Adicione salário e outras fontes de renda.",
+    link: "/recebimentos",
+  },
+  {
+    id: "passo-2",
+    numero: "02",
+    titulo: "Lance seus gastos fixos",
+    descricao: "Aluguel, contas de casa, assinaturas.",
+    link: "/gastos-fixos",
+  },
+  {
+    id: "passo-3",
+    numero: "03",
+    titulo: "Cadastre seus cartões",
+    descricao: "Bandeira, limite e dias de fechamento/vencimento.",
+    link: "/cartao-de-credito",
+  },
+  {
+    id: "passo-4",
+    numero: "04",
+    titulo: "Crie sua Reserva de Emergência",
+    descricao: "Comece com uma meta de 6x seus gastos fixos.",
+    link: "/cofrinhos",
+  },
+  {
+    id: "passo-5",
+    numero: "05",
+    titulo: "Categorize seus gastos",
+    descricao: "Facilita ver para onde vai seu dinheiro.",
+    link: "/categorias",
+  },
+  {
+    id: "passo-6",
+    numero: "06",
+    titulo: "Convide um segundo usuário",
+    descricao: "Opcional. Compartilhe com quem organiza junto.",
+    link: "/segundo-usuario",
+  },
+  {
+    id: "passo-7",
+    numero: "07",
+    titulo: "Ative a Vera",
+    descricao: "Sua gerente financeira com IA para tirar dúvidas.",
+    link: "/vera-gerente",
+  },
 ];
 
-function PassoAPasso() {
-  const [lista, setLista] = useState(etapas);
+const STORAGE_KEY = "organizais_passos_concluidos_v1";
 
-  const toggleEtapa = (id: number) => {
-    setLista((prev) =>
-      prev.map((e) => (e.id === id ? { ...e, concluido: !e.concluido } : e))
-    );
+function PassoAPasso() {
+  const [concluidos, setConcluidos] = useState<string[]>(() => {
+    if (typeof window === "undefined") return [];
+    try {
+      const salvo = localStorage.getItem(STORAGE_KEY);
+      return salvo ? JSON.parse(salvo) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(concluidos));
+    } catch {
+      // Ignora erro de storage
+    }
+  }, [concluidos]);
+
+  const toggleConcluido = (id: string, titulo: string) => {
+    setConcluidos((prev) => {
+      const estaConcluido = prev.includes(id);
+      if (estaConcluido) {
+        toast.info(`Passo marcado como pendente`);
+        return prev.filter((item) => item !== id);
+      } else {
+        const novos = [...prev, id];
+        if (novos.length === passosIniciais.length) {
+          toast.success("Parabéns! Você completou todos os 7 passos!");
+        } else {
+          toast.success(`"${titulo}" concluído!`);
+        }
+        return novos;
+      }
+    });
   };
 
-  const concluidas = lista.filter((e) => e.concluido).length;
-  const progresso = Math.round((concluidas / lista.length) * 100);
+  const totalPassos = passosIniciais.length;
+  const qtdConcluidos = concluidos.length;
+  const porcentagem = Math.round((qtdConcluidos / totalPassos) * 100);
+
+  // SVG Gauge calculations
+  const raio = 26;
+  const circunferencia = 2 * Math.PI * raio;
+  const offset = circunferencia - (porcentagem / 100) * circunferencia;
 
   return (
-    <AppShell titulo="Passo a passo" descricao="Seu roteiro prático para conquistar estabilidade e liberdade financeira.">
-      <Panel className="p-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
+    <AppShell>
+      <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+        {/* Header Superior com Ícone 3D de Prancheta */}
+        <div className="flex items-center gap-4">
+          <div className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-white/[0.08] bg-[#161618] p-1.5 shadow-xl shadow-black/50 sm:h-14 sm:w-14">
+            <img
+              src="/icons/kpi/passo-header@2x.png"
+              alt="Passo a passo"
+              className="h-full w-full object-contain drop-shadow-[0_2px_8px_rgba(249,115,22,0.25)]"
+            />
+          </div>
+
           <div>
-            <Eyebrow>Trilha de Organização</Eyebrow>
-            <h3 className="mt-1 text-xl font-bold">Progresso do Método ({progresso}%)</h3>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              {concluidas} de {lista.length} etapas concluídas
+            <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
+              Passo a passo
+            </h1>
+            <p className="mt-1 text-xs text-neutral-400 sm:text-sm">
+              Complete estas etapas para tirar o máximo do OrganizaMais+.
             </p>
           </div>
-          <div className="w-full sm:w-48">
-            <div className="h-2.5 w-full overflow-hidden rounded-full bg-surface-2">
-              <div
-                className="h-full rounded-full bg-primary transition-all duration-300"
-                style={{ width: `${progresso}%` }}
-              />
+        </div>
+
+        {/* Card de Progresso */}
+        <div className="mt-8 rounded-2xl border border-white/[0.08] bg-[#161618] p-5 shadow-xl sm:rounded-3xl sm:p-7">
+          <div className="flex items-center gap-5 sm:gap-6">
+            {/* Medidor Circular */}
+            <div className="relative flex h-14 w-14 shrink-0 items-center justify-center sm:h-16 sm:w-16">
+              <svg className="h-full w-full -rotate-90 transform" viewBox="0 0 64 64">
+                {/* Trilha de fundo */}
+                <circle
+                  cx="32"
+                  cy="32"
+                  r={raio}
+                  className="stroke-neutral-800"
+                  strokeWidth="5"
+                  fill="transparent"
+                />
+                {/* Trilha preenchida */}
+                <circle
+                  cx="32"
+                  cy="32"
+                  r={raio}
+                  className="stroke-orange-500 transition-all duration-500"
+                  strokeWidth="5"
+                  strokeDasharray={circunferencia}
+                  strokeDashoffset={offset}
+                  strokeLinecap="round"
+                  fill="transparent"
+                />
+              </svg>
+              <span className="absolute text-xs font-bold text-white sm:text-sm">
+                {porcentagem}%
+              </span>
+            </div>
+
+            {/* Textos de Progresso */}
+            <div className="flex-1 min-w-0">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 sm:text-[11px]">
+                Seu progresso
+              </span>
+              <h2 className="mt-0.5 text-base font-bold text-white sm:text-lg">
+                {qtdConcluidos} de {totalPassos} passos concluídos
+              </h2>
+              <p className="mt-0.5 text-xs text-neutral-400">
+                Marque cada etapa conforme for concluindo.
+              </p>
+
+              {/* Barra Horizontal */}
+              <div className="mt-3.5 h-1.5 w-full overflow-hidden rounded-full bg-neutral-800/80">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-orange-500 to-amber-500 transition-all duration-500"
+                  style={{ width: `${porcentagem}%` }}
+                />
+              </div>
             </div>
           </div>
         </div>
 
+        {/* Lista das 7 Etapas */}
         <div className="mt-6 space-y-3">
-          {lista.map((etapa) => (
-            <div
-              key={etapa.id}
-              onClick={() => toggleEtapa(etapa.id)}
-              className={`flex items-start gap-4 p-4 rounded-2xl border transition-all cursor-pointer ${
-                etapa.concluido
-                  ? "border-emerald-500/30 bg-emerald-500/5 hover:bg-emerald-500/10"
-                  : "border-border bg-surface/40 hover:bg-surface/70"
-              }`}
-            >
-              <div className="mt-0.5">
-                {etapa.concluido ? (
-                  <CheckCircle2 className="h-5 w-5 text-emerald-400" />
-                ) : (
-                  <Circle className="h-5 w-5 text-muted-foreground" />
-                )}
+          {passosIniciais.map((passo) => {
+            const isDone = concluidos.includes(passo.id);
+            return (
+              <div
+                key={passo.id}
+                onClick={() => toggleConcluido(passo.id, passo.titulo)}
+                className={`group relative flex items-center justify-between rounded-2xl border bg-[#161618] px-4 py-3.5 transition-all duration-200 cursor-pointer sm:px-5 sm:py-4 ${
+                  isDone
+                    ? "border-emerald-500/30 bg-[#161917]"
+                    : "border-white/[0.06] hover:border-orange-500/50 hover:bg-[#19191c]"
+                }`}
+              >
+                {/* Lado Esquerdo: Número e Textos */}
+                <div className="flex items-center gap-3.5 sm:gap-4 min-w-0">
+                  <div
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-xs font-semibold transition-colors sm:h-9 sm:w-9 ${
+                      isDone
+                        ? "bg-emerald-500/15 text-emerald-400"
+                        : "bg-white/[0.04] text-neutral-400 group-hover:text-white"
+                    }`}
+                  >
+                    {passo.numero}
+                  </div>
+
+                  <div className="min-w-0">
+                    <h3
+                      className={`text-xs sm:text-sm font-semibold transition-colors ${
+                        isDone
+                          ? "text-neutral-300 line-through opacity-85"
+                          : "text-white group-hover:text-white"
+                      }`}
+                    >
+                      {passo.titulo}
+                    </h3>
+                    <p className="mt-0.5 truncate text-[11px] text-neutral-400 sm:text-xs">
+                      {passo.descricao}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Lado Direito: Círculo de Seleção + Link de Atalho */}
+                <div className="flex items-center gap-3 shrink-0 ml-3">
+                  <Link
+                    to={passo.link}
+                    onClick={(e) => e.stopPropagation()}
+                    className="hidden text-neutral-500 hover:text-orange-400 transition-colors sm:block"
+                    title={`Ir para ${passo.titulo}`}
+                  >
+                    <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </Link>
+
+                  <div
+                    className={`flex h-6 w-6 items-center justify-center rounded-full transition-all duration-200 ${
+                      isDone
+                        ? "bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-md shadow-orange-500/30 ring-2 ring-orange-500/40"
+                        : "border-2 border-neutral-600 group-hover:border-orange-500/70"
+                    }`}
+                  >
+                    {isDone && <Check className="h-3.5 w-3.5 stroke-[2.5]" />}
+                  </div>
+                </div>
               </div>
-              <div className="flex-1">
-                <h4 className={`text-sm font-semibold ${etapa.concluido ? "text-foreground line-through opacity-80" : "text-foreground"}`}>
-                  {etapa.id}. {etapa.titulo}
-                </h4>
-                <p className="text-xs text-muted-foreground mt-0.5">{etapa.desc}</p>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
-      </Panel>
+      </div>
     </AppShell>
   );
 }
