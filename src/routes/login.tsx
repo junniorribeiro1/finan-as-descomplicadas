@@ -6,6 +6,7 @@ import {
   Lock,
   Mail,
   User,
+  Phone,
   ArrowRight,
   Sparkles,
   Eye,
@@ -46,6 +47,7 @@ function LoginPage() {
   const [modo, setModo] = useState<"login" | "cadastro" | "recuperar">("login");
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
+  const [telefone, setTelefone] = useState("");
   const [senha, setSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
   const [mostrarSenha, setMostrarSenha] = useState(false);
@@ -53,6 +55,20 @@ function LoginPage() {
   const [recuperacaoEnviada, setRecuperacaoEnviada] = useState(false);
   const [mensagemErro, setMensagemErro] = useState<string | null>(null);
   const [mensagemSucesso, setMensagemSucesso] = useState<string | null>(null);
+
+  const formatarTelefone = (valor: string) => {
+    const apenasNumeros = valor.replace(/\D/g, "").slice(0, 11);
+    if (apenasNumeros.length <= 2) {
+      return apenasNumeros.length > 0 ? `(${apenasNumeros}` : "";
+    }
+    if (apenasNumeros.length <= 6) {
+      return `(${apenasNumeros.slice(0, 2)}) ${apenasNumeros.slice(2)}`;
+    }
+    if (apenasNumeros.length <= 10) {
+      return `(${apenasNumeros.slice(0, 2)}) ${apenasNumeros.slice(2, 6)}-${apenasNumeros.slice(6)}`;
+    }
+    return `(${apenasNumeros.slice(0, 2)}) ${apenasNumeros.slice(2, 7)}-${apenasNumeros.slice(7, 11)}`;
+  };
 
   // Se já estiver logado, redirecionar automaticamente para a página solicitada ou /app
   useEffect(() => {
@@ -116,8 +132,16 @@ function LoginPage() {
     setMensagemErro(null);
     setMensagemSucesso(null);
 
-    if (!nome.trim() || !email.trim() || !senha) {
-      const msg = "Preencha todos os campos.";
+    if (!nome.trim() || !email.trim() || !senha || !telefone.trim()) {
+      const msg = "Preencha todos os campos obrigatórios.";
+      setMensagemErro(msg);
+      toast.error(msg);
+      return;
+    }
+
+    const telefoneLimpo = telefone.replace(/\D/g, "");
+    if (telefoneLimpo.length < 10) {
+      const msg = "Informe um número de telefone com DDD válido (ex: 11 99999-9999).";
       setMensagemErro(msg);
       toast.error(msg);
       return;
@@ -146,6 +170,7 @@ function LoginPage() {
           p_email: email.trim(),
           p_password: senha,
           p_full_name: nome.trim(),
+          p_phone: telefone.trim(),
         }
       );
 
@@ -440,6 +465,23 @@ function LoginPage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="seu.email@exemplo.com"
+                      required
+                      className="w-full rounded-xl bg-[#19191d] border border-white/10 pl-10 pr-4 py-2.5 text-xs text-white placeholder-stone-500 outline-none focus:border-[#F97316] transition-colors"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-stone-300 mb-1.5">
+                    Telefone com DDD (WhatsApp)
+                  </label>
+                  <div className="relative">
+                    <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-stone-500" />
+                    <input
+                      type="tel"
+                      value={telefone}
+                      onChange={(e) => setTelefone(formatarTelefone(e.target.value))}
+                      placeholder="(11) 99999-9999"
                       required
                       className="w-full rounded-xl bg-[#19191d] border border-white/10 pl-10 pr-4 py-2.5 text-xs text-white placeholder-stone-500 outline-none focus:border-[#F97316] transition-colors"
                     />

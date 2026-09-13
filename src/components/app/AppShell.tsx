@@ -14,8 +14,8 @@ import {
   ListChecks,
   CircleHelp,
   Upload,
-  Bell,
   Sun,
+  Moon,
   ChevronDown,
   Sparkles,
   Menu,
@@ -149,6 +149,20 @@ export function AppShell({
   const [tipoConta, setTipoConta] = useState<"pessoal" | "empresa">("pessoal");
   const [mes, setMes] = useState("Este mês");
   const [ano, setAno] = useState("2026");
+  const [tema, setTema] = useState<"dark" | "light">(() => {
+    if (typeof window !== "undefined") {
+      return (localStorage.getItem("organizai_theme") as "dark" | "light") || "dark";
+    }
+    return "dark";
+  });
+
+  const alternarTema = () => {
+    const novoTema = tema === "dark" ? "light" : "dark";
+    setTema(novoTema);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("organizai_theme", novoTema);
+    }
+  };
 
   // Proteção de rota: Redireciona para /login se não estiver autenticado
   useEffect(() => {
@@ -277,7 +291,14 @@ export function AppShell({
     "Usuário";
 
   return (
-    <div className="min-h-screen bg-[#0d0d0d] text-foreground font-sans">
+    <div
+      className={cn(
+        "min-h-screen font-sans transition-colors duration-200",
+        tema === "light"
+          ? "organizai-theme-light bg-[#f8f9fc] text-slate-900"
+          : "organizai-theme-dark bg-[#0d0d0d] text-foreground"
+      )}
+    >
       {/* Sidebar Desktop */}
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-[17rem] flex-col border-r border-white/[0.06] bg-[#0d0d0d] px-4 py-5 lg:flex">
         <Marca />
@@ -524,18 +545,22 @@ export function AppShell({
 
               {/* Modo Claro/Escuro */}
               <button
-                className="grid h-9 w-9 place-items-center rounded-full text-stone-400 hover:text-white hover:bg-white/5 transition-colors"
+                type="button"
+                onClick={alternarTema}
+                className={cn(
+                  "grid h-9 w-9 place-items-center rounded-full transition-all",
+                  tema === "dark"
+                    ? "text-stone-400 hover:text-white hover:bg-white/5"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
+                )}
+                title={tema === "dark" ? "Mudar para Modo Claro" : "Mudar para Modo Escuro"}
                 aria-label="Alternar tema"
               >
-                <Sun className="h-4 w-4" />
-              </button>
-
-              {/* Notificações */}
-              <button
-                className="grid h-9 w-9 place-items-center rounded-full text-stone-400 hover:text-white hover:bg-white/5 transition-colors"
-                aria-label="Notificações"
-              >
-                <Bell className="h-4 w-4" />
+                {tema === "dark" ? (
+                  <Sun className="h-4 w-4 text-amber-400 hover:rotate-45 transition-transform" />
+                ) : (
+                  <Moon className="h-4 w-4 text-indigo-600 hover:-rotate-12 transition-transform" />
+                )}
               </button>
 
               {/* Avatar do Usuário */}

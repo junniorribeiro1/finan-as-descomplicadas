@@ -25,6 +25,7 @@ import {
   LogOut,
   RefreshCw,
   Eye,
+  Phone,
   X,
   Filter,
 } from "lucide-react";
@@ -77,7 +78,7 @@ const ALUNOS_EXEMPLO: AlunoFinanceiro[] = [
     phone: "(77) 99123-4567",
     role: "user",
     status: "ativo",
-    plan: "OrganizAI Pro",
+    plan: "Free",
     account_type: "pessoal",
     created_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 12).toISOString(),
     last_active_at: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
@@ -99,7 +100,7 @@ const ALUNOS_EXEMPLO: AlunoFinanceiro[] = [
     phone: "(11) 98765-4321",
     role: "user",
     status: "ativo",
-    plan: "OrganizAI Pro PJ",
+    plan: "Free",
     account_type: "empresa",
     created_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5).toISOString(),
     last_active_at: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
@@ -121,7 +122,7 @@ const ALUNOS_EXEMPLO: AlunoFinanceiro[] = [
     phone: "(21) 99887-1122",
     role: "user",
     status: "pendente",
-    plan: "OrganizAI Pro",
+    plan: "Free",
     account_type: "pessoal",
     created_at: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString(),
     last_active_at: new Date(Date.now() - 1000 * 60 * 180).toISOString(),
@@ -190,7 +191,7 @@ function AdminPage() {
           phone: p.phone || "Não informado",
           role: p.role || "user",
           status: p.status || "ativo",
-          plan: p.plan || "OrganizAI Pro",
+          plan: p.plan || "Free",
           account_type: p.account_type || "pessoal",
           created_at: p.created_at || new Date().toISOString(),
           last_active_at: p.last_active_at || p.created_at,
@@ -679,6 +680,18 @@ function AdminPage() {
                                 {aluno.full_name}
                               </p>
                               <p className="text-[11px] text-stone-400">{aluno.email}</p>
+                              {aluno.phone && aluno.phone !== "Não informado" && (
+                                <a
+                                  href={`https://wa.me/55${aluno.phone.replace(/\D/g, "")}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="inline-flex items-center gap-1 text-[10px] text-emerald-400 hover:text-emerald-300 font-medium transition-colors mt-0.5"
+                                  title="Conversar no WhatsApp"
+                                >
+                                  <Phone className="h-2.5 w-2.5" />
+                                  {aluno.phone}
+                                </a>
+                              )}
                             </div>
                           </div>
                         </td>
@@ -686,7 +699,7 @@ function AdminPage() {
                         {/* Plano */}
                         <td className="py-3.5 px-3">
                           <span className="inline-flex items-center gap-1 rounded-full bg-white/[0.06] px-2.5 py-0.5 text-[10px] font-semibold text-stone-300">
-                            {aluno.plan || "OrganizAI Pro"}
+                            {aluno.plan || "Free"}
                           </span>
                         </td>
 
@@ -815,8 +828,25 @@ function AdminPage() {
                       {alunoSelecionado.status.toUpperCase()}
                     </span>
                   </div>
-                  <p className="text-xs text-stone-400 mt-0.5">
-                    {alunoSelecionado.email} • {alunoSelecionado.phone || "Sem telefone"}
+                  <p className="text-xs text-stone-400 mt-1 flex items-center gap-2 flex-wrap">
+                    <span>{alunoSelecionado.email}</span>
+                    <span>•</span>
+                    {alunoSelecionado.phone && alunoSelecionado.phone !== "Não informado" ? (
+                      <a
+                        href={`https://wa.me/55${alunoSelecionado.phone.replace(/\D/g, "")}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1 text-emerald-400 hover:underline font-semibold"
+                        title="Conversar no WhatsApp"
+                      >
+                        <Phone className="h-3 w-3" />
+                        {alunoSelecionado.phone} (WhatsApp)
+                      </a>
+                    ) : (
+                      <span>Sem telefone</span>
+                    )}
+                    <span>•</span>
+                    <span className="text-stone-300">Plano {alunoSelecionado.plan || "Free"}</span>
                   </p>
                 </div>
               </div>

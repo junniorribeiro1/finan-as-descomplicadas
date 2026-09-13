@@ -150,3 +150,160 @@
     border-color: var(--color-border-strong);
   }
 }
+
+/* =========================================================
+ * ORGANIZAI — MODO CLARO EXCLUSIVO DO PAINEL INTERNO
+ * Não afeta landing pages ou sites externos criados à parte
+ * ========================================================= */
+.organizai-theme-light {
+  color-scheme: light;
+  --background: oklch(0.978 0.003 250);
+  --foreground: oklch(0.18 0.02 260);
+  --surface: oklch(1 0 0);
+  --surface-2: oklch(0.96 0.005 250);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.18 0.02 260);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.18 0.02 260);
+  --muted: oklch(0.94 0.005 250);
+  --muted-foreground: oklch(0.46 0.02 260);
+  --subtle: oklch(0.55 0.02 260);
+  --border: rgba(0, 0, 0, 0.08);
+  --border-strong: rgba(0, 0, 0, 0.16);
+  --input: rgba(0, 0, 0, 0.12);
+
+  background-color: #f8f9fc !important;
+  color: #0f172a !important;
+}
+
+/* Sidebar & Navbar no Modo Claro */
+.organizai-theme-light aside {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+.organizai-theme-light header {
+  background-color: rgba(255, 255, 255, 0.94) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+.organizai-theme-light header select,
+.organizai-theme-light header .rounded-full.bg-\[\#181818\] {
+  background-color: #f1f5f9 !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  color: #0f172a !important;
+}
+
+.organizai-theme-light header select option {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+/* Tipografia e Textos */
+.organizai-theme-light .font-display.text-white,
+.organizai-theme-light h1.text-white,
+.organizai-theme-light h2.text-white,
+.organizai-theme-light h3.text-white,
+.organizai-theme-light h4.text-white,
+.organizai-theme-light span.text-white,
+.organizai-theme-light p.text-white,
+.organizai-theme-light strong.text-white {
+  color: #0f172a !important;
+}
+
+.organizai-theme-light .text-stone-200,
+.organizai-theme-light .text-stone-300 {
+  color: #334155 !important;
+}
+
+.organizai-theme-light .text-stone-400,
+.organizai-theme-light .text-stone-500 {
+  color: #64748b !important;
+}
+
+/* Links de Navegação da Barra Lateral */
+.organizai-theme-light nav a {
+  color: #334155 !important;
+}
+
+.organizai-theme-light nav a:hover {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+  color: #0f172a !important;
+}
+
+.organizai-theme-light nav a[data-status="active"] {
+  background-color: #fff7ed !important;
+  color: #ea580c !important;
+}
+
+/* Painéis, Cards e Caixas */
+.organizai-theme-light .panel,
+.organizai-theme-light section.panel {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+.organizai-theme-light .bg-\[\#0d0d0d\],
+.organizai-theme-light .bg-\[\#09090b\],
+.organizai-theme-light .bg-\[\#121214\],
+.organizai-theme-light .bg-\[\#141214\],
+.organizai-theme-light .bg-\[\#141311\],
+.organizai-theme-light .bg-\[\#141414\],
+.organizai-theme-light .bg-\[\#141418\],
+.organizai-theme-light .bg-\[\#161618\],
+.organizai-theme-light .bg-\[\#181818\],
+.organizai-theme-light .bg-\[\#19191d\],
+.organizai-theme-light .bg-\[\#1a1a1c\],
+.organizai-theme-light .bg-\[\#1e1e20\],
+.organizai-theme-light .bg-\[\#1f1f23\],
+.organizai-theme-light .bg-\[\#232328\] {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  color: #0f172a !important;
+}
+
+.organizai-theme-light .border-white\/\[0\.04\],
+.organizai-theme-light .border-white\/\[0\.06\],
+.organizai-theme-light .border-white\/\[0\.08\],
+.organizai-theme-light .border-white\/10,
+.organizai-theme-light .border-white\/\[0\.1\] {
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+.organizai-theme-light .bg-white\/\[0\.02\],
+.organizai-theme-light .bg-white\/\[0\.04\],
+.organizai-theme-light .bg-white\/\[0\.06\],
+.organizai-theme-light .bg-white\/5 {
+  background-color: #f8fafc !important;
+}
+
+/* Tabelas */
+.organizai-theme-light table th {
+  background-color: #f8fafc !important;
+  color: #64748b !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+.organizai-theme-light table td {
+  border-color: rgba(0, 0, 0, 0.05) !important;
+  color: #1e293b !important;
+}
+
+.organizai-theme-light table tr:hover {
+  background-color: #f8fafc !important;
+}
+
+/* Inputs e Formulários */
+.organizai-theme-light input,
+.organizai-theme-light select,
+.organizai-theme-light textarea {
+  background-color: #f8fafc !important;
+  border-color: rgba(0, 0, 0, 0.12) !important;
+  color: #0f172a !important;
+}
+
+.organizai-theme-light input::placeholder,
+.organizai-theme-light textarea::placeholder {
+  color: #94a3b8 !important;
+}

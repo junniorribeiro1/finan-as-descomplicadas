@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { AppShell } from "@/components/app/AppShell";
 import { Panel } from "@/components/app/kit";
-import { User, Mail, Shield, Calendar, LogOut } from "lucide-react";
+import { User, Mail, Phone, Shield, Calendar, LogOut } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
 
@@ -16,7 +16,7 @@ export const Route = createFileRoute("/perfil")({
 });
 
 function Perfil() {
-  const { user, signOut } = useAuth();
+  const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
 
   const nomeCompleto =
@@ -82,6 +82,16 @@ function Perfil() {
 
             <div className="flex items-center justify-between p-4 sm:p-5">
               <div className="flex items-center gap-3">
+                <Phone className="h-4 w-4 text-muted-foreground" />
+                <span className="text-xs text-muted-foreground">Telefone</span>
+              </div>
+              <span className="text-xs font-semibold text-foreground">
+                {profile?.phone || (user?.user_metadata as any)?.phone || "—"}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between p-4 sm:p-5">
+              <div className="flex items-center gap-3">
                 <Calendar className="h-4 w-4 text-muted-foreground" />
                 <span className="text-xs text-muted-foreground">Conta criada em</span>
               </div>
@@ -93,8 +103,8 @@ function Perfil() {
                 <Shield className="h-4 w-4 text-muted-foreground" />
                 <span className="text-xs text-muted-foreground">Status do Plano</span>
               </div>
-              <span className="rounded-full bg-orange-500/20 border border-orange-500/30 px-3 py-1 text-xs font-bold text-orange-400">
-                OrganizAI Pro
+              <span className="rounded-full bg-emerald-500/20 border border-emerald-500/30 px-3 py-1 text-xs font-bold text-emerald-400">
+                Free
               </span>
             </div>
           </div>
