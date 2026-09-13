@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/app/AppShell";
 import { cn } from "@/lib/utils";
@@ -33,87 +32,63 @@ const diasMes = Array.from({ length: 30 }, (_, i) => i + 1);
 
 const kpiCards = [
   {
-    id: 0,
     rotulo: "TOTAL DE GASTOS",
     valor: "R$ 0,00",
     descricao: "Fixos + variáveis",
     icone: "/icons/kpi/gastos@2x.png",
-    bordaAtiva: "border-[#d97736]/70 shadow-[0_0_24px_rgba(217,119,54,0.22)]",
-    bgAtivo: "bg-gradient-to-b from-[#241a14] via-[#181615] to-[#131212]",
-    sheenAtivo: "from-amber-500/25",
-    bordaHover: "hover:border-[#d97736]/70 hover:shadow-[0_0_24px_rgba(217,119,54,0.20)] hover:bg-gradient-to-b hover:from-[#241a14] hover:to-[#131212]",
+    bordaHover: "hover:border-[#d97736]/70 hover:shadow-[0_0_24px_rgba(217,119,54,0.22)] hover:bg-gradient-to-b hover:from-[#241a14] hover:to-[#131212]",
     sheenHover: "group-hover:from-amber-500/25",
   },
   {
-    id: 1,
     rotulo: "TOTAL DE RECEBIMENTOS",
     valor: "R$ 0,00",
     descricao: "Somatório do período",
     icone: "/icons/kpi/recebimentos@2x.png",
-    bordaAtiva: "border-emerald-500/70 shadow-[0_0_24px_rgba(16,185,129,0.22)]",
-    bgAtivo: "bg-gradient-to-b from-[#13241b] via-[#141b17] to-[#131212]",
-    sheenAtivo: "from-emerald-500/25",
-    bordaHover: "hover:border-emerald-500/70 hover:shadow-[0_0_24px_rgba(16,185,129,0.20)] hover:bg-gradient-to-b hover:from-[#13241b] hover:to-[#131212]",
+    bordaHover: "hover:border-emerald-500/70 hover:shadow-[0_0_24px_rgba(16,185,129,0.22)] hover:bg-gradient-to-b hover:from-[#13241b] hover:to-[#131212]",
     sheenHover: "group-hover:from-emerald-500/25",
   },
   {
-    id: 2,
     rotulo: "TOTAL PAGO",
     valor: "R$ 0,00",
     descricao: "0% das contas",
     icone: "/icons/kpi/total_pago@2x.png",
-    bordaAtiva: "border-teal-400/70 shadow-[0_0_24px_rgba(45,212,191,0.22)]",
-    bgAtivo: "bg-gradient-to-b from-[#122323] via-[#141919] to-[#131212]",
-    sheenAtivo: "from-teal-400/25",
-    bordaHover: "hover:border-teal-400/70 hover:shadow-[0_0_24px_rgba(45,212,191,0.20)] hover:bg-gradient-to-b hover:from-[#122323] hover:to-[#131212]",
+    bordaHover: "hover:border-teal-400/70 hover:shadow-[0_0_24px_rgba(45,212,191,0.22)] hover:bg-gradient-to-b hover:from-[#122323] hover:to-[#131212]",
     sheenHover: "group-hover:from-teal-400/25",
   },
   {
-    id: 3,
     rotulo: "FALTA PAGAR",
     valor: "R$ 0,00",
     descricao: "Este mês",
     icone: "/icons/kpi/falta_pagar@2x.png",
-    bordaAtiva: "border-orange-500/70 shadow-[0_0_24px_rgba(249,115,22,0.22)]",
-    bgAtivo: "bg-gradient-to-b from-[#261913] via-[#191614] to-[#131212]",
-    sheenAtivo: "from-orange-500/25",
-    bordaHover: "hover:border-orange-500/70 hover:shadow-[0_0_24px_rgba(249,115,22,0.20)] hover:bg-gradient-to-b hover:from-[#261913] hover:to-[#131212]",
+    bordaHover: "hover:border-orange-500/70 hover:shadow-[0_0_24px_rgba(249,115,22,0.22)] hover:bg-gradient-to-b hover:from-[#261913] hover:to-[#131212]",
     sheenHover: "group-hover:from-orange-500/25",
   },
   {
-    id: 4,
     rotulo: "SALDO DISPONÍVEL",
     valor: "R$ 0,00",
     descricao: "Todos os bancos",
     icone: "/icons/kpi/saldo@2x.png",
-    bordaAtiva: "border-amber-400/70 shadow-[0_0_24px_rgba(251,191,36,0.22)]",
-    bgAtivo: "bg-gradient-to-b from-[#261c12] via-[#191714] to-[#131212]",
-    sheenAtivo: "from-amber-400/25",
-    bordaHover: "hover:border-amber-400/70 hover:shadow-[0_0_24px_rgba(251,191,36,0.20)] hover:bg-gradient-to-b hover:from-[#261c12] hover:to-[#131212]",
+    bordaHover: "hover:border-amber-400/70 hover:shadow-[0_0_24px_rgba(251,191,36,0.22)] hover:bg-gradient-to-b hover:from-[#261c12] hover:to-[#131212]",
     sheenHover: "group-hover:from-amber-400/25",
   },
 ];
 
 function Dashboard() {
-  const [cardAtivo, setCardAtivo] = useState<number | null>(0);
-
   return (
     <AppShell>
-      {/* 1. Hero Banner de Boas-Vindas */}
-      <div className="relative min-h-[170px] sm:min-h-[190px] overflow-hidden rounded-3xl border border-white/[0.06] bg-[#121212] shadow-xl">
-        {/* Imagem de Fundo 3D Luxo com Moedas e Ondas */}
+      {/* 1. Hero Banner de Boas-Vindas com Fluidez 3D */}
+      <div className="relative min-h-[175px] sm:min-h-[190px] overflow-hidden rounded-3xl border border-white/[0.06] bg-[#0d0d0d] shadow-xl">
+        {/* Imagem de Fundo com as Ondas Fluidas e Moedas 3D da Referência */}
         <img
-          src="/hero-banner.jpg"
-          alt="Finanças OrganizAI"
-          className="absolute right-0 top-0 h-full w-full sm:w-[65%] object-cover object-center opacity-85"
+          src="/hero-banner.png"
+          alt="Fluidez OrganizAI"
+          className="absolute right-0 top-0 h-full w-full object-cover object-right pointer-events-none select-none"
         />
-        {/* Degradê para fusão suave com o texto */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#121212] via-[#121212]/90 sm:via-[#121212]/75 to-transparent" />
 
         {/* Textos do Banner */}
         <div className="relative z-10 flex h-full flex-col justify-center p-6 sm:p-8">
           <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#F97316]">
-            ORGANIZAI
+            ORGANIZAMAIS+
           </span>
           <h2 className="mt-1 font-display text-2xl font-bold tracking-tight text-white sm:text-3xl">
             Bem-vindo(a) 👋
@@ -126,63 +101,52 @@ function Dashboard() {
 
       {/* 2. Top 5 KPI Cards em Linha Horizontal */}
       <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
-        {kpiCards.map((card) => {
-          const isAtivo = cardAtivo === card.id;
-          return (
-            <button
-              type="button"
-              key={card.rotulo}
-              onClick={() => setCardAtivo(card.id)}
+        {kpiCards.map((card) => (
+          <div
+            key={card.rotulo}
+            className={cn(
+              "group relative flex flex-col justify-between rounded-2xl p-4 sm:p-5 text-left transition-all duration-300 ease-out outline-none overflow-hidden cursor-default",
+              "border border-white/[0.08] bg-[#151515]",
+              "hover:-translate-y-1",
+              card.bordaHover
+            )}
+          >
+            {/* Feixe de luz suave superior acionado SOMENTE no hover */}
+            <div
               className={cn(
-                "group relative flex flex-col justify-between rounded-2xl p-4 sm:p-5 text-left transition-all duration-300 ease-out outline-none overflow-hidden cursor-pointer",
-                "border hover:-translate-y-1",
-                isAtivo
-                  ? cn(card.bordaAtiva, card.bgAtivo)
-                  : cn(
-                      "border-white/[0.08] bg-[#151515]",
-                      card.bordaHover
-                    )
+                "pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 h-16 w-3/4 rounded-full blur-xl transition-opacity duration-300",
+                "bg-gradient-to-b to-transparent opacity-0 group-hover:opacity-100",
+                card.sheenHover
               )}
-            >
-              {/* Feixe de luz suave superior (luzes atmosféricas) */}
-              <div
-                className={cn(
-                  "pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 h-16 w-3/4 rounded-full blur-xl transition-opacity duration-300",
-                  "bg-gradient-to-b to-transparent",
-                  isAtivo
-                    ? card.sheenAtivo
-                    : cn("opacity-0", card.sheenHover, "group-hover:opacity-100")
-                )}
-              />
+            />
 
-              {/* Linha Superior: Rótulo e Cápsula com Ícone 3D */}
-              <div className="relative z-10 flex items-start justify-between gap-2 w-full">
-                <span className="text-[11px] font-semibold tracking-wider text-stone-400 uppercase">
-                  {card.rotulo}
-                </span>
+            {/* Linha Superior: Rótulo e Cápsula com Ícone 3D */}
+            <div className="relative z-10 flex items-start justify-between gap-2 w-full">
+              <span className="text-[11px] font-semibold tracking-wider text-stone-400 uppercase">
+                {card.rotulo}
+              </span>
 
-                {/* Cápsula escura circular com reflexo neon e ícone 3D */}
-                <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full overflow-hidden transition-transform duration-300 group-hover:scale-105 shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
-                  <img
-                    src={card.icone}
-                    alt={card.rotulo}
-                    className="h-full w-full object-cover select-none pointer-events-none"
-                  />
-                </div>
+              {/* Cápsula escura circular com reflexo neon e ícone 3D */}
+              <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full overflow-hidden transition-transform duration-300 group-hover:scale-105 shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+                <img
+                  src={card.icone}
+                  alt={card.rotulo}
+                  className="h-full w-full object-cover select-none pointer-events-none"
+                />
               </div>
+            </div>
 
-              {/* Linha Inferior: Valor e Descrição */}
-              <div className="relative z-10 mt-3 sm:mt-4">
-                <span className="font-display text-2xl sm:text-[1.7rem] font-bold tracking-tight text-white leading-none block">
-                  {card.valor}
-                </span>
-                <p className="mt-1.5 text-[11px] font-normal text-stone-400">
-                  {card.descricao}
-                </p>
-              </div>
-            </button>
-          );
-        })}
+            {/* Linha Inferior: Valor e Descrição */}
+            <div className="relative z-10 mt-3 sm:mt-4">
+              <span className="font-display text-2xl sm:text-[1.7rem] font-bold tracking-tight text-white leading-none block">
+                {card.valor}
+              </span>
+              <p className="mt-1.5 text-[11px] font-normal text-stone-400">
+                {card.descricao}
+              </p>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* 3. Grid Principal em 2 Colunas */}
