@@ -19,6 +19,8 @@ export interface UserProfile {
   plan?: string;
   avatar_url?: string | null;
   phone?: string | null;
+  preferred_name?: string | null;
+  vera_activated_at?: string | null;
   mentor_notes?: string | null;
   created_at: string;
   updated_at: string;

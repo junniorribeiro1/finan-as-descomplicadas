@@ -11,28 +11,43 @@ export interface MensagemChat {
 
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
-const SYSTEM_PROMPT = `Você é a Vera, gerente financeira inteligente com inteligência artificial do OrganizAI.
+function getSystemPrompt(nomeUsuario?: string): string {
+  const instrucaoNome = nomeUsuario
+    ? `\n- O usuário configurou que deseja ser chamado(a) de "${nomeUsuario}". Sempre se dirija a ele(a) chamando por "${nomeUsuario}" com naturalidade, simpatia, carinho e profissionalismo nas suas respostas.`
+    : "";
+
+  return `Você é a Vera, gerente financeira inteligente com inteligência artificial do OrganizAI.
 Sua personalidade e diretrizes:
-- Calorosa, empática, prática, elegante e encorajadora.
+- Calorosa, empática, prática, elegante e encorajadora.${instrucaoNome}
 - Especialista em finanças pessoais, fluxo de caixa, cartões de crédito, cortes inteligentes de gastos, cofrinhos, reserva de emergência e investimentos no Brasil.
 - Responda sempre em português brasileiro claro, correto e bem estruturado.
 - Dê conselhos acionáveis e realistas, utilizando valores e termos como R$, CDI, Selic, aportes, cofrinhos e despesas fixas/variáveis.
 - Mantenha respostas com 2 a 3 parágrafos objetivos, evitando enrolação ou listas infinitas a menos que solicitado.`;
+}
 
-const RESPOSTAS_FALLBACK: Record<string, string> = {
-  "Como estão meus gastos deste mês?":
-    "Seus gastos deste mês somam R$ 3.840,00 até agora. As categorias com maior peso são Moradia (42%) e Alimentação (25%). Você ainda está dentro do orçamento planejado para o período.",
-  "Onde posso economizar?":
-    "Identifiquei duas oportunidades de economia: você teve R$ 320,00 em pedidos de delivery no último fim de semana e duas assinaturas de streaming pouco utilizadas. Cortar 30% nisso pouparia cerca de R$ 180,00/mês.",
-  "Quanto falta para minha reserva?":
-    "Sua reserva de emergência atual cobre 4,2 meses do seu custo de vida essencial. Para atingir a meta recomendada de 6 meses (R$ 18.000,00), faltam apenas R$ 5.400,00. Mantendo o ritmo de aportes de R$ 900/mês, você atinge a meta em 6 meses!",
-  "Devo aumentar meus investimentos?":
-    "Com seus gastos fixos estabilizados e fluxo de caixa positivo neste mês, recomendo sim direcionar R$ 450,00 adicionais para Tesouro Selic ou CDB de liquidez diária antes de buscar renda variável.",
-};
+function getRespostasFallback(pergunta: string, nomeUsuario?: string): string {
+  const nomeTratamento = nomeUsuario ? `${nomeUsuario}, ` : "";
+  const mapa: Record<string, string> = {
+    "Como estão meus gastos deste mês?":
+      `${nomeTratamento}seus gastos deste mês somam R$ 3.840,00 até agora. As categorias com maior peso são Moradia (42%) e Alimentação (25%). Você ainda está dentro do orçamento planejado para o período.`,
+    "Onde posso economizar?":
+      `${nomeTratamento}identifiquei duas oportunidades de economia: você teve R$ 320,00 em pedidos de delivery no último fim de semana e duas assinaturas de streaming pouco utilizadas. Cortar 30% nisso pouparia cerca de R$ 180,00/mês.`,
+    "Quanto falta para minha reserva?":
+      `${nomeTratamento}sua reserva de emergência atual cobre 4,2 meses do seu custo de vida essencial. Para atingir a meta recomendada de 6 meses (R$ 18.000,00), faltam apenas R$ 5.400,00. Mantendo o ritmo de aportes de R$ 900/mês, você atinge a meta em 6 meses!`,
+    "Devo aumentar meus investimentos?":
+      `${nomeTratamento}com seus gastos fixos estabilizados e fluxo de caixa positivo neste mês, recomendo sim direcionar R$ 450,00 adicionais para Tesouro Selic ou CDB de liquidez diária antes de buscar renda variável.`,
+  };
+
+  return (
+    mapa[pergunta] ||
+    `${nomeTratamento}analisei seus dados no OrganizAI e vejo que você tem mantido seus gastos essenciais sob controle. Minha sugestão prática é focar no controle dos gastos variáveis desta semana para garantir sobra no fluxo de caixa e fortalecer seus cofrinhos!`
+  );
+}
 
 export async function perguntarParaVera(
   pergunta: string,
-  historico: MensagemChat[]
+  historico: MensagemChat[],
+  nomeUsuario?: string
 ): Promise<{ texto: string }> {
   const apiKey =
     (typeof import.meta !== "undefined" &&
@@ -45,15 +60,12 @@ export async function perguntarParaVera(
     "";
 
   if (!apiKey) {
-    const respostaFallback =
-      RESPOSTAS_FALLBACK[pergunta] ||
-      `Entendi sua dúvida sobre "${pergunta}". Analisando seus dados no OrganizAI, você tem mantido seus gastos essenciais estáveis. Minha sugestão prática é focar no controle dos gastos variáveis desta semana para garantir sobra no fluxo de caixa e fortalecer seus cofrinhos!`;
-    return { texto: respostaFallback };
+    return { texto: getRespostasFallback(pergunta, nomeUsuario) };
   }
 
   // Montar histórico de mensagens formatado
   const messages = [
-    { role: "system", content: SYSTEM_PROMPT },
+    { role: "system", content: getSystemPrompt(nomeUsuario) },
     ...historico.slice(-6).map((m) => ({
       role: m.remetente === "vera" ? "assistant" : "user",
       content: m.texto,

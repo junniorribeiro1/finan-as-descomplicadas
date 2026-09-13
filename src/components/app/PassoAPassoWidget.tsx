@@ -185,10 +185,12 @@ export function PassoAPassoWidget() {
   const [showCelebration, setShowCelebration] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  // Carrega estado salvo do localStorage
+  // Carrega estado salvo do localStorage e escuta eventos de sincronização
   useEffect(() => {
     setMounted(true);
-    if (typeof window !== "undefined") {
+
+    const recarregar = () => {
+      if (typeof window === "undefined") return;
       try {
         const savedConcluidos = localStorage.getItem(STORAGE_KEY);
         const savedDismissed = localStorage.getItem(DISMISSED_KEY);
@@ -200,7 +202,6 @@ export function PassoAPassoWidget() {
           }
         }
 
-        // Se o usuário concluiu e foi dispensado
         if (savedDismissed === "true") {
           setIsDismissed(true);
         } else {
@@ -209,7 +210,17 @@ export function PassoAPassoWidget() {
       } catch {
         // Fallback limpo
       }
-    }
+    };
+
+    recarregar();
+
+    window.addEventListener("organizai_passo_sync", recarregar);
+    window.addEventListener("storage", recarregar);
+
+    return () => {
+      window.removeEventListener("organizai_passo_sync", recarregar);
+      window.removeEventListener("storage", recarregar);
+    };
   }, []);
 
   const totalPassos = passosIniciais.length;
