@@ -1304,7 +1304,7 @@ export default function ImersaoPage() {
             },
             {
               q: "E se eu não puder assistir ao vivo em algum horário?",
-              a: "Aconselhamos a participação ao vivo para aproveitar a sessão de mentoria e dúvidas, mas você terá acesso às orientações, materiais e resumo completo do evento.",
+              a: "Aconselhamos a participação ao vivo para aproveitar a sessão de mentoria e dúvidas, mas caso você tenha adquirido o módulo gravado, terá acesso às orientações, materiais e resumo completo do evento assim que disponível.",
             },
             {
               q: "Serve tanto para quem é pessoa física quanto para PJ/MEI?",
@@ -1312,7 +1312,7 @@ export default function ImersaoPage() {
             },
             {
               q: "Como funciona a garantia incondicional de 7 dias?",
-              a: "Se você participar da imersão e por qualquer razão sentir que o conteúdo não é para você, basta solicitar o reembolso em até 7 dias e devolveremos 100% do valor pago.",
+              a: "Se você se arrepender até antes da data da imersão e achar que o método não agrega em sua organização financeira, basta enviar uma mensagem e devolveremos 100% do valor do seu ingresso. Sem letras miúdas.",
             },
           ].map((item, idx) => (
             <div
