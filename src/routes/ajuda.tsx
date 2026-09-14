@@ -57,7 +57,7 @@ const faqList: FaqItem[] = [
     id: "faq-4",
     pergunta: "Como a Vera funciona?",
     resposta:
-      "A Vera é sua assistente com inteligência artificial. Ela analisa seus gastos, identifica padrões de consumo, sugere cortes inteligentes e responde a qualquer dúvida financeira.",
+      "A Vera é sua gerente financeira com inteligência artificial. Ela analisa seus hábitos de consumo, identifica oportunidades de corte e economia, projeta seus cofrinhos e responde a qualquer dúvida sobre finanças pessoais e empresariais.\n\nRegras de Uso e Créditos Diários:\n• Plano Free: Cada usuário tem direito a 10 mensagens (créditos) enviadas por dia ao assistente.\n• Renovação Diária: Os créditos são renovados todos os dias pontualmente às 06h da manhã, sem acúmulo de créditos não utilizados.\n• Administradores: Usuários administradores possuem acesso 100% ilimitado, sem restrição diária de mensagens.",
   },
   {
     id: "faq-5",
@@ -271,7 +271,7 @@ function CentralAjuda() {
 
                     {isOpen && (
                       <div className="px-4 pb-4 pt-0 text-xs sm:text-sm text-neutral-400 leading-relaxed animate-in fade-in duration-200">
-                        <p>{faq.resposta}</p>
+                        <p className="whitespace-pre-line">{faq.resposta}</p>
                       </div>
                     )}
                   </div>

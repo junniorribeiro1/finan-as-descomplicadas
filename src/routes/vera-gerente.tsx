@@ -1,13 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useRef, useEffect } from "react";
 import { AppShell } from "@/components/app/AppShell";
-import { Send, Sparkles, Check, Edit2, Bot, ShieldCheck } from "lucide-react";
+import { Send, Sparkles, Check, Edit2, Bot, ShieldCheck, Lock, Clock } from "lucide-react";
 import { perguntarParaVera } from "@/lib/vera-ai";
 import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import confetti from "canvas-confetti";
 import { STORAGE_KEY } from "@/components/app/PassoAPassoWidget";
+import {
+  LIMITE_DIARIO_VERA,
+  obterStatusCreditosVera,
+  registrarEnvioMensagemVera,
+  type StatusCreditosVera,
+} from "@/lib/vera-credits";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/vera-gerente")({
   head: () => ({
@@ -37,7 +44,7 @@ const sugestoesRapidas = [
 ];
 
 function VeraGerente() {
-  const { user, profile, refreshProfile } = useAuth();
+  const { user, profile, refreshProfile, isAdmin } = useAuth();
 
   const [isAtivada, setIsAtivada] = useState(false);
   const [nomeTratamento, setNomeTratamento] = useState("");
@@ -50,6 +57,31 @@ function VeraGerente() {
   const [input, setInput] = useState("");
   const [carregando, setCarregando] = useState(false);
   const fimMensagensRef = useRef<HTMLDivElement>(null);
+
+  // Status de créditos diários da Vera
+  const [creditos, setCreditos] = useState<StatusCreditosVera>(() =>
+    obterStatusCreditosVera(user?.id, isAdmin, profile)
+  );
+
+  // Atualiza créditos sempre que user, profile ou status admin mudarem
+  useEffect(() => {
+    setCreditos(obterStatusCreditosVera(user?.id, isAdmin, profile));
+  }, [user?.id, isAdmin, profile]);
+
+  // Escuta sincronização externa/entre abas de créditos e atualiza o relógio a cada 60s
+  useEffect(() => {
+    const atualizar = () => {
+      setCreditos(obterStatusCreditosVera(user?.id, isAdmin, profile));
+    };
+
+    window.addEventListener("organizai_vera_creditos_sync", atualizar);
+    const interval = setInterval(atualizar, 60000); // recalcula tempo restante a cada minuto
+
+    return () => {
+      window.removeEventListener("organizai_vera_creditos_sync", atualizar);
+      clearInterval(interval);
+    };
+  }, [user?.id, isAdmin, profile]);
 
   // Carrega status de ativação e nome exclusivo do usuário
   useEffect(() => {
@@ -203,6 +235,14 @@ function VeraGerente() {
     const conteudo = (textoParaEnviar ?? input).trim();
     if (!conteudo || carregando) return;
 
+    // Se usuário não for admin e atingiu o limite diário de 10 mensagens
+    if (!isAdmin && creditos.isBloqueado) {
+      toast.error("Limite diário de 10 mensagens atingido!", {
+        description: `Seus créditos serão renovados em ${creditos.proximaRenovacaoFormatada}.`,
+      });
+      return;
+    }
+
     const agora = new Date();
     const horaFormatada = agora.toLocaleTimeString("pt-BR", {
       hour: "2-digit",
@@ -219,6 +259,21 @@ function VeraGerente() {
     setMensagens((prev) => [...prev, msgUsuario]);
     if (!textoParaEnviar) setInput("");
     setCarregando(true);
+
+    // Registra envio e atualiza contagem de créditos do ciclo atual
+    if (user?.id && !isAdmin) {
+      const { novoEnviadas, isBloqueado } = await registrarEnvioMensagemVera(
+        user.id,
+        isAdmin,
+        profile
+      );
+      setCreditos((prev) => ({
+        ...prev,
+        mensagensEnviadas: novoEnviadas,
+        mensagensRestantes: Math.max(0, LIMITE_DIARIO_VERA - novoEnviadas),
+        isBloqueado: Boolean(isBloqueado),
+      }));
+    }
 
     const { texto: respostaTexto } = await perguntarParaVera(
       conteudo,
@@ -269,21 +324,58 @@ function VeraGerente() {
               </div>
             </div>
 
-            {/* Status de Ativação / Nome exclusivo do usuário */}
+            {/* Status de Ativação / Nome exclusivo do usuário & Créditos */}
             {isAtivada && (
-              <div className="self-start sm:self-auto flex items-center gap-2 rounded-full border border-purple-500/30 bg-purple-500/10 px-3.5 py-1.5 text-xs text-purple-300 shadow-sm">
-                <Bot className="h-3.5 w-3.5 text-purple-400" />
-                <span>
-                  Ativa para <strong className="text-white">{nomeTratamento}</strong>
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setEditandoNome(true)}
-                  className="p-1 hover:text-white transition-colors"
-                  title="Alterar como a Vera me chama"
-                >
-                  <Edit2 className="h-3 w-3" />
-                </button>
+              <div className="self-start sm:self-auto flex flex-wrap items-center gap-2">
+                <div className="flex items-center gap-2 rounded-full border border-purple-500/30 bg-purple-500/10 px-3.5 py-1.5 text-xs text-purple-300 shadow-sm">
+                  <Bot className="h-3.5 w-3.5 text-purple-400" />
+                  <span>
+                    Ativa para <strong className="text-white">{nomeTratamento}</strong>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setEditandoNome(true)}
+                    className="p-1 hover:text-white transition-colors"
+                    title="Alterar como a Vera me chama"
+                  >
+                    <Edit2 className="h-3 w-3" />
+                  </button>
+                </div>
+
+                {/* Badge de Créditos Diários */}
+                {isAdmin ? (
+                  <div className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/40 bg-amber-500/15 px-3.5 py-1.5 text-xs font-bold text-amber-300 shadow-sm">
+                    <ShieldCheck className="h-3.5 w-3.5 text-amber-400" />
+                    <span>Ilimitado (Admin)</span>
+                  </div>
+                ) : (
+                  <div
+                    className={cn(
+                      "inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-medium shadow-sm transition-colors",
+                      creditos.isBloqueado
+                        ? "border-amber-500/40 bg-amber-500/15 text-amber-300"
+                        : creditos.mensagensRestantes <= 2
+                        ? "border-amber-500/30 bg-[#1f1d1a] text-amber-200"
+                        : "border-purple-500/30 bg-[#1a1922] text-stone-300"
+                    )}
+                  >
+                    {creditos.isBloqueado ? (
+                      <Lock className="h-3 w-3 text-amber-400" />
+                    ) : (
+                      <Sparkles className="h-3 w-3 text-purple-400" />
+                    )}
+                    <span>
+                      {creditos.isBloqueado ? (
+                        <strong>0 de {LIMITE_DIARIO_VERA} créditos hoje</strong>
+                      ) : (
+                        <>
+                          <strong className="text-white">{creditos.mensagensRestantes}</strong> de{" "}
+                          {LIMITE_DIARIO_VERA} créditos hoje
+                        </>
+                      )}
+                    </span>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -456,50 +548,83 @@ function VeraGerente() {
               <div ref={fimMensagensRef} />
             </div>
 
-            {/* Sugestões Rápidas + Barra de Entrada */}
+            {/* Sugestões Rápidas + Barra de Entrada / Bloqueio estilo ChatGPT */}
             <div className="mt-4 pt-2">
-              {/* Pílulas de Sugestões de Perguntas */}
-              <div className="mb-3.5 flex flex-wrap gap-2">
-                {sugestoesRapidas.map((sugestao) => (
-                  <button
-                    key={sugestao}
-                    onClick={() => enviar(sugestao)}
-                    disabled={carregando}
-                    className="group inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-[#1a1a1c]/80 px-3.5 py-1.5 text-xs text-neutral-300 transition-all hover:border-purple-500/40 hover:bg-purple-950/25 hover:text-white active:scale-95 disabled:opacity-50"
-                  >
-                    <span className="font-semibold text-purple-400 transition-transform group-hover:scale-110">
-                      #
-                    </span>
-                    <span>{sugestao}</span>
-                  </button>
-                ))}
-              </div>
+              {!creditos.isBloqueado ? (
+                <>
+                  {/* Pílulas de Sugestões de Perguntas */}
+                  <div className="mb-3.5 flex flex-wrap gap-2">
+                    {sugestoesRapidas.map((sugestao) => (
+                      <button
+                        key={sugestao}
+                        onClick={() => enviar(sugestao)}
+                        disabled={carregando}
+                        className="group inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-[#1a1a1c]/80 px-3.5 py-1.5 text-xs text-neutral-300 transition-all hover:border-purple-500/40 hover:bg-purple-950/25 hover:text-white active:scale-95 disabled:opacity-50"
+                      >
+                        <span className="font-semibold text-purple-400 transition-transform group-hover:scale-110">
+                          #
+                        </span>
+                        <span>{sugestao}</span>
+                      </button>
+                    ))}
+                  </div>
 
-              {/* Input Arredondado */}
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  enviar();
-                }}
-                className="relative flex items-center rounded-full border border-white/[0.08] bg-[#111113] px-4 py-2 shadow-inner transition-colors focus-within:border-purple-500/50 sm:py-2.5"
-              >
-                <input
-                  type="text"
-                  placeholder={`Pergunte à Vera${nomeTratamento ? `, ${nomeTratamento}` : ""}...`}
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  disabled={carregando}
-                  className="flex-1 bg-transparent pr-3 text-xs text-white placeholder:text-neutral-500 focus:outline-none sm:text-sm"
-                />
-                <button
-                  type="submit"
-                  disabled={!input.trim() || carregando}
-                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#7c3aed] text-white shadow-md shadow-purple-900/40 transition-all hover:bg-[#6d28d9] active:scale-95 disabled:opacity-40 disabled:hover:bg-[#7c3aed]"
-                  title="Enviar mensagem"
-                >
-                  <Send className="h-3.5 w-3.5" />
-                </button>
-              </form>
+                  {/* Input Arredondado */}
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      enviar();
+                    }}
+                    className="relative flex items-center rounded-full border border-white/[0.08] bg-[#111113] px-4 py-2 shadow-inner transition-colors focus-within:border-purple-500/50 sm:py-2.5"
+                  >
+                    <input
+                      type="text"
+                      placeholder={`Pergunte à Vera${nomeTratamento ? `, ${nomeTratamento}` : ""}...`}
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      disabled={carregando}
+                      className="flex-1 bg-transparent pr-3 text-xs text-white placeholder:text-neutral-500 focus:outline-none sm:text-sm"
+                    />
+                    <button
+                      type="submit"
+                      disabled={!input.trim() || carregando}
+                      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#7c3aed] text-white shadow-md shadow-purple-900/40 transition-all hover:bg-[#6d28d9] active:scale-95 disabled:opacity-40 disabled:hover:bg-[#7c3aed]"
+                      title="Enviar mensagem"
+                    >
+                      <Send className="h-3.5 w-3.5" />
+                    </button>
+                  </form>
+                </>
+              ) : (
+                /* Card de Bloqueio de Créditos Diários - Estilo ChatGPT */
+                <div className="rounded-2xl border border-amber-500/25 bg-gradient-to-b from-[#1c1815] to-[#121214] p-5 shadow-2xl text-center animate-in fade-in zoom-in-95 duration-200">
+                  <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-400 mb-3 shadow-md shadow-amber-950/40">
+                    <Lock className="h-5 w-5" />
+                  </div>
+                  <h4 className="text-sm font-bold text-white tracking-tight sm:text-base">
+                    Limite diário de 10 mensagens atingido
+                  </h4>
+                  <p className="mx-auto mt-1.5 max-w-lg text-xs sm:text-sm text-stone-300 leading-relaxed">
+                    No <strong className="text-amber-300 font-semibold">Plano Free</strong>, cada usuário pode enviar até <strong className="text-white">10 mensagens diárias</strong> para a assistente Vera. Seus créditos serão renovados em:
+                  </p>
+
+                  <div className="mt-4 inline-flex flex-col sm:flex-row items-center gap-2.5 rounded-2xl border border-amber-500/20 bg-[#171518] px-5 py-3 shadow-inner">
+                    <div className="flex items-center gap-2 text-xs sm:text-sm font-bold text-amber-400">
+                      <Clock className="h-4 w-4" />
+                      <span className="capitalize">{creditos.proximaRenovacaoFormatada}</span>
+                    </div>
+                    <span className="hidden sm:inline text-stone-600">•</span>
+                    <span className="text-[11px] sm:text-xs text-stone-400">
+                      (renovação diária às 06h, sem acúmulo de créditos)
+                    </span>
+                  </div>
+
+                  <div className="mt-3 flex items-center justify-center gap-1.5 text-[11px] text-stone-400">
+                    <span>Tempo restante para renovação:</span>
+                    <strong className="text-amber-400/90 font-bold">{creditos.tempoRestanteTexto}</strong>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}

@@ -21,6 +21,8 @@ export interface UserProfile {
   phone?: string | null;
   preferred_name?: string | null;
   vera_activated_at?: string | null;
+  vera_mensagens_hoje?: number | null;
+  vera_ultimo_ciclo?: string | null;
   mentor_notes?: string | null;
   patente_nivel?: number | null;
   patente_atualizada_em?: string | null;
