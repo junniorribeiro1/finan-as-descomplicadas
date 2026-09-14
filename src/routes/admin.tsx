@@ -30,6 +30,9 @@ import {
   Filter,
   Trophy,
   Award,
+  Sparkles,
+  RotateCcw,
+  Lock,
 } from "lucide-react";
 import { toast } from "sonner";
 import { brl } from "@/lib/mock-data";
@@ -164,6 +167,8 @@ function AdminPage() {
 
   // Estado do Modal de Raio-X Financeiro
   const [alunoSelecionado, setAlunoSelecionado] = useState<AlunoFinanceiro | null>(null);
+  // Estado do Modal Dedicado de Gestão e Liberação de Patentes
+  const [alunoGerenciandoPatente, setAlunoGerenciandoPatente] = useState<AlunoFinanceiro | null>(null);
   const [notasEdicao, setNotasEdicao] = useState("");
   const [salvandoNotas, setSalvandoNotas] = useState(false);
 
@@ -358,6 +363,12 @@ function AdminPage() {
 
       if (alunoSelecionado?.id === alunoId) {
         setAlunoSelecionado((prev) =>
+          prev ? { ...prev, patente_nivel: novoNivel } : null
+        );
+      }
+
+      if (alunoGerenciandoPatente?.id === alunoId) {
+        setAlunoGerenciandoPatente((prev) =>
           prev ? { ...prev, patente_nivel: novoNivel } : null
         );
       }
@@ -767,25 +778,66 @@ function AdminPage() {
                           </span>
                         </td>
 
-                        {/* Patente Atual */}
-                        <td className="py-3.5 px-3">
-                          {aluno.patente_nivel && aluno.patente_nivel > 0 ? (
+                        {/* Patente Atual & Controle Direto */}
+                        <td className="py-3.5 px-3 min-w-[210px]">
+                          <div className="flex flex-col gap-1.5">
                             <div className="flex items-center gap-2">
-                              <EscudoPatente nivel={aluno.patente_nivel} tamanho="sm" />
-                              <div className="min-w-0">
-                                <span className="font-semibold text-white block text-[11px] truncate max-w-[130px]">
-                                  {getPatentePorNivel(aluno.patente_nivel)?.titulo}
+                              <button
+                                type="button"
+                                onClick={() => setAlunoGerenciandoPatente(aluno)}
+                                title="Clique para abrir a tela de metas e patentes deste aluno"
+                                className="shrink-0 transition-transform hover:scale-110 cursor-pointer"
+                              >
+                                <EscudoPatente
+                                  nivel={aluno.patente_nivel && aluno.patente_nivel > 0 ? aluno.patente_nivel : 1}
+                                  bloqueado={!aluno.patente_nivel || aluno.patente_nivel === 0}
+                                  tamanho="sm"
+                                />
+                              </button>
+
+                              <div className="min-w-0 flex-1">
+                                <span className="font-semibold text-white block text-[11px] truncate">
+                                  {aluno.patente_nivel && aluno.patente_nivel > 0
+                                    ? getPatentePorNivel(aluno.patente_nivel)?.titulo
+                                    : "Nível 0 • Sem Patente"}
                                 </span>
                                 <span className="text-[10px] text-stone-400 block">
-                                  Nível {aluno.patente_nivel} de 5
+                                  {aluno.patente_nivel && aluno.patente_nivel > 0
+                                    ? `Nível ${aluno.patente_nivel} de 5`
+                                    : "Iniciante (Auto no Passo a Passo)"}
                                 </span>
                               </div>
                             </div>
-                          ) : (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-white/[0.04] border border-white/10 px-2 py-0.5 text-[10px] text-stone-400">
-                              Nível 0 • Iniciante
-                            </span>
-                          )}
+
+                            {/* Seletor Rápido de Patente e Botão de Liberar Próxima */}
+                            <div className="flex items-center gap-1.5">
+                              <select
+                                value={aluno.patente_nivel ?? 0}
+                                onChange={(e) => alterarPatente(aluno.id, Number(e.target.value))}
+                                className="rounded-lg border border-white/10 bg-[#16151a] px-2 py-1 text-[11px] font-medium text-stone-300 outline-none hover:border-amber-400 focus:border-amber-400 transition-colors cursor-pointer w-full max-w-[155px]"
+                                title="Selecione para alterar ou regredir a patente diretamente"
+                              >
+                                <option value={0} className="bg-[#141417] text-stone-400">Nível 0: Sem Patente</option>
+                                <option value={1} className="bg-[#141417] text-amber-400">Nível 1: Org. Aprendiz (Auto)</option>
+                                <option value={2} className="bg-[#141417] text-cyan-400">Nível 2: Guardião Orçamento</option>
+                                <option value={3} className="bg-[#141417] text-yellow-400">Nível 3: Mestre Reserva</option>
+                                <option value={4} className="bg-[#141417] text-emerald-400">Nível 4: Investidor Consciente</option>
+                                <option value={5} className="bg-[#141417] text-purple-400">Nível 5: Liberdade Financeira</option>
+                              </select>
+
+                              {(aluno.patente_nivel || 0) < 5 && (
+                                <button
+                                  type="button"
+                                  onClick={() => alterarPatente(aluno.id, (aluno.patente_nivel || 0) + 1)}
+                                  title={`Liberar imediatamente a próxima patente (Nível ${(aluno.patente_nivel || 0) + 1})`}
+                                  className="inline-flex items-center gap-0.5 rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 px-2 py-1 text-[10px] font-bold text-white shadow-sm hover:scale-105 active:scale-95 transition-all shrink-0 cursor-pointer"
+                                >
+                                  <Sparkles className="h-2.5 w-2.5" />
+                                  <span>+Nível {(aluno.patente_nivel || 0) + 1}</span>
+                                </button>
+                              )}
+                            </div>
+                          </div>
                         </td>
 
                         {/* Data */}
@@ -823,11 +875,22 @@ function AdminPage() {
                         {/* Ações */}
                         <td className="py-3.5 px-3 text-right">
                           <div className="flex items-center justify-end gap-2">
+                            {/* Botão Dedicado de Liberar Patente */}
+                            <button
+                              type="button"
+                              onClick={() => setAlunoGerenciandoPatente(aluno)}
+                              title="Liberar ou alterar patente deste aluno"
+                              className="inline-flex items-center gap-1.5 rounded-xl border border-amber-500/40 bg-amber-500/15 hover:bg-amber-500/25 px-3 py-1.5 text-xs font-bold text-amber-300 transition-all shadow-sm cursor-pointer hover:scale-105"
+                            >
+                              <Trophy className="h-3.5 w-3.5 text-amber-400" />
+                              <span>Liberar Patente</span>
+                            </button>
+
                             {/* Botão de Raio-X */}
                             <button
                               type="button"
                               onClick={() => abrirRaioX(aluno)}
-                              className="inline-flex items-center gap-1.5 rounded-xl border border-orange-500/30 bg-orange-500/10 px-3 py-1.5 text-xs font-bold text-[#F97316] hover:bg-orange-500/20 transition-all shadow-sm"
+                              className="inline-flex items-center gap-1.5 rounded-xl border border-orange-500/30 bg-orange-500/10 px-3 py-1.5 text-xs font-bold text-[#F97316] hover:bg-orange-500/20 transition-all shadow-sm cursor-pointer"
                             >
                               <Eye className="h-3.5 w-3.5" />
                               Raio-X
@@ -1150,6 +1213,280 @@ function AdminPage() {
                   )}
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Modal Dedicado de Gestão e Liberação de Patentes */}
+      {alunoGerenciandoPatente && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/85 backdrop-blur-md transition-opacity"
+            onClick={() => setAlunoGerenciandoPatente(null)}
+          />
+
+          {/* Conteúdo do Modal */}
+          <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl border border-amber-500/30 bg-[#131217] p-6 sm:p-8 shadow-2xl shadow-black z-10">
+            {/* Header */}
+            <div className="flex items-start justify-between gap-4 pb-6 border-b border-white/[0.08]">
+              <div className="flex items-center gap-4">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-amber-500/40 bg-amber-500/10 text-amber-400 shadow-lg">
+                  <Trophy className="h-7 w-7" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                      Liberar & Gerenciar Patentes
+                    </h2>
+                    <span className="rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+                      Mentoria
+                    </span>
+                  </div>
+                  <p className="text-xs sm:text-sm text-stone-300 mt-1">
+                    Aluno(a): <strong className="text-white">{alunoGerenciandoPatente.full_name}</strong> •{" "}
+                    <span className="text-stone-400">{alunoGerenciandoPatente.email}</span>
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setAlunoGerenciandoPatente(null)}
+                className="grid h-9 w-9 place-items-center rounded-xl border border-white/10 text-stone-400 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            {/* Aviso Explicativo da Regra das Patentes */}
+            <div className="mt-6 rounded-2xl border border-amber-500/20 bg-amber-500/[0.06] p-4 sm:p-5 flex items-start gap-3.5">
+              <Sparkles className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
+              <div className="text-xs text-stone-200 leading-relaxed">
+                <p className="font-bold text-amber-300 mb-1">
+                  Como funciona a evolução de patentes:
+                </p>
+                <p>
+                  • <strong>Nível 1 (Organizador Aprendiz)</strong>: É concedida automaticamente pelo sistema quando o aluno conclui os 7 passos do onboarding no aplicativo.
+                </p>
+                <p className="mt-1">
+                  • <strong>Níveis 2 a 5</strong>: São liberadas <strong>exclusivamente por você</strong>, conforme o aluno atinge as metas financeiras estabelecidas na mentoria.
+                </p>
+                <p className="mt-1">
+                  • <strong>Regressão</strong>: Se o aluno descuidar do orçamento ou perder disciplina, você pode <strong>regredir o nível a qualquer momento</strong> clicando no botão correspondente.
+                </p>
+              </div>
+            </div>
+
+            {/* Banner da Patente Atual e Ação Rápida de Avanço */}
+            <div className="mt-6 rounded-2xl border border-white/10 bg-gradient-to-r from-[#1b1722] via-[#16141a] to-[#121215] p-5 sm:p-6 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-5">
+              <div className="flex items-center gap-4">
+                <div className="shrink-0">
+                  <EscudoPatente
+                    nivel={
+                      alunoGerenciandoPatente.patente_nivel && alunoGerenciandoPatente.patente_nivel > 0
+                        ? alunoGerenciandoPatente.patente_nivel
+                        : 1
+                    }
+                    bloqueado={!alunoGerenciandoPatente.patente_nivel || alunoGerenciandoPatente.patente_nivel === 0}
+                    tamanho="md"
+                  />
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400">
+                    Situação Atual do Aluno
+                  </span>
+                  <h3 className="text-base sm:text-lg font-bold text-white">
+                    {alunoGerenciandoPatente.patente_nivel && alunoGerenciandoPatente.patente_nivel > 0
+                      ? `Nível ${alunoGerenciandoPatente.patente_nivel}: ${getPatentePorNivel(alunoGerenciandoPatente.patente_nivel)?.titulo}`
+                      : "Nível 0: Sem Patente (Iniciante)"}
+                  </h3>
+                  <p className="text-xs text-stone-400 mt-0.5">
+                    {alunoGerenciandoPatente.patente_nivel && alunoGerenciandoPatente.patente_nivel > 0
+                      ? getPatentePorNivel(alunoGerenciandoPatente.patente_nivel)?.descricao
+                      : "Aluno ainda não concluiu o checklist passo a passo ou teve a patente removida."}
+                  </p>
+                </div>
+              </div>
+
+              {/* Botão de Avanço Imediato para a Próxima Patente */}
+              {(alunoGerenciandoPatente.patente_nivel || 0) < 5 && (
+                <button
+                  type="button"
+                  onClick={() =>
+                    alterarPatente(
+                      alunoGerenciandoPatente.id,
+                      (alunoGerenciandoPatente.patente_nivel || 0) + 1
+                    )
+                  }
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:brightness-110 px-5 py-3 text-xs font-bold text-white shadow-lg shadow-orange-950/40 hover:scale-105 active:scale-95 transition-all shrink-0 cursor-pointer"
+                >
+                  <Sparkles className="h-4 w-4" />
+                  <span>
+                    Liberar Próxima Patente (Nível {(alunoGerenciandoPatente.patente_nivel || 0) + 1})
+                  </span>
+                </button>
+              )}
+            </div>
+
+            {/* Grade com Todas as 5 Patentes + Nível 0 para Liberação Direta */}
+            <div className="mt-6 space-y-3.5">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-stone-400">
+                Selecione a patente desejada para o aluno:
+              </h4>
+
+              {/* Nível 0: Sem Patente */}
+              <div
+                className={cn(
+                  "rounded-2xl p-4 border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4",
+                  (alunoGerenciandoPatente.patente_nivel || 0) === 0
+                    ? "border-white/40 bg-white/[0.06] shadow-md"
+                    : "border-white/[0.06] bg-white/[0.02] opacity-75 hover:opacity-100"
+                )}
+              >
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 rounded-xl bg-stone-800/80 border border-white/10 flex items-center justify-center text-sm font-bold text-stone-400 shrink-0">
+                    0
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h5 className="text-sm font-bold text-white">Nível 0 — Sem Patente (Iniciante)</h5>
+                      {(alunoGerenciandoPatente.patente_nivel || 0) === 0 && (
+                        <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-bold text-white">
+                          ATUAL
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-stone-400 mt-0.5">
+                      Fase de entrada. Aluno ainda não concluiu o onboarding inicial.
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  disabled={(alunoGerenciandoPatente.patente_nivel || 0) === 0}
+                  onClick={() => alterarPatente(alunoGerenciandoPatente.id, 0)}
+                  className="rounded-xl border border-white/10 hover:bg-white/10 px-3.5 py-2 text-xs font-bold text-stone-300 disabled:opacity-40 disabled:pointer-events-none transition-all cursor-pointer self-start sm:self-auto shrink-0"
+                >
+                  {(alunoGerenciandoPatente.patente_nivel || 0) === 0 ? "Patente Atual" : "Definir como Nível 0"}
+                </button>
+              </div>
+
+              {/* Níveis 1 a 5 */}
+              {PATENTES.map((patente) => {
+                const nivelAtual = alunoGerenciandoPatente.patente_nivel || 0;
+                const isAtual = nivelAtual === patente.nivel;
+                const isAlcancada = nivelAtual >= patente.nivel;
+                const isProxima = nivelAtual + 1 === patente.nivel;
+
+                return (
+                  <div
+                    key={patente.id}
+                    className={cn(
+                      "rounded-2xl p-4 sm:p-5 border transition-all flex flex-col md:flex-row md:items-center justify-between gap-5",
+                      isAtual
+                        ? `border-amber-400/80 bg-gradient-to-r ${patente.corGradiente} ring-2 ring-amber-400/40 shadow-xl`
+                        : isAlcancada
+                        ? "border-emerald-500/30 bg-emerald-500/[0.04]"
+                        : isProxima
+                        ? "border-amber-500/30 bg-amber-500/[0.03]"
+                        : "border-white/[0.05] bg-white/[0.01] opacity-70 hover:opacity-95"
+                    )}
+                  >
+                    <div className="flex items-start sm:items-center gap-4">
+                      <div className="shrink-0 transition-transform hover:scale-105 duration-200">
+                        <EscudoPatente
+                          nivel={patente.nivel}
+                          bloqueado={!isAlcancada}
+                          tamanho="md"
+                        />
+                      </div>
+
+                      <div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-xs font-bold text-white">Nível {patente.nivel}</span>
+                          <span className="text-stone-500">•</span>
+                          <h5 className="text-sm sm:text-base font-bold text-white">
+                            {patente.titulo}
+                          </h5>
+
+                          {isAtual ? (
+                            <span className="rounded-full bg-amber-400 text-black px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider shadow-sm">
+                              ⭐ PATENTE ATUAL
+                            </span>
+                          ) : isAlcancada ? (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/20 border border-emerald-500/40 px-2 py-0.5 text-[10px] font-bold text-emerald-300">
+                              <CheckCircle2 className="h-3 w-3" />
+                              CONQUISTADA
+                            </span>
+                          ) : isProxima ? (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/20 border border-amber-500/40 px-2 py-0.5 text-[10px] font-bold text-amber-300 animate-pulse">
+                              <Sparkles className="h-3 w-3" />
+                              PRÓXIMA META
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-white/[0.05] border border-white/10 px-2 py-0.5 text-[10px] font-medium text-stone-400">
+                              <Lock className="h-3 w-3" />
+                              BLOQUEADA
+                            </span>
+                          )}
+                        </div>
+
+                        <p className="text-xs text-stone-300 mt-1 max-w-xl">
+                          {patente.descricao}
+                        </p>
+
+                        <div className="mt-2.5 flex items-center gap-2 flex-wrap text-xs">
+                          <span className="font-semibold text-stone-300">Meta:</span>
+                          <span className="text-stone-400">{patente.criterio}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Botões de Ação para cada Patente */}
+                    <div className="self-end md:self-center shrink-0">
+                      {isAtual ? (
+                        <span className="inline-flex items-center gap-1.5 rounded-xl bg-white/20 px-4 py-2 text-xs font-bold text-white shadow-inner">
+                          <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                          Patente Ativa
+                        </span>
+                      ) : isAlcancada ? (
+                        <button
+                          type="button"
+                          onClick={() => alterarPatente(alunoGerenciandoPatente.id, patente.nivel)}
+                          className="inline-flex items-center gap-1.5 rounded-xl border border-amber-500/40 bg-amber-500/15 hover:bg-amber-500/25 px-4 py-2 text-xs font-bold text-amber-300 transition-all cursor-pointer hover:scale-105"
+                          title="Regredir ou reposicionar aluno nesta patente"
+                        >
+                          <RotateCcw className="h-3.5 w-3.5" />
+                          <span>Regredir para Nível {patente.nivel}</span>
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => alterarPatente(alunoGerenciandoPatente.id, patente.nivel)}
+                          className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:brightness-110 px-4 py-2 text-xs font-bold text-white shadow-md shadow-emerald-950/40 transition-all cursor-pointer hover:scale-105"
+                          title={`Liberar patente Nível ${patente.nivel} para este aluno`}
+                        >
+                          <Sparkles className="h-3.5 w-3.5" />
+                          <span>Liberar Nível {patente.nivel}</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Rodapé do Modal */}
+            <div className="mt-6 pt-5 border-t border-white/[0.08] flex items-center justify-end">
+              <button
+                type="button"
+                onClick={() => setAlunoGerenciandoPatente(null)}
+                className="rounded-xl border border-white/10 hover:bg-white/5 px-5 py-2.5 text-xs font-semibold text-stone-300 hover:text-white transition-colors cursor-pointer"
+              >
+                Concluir & Fechar
+              </button>
             </div>
           </div>
         </div>
