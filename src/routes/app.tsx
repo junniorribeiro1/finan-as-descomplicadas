@@ -556,17 +556,21 @@ function Dashboard() {
 
               {/* Eixo X: Dias do Mês (1 a 30) */}
               <div className="mt-2 flex justify-between pl-16 text-[9px] text-stone-500">
-                {diasMes.map((dia) => (
-                  <span
-                    key={dia}
-                    className={cn(
-                      "w-3 text-center transition-colors",
-                      hoverDia === dia ? "text-white font-bold" : "text-stone-500"
-                    )}
-                  >
-                    {dia}
-                  </span>
-                ))}
+                {diasMes.map((dia) => {
+                  const isVisibleOnMobile = dia === 1 || dia % 5 === 0 || dia === 30 || hoverDia === dia;
+                  return (
+                    <span
+                      key={dia}
+                      className={cn(
+                        "w-3 text-center transition-colors",
+                        isVisibleOnMobile ? "block" : "hidden sm:block",
+                        hoverDia === dia ? "text-white font-bold" : "text-stone-500"
+                      )}
+                    >
+                      {dia}
+                    </span>
+                  );
+                })}
               </div>
             </div>
           </div>

@@ -24,7 +24,7 @@ interface LoginSearch {
 export const Route = createFileRoute("/login")({
   validateSearch: (search: Record<string, unknown>): LoginSearch => {
     return {
-      redirect: (search.redirect as string) || "/app",
+      redirect: (search["redirect"] as string) || "/app",
     };
   },
   head: () => ({
@@ -558,6 +558,15 @@ function LoginPage() {
                     <p className="text-xs text-stone-400">
                       Enviamos um link para redefinir sua senha no e-mail informado.
                     </p>
+                    <p className="text-[11px] text-stone-500 pt-1">
+                      Não recebeu? Verifique o spam ou contate o suporte:{" "}
+                      <a
+                        href="mailto:suporte@nataliarodolfo.com.br"
+                        className="text-[#F97316] hover:underline font-medium"
+                      >
+                        suporte@nataliarodolfo.com.br
+                      </a>
+                    </p>
                     <button
                       type="button"
                       onClick={() => {
@@ -609,6 +618,19 @@ function LoginPage() {
                 )}
               </div>
             )}
+
+            {/* Suporte de Acesso */}
+            <div className="mt-5 text-center">
+              <p className="text-[11.5px] text-stone-400">
+                Dúvidas ou problemas de acesso?{" "}
+                <a
+                  href="mailto:suporte@nataliarodolfo.com.br"
+                  className="text-[#F97316] hover:underline font-medium"
+                >
+                  suporte@nataliarodolfo.com.br
+                </a>
+              </p>
+            </div>
 
             {/* Rodapé de Segurança */}
             <div className="mt-8 pt-5 border-t border-white/[0.06] flex items-center justify-center gap-2 text-[11px] text-stone-500">

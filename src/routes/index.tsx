@@ -9,6 +9,7 @@ import {
   ChevronRight,
   WalletCards,
   Award,
+  Mail,
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -215,6 +216,31 @@ function NataliaLinksPage() {
             </div>
 
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/[0.04] text-stone-400 border border-white/[0.06] transition-all duration-300 group-hover:border-emerald-500/30 group-hover:text-emerald-400 group-hover:bg-emerald-500/10">
+              <ArrowUpRight className="h-4 w-4 stroke-[2.2]" />
+            </div>
+          </a>
+
+          {/* LINK 5: E-mail de Suporte */}
+          <a
+            href="mailto:suporte@nataliarodolfo.com.br"
+            className="group relative flex items-center justify-between gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.04] p-4 backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-orange-500/40 hover:bg-orange-950/20 hover:shadow-[0_4px_24px_rgba(249,115,22,0.12)] active:translate-y-0"
+          >
+            <div className="flex items-center gap-3.5 min-w-0 flex-1">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-orange-500 to-amber-500 text-white shadow-sm shadow-orange-950/30">
+                <Mail className="h-5 w-5 stroke-[2.2]" />
+              </div>
+
+              <div className="flex flex-col text-left min-w-0 flex-1">
+                <span className="text-[0.925rem] font-semibold text-white group-hover:text-orange-300 transition-colors">
+                  E-mail de Suporte
+                </span>
+                <p className="text-[0.785rem] text-stone-400 leading-snug mt-0.5">
+                  suporte@nataliarodolfo.com.br
+                </p>
+              </div>
+            </div>
+
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/[0.04] text-stone-400 border border-white/[0.06] transition-all duration-300 group-hover:border-orange-500/30 group-hover:text-orange-400 group-hover:bg-orange-500/10">
               <ArrowUpRight className="h-4 w-4 stroke-[2.2]" />
             </div>
           </a>

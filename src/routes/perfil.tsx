@@ -371,8 +371,15 @@ function Perfil() {
                   value={user?.email || ""}
                   className="w-full rounded-xl border border-white/[0.05] bg-white/[0.02] px-3.5 py-2.5 text-xs text-stone-400 cursor-not-allowed opacity-75"
                 />
-                <span className="text-[10px] text-stone-500 block">
-                  Para alterar seu e-mail de acesso, entre em contato com o suporte ou use a redefinição de login.
+                <span className="text-[10px] text-stone-500 block leading-relaxed">
+                  Para alterar seu e-mail de acesso, entre em contato com o suporte através de{" "}
+                  <a
+                    href="mailto:suporte@nataliarodolfo.com.br"
+                    className="text-orange-400 hover:text-orange-300 underline underline-offset-2 font-medium"
+                  >
+                    suporte@nataliarodolfo.com.br
+                  </a>{" "}
+                  ou use a recuperação de senha no login.
                 </span>
               </div>
 
@@ -886,6 +893,47 @@ function Perfil() {
               <span>Acessar Importação</span>
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
+          </div>
+        </Panel>
+
+        {/* 5. CARD DE SUPORTE E ATENDIMENTO */}
+        <Panel className="p-6 sm:p-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+            <div className="flex items-start gap-4">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-orange-500/15 border border-orange-500/30 text-[#F97316]">
+                <Mail className="h-5 w-5" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-base sm:text-lg font-bold text-foreground">
+                    Canal de Suporte e Atendimento
+                  </h3>
+                  <span className="rounded-full bg-orange-500/15 border border-orange-500/30 px-2 py-0.5 text-[10px] font-bold text-[#F97316] uppercase tracking-wider">
+                    Ajuda
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1 max-w-md leading-relaxed">
+                  Dúvidas sobre o método, alteração de cadastro ou solicitações de acesso? Fale diretamente com a equipe de suporte.
+                </p>
+                <div className="mt-2 flex items-center gap-2">
+                  <span className="text-xs text-stone-400">E-mail:</span>
+                  <a
+                    href="mailto:suporte@nataliarodolfo.com.br"
+                    className="text-xs font-semibold text-[#F97316] hover:underline"
+                  >
+                    suporte@nataliarodolfo.com.br
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <a
+              href="mailto:suporte@nataliarodolfo.com.br"
+              className="group inline-flex items-center justify-center gap-2 self-start sm:self-auto rounded-xl bg-[#F97316] hover:bg-[#ea580c] px-4 py-2.5 text-xs font-semibold text-white shadow-lg shadow-orange-950/40 hover:brightness-110 active:scale-95 transition-all shrink-0"
+            >
+              <Mail className="h-4 w-4" />
+              <span>Enviar E-mail de Suporte</span>
+            </a>
           </div>
         </Panel>
       </div>

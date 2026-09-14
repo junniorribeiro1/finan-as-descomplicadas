@@ -531,11 +531,12 @@ function AdminPage() {
           <div className="flex items-center gap-3">
             <Link
               to="/app"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-1.5 text-xs font-semibold text-stone-200 hover:bg-white/[0.08] hover:text-white transition-all shadow-sm"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] px-2.5 sm:px-3.5 py-1.5 text-xs font-semibold text-stone-200 hover:bg-white/[0.08] hover:text-white transition-all shadow-sm"
               title="Acessar visão de aluno no aplicativo"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
-              <span>Ir para o OrganizAI (/app)</span>
+              <span className="hidden sm:inline">Ir para o OrganizAI (/app)</span>
+              <span className="sm:hidden text-[11px]">App</span>
             </Link>
 
             <button
@@ -989,16 +990,16 @@ function AdminPage() {
           />
 
           {/* Conteúdo do Modal */}
-          <div className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-3xl border border-white/10 bg-[#141418] p-6 sm:p-8 shadow-2xl shadow-black z-10">
+          <div className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-3xl border border-white/10 bg-[#141418] p-4 sm:p-8 shadow-2xl shadow-black z-10">
             {/* Header do Modal */}
-            <div className="flex items-start justify-between gap-4 pb-6 border-b border-white/[0.08]">
-              <div className="flex items-center gap-4">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-orange-500/40 bg-[#1c120c] font-display text-xl font-bold text-orange-400">
+            <div className="flex items-start justify-between gap-3 sm:gap-4 pb-4 sm:pb-6 border-b border-white/[0.08]">
+              <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+                <div className="flex h-11 w-11 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-2xl border border-orange-500/40 bg-[#1c120c] font-display text-lg sm:text-xl font-bold text-orange-400">
                   {(alunoSelecionado.full_name?.[0] || "A").toUpperCase()}
                 </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h2 className="text-xl font-bold text-white">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h2 className="text-lg sm:text-xl font-bold text-white truncate">
                       {alunoSelecionado.full_name}
                     </h2>
                     <span
@@ -1264,23 +1265,23 @@ function AdminPage() {
           />
 
           {/* Conteúdo do Modal */}
-          <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl border border-amber-500/30 bg-[#131217] p-6 sm:p-8 shadow-2xl shadow-black z-10">
+          <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl border border-amber-500/30 bg-[#131217] p-4 sm:p-8 shadow-2xl shadow-black z-10">
             {/* Header */}
-            <div className="flex items-start justify-between gap-4 pb-6 border-b border-white/[0.08]">
-              <div className="flex items-center gap-4">
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-amber-500/40 bg-amber-500/10 text-amber-400 shadow-lg">
-                  <Trophy className="h-7 w-7" />
+            <div className="flex items-start justify-between gap-3 sm:gap-4 pb-4 sm:pb-6 border-b border-white/[0.08]">
+              <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+                <div className="flex h-11 w-11 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-2xl border border-amber-500/40 bg-amber-500/10 text-amber-400 shadow-lg">
+                  <Trophy className="h-5 w-5 sm:h-7 sm:w-7" />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                    <h2 className="text-lg sm:text-2xl font-bold text-white tracking-tight truncate">
                       Liberar & Gerenciar Patentes
                     </h2>
-                    <span className="rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+                    <span className="rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2 py-0.5 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider">
                       Mentoria
                     </span>
                   </div>
-                  <p className="text-xs sm:text-sm text-stone-300 mt-1">
+                  <p className="text-xs sm:text-sm text-stone-300 mt-1 truncate">
                     Aluno(a): <strong className="text-white">{alunoGerenciandoPatente.full_name}</strong> •{" "}
                     <span className="text-stone-400">{alunoGerenciandoPatente.email}</span>
                   </p>

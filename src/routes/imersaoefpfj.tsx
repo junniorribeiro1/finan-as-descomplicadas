@@ -280,9 +280,9 @@ export default function ImersaoPage() {
         <div className="relative z-10 mx-auto w-full max-w-6xl px-5 pt-12 sm:pt-16 md:pt-20 lg:pt-24 pb-14 md:pb-20">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             {/* COLUNA ESQUERDA: TODAS AS INFORMAÇÕES COM MÁXIMA NITIDEZ */}
-            <div className="flex flex-col items-start text-left gap-4 lg:col-span-7">
+            <div className="flex flex-col items-center text-center lg:items-start lg:text-left gap-4 lg:col-span-7">
               {/* TAGS DE EVENTO NO TOPO (CLEAN E COMPACTAS) */}
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2">
                 <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-950/60 px-3 py-1 text-[0.68rem] sm:text-xs font-semibold text-emerald-300 backdrop-blur-md">
                   <span className="relative flex h-2 w-2">
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
@@ -302,7 +302,7 @@ export default function ImersaoPage() {
               </div>
 
               {/* TÍTULO PRINCIPAL — IMERSÃO EDUCAÇÃO FINANCEIRA COM GRANDE DESTAQUE */}
-              <div className="w-full">
+              <div className="w-full text-center lg:text-left">
                 <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.3rem] xl:text-[3.7rem] font-black tracking-tight leading-[1.06] text-white">
                   IMERSÃO
                   <span className="block text-white mt-0.5">EDUCAÇÃO</span>
@@ -316,7 +316,7 @@ export default function ImersaoPage() {
               </div>
 
               {/* SUBTÍTULO CONCISO E ENXUTO */}
-              <p className="text-xs sm:text-sm md:text-[0.95rem] font-normal leading-relaxed text-stone-300/80 max-w-lg">
+              <p className="text-xs sm:text-sm md:text-[0.95rem] font-normal leading-relaxed text-stone-300/80 max-w-lg mx-auto lg:mx-0 text-center lg:text-left">
                 Aprenda a organizar seu dinheiro,{" "}
                 <strong className="font-semibold text-white underline decoration-amber-400 decoration-2 underline-offset-4">
                   sair do vermelho
@@ -325,7 +325,7 @@ export default function ImersaoPage() {
               </p>
 
               {/* 3 LOTES NO HERO (APENAS OS LOTES, SEM TEXTO SELECIONE) */}
-              <div className="mt-1 w-full max-w-sm sm:max-w-md">
+              <div className="mt-1 w-full max-w-sm sm:max-w-md mx-auto lg:mx-0">
                 <div className="grid grid-cols-3 gap-2">
                   {/* Lote 1 Ativo - R$ 27,00 */}
                   <button
@@ -393,7 +393,7 @@ export default function ImersaoPage() {
               </div>
 
               {/* BOTÕES DE AÇÃO HERO */}
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 pt-1 w-full max-w-sm sm:max-w-md">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-2.5 pt-1 w-full max-w-sm sm:max-w-md mx-auto lg:mx-0">
                 <a
                   href={defaultWppUrl}
                   target="_blank"
@@ -415,7 +415,7 @@ export default function ImersaoPage() {
               </div>
 
               {/* BARRA DE PROGRESSO DE VAGAS */}
-              <div className="flex flex-col gap-1 w-full max-w-sm sm:max-w-md pt-0.5">
+              <div className="flex flex-col gap-1 w-full max-w-sm sm:max-w-md mx-auto lg:mx-0 pt-0.5">
                 <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10 border border-white/5">
                   <div
                     className="h-full rounded-full bg-gradient-to-r from-amber-500 to-emerald-400 shadow-[0_0_10px_#f59e0b] transition-all duration-1000"
@@ -460,24 +460,27 @@ export default function ImersaoPage() {
           </div>
 
           {/* Timeline de 3 Passos */}
-          <div className="relative max-w-3xl mx-auto flex flex-col gap-10 md:gap-12 before:absolute before:left-4 md:before:left-1/2 before:top-4 before:bottom-4 before:w-[2px] before:bg-gradient-to-b before:from-amber-500 before:via-emerald-500 before:to-amber-500/20 before:-translate-x-1/2">
+          <div className="relative max-w-3xl mx-auto flex flex-col gap-8 md:gap-12 md:before:absolute md:before:left-1/2 md:before:top-4 md:before:bottom-4 md:before:w-[2px] md:before:bg-gradient-to-b md:before:from-amber-500 md:before:via-emerald-500 md:before:to-amber-500/20 md:before:-translate-x-1/2">
             {/* Passo 1 */}
-            <div className="relative flex flex-col md:flex-row items-start md:items-center gap-6">
-              <div className="md:w-1/2 md:text-right md:pr-10 pl-10 md:pl-0">
+            <div className="relative flex flex-col md:flex-row items-center md:items-center gap-3 md:gap-6 text-center md:text-right">
+              <div className="w-full md:w-1/2 md:pr-10 flex flex-col items-center md:items-end">
+                <div className="flex md:hidden h-9 w-9 items-center justify-center rounded-full bg-stone-950 border-2 border-amber-400 text-amber-300 shadow-[0_0_12px_#f59e0b] mb-2">
+                  <span className="text-xs font-black">1</span>
+                </div>
                 <span className="font-mono text-xs font-bold text-amber-400 tracking-wider uppercase">
                   Fase 01
                 </span>
-                <h3 className="text-lg md:text-xl font-bold text-white mt-1">
-                  Diagnóstico e Fim da Mistura e Saída do Vermelho e Construção de Reserva
+                <h3 className="text-base sm:text-lg md:text-xl font-bold text-white mt-1">
+                  Diagnóstico & Fim da Mistura
                 </h3>
-                <p className="text-sm text-stone-300/80 mt-1 leading-relaxed">
+                <p className="text-xs sm:text-sm text-stone-300/80 mt-1 leading-relaxed max-w-md mx-auto md:mr-0">
                   Você vai mapear exatamente onde o dinheiro está vazando, erguer
                   o muro de separação entre as contas e traçar o plano prático
                   para eliminar dívidas e construir sua reserva.
                 </p>
               </div>
 
-              <div className="absolute left-4 md:left-1/2 -translate-x-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-stone-950 border-2 border-amber-400 text-amber-300 shadow-[0_0_12px_#f59e0b] z-10">
+              <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 h-8 w-8 items-center justify-center rounded-full bg-stone-950 border-2 border-amber-400 text-amber-300 shadow-[0_0_12px_#f59e0b] z-10">
                 <span className="text-xs font-black">1</span>
               </div>
 
@@ -485,21 +488,25 @@ export default function ImersaoPage() {
             </div>
 
             {/* Passo 2 */}
-            <div className="relative flex flex-col md:flex-row items-start md:items-center gap-6">
+            <div className="relative flex flex-col md:flex-row items-center md:items-center gap-3 md:gap-6 text-center md:text-left">
               <div className="hidden md:block md:w-1/2 md:pr-10" />
 
-              <div className="absolute left-4 md:left-1/2 -translate-x-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-stone-950 border-2 border-emerald-400 text-emerald-300 shadow-[0_0_12px_#10b981] z-10">
+              <div className="flex md:hidden h-9 w-9 items-center justify-center rounded-full bg-stone-950 border-2 border-emerald-400 text-emerald-300 shadow-[0_0_12px_#10b981] mb-2">
                 <span className="text-xs font-black">2</span>
               </div>
 
-              <div className="md:w-1/2 md:text-left md:pl-10 pl-10">
+              <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 h-8 w-8 items-center justify-center rounded-full bg-stone-950 border-2 border-emerald-400 text-emerald-300 shadow-[0_0_12px_#10b981] z-10">
+                <span className="text-xs font-black">2</span>
+              </div>
+
+              <div className="w-full md:w-1/2 md:pl-10 flex flex-col items-center md:items-start">
                 <span className="font-mono text-xs font-bold text-emerald-400 tracking-wider uppercase">
                   Fase 02
                 </span>
-                <h3 className="text-lg md:text-xl font-bold text-white mt-1">
+                <h3 className="text-base sm:text-lg md:text-xl font-bold text-white mt-1">
                   Método de Fluxo e Gastos na Prática
                 </h3>
-                <p className="text-sm text-stone-300/80 mt-1 leading-relaxed">
+                <p className="text-xs sm:text-sm text-stone-300/80 mt-1 leading-relaxed max-w-md mx-auto md:ml-0">
                   Aprenda como manter um controle diário de 5 minutos, definindo
                   pró-labore real sem sufocar o caixa da sua empresa.
                 </p>
@@ -507,21 +514,24 @@ export default function ImersaoPage() {
             </div>
 
             {/* Passo 3 */}
-            <div className="relative flex flex-col md:flex-row items-start md:items-center gap-6">
-              <div className="md:w-1/2 md:text-right md:pr-10 pl-10 md:pl-0">
+            <div className="relative flex flex-col md:flex-row items-center md:items-center gap-3 md:gap-6 text-center md:text-right">
+              <div className="w-full md:w-1/2 md:pr-10 flex flex-col items-center md:items-end">
+                <div className="flex md:hidden h-9 w-9 items-center justify-center rounded-full bg-stone-950 border-2 border-amber-400 text-amber-300 shadow-[0_0_12px_#f59e0b] mb-2">
+                  <span className="text-xs font-black">3</span>
+                </div>
                 <span className="font-mono text-xs font-bold text-amber-400 tracking-wider uppercase">
                   Fase 03
                 </span>
-                <h3 className="text-lg md:text-xl font-bold text-white mt-1">
+                <h3 className="text-base sm:text-lg md:text-xl font-bold text-white mt-1">
                   Saída do Vermelho & Construção de Reserva
                 </h3>
-                <p className="text-sm text-stone-300/80 mt-1 leading-relaxed">
+                <p className="text-xs sm:text-sm text-stone-300/80 mt-1 leading-relaxed max-w-md mx-auto md:mr-0">
                   Estratégia de estancamento de juros, negociação de dívidas e o
                   plano prático para blindar sua família contra imprevistos.
                 </p>
               </div>
 
-              <div className="absolute left-4 md:left-1/2 -translate-x-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-stone-950 border-2 border-amber-400 text-amber-300 shadow-[0_0_12px_#f59e0b] z-10">
+              <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 h-8 w-8 items-center justify-center rounded-full bg-stone-950 border-2 border-amber-400 text-amber-300 shadow-[0_0_12px_#f59e0b] z-10">
                 <span className="text-xs font-black">3</span>
               </div>
 
@@ -550,14 +560,14 @@ export default function ImersaoPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {/* Módulo 1 */}
-          <div className="group relative rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1.5 hover:border-amber-500/40 hover:bg-amber-950/10 hover:shadow-[0_10px_30px_rgba(245,158,11,0.1)]">
-            <div className="flex items-center justify-between mb-4">
+          <div className="group relative rounded-2xl border border-white/[0.08] bg-white/[0.02] p-5 sm:p-6 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1.5 hover:border-amber-500/40 hover:bg-amber-950/10 hover:shadow-[0_10px_30px_rgba(245,158,11,0.1)] flex flex-col items-center sm:items-start text-center sm:text-left">
+            <div className="flex items-center justify-between w-full mb-3">
               <span className="font-mono text-xs font-bold text-amber-400 uppercase tracking-wider">
                 Módulo 01
               </span>
               <Building2 className="h-5 w-5 text-amber-400/80 group-hover:scale-110 transition-transform" />
             </div>
-            <h3 className="text-lg font-bold text-white group-hover:text-amber-300 transition-colors">
+            <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-amber-300 transition-colors">
               A Separação Cirúrgica entre PF e PJ
             </h3>
             <p className="mt-2 text-xs sm:text-sm text-stone-400 leading-relaxed">
@@ -568,14 +578,14 @@ export default function ImersaoPage() {
           </div>
 
           {/* Módulo 2 */}
-          <div className="group relative rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1.5 hover:border-emerald-500/40 hover:bg-emerald-950/10 hover:shadow-[0_10px_30px_rgba(16,185,129,0.1)]">
-            <div className="flex items-center justify-between mb-4">
+          <div className="group relative rounded-2xl border border-white/[0.08] bg-white/[0.02] p-5 sm:p-6 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1.5 hover:border-emerald-500/40 hover:bg-emerald-950/10 hover:shadow-[0_10px_30px_rgba(16,185,129,0.1)] flex flex-col items-center sm:items-start text-center sm:text-left">
+            <div className="flex items-center justify-between w-full mb-3">
               <span className="font-mono text-xs font-bold text-emerald-400 uppercase tracking-wider">
                 Módulo 02
               </span>
               <ShieldCheck className="h-5 w-5 text-emerald-400/80 group-hover:scale-110 transition-transform" />
             </div>
-            <h3 className="text-lg font-bold text-white group-hover:text-emerald-300 transition-colors">
+            <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-emerald-300 transition-colors">
               Plano de Ataque para Sair do Vermelho
             </h3>
             <p className="mt-2 text-xs sm:text-sm text-stone-400 leading-relaxed">
@@ -586,14 +596,14 @@ export default function ImersaoPage() {
           </div>
 
           {/* Módulo 3 */}
-          <div className="group relative rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1.5 hover:border-amber-500/40 hover:bg-amber-950/10 hover:shadow-[0_10px_30px_rgba(245,158,11,0.1)]">
-            <div className="flex items-center justify-between mb-4">
+          <div className="group relative rounded-2xl border border-white/[0.08] bg-white/[0.02] p-5 sm:p-6 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1.5 hover:border-amber-500/40 hover:bg-amber-950/10 hover:shadow-[0_10px_30px_rgba(245,158,11,0.1)] flex flex-col items-center sm:items-start text-center sm:text-left">
+            <div className="flex items-center justify-between w-full mb-3">
               <span className="font-mono text-xs font-bold text-amber-400 uppercase tracking-wider">
                 Módulo 03
               </span>
               <BarChart3 className="h-5 w-5 text-amber-400/80 group-hover:scale-110 transition-transform" />
             </div>
-            <h3 className="text-lg font-bold text-white group-hover:text-amber-300 transition-colors">
+            <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-amber-300 transition-colors">
               Fluxo de Caixa com Previsibilidade
             </h3>
             <p className="mt-2 text-xs sm:text-sm text-stone-400 leading-relaxed">
@@ -604,14 +614,14 @@ export default function ImersaoPage() {
           </div>
 
           {/* Módulo 4 */}
-          <div className="group relative rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1.5 hover:border-emerald-500/40 hover:bg-emerald-950/10 hover:shadow-[0_10px_30px_rgba(16,185,129,0.1)]">
-            <div className="flex items-center justify-between mb-4">
+          <div className="group relative rounded-2xl border border-white/[0.08] bg-white/[0.02] p-5 sm:p-6 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1.5 hover:border-emerald-500/40 hover:bg-emerald-950/10 hover:shadow-[0_10px_30px_rgba(16,185,129,0.1)] flex flex-col items-center sm:items-start text-center sm:text-left">
+            <div className="flex items-center justify-between w-full mb-3">
               <span className="font-mono text-xs font-bold text-emerald-400 uppercase tracking-wider">
                 Módulo 04
               </span>
               <Layers className="h-5 w-5 text-emerald-400/80 group-hover:scale-110 transition-transform" />
             </div>
-            <h3 className="text-lg font-bold text-white group-hover:text-emerald-300 transition-colors">
+            <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-emerald-300 transition-colors">
               Orçamento Inteligente & Ferramentas
             </h3>
             <p className="mt-2 text-xs sm:text-sm text-stone-400 leading-relaxed">
@@ -622,14 +632,14 @@ export default function ImersaoPage() {
           </div>
 
           {/* Módulo 5 */}
-          <div className="group relative rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1.5 hover:border-amber-500/40 hover:bg-amber-950/10 hover:shadow-[0_10px_30px_rgba(245,158,11,0.1)]">
-            <div className="flex items-center justify-between mb-4">
+          <div className="group relative rounded-2xl border border-white/[0.08] bg-white/[0.02] p-5 sm:p-6 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1.5 hover:border-amber-500/40 hover:bg-amber-950/10 hover:shadow-[0_10px_30px_rgba(245,158,11,0.1)] flex flex-col items-center sm:items-start text-center sm:text-left">
+            <div className="flex items-center justify-between w-full mb-3">
               <span className="font-mono text-xs font-bold text-amber-400 uppercase tracking-wider">
                 Módulo 05
               </span>
               <Wallet className="h-5 w-5 text-amber-400/80 group-hover:scale-110 transition-transform" />
             </div>
-            <h3 className="text-lg font-bold text-white group-hover:text-amber-300 transition-colors">
+            <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-amber-300 transition-colors">
               Construção da Reserva de Emergência
             </h3>
             <p className="mt-2 text-xs sm:text-sm text-stone-400 leading-relaxed">
@@ -640,14 +650,14 @@ export default function ImersaoPage() {
           </div>
 
           {/* Módulo 6 */}
-          <div className="group relative rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1.5 hover:border-emerald-500/40 hover:bg-emerald-950/10 hover:shadow-[0_10px_30px_rgba(16,185,129,0.1)]">
-            <div className="flex items-center justify-between mb-4">
+          <div className="group relative rounded-2xl border border-white/[0.08] bg-white/[0.02] p-5 sm:p-6 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1.5 hover:border-emerald-500/40 hover:bg-emerald-950/10 hover:shadow-[0_10px_30px_rgba(16,185,129,0.1)] flex flex-col items-center sm:items-start text-center sm:text-left">
+            <div className="flex items-center justify-between w-full mb-3">
               <span className="font-mono text-xs font-bold text-emerald-400 uppercase tracking-wider">
                 Módulo 06
               </span>
               <TrendingUp className="h-5 w-5 text-emerald-400/80 group-hover:scale-110 transition-transform" />
             </div>
-            <h3 className="text-lg font-bold text-white group-hover:text-emerald-300 transition-colors">
+            <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-emerald-300 transition-colors">
               Decisões Conscientes & Multiplicação
             </h3>
             <p className="mt-2 text-xs sm:text-sm text-stone-400 leading-relaxed">
@@ -665,7 +675,7 @@ export default function ImersaoPage() {
       <section className="reveal-on-scroll relative z-20 mx-auto w-full max-w-7xl px-5 py-16 md:px-8">
         <div className="overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-[#12161f] via-[#0b0e14] to-[#07080a] p-8 md:p-14">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-            <div>
+            <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
               <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-red-400">
                 Chega de Angústia
               </span>
@@ -682,7 +692,7 @@ export default function ImersaoPage() {
                 maiores.
               </p>
 
-              <div className="mt-6 border-l-4 border-amber-400 pl-4 py-1">
+              <div className="mt-6 border-t-2 sm:border-t-0 sm:border-l-4 border-amber-400 p-3.5 sm:pl-4 sm:py-1 rounded-xl sm:rounded-none bg-amber-500/5 sm:bg-transparent text-center lg:text-left">
                 <p className="font-mono text-xs sm:text-sm text-amber-300 tracking-wide uppercase">
                   "O maior risco financeiro de uma família ou empresa não é a
                   crise, é a falta de método para administrar o que entra todo
@@ -690,7 +700,7 @@ export default function ImersaoPage() {
                 </p>
               </div>
 
-              <div className="mt-8">
+              <div className="mt-8 flex justify-center lg:justify-start w-full">
                 <a
                   href="#preco"
                   className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 px-6 py-3.5 text-xs font-black uppercase tracking-wider text-stone-950 shadow-[0_0_20px_rgba(245,158,11,0.3)] transition-all hover:scale-105"
@@ -703,34 +713,34 @@ export default function ImersaoPage() {
 
             {/* Comparativo Antes vs Depois */}
             <div className="flex flex-col gap-3">
-              <div className="rounded-2xl border border-red-500/20 bg-red-950/15 p-5">
+              <div className="rounded-2xl border border-red-500/20 bg-red-950/15 p-5 flex flex-col items-center sm:items-start text-center sm:text-left">
                 <span className="text-xs font-bold text-red-400 uppercase tracking-wider">
                   Sem o Método da Imersão
                 </span>
-                <ul className="mt-2.5 flex flex-col gap-2 text-xs sm:text-sm text-stone-300">
+                <ul className="mt-2.5 flex flex-col gap-2 text-xs sm:text-sm text-stone-300 text-left">
                   <li className="flex items-start gap-2">
                     <span className="text-red-400 font-bold">✕</span>
-                    Mistura diária de boletos pessoais e empresariais no mesmo app
+                    <span>Mistura diária de boletos pessoais e empresariais no mesmo app</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-red-400 font-bold">✕</span>
-                    Dívidas acumulando juros sem estratégia clara de quitação
+                    <span>Dívidas acumulando juros sem estratégia clara de quitação</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-red-400 font-bold">✕</span>
-                    Sensação constante de insegurança caso ocorra uma emergência
+                    <span>Sensação constante de insegurança caso ocorra uma emergência</span>
                   </li>
                 </ul>
               </div>
 
-              <div className="rounded-2xl border border-emerald-500/30 bg-emerald-950/20 p-5 shadow-[0_4px_24px_rgba(16,185,129,0.1)]">
+              <div className="rounded-2xl border border-emerald-500/30 bg-emerald-950/20 p-5 shadow-[0_4px_24px_rgba(16,185,129,0.1)] flex flex-col items-center sm:items-start text-center sm:text-left">
                 <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">
                   Com a Imersão de Natalia Rodolfo
                 </span>
-                <ul className="mt-2.5 flex flex-col gap-2 text-xs sm:text-sm text-stone-200">
+                <ul className="mt-2.5 flex flex-col gap-2 text-xs sm:text-sm text-stone-200 text-left">
                   <li className="flex items-start gap-2">
                     <Check className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
-                    Contas PF e PJ 100% isoladas com pró-labore definido
+                    <span>Contas PF e PJ 100% isoladas com pró-labore definido</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <Check className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
@@ -756,42 +766,42 @@ export default function ImersaoPage() {
           <div className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full bg-amber-500/20 blur-[90px]" />
           <div className="pointer-events-none absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-emerald-500/20 blur-[90px]" />
 
-          <div className="relative z-10">
-            <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/40 bg-amber-500/15 px-3.5 py-1 text-xs font-bold text-amber-300 uppercase tracking-wider mb-4">
+          <div className="relative z-10 flex flex-col items-center text-center lg:items-start lg:text-left">
+            <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/40 bg-amber-500/15 px-3.5 py-1 text-xs font-bold text-amber-300 uppercase tracking-wider mb-4 mx-auto lg:mx-0">
               <Sparkles className="h-3.5 w-3.5" />
               <span>Bônus Exclusivo da 1ª Edição</span>
             </div>
 
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white max-w-xl">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white max-w-xl mx-auto lg:mx-0 text-center lg:text-left">
               Acesso Exclusivo ao App OrganizAI
             </h2>
-            <p className="mt-3 text-sm sm:text-base text-stone-300 max-w-2xl leading-relaxed">
+            <p className="mt-3 text-sm sm:text-base text-stone-300 max-w-2xl leading-relaxed mx-auto lg:mx-0 text-center lg:text-left">
               Você não vai sair da imersão apenas com anotações e teoria. Você
               receberá o acesso ao nosso App OrganizAI, a plataforma
               completa de inteligência e gestão para organizar suas finanças
               pessoais e jurídicas com máxima praticidade.
             </p>
 
-            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl">
-              <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/40 p-3">
+            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl w-full">
+              <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/40 p-3 text-left">
                 <CheckCircle2 className="h-5 w-5 text-amber-400 shrink-0" />
                 <span className="text-xs sm:text-sm text-stone-200">
                   Aplicativo com Separação Prática PF vs PJ
                 </span>
               </div>
-              <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/40 p-3">
+              <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/40 p-3 text-left">
                 <CheckCircle2 className="h-5 w-5 text-amber-400 shrink-0" />
                 <span className="text-xs sm:text-sm text-stone-200">
                   Painel de Fluxo de Caixa e Controle de Gastos
                 </span>
               </div>
-              <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/40 p-3">
+              <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/40 p-3 text-left">
                 <CheckCircle2 className="h-5 w-5 text-amber-400 shrink-0" />
                 <span className="text-xs sm:text-sm text-stone-200">
                   Módulo de Metas, Diagnóstico & Pró-labore
                 </span>
               </div>
-              <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/40 p-3">
+              <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/40 p-3 text-left">
                 <CheckCircle2 className="h-5 w-5 text-amber-400 shrink-0" />
                 <span className="text-xs sm:text-sm text-stone-200">
                   Comunidade Exclusiva de Alunos e Suporte
@@ -799,7 +809,7 @@ export default function ImersaoPage() {
               </div>
             </div>
 
-            <div className="mt-8 flex flex-wrap items-center gap-4 pt-6 border-t border-white/10">
+            <div className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-6 border-t border-white/10 w-full text-center">
               <span className="font-mono text-xs text-stone-500 line-through uppercase">
                 Vendido separadamente por R$ 197,00
               </span>
@@ -831,9 +841,9 @@ export default function ImersaoPage() {
 
         <div className="flex flex-col gap-3 max-w-2xl mx-auto">
           {/* 13h00 */}
-          <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] p-4 transition-colors hover:border-amber-500/30 hover:bg-white/[0.04]">
-            <div className="flex items-center gap-4">
-              <span className="font-mono text-sm font-bold text-amber-400">
+          <div className="flex flex-col sm:flex-row items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] p-4 transition-colors hover:border-amber-500/30 hover:bg-white/[0.04] text-center sm:text-left gap-2 sm:gap-4">
+            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
+              <span className="font-mono text-xs sm:text-sm font-bold text-amber-400 bg-amber-500/10 px-2.5 py-0.5 rounded-md sm:bg-transparent sm:p-0">
                 13h00
               </span>
               <span className="text-sm font-semibold text-white">
@@ -846,9 +856,9 @@ export default function ImersaoPage() {
           </div>
 
           {/* 14h30 */}
-          <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] p-4 transition-colors hover:border-amber-500/30 hover:bg-white/[0.04]">
-            <div className="flex items-center gap-4">
-              <span className="font-mono text-sm font-bold text-amber-400">
+          <div className="flex flex-col sm:flex-row items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] p-4 transition-colors hover:border-amber-500/30 hover:bg-white/[0.04] text-center sm:text-left gap-2 sm:gap-4">
+            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
+              <span className="font-mono text-xs sm:text-sm font-bold text-amber-400 bg-amber-500/10 px-2.5 py-0.5 rounded-md sm:bg-transparent sm:p-0">
                 14h30
               </span>
               <span className="text-sm font-semibold text-white">
@@ -861,9 +871,9 @@ export default function ImersaoPage() {
           </div>
 
           {/* 15h30 */}
-          <div className="flex items-center justify-between rounded-xl border border-white/5 bg-white/[0.01] p-4 opacity-70">
-            <div className="flex items-center gap-4">
-              <span className="font-mono text-sm font-bold text-stone-400">
+          <div className="flex flex-col sm:flex-row items-center justify-between rounded-xl border border-white/5 bg-white/[0.01] p-4 opacity-70 text-center sm:text-left gap-2 sm:gap-4">
+            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
+              <span className="font-mono text-xs sm:text-sm font-bold text-stone-400 bg-white/5 px-2.5 py-0.5 rounded-md sm:bg-transparent sm:p-0">
                 15h30
               </span>
               <span className="text-sm font-medium text-stone-300">
@@ -876,9 +886,9 @@ export default function ImersaoPage() {
           </div>
 
           {/* 15h45 */}
-          <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] p-4 transition-colors hover:border-emerald-500/30 hover:bg-white/[0.04]">
-            <div className="flex items-center gap-4">
-              <span className="font-mono text-sm font-bold text-emerald-400">
+          <div className="flex flex-col sm:flex-row items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] p-4 transition-colors hover:border-emerald-500/30 hover:bg-white/[0.04] text-center sm:text-left gap-2 sm:gap-4">
+            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
+              <span className="font-mono text-xs sm:text-sm font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-md sm:bg-transparent sm:p-0">
                 15h45
               </span>
               <span className="text-sm font-semibold text-white">
@@ -891,9 +901,9 @@ export default function ImersaoPage() {
           </div>
 
           {/* 16h45 */}
-          <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] p-4 transition-colors hover:border-emerald-500/30 hover:bg-white/[0.04]">
-            <div className="flex items-center gap-4">
-              <span className="font-mono text-sm font-bold text-emerald-400">
+          <div className="flex flex-col sm:flex-row items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] p-4 transition-colors hover:border-emerald-500/30 hover:bg-white/[0.04] text-center sm:text-left gap-2 sm:gap-4">
+            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
+              <span className="font-mono text-xs sm:text-sm font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-md sm:bg-transparent sm:p-0">
                 16h45
               </span>
               <span className="text-sm font-semibold text-white">
@@ -906,9 +916,9 @@ export default function ImersaoPage() {
           </div>
 
           {/* 17h30 */}
-          <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] p-4 transition-colors hover:border-amber-500/30 hover:bg-white/[0.04]">
-            <div className="flex items-center gap-4">
-              <span className="font-mono text-sm font-bold text-amber-400">
+          <div className="flex flex-col sm:flex-row items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] p-4 transition-colors hover:border-amber-500/30 hover:bg-white/[0.04] text-center sm:text-left gap-2 sm:gap-4">
+            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
+              <span className="font-mono text-xs sm:text-sm font-bold text-amber-400 bg-amber-500/10 px-2.5 py-0.5 rounded-md sm:bg-transparent sm:p-0">
                 17h30
               </span>
               <span className="text-sm font-semibold text-white">
@@ -936,7 +946,7 @@ export default function ImersaoPage() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-5xl mx-auto">
-          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 hover:border-white/20 transition-colors">
+          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 sm:p-6 hover:border-white/20 transition-colors flex flex-col items-center sm:items-start text-center sm:text-left">
             <span className="font-mono text-xs font-bold text-amber-400">
               01/
             </span>
@@ -949,7 +959,7 @@ export default function ImersaoPage() {
             </p>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 hover:border-white/20 transition-colors">
+          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 sm:p-6 hover:border-white/20 transition-colors flex flex-col items-center sm:items-start text-center sm:text-left">
             <span className="font-mono text-xs font-bold text-emerald-400">
               02/
             </span>
@@ -962,7 +972,7 @@ export default function ImersaoPage() {
             </p>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 hover:border-white/20 transition-colors">
+          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 sm:p-6 hover:border-white/20 transition-colors flex flex-col items-center sm:items-start text-center sm:text-left">
             <span className="font-mono text-xs font-bold text-amber-400">
               03/
             </span>
@@ -975,7 +985,7 @@ export default function ImersaoPage() {
             </p>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 hover:border-white/20 transition-colors">
+          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 sm:p-6 hover:border-white/20 transition-colors flex flex-col items-center sm:items-start text-center sm:text-left">
             <span className="font-mono text-xs font-bold text-emerald-400">
               04/
             </span>
@@ -988,7 +998,7 @@ export default function ImersaoPage() {
             </p>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 hover:border-white/20 transition-colors sm:col-span-2 lg:col-span-2">
+          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 sm:p-6 hover:border-white/20 transition-colors sm:col-span-2 lg:col-span-2 flex flex-col items-center sm:items-start text-center sm:text-left">
             <span className="font-mono text-xs font-bold text-amber-400">
               05/
             </span>
@@ -1003,12 +1013,12 @@ export default function ImersaoPage() {
         </div>
 
         {/* BOX DE GARANTIA INCONDICIONAL */}
-        <div className="mt-12 max-w-4xl mx-auto rounded-3xl border border-emerald-500/30 bg-gradient-to-r from-emerald-950/30 via-[#0d1512] to-emerald-950/20 p-6 sm:p-10 backdrop-blur-xl flex flex-col md:flex-row items-center gap-6">
+        <div className="mt-12 max-w-4xl mx-auto rounded-3xl border border-emerald-500/30 bg-gradient-to-r from-emerald-950/30 via-[#0d1512] to-emerald-950/20 p-6 sm:p-10 backdrop-blur-xl flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
           <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
             <ShieldCheck className="h-8 w-8" />
           </div>
-          <div>
-            <div className="inline-flex items-center gap-1.5 rounded-md bg-emerald-500/10 px-2 py-0.5 text-xs font-bold text-emerald-300 uppercase tracking-wider">
+          <div className="flex flex-col items-center md:items-start">
+            <div className="inline-flex items-center gap-1.5 rounded-md bg-emerald-500/10 px-2 py-0.5 text-xs font-bold text-emerald-300 uppercase tracking-wider mx-auto md:mx-0">
               <span>Garantia Incondicional de 7 Dias</span>
             </div>
             <h3 className="text-xl font-bold text-white mt-1">
@@ -1031,15 +1041,15 @@ export default function ImersaoPage() {
         <div className="rounded-3xl border border-amber-500/40 bg-gradient-to-b from-[#18120a] via-[#0f0c07] to-[#080808] p-8 md:p-14 shadow-[0_10px_60px_rgba(245,158,11,0.2)]">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             {/* Benefícios Inclusos */}
-            <div className="lg:col-span-7 flex flex-col gap-4">
-              <span className="font-mono text-xs font-bold text-amber-400 uppercase tracking-[0.2em]">
+            <div className="lg:col-span-7 flex flex-col items-center text-center lg:items-start lg:text-left gap-4">
+              <span className="font-mono text-xs font-bold text-amber-400 uppercase tracking-[0.2em] mx-auto lg:mx-0">
                 Ingresso Oficial
               </span>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-tight">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-tight text-center lg:text-left">
                 Tudo o que está incluso no seu acesso:
               </h2>
 
-              <ul className="flex flex-col gap-2.5 mt-2 text-xs sm:text-sm text-stone-200">
+              <ul className="flex flex-col gap-2.5 mt-2 text-xs sm:text-sm text-stone-200 text-left w-full max-w-lg mx-auto lg:mx-0">
                 <li className="flex items-center gap-2.5">
                   <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
                   <span>
@@ -1073,7 +1083,7 @@ export default function ImersaoPage() {
               </ul>
 
               {/* Comparativo dos 3 Lotes na Dobra de Oferta */}
-              <div className="mt-4 grid grid-cols-3 gap-2 border-t border-white/10 pt-4 max-w-sm">
+              <div className="mt-4 grid grid-cols-3 gap-2 border-t border-white/10 pt-4 max-w-sm mx-auto lg:mx-0 w-full">
                 <div className="flex flex-col p-2 rounded-lg bg-amber-500/10 border border-amber-400/30 text-center">
                   <span className="font-mono text-[0.65rem] text-amber-400 font-bold uppercase">Lote 1</span>
                   <span className="text-sm font-black text-white">R$ 27,00</span>
@@ -1139,15 +1149,15 @@ export default function ImersaoPage() {
       ═══════════════════════════════════════════════ */}
       <section className="reveal-on-scroll relative z-20 mx-auto w-full max-w-5xl px-5 py-12 md:px-8">
         <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-8 md:p-12 flex flex-col md:flex-row items-center gap-8">
-          <div className="md:w-1/2">
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-300 uppercase tracking-wider mb-3">
+          <div className="md:w-1/2 flex flex-col items-center text-center md:items-start md:text-left">
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-300 uppercase tracking-wider mb-3 mx-auto md:mx-0">
               <Award className="h-3.5 w-3.5" />
               <span>Certificação Oficial</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-white text-center md:text-left">
               Vou receber certificado?
             </h2>
-            <p className="mt-3 text-xs sm:text-sm text-stone-300 leading-relaxed">
+            <p className="mt-3 text-xs sm:text-sm text-stone-300 leading-relaxed text-center md:text-left">
               <strong className="text-white">Sim!</strong> Todos os participantes
               que concluírem a Imersão receberão o{" "}
               <strong className="text-amber-300">
@@ -1158,7 +1168,7 @@ export default function ImersaoPage() {
             </p>
           </div>
 
-          <div className="md:w-1/2 flex justify-center">
+          <div className="md:w-1/2 flex justify-center w-full">
             {/* Mockup estilizado do Certificado */}
             <div className="relative w-full max-w-sm rounded-2xl border-2 border-amber-400/40 bg-gradient-to-br from-[#1b150c] via-[#0f0c08] to-stone-950 p-6 shadow-[0_10px_40px_rgba(245,158,11,0.15)] text-center">
               <div className="flex justify-center mb-3">
@@ -1199,23 +1209,23 @@ export default function ImersaoPage() {
             </div>
           </div>
 
-          <div className="lg:w-7/12 flex flex-col gap-4">
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs font-bold text-amber-300 uppercase tracking-wider w-fit">
+          <div className="lg:w-7/12 flex flex-col items-center text-center lg:items-start lg:text-left gap-4">
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs font-bold text-amber-300 uppercase tracking-wider w-fit mx-auto lg:mx-0">
               <Sparkles className="h-3 w-3" />
               <span>Sua Professora & Mentora</span>
             </div>
 
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-white text-center lg:text-left">
               Quem é Natalia Rodolfo?
             </h2>
 
-            <p className="text-xs sm:text-sm text-stone-300 leading-relaxed">
+            <p className="text-xs sm:text-sm text-stone-300 leading-relaxed text-center lg:text-left">
               Educadora Financeira, mentora e estrategista, Natalia Rodolfo tem
               como missão simplificar o que as instituições financeiras tornaram
               complexo.
             </p>
 
-            <p className="text-xs sm:text-sm text-stone-300 leading-relaxed">
+            <p className="text-xs sm:text-sm text-stone-300 leading-relaxed text-center lg:text-left">
               Com anos de atuação orientando famílias, autônomos e pequenos
               empresários, desenvolveu um método direto e sem rodeios para
               transformar a relação com o dinheiro: eliminando a confusão entre
@@ -1223,7 +1233,7 @@ export default function ImersaoPage() {
               um futuro com previsibilidade e paz.
             </p>
 
-            <div className="pt-2">
+            <div className="pt-2 flex justify-center lg:justify-start w-full">
               <a
                 href="https://www.instagram.com/nataliafinancas/"
                 target="_blank"
@@ -1324,6 +1334,16 @@ export default function ImersaoPage() {
             <MessageCircle className="h-4 w-4" />
             <span>Chamar no WhatsApp</span>
           </a>
+
+          <p className="mt-4 text-xs text-stone-400">
+            Prefere e-mail? Fale conosco:{" "}
+            <a
+              href="mailto:suporte@nataliarodolfo.com.br"
+              className="text-emerald-400 hover:underline font-semibold"
+            >
+              suporte@nataliarodolfo.com.br
+            </a>
+          </p>
         </div>
       </section>
 
@@ -1345,7 +1365,7 @@ export default function ImersaoPage() {
 
       {/* ── STICKY BAR INFERIOR (SURGE NO SCROLL - LOTE 1: R$ 27,00) ── */}
       <div
-        className={`fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[92vw] max-w-md rounded-full border border-white/15 bg-black/80 p-2 pl-4 backdrop-blur-xl shadow-[0_10px_40px_rgba(0,0,0,0.8)] transition-all duration-500 flex items-center justify-between ${
+        className={`fixed bottom-3 left-1/2 -translate-x-1/2 z-40 w-[94vw] max-w-md rounded-full border border-white/15 bg-black/90 p-2 pl-4 backdrop-blur-xl shadow-[0_10px_40px_rgba(0,0,0,0.8)] transition-all duration-500 flex items-center justify-between ${
           showStickyBar
             ? "translate-y-0 opacity-100"
             : "translate-y-20 opacity-0 pointer-events-none"
@@ -1370,13 +1390,13 @@ export default function ImersaoPage() {
         </a>
       </div>
 
-      {/* ── FLOATING WHATSAPP BUTTON ── */}
+      {/* ── FLOATING WHATSAPP BUTTON (ELEVADO NO MOBILE PARA NÃO TAPAR O STICKY BAR) ── */}
       <a
         href={supportWppUrl}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Fale conosco no WhatsApp"
-        className="fixed bottom-6 right-5 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500 text-stone-950 shadow-[0_0_24px_rgba(16,185,129,0.5)] transition-all duration-300 hover:scale-110 hover:bg-emerald-400"
+        className="fixed bottom-20 right-4 sm:bottom-6 sm:right-6 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500 text-stone-950 shadow-[0_0_24px_rgba(16,185,129,0.5)] transition-all duration-300 hover:scale-110 hover:bg-emerald-400"
       >
         <MessageCircle className="h-6 w-6" />
       </a>

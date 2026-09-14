@@ -71,6 +71,12 @@ const faqList: FaqItem[] = [
     resposta:
       "Sim. Na aba 'Importar dados' você pode carregar extratos bancários em formato OFX, CSV ou planilhas Excel para sincronizar seu histórico financeiro rapidamente.",
   },
+  {
+    id: "faq-7",
+    pergunta: "Como entrar em contato com o suporte?",
+    resposta:
+      "Você pode tirar dúvidas instantâneas com a Vera (nossa gerente com inteligência artificial) no menu 'Vera Gerente' ou falar com nossa equipe pelo e-mail suporte@nataliarodolfo.com.br (tempo médio de resposta de até 24h úteis).",
+  },
 ];
 
 function CentralAjuda() {
@@ -333,7 +339,12 @@ function CentralAjuda() {
 
               <div className="rounded-xl border border-white/10 bg-white/[0.02] p-3.5">
                 <h4 className="text-xs font-semibold text-white">E-mail de Suporte</h4>
-                <p className="text-xs text-neutral-400 mt-1">suporte@organizai.com</p>
+                <a
+                  href="mailto:suporte@nataliarodolfo.com.br"
+                  className="text-xs text-orange-400 hover:text-orange-300 underline underline-offset-2 mt-1 inline-block transition-colors font-medium"
+                >
+                  suporte@nataliarodolfo.com.br
+                </a>
                 <p className="text-[11px] text-neutral-500 mt-0.5">Tempo médio de resposta: até 24h</p>
               </div>
             </div>

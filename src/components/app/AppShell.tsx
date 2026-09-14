@@ -126,6 +126,15 @@ function VeraAjudaCard({ onNavigate }: { onNavigate?: () => void }) {
           <Sparkles className="h-3.5 w-3.5" />
           Falar com a Vera
         </Link>
+        <div className="mt-2.5 pt-2 border-t border-white/[0.08] flex flex-col items-center text-center gap-0.5">
+          <span className="text-[10px] text-stone-400">Suporte por e-mail:</span>
+          <a
+            href="mailto:suporte@nataliarodolfo.com.br"
+            className="text-[10.5px] font-medium text-purple-300 hover:text-white transition-colors underline underline-offset-2"
+          >
+            suporte@nataliarodolfo.com.br
+          </a>
+        </div>
       </div>
     </div>
   );
@@ -269,6 +278,17 @@ export function AppShell({
             >
               Avisar a Mentoria no WhatsApp
             </a>
+            <div className="text-center py-0.5">
+              <span className="text-[11px] text-stone-400">
+                Ou solicite por e-mail:{" "}
+                <a
+                  href="mailto:suporte@nataliarodolfo.com.br"
+                  className="text-amber-400 hover:underline font-semibold"
+                >
+                  suporte@nataliarodolfo.com.br
+                </a>
+              </span>
+            </div>
             <button
               type="button"
               onClick={async () => {
@@ -308,6 +328,17 @@ export function AppShell({
             >
               Falar no WhatsApp da Mentoria
             </a>
+            <div className="text-center py-0.5">
+              <span className="text-[11px] text-stone-400">
+                Ou fale com o suporte:{" "}
+                <a
+                  href="mailto:suporte@nataliarodolfo.com.br"
+                  className="text-rose-400 hover:underline font-semibold"
+                >
+                  suporte@nataliarodolfo.com.br
+                </a>
+              </span>
+            </div>
             <button
               type="button"
               onClick={async () => {
@@ -638,7 +669,7 @@ export function AppShell({
         <header className="sticky top-0 z-20 border-b border-white/[0.06] bg-[#0d0d0d]/95 backdrop-blur-md">
           <div className="mx-auto flex max-w-[1600px] items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
             {/* Lado Esquerdo: Filtros */}
-            <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="flex items-center gap-1.5 sm:gap-3 min-w-0">
               {/* Botão Menu Mobile */}
               <button
                 onClick={() => setAberto(true)}
@@ -649,12 +680,12 @@ export function AppShell({
               </button>
 
               {/* Toggle Pessoal / Empresa */}
-              <div className="flex items-center rounded-full bg-[#181818] p-1 border border-white/[0.08]">
+              <div className="flex items-center rounded-full bg-[#181818] p-0.5 sm:p-1 border border-white/[0.08] shrink-0">
                 <button
                   type="button"
                   onClick={() => mudarTipoConta("pessoal")}
                   className={cn(
-                    "rounded-full px-4 py-1.5 text-xs font-semibold transition-all cursor-pointer",
+                    "rounded-full px-2.5 sm:px-4 py-1 sm:py-1.5 text-[11px] sm:text-xs font-semibold transition-all cursor-pointer",
                     tipoConta === "pessoal"
                       ? "bg-[#F97316] text-white shadow-md shadow-orange-950/40"
                       : "text-stone-400 hover:text-stone-200"
@@ -666,7 +697,7 @@ export function AppShell({
                   type="button"
                   onClick={() => mudarTipoConta("empresa")}
                   className={cn(
-                    "rounded-full px-4 py-1.5 text-xs font-medium transition-all cursor-pointer",
+                    "rounded-full px-2.5 sm:px-4 py-1 sm:py-1.5 text-[11px] sm:text-xs font-medium transition-all cursor-pointer",
                     tipoConta === "empresa"
                       ? "bg-[#F97316] text-white shadow-md shadow-orange-950/40"
                       : "text-stone-400 hover:text-stone-200"
@@ -677,11 +708,11 @@ export function AppShell({
               </div>
 
               {/* Dropdown Este mês */}
-              <div className="relative">
+              <div className="relative shrink-0 hidden sm:block">
                 <select
                   value={mes}
                   onChange={(e) => setMes(e.target.value)}
-                  className="appearance-none rounded-full bg-[#181818] border border-white/[0.08] px-4 py-1.5 pr-8 text-xs font-medium text-white outline-none cursor-pointer hover:border-white/20 transition-colors"
+                  className="appearance-none rounded-full bg-[#181818] border border-white/[0.08] px-3 sm:px-4 py-1 sm:py-1.5 pr-7 sm:pr-8 text-xs font-medium text-white outline-none cursor-pointer hover:border-white/20 transition-colors"
                 >
                   <option value="Este mês" className="bg-[#181818]">Este mês</option>
                   <option value="Janeiro" className="bg-[#181818]">Janeiro</option>
@@ -701,7 +732,7 @@ export function AppShell({
               </div>
 
               {/* Dropdown 2026 */}
-              <div className="relative">
+              <div className="relative shrink-0 hidden md:block">
                 <select
                   value={ano}
                   onChange={(e) => setAno(e.target.value)}

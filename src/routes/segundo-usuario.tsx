@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AppShell } from "@/components/app/AppShell";
+import { useAuth } from "@/lib/auth-context";
 import {
   UserPlus,
   ShieldCheck,
@@ -39,6 +40,7 @@ interface Usuario {
 }
 
 function SegundoUsuario() {
+  const { user, profile } = useAuth();
   const [modalAberto, setModalAberto] = useState(false);
   const [emailConvite, setEmailConvite] = useState("");
   const [nomeConvite, setNomeConvite] = useState("");
@@ -47,13 +49,29 @@ function SegundoUsuario() {
   const [usuarios, setUsuarios] = useState<Usuario[]>([
     {
       id: "owner-1",
-      nome: "Você",
-      email: "voce@exemplo.com",
+      nome: profile?.full_name || "Você",
+      email: user?.email || "usuario@organizai.com",
       papel: "Titular",
       status: "ativo",
       isOwner: true,
     },
   ]);
+
+  useEffect(() => {
+    if (user?.email) {
+      setUsuarios((prev) =>
+        prev.map((u) =>
+          u.isOwner
+            ? {
+                ...u,
+                nome: profile?.full_name || u.nome,
+                email: user.email || u.email,
+              }
+            : u
+        )
+      );
+    }
+  }, [user?.email, profile?.full_name]);
 
   const handleEnviarConvite = (e: React.FormEvent) => {
     e.preventDefault();
@@ -241,6 +259,17 @@ function SegundoUsuario() {
               );
             })}
           </div>
+        </div>
+
+        {/* Dica de Suporte */}
+        <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-2 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4 text-xs text-neutral-400">
+          <span>Dúvidas ou precisa de suporte para gerenciar acessos compartilhados?</span>
+          <a
+            href="mailto:suporte@nataliarodolfo.com.br"
+            className="text-[#F97316] hover:underline font-semibold"
+          >
+            suporte@nataliarodolfo.com.br
+          </a>
         </div>
       </div>
 
