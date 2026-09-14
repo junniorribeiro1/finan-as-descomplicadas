@@ -86,6 +86,10 @@ export interface InvestimentoItem {
   saldoAtual: number;
   instituicao?: string | undefined;
   rendimentoPct?: number | undefined;
+  aporteMensal?: number | undefined;
+  prazoMeses?: number | undefined;
+  dataInicio?: string | undefined;
+  tipoConta?: "pessoal" | "empresa";
   created_at?: string;
 }
 
@@ -202,7 +206,10 @@ export function calcularResumoFinanceiro(
   const saldoBancos = bancos.reduce((acc, curr) => acc + (Number(curr.saldo) || 0), 0);
   const saldoDisponivel = bancos.length > 0 ? saldoBancos : totalReceitas - totalPago;
 
-  const totalInvestido = investimentos.reduce((acc, curr) => acc + (Number(curr.saldoAtual) || 0), 0);
+  const investFiltrados = tipoConta
+    ? investimentos.filter((i) => (i.tipoConta || "pessoal") === tipoConta)
+    : investimentos;
+  const totalInvestido = investFiltrados.reduce((acc, curr) => acc + (Number(curr.saldoAtual) || 0), 0);
   const cofrinhosFiltrados = tipoConta
     ? cofrinhos.filter((c) => (c.tipoConta || "pessoal") === tipoConta)
     : cofrinhos;
@@ -420,6 +427,10 @@ export async function carregarDadosFinanceirosUsuario(userId: string) {
       saldoAtual: Number(i.saldo_atual) || 0,
       instituicao: i.instituicao,
       rendimentoPct: Number(i.rendimento_pct) || 0,
+      aporteMensal: Number(i.aporte_mensal) || 0,
+      prazoMeses: Number(i.prazo_meses) || 60,
+      dataInicio: i.data_inicio,
+      tipoConta: (i.tipo_conta as "pessoal" | "empresa") || "pessoal",
       created_at: i.created_at,
     }));
 
