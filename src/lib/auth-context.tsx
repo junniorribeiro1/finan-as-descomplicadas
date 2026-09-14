@@ -43,7 +43,10 @@ interface AuthContextType {
   refreshProfile: () => Promise<void>;
 }
 
-const ADMIN_FALLBACK_EMAILS = ["junniorribeiro1@gmail.com"];
+const ADMIN_FALLBACK_EMAILS = [
+  "junniorribeiro1@gmail.com",
+  "suporte@nataliarodolfo.com.br",
+];
 
 const AuthContext = createContext<AuthContextType>({
   user: null,

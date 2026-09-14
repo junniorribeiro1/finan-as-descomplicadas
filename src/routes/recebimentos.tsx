@@ -239,8 +239,8 @@ function Recebimentos() {
   // Bancos registrados pelo usuário
   const [bancosCadastrados, setBancosCadastrados] = useState<string[]>(BANCOS_PADRAO);
 
-  // Filtros
-  const [filtroPeriodo, setFiltroPeriodo] = useState<"mes" | "ano" | "todos">("mes");
+  // Filtros (inicia em "todos" para exibir imediatamente qualquer lançamento no histórico)
+  const [filtroPeriodo, setFiltroPeriodo] = useState<"mes" | "ano" | "todos">("todos");
   const [busca, setBusca] = useState("");
 
   // Form states para NOVO Recebimento
@@ -734,6 +734,18 @@ function Recebimentos() {
         <div className="inline-flex items-center gap-1 rounded-full bg-[#151515] p-1 border border-white/[0.06] self-start">
           <button
             type="button"
+            onClick={() => setFiltroPeriodo("todos")}
+            className={cn(
+              "rounded-full px-3.5 py-1 text-xs font-bold transition-all cursor-pointer",
+              filtroPeriodo === "todos"
+                ? "bg-[#F97316] text-white shadow-sm shadow-orange-950/40"
+                : "text-stone-400 hover:text-white"
+            )}
+          >
+            Todos
+          </button>
+          <button
+            type="button"
             onClick={() => setFiltroPeriodo("mes")}
             className={cn(
               "rounded-full px-3.5 py-1 text-xs font-bold transition-all cursor-pointer",
@@ -748,25 +760,13 @@ function Recebimentos() {
             type="button"
             onClick={() => setFiltroPeriodo("ano")}
             className={cn(
-              "rounded-full px-3.5 py-1 text-xs font-medium transition-all cursor-pointer",
+              "rounded-full px-3.5 py-1 text-xs font-bold transition-all cursor-pointer",
               filtroPeriodo === "ano"
-                ? "bg-[#F97316] text-white font-bold shadow-sm shadow-orange-950/40"
+                ? "bg-[#F97316] text-white shadow-sm shadow-orange-950/40"
                 : "text-stone-400 hover:text-white"
             )}
           >
             Este ano
-          </button>
-          <button
-            type="button"
-            onClick={() => setFiltroPeriodo("todos")}
-            className={cn(
-              "rounded-full px-3.5 py-1 text-xs font-medium transition-all cursor-pointer",
-              filtroPeriodo === "todos"
-                ? "bg-[#F97316] text-white font-bold shadow-sm shadow-orange-950/40"
-                : "text-stone-400 hover:text-white"
-            )}
-          >
-            Todos
           </button>
         </div>
 

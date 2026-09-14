@@ -105,30 +105,114 @@ function AdminPage() {
     }
   }, [authLoading, session, navigate]);
 
-  // Carrega lista de alunos do Supabase
-  const carregarAlunos = async () => {
-    setCarregando(true);
+  // Carrega lista de alunos do Supabase calculando métricas vivas em tempo real
+  const carregarAlunos = async (silencioso = false) => {
+    if (!silencioso) setCarregando(true);
     try {
-      const { data: profiles, error: pError } = await supabase
-        .from("profiles")
-        .select("*")
-        .order("created_at", { ascending: false });
+      // 1. Busca perfis, resumos e dados vivos de todas as tabelas em paralelo
+      const [
+        { data: profiles, error: pError },
+        { data: summaries },
+        { data: recData },
+        { data: fixData },
+        { data: varData },
+        { data: invData },
+        { data: cofData },
+        { data: carData },
+      ] = await Promise.all([
+        supabase.from("profiles").select("*").order("created_at", { ascending: false }),
+        supabase.from("user_financial_summaries").select("*"),
+        supabase.from("recebimentos").select("user_id, valor"),
+        supabase.from("gastos_fixos").select("user_id, valor, ativo"),
+        supabase.from("gastos_variaveis").select("user_id, valor"),
+        supabase.from("investimentos").select("user_id, saldo_atual, valor_aplicado"),
+        supabase.from("cofrinhos").select("user_id, valor_atual"),
+        supabase.from("cartoes_credito").select("user_id, fatura_atual"),
+      ]);
 
       if (pError) throw pError;
 
-      // Busca dados dos dashboards/resumos financeiros de cada aluno se disponível
-      const { data: summaries } = await supabase
-        .from("financial_summary")
-        .select("*");
+      // Mapas de agregação viva por usuário
+      const receitasMap = new Map<string, number>();
+      (recData || []).forEach((r: any) => {
+        const val = Number(r.valor) || 0;
+        receitasMap.set(r.user_id, (receitasMap.get(r.user_id) || 0) + val);
+      });
 
-      const summaryMap = new Map();
+      const gastosFixosMap = new Map<string, number>();
+      (fixData || []).forEach((f: any) => {
+        if (f.ativo === false) return;
+        const val = Number(f.valor) || 0;
+        gastosFixosMap.set(f.user_id, (gastosFixosMap.get(f.user_id) || 0) + val);
+      });
+
+      const gastosVariaveisMap = new Map<string, number>();
+      (varData || []).forEach((v: any) => {
+        const val = Number(v.valor) || 0;
+        gastosVariaveisMap.set(v.user_id, (gastosVariaveisMap.get(v.user_id) || 0) + val);
+      });
+
+      const investimentosMap = new Map<string, number>();
+      (invData || []).forEach((i: any) => {
+        const val = Number(i.saldo_atual) || Number(i.valor_aplicado) || 0;
+        investimentosMap.set(i.user_id, (investimentosMap.get(i.user_id) || 0) + val);
+      });
+
+      const cofrinhosMap = new Map<string, number>();
+      (cofData || []).forEach((c: any) => {
+        const val = Number(c.valor_atual) || 0;
+        cofrinhosMap.set(c.user_id, (cofrinhosMap.get(c.user_id) || 0) + val);
+      });
+
+      const cartoesMap = new Map<string, number>();
+      (carData || []).forEach((c: any) => {
+        const val = Number(c.fatura_atual) || 0;
+        cartoesMap.set(c.user_id, (cartoesMap.get(c.user_id) || 0) + val);
+      });
+
+      const summaryMap = new Map<string, any>();
       (summaries || []).forEach((s: any) => {
         summaryMap.set(s.user_id, s);
       });
 
-      // Mapeia perfis reais
+      // Mapeia perfis reais calculando os números vivos instantâneos
       const alunosReais: AlunoFinanceiro[] = (profiles || []).map((p: any) => {
         const sum = summaryMap.get(p.id) || {};
+
+        const totalReceitas = receitasMap.has(p.id)
+          ? receitasMap.get(p.id)!
+          : Number(sum.total_receitas) || 0;
+
+        const totalGastosFixos = gastosFixosMap.has(p.id)
+          ? gastosFixosMap.get(p.id)!
+          : Number(sum.total_gastos_fixos) || 0;
+
+        const totalGastosVariaveis = gastosVariaveisMap.has(p.id)
+          ? gastosVariaveisMap.get(p.id)!
+          : Number(sum.total_gastos_variaveis) || 0;
+
+        const totalInvestido = investimentosMap.has(p.id)
+          ? investimentosMap.get(p.id)!
+          : Number(sum.total_investido) || 0;
+
+        const totalCofrinhos = cofrinhosMap.has(p.id)
+          ? cofrinhosMap.get(p.id)!
+          : Number(sum.total_cofrinhos) || 0;
+
+        const cartaoFaturaAtual = cartoesMap.has(p.id)
+          ? cartoesMap.get(p.id)!
+          : Number(sum.cartao_fatura_atual) || 0;
+
+        const saldoTotal = totalReceitas - (totalGastosFixos + totalGastosVariaveis);
+        const reservaMeta =
+          totalGastosFixos > 0
+            ? totalGastosFixos * 6
+            : Number(sum.reserva_emergencia_meta) || 0;
+        const reservaAtual =
+          totalCofrinhos > 0
+            ? totalCofrinhos
+            : Number(sum.reserva_emergencia_atual) || 0;
+
         return {
           id: p.id,
           full_name: p.full_name || p.email?.split("@")[0] || "Aluno",
@@ -144,31 +228,67 @@ function AdminPage() {
           patente_nivel: p.patente_nivel ?? 0,
           patente_atualizada_em: p.patente_atualizada_em || null,
           conquistas_desbloqueadas: p.conquistas_desbloqueadas || [],
-          saldo_total: Number(sum.saldo_total) || 0,
-          total_receitas: Number(sum.total_receitas) || 0,
-          total_gastos_fixos: Number(sum.total_gastos_fixos) || 0,
-          total_gastos_variaveis: Number(sum.total_gastos_variaveis) || 0,
-          total_investido: Number(sum.total_investido) || 0,
-          total_cofrinhos: Number(sum.total_cofrinhos) || 0,
-          cartao_fatura_atual: Number(sum.cartao_fatura_atual) || 0,
-          reserva_emergencia_atual: Number(sum.reserva_emergencia_atual) || 0,
-          reserva_emergencia_meta: Number(sum.reserva_emergencia_meta) || 0,
+          saldo_total: saldoTotal,
+          total_receitas: totalReceitas,
+          total_gastos_fixos: totalGastosFixos,
+          total_gastos_variaveis: totalGastosVariaveis,
+          total_investido: totalInvestido,
+          total_cofrinhos: totalCofrinhos,
+          cartao_fatura_atual: cartaoFaturaAtual,
+          reserva_emergencia_atual: reservaAtual,
+          reserva_emergencia_meta: reservaMeta,
         };
       });
 
       setAlunos(alunosReais);
+
+      // Sincroniza aluno selecionado no modal se estiver aberto
+      setAlunoSelecionado((prev) => {
+        if (!prev) return null;
+        const atualizado = alunosReais.find((a) => a.id === prev.id);
+        return atualizado ? { ...atualizado, mentor_notes: prev.mentor_notes } : prev;
+      });
     } catch (err) {
       console.error(err);
-      toast.error("Erro ao sincronizar alunos do banco de dados.");
+      if (!silencioso) toast.error("Erro ao sincronizar alunos do banco de dados.");
     } finally {
-      setCarregando(false);
+      if (!silencioso) setCarregando(false);
     }
   };
 
+  // Efeito com Carga Inicial + Realtime do Supabase + Polling de Segurança
   useEffect(() => {
-    if (session) {
-      carregarAlunos();
-    }
+    if (!session) return;
+
+    // 1. Carga inicial
+    carregarAlunos();
+
+    // 2. Canal Realtime Global do Supabase para atualizar a qualquer inserção/edição/remoção
+    const channel = supabase
+      .channel("admin_realtime_metrics")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public" },
+        () => {
+          carregarAlunos(true);
+        }
+      )
+      .subscribe();
+
+    // 3. Ouvinte de evento local (caso o próprio admin faça alterações)
+    const handleFinanceSync = () => carregarAlunos(true);
+    window.addEventListener("organizai_finance_sync", handleFinanceSync);
+
+    // 4. Polling de verificação periódica a cada 8 segundos
+    const interval = setInterval(() => {
+      carregarAlunos(true);
+    }, 8000);
+
+    return () => {
+      supabase.removeChannel(channel);
+      window.removeEventListener("organizai_finance_sync", handleFinanceSync);
+      clearInterval(interval);
+    };
   }, [session]);
 
   // Alterar status de um aluno (Ativar / Bloquear / Pendente)
@@ -476,9 +596,9 @@ function AdminPage() {
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
-            <span className="inline-flex items-center gap-2 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-2.5 text-xs font-bold text-emerald-400">
+            <span className="inline-flex items-center gap-2 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-2.5 text-xs font-bold text-emerald-400 shadow-sm shadow-emerald-950/20">
               <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
-              Supabase Conectado
+              Tempo Real Conectado
             </span>
           </div>
         </div>
