@@ -266,7 +266,7 @@ export function AppShell({
               Status do seu acesso:
             </span>
             <p className="text-[11px] text-stone-400 leading-snug">
-              A aprovação é feita manualmente pela equipe da Natalia Rodolfo para garantir o acompanhamento individualizado. Assim que liberado no painel, seu acesso será ativado.
+              A aprovação é feita manualmente pela equipe da Natália Rodolfo para garantir o acompanhamento individualizado. Assim que liberado no painel, seu acesso será ativado.
             </p>
           </div>
           <div className="mt-6 flex flex-col gap-3">

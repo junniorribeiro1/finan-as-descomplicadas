@@ -15,13 +15,13 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Natalia Rodolfo — Links Oficiais & Plataforma OrganizAI" },
+      { title: "Natália Rodolfo — Links Oficiais & Plataforma OrganizAI" },
       {
         name: "description",
         content:
           "Educadora Financeira e Estrategista de Gestão. Conheça a IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ, a plataforma OrganizAI e canais oficiais.",
       },
-      { property: "og:title", content: "Natalia Rodolfo — Links Oficiais & OrganizAI" },
+      { property: "og:title", content: "Natália Rodolfo — Links Oficiais & OrganizAI" },
       {
         property: "og:description",
         content:
@@ -60,7 +60,7 @@ function NataliaLinksPage() {
             <div className="relative flex h-28 w-28 md:h-32 md:w-32 items-center justify-center overflow-hidden rounded-full p-[3px] bg-gradient-to-b from-amber-400/60 via-stone-800 to-amber-600/40 ring-1 ring-white/20 shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
               <img
                 src="/natalia-profile.jpg"
-                alt="Natalia Rodolfo"
+                alt="Natália Rodolfo"
                 className="h-full w-full rounded-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
               />
             </div>
@@ -76,7 +76,7 @@ function NataliaLinksPage() {
 
           {/* Nome */}
           <h1 className="text-2xl md:text-[1.75rem] font-bold tracking-tight text-white font-display">
-            Natalia Rodolfo
+            Natália Rodolfo
           </h1>
 
           {/* Tagline / Especialidade */}
@@ -195,7 +195,7 @@ function NataliaLinksPage() {
 
           {/* LINK 4: WhatsApp */}
           <a
-            href="https://wa.me/5577981381477?text=Ol%C3%A1%2C%20Natalia!%20Gostaria%20de%20informa%C3%A7%C3%B5es%20sobre%20a%20Imers%C3%A3o%20e%20mentorias."
+            href="https://wa.me/5577981381477?text=Ol%C3%A1%2C%20Nat%C3%A1lia!%20Gostaria%20de%20informa%C3%A7%C3%B5es%20sobre%20a%20Imers%C3%A3o%20e%20mentorias."
             target="_blank"
             rel="noopener noreferrer"
             className="group relative flex items-center justify-between gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.04] p-4 backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-500/40 hover:bg-emerald-950/20 hover:shadow-[0_4px_24px_rgba(16,185,129,0.12)] active:translate-y-0"
@@ -251,14 +251,14 @@ function NataliaLinksPage() {
           <div className="flex items-center gap-2 text-xs font-medium text-stone-400">
             <span className="h-1.5 w-1.5 rounded-full bg-amber-500/70" />
             <span className="text-stone-300 font-semibold tracking-wide">
-              Natalia Rodolfo
+              Natália Rodolfo
             </span>
             <span className="text-stone-600">•</span>
             <span className="text-stone-400">Educação Financeira PF e PJ</span>
           </div>
 
           <p className="text-[0.725rem] text-stone-500 tracking-tight">
-            &copy; {new Date().getFullYear()} Natalia Rodolfo. Todos os direitos reservados.
+            &copy; {new Date().getFullYear()} Natália Rodolfo. Todos os direitos reservados.
           </p>
         </footer>
       </main>

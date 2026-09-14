@@ -153,7 +153,7 @@ export const PATENTES: PatenteInfo[] = [
     descricao:
       "Independência plena, vida financeira descomplicada e patrimônio gerando segurança e abundância contínua.",
     criterio:
-      "Autonomia total, metas batidas e aprovação de excelência pela mentoria Natalia Rodolfo.",
+      "Autonomia total, metas batidas e aprovação de excelência pela mentoria Natália Rodolfo.",
     corHex: "#a855f7",
     corBadge: "bg-purple-500/25 text-purple-300 border-purple-500/50 shadow-sm shadow-purple-950/40",
     corBorda: "border-purple-500/50",
@@ -172,7 +172,7 @@ export const PATENTES: PatenteInfo[] = [
       {
         id: "aluno_inspiracao",
         titulo: "Case de Sucesso da Mentoria",
-        descricao: "Reconhecimento de excelência máxima por Natalia Rodolfo.",
+        descricao: "Reconhecimento de excelência máxima por Natália Rodolfo.",
       },
     ],
   },

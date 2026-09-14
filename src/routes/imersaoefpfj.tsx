@@ -27,15 +27,15 @@ import {
 export const Route = createFileRoute("/imersaoefpfj")({
   head: () => ({
     meta: [
-      { title: "IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ — Natalia Rodolfo" },
+      { title: "IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ — Natália Rodolfo" },
       {
         name: "description",
         content:
-          "Participe da IMER$ÃO EDUCAÇÃO FINANCEIRA para Pessoas Física e Jurídica com Natalia Rodolfo. Aprenda a organizar suas finanças, sair do vermelho e ter fluxo de caixa previsível. 25 de Outubro, 100% ao vivo no Zoom.",
+          "Participe da IMER$ÃO EDUCAÇÃO FINANCEIRA para Pessoas Física e Jurídica com Natália Rodolfo. Aprenda a organizar suas finanças, sair do vermelho e ter fluxo de caixa previsível. 25 de Outubro, 100% ao vivo no Zoom.",
       },
       {
         property: "og:title",
-        content: "IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ — Natalia Rodolfo",
+        content: "IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ — Natália Rodolfo",
       },
       {
         property: "og:description",
@@ -54,7 +54,7 @@ export default function ImersaoPage() {
   // 1. WhatsApp link
   const wppNumber = "5577981381477";
   const defaultWppUrl = `https://wa.me/${wppNumber}?text=${encodeURIComponent(
-    "Olá, Natalia! Gostaria de garantir minha vaga no 1º Lote (R$ 27,00) da IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ."
+    "Olá, Natália! Gostaria de garantir minha vaga no 1º Lote (R$ 27,00) da IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ."
   )}`;
   const supportWppUrl = `https://wa.me/${wppNumber}?text=${encodeURIComponent(
     "Olá! Tenho uma dúvida sobre a IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ."
@@ -114,7 +114,7 @@ export default function ImersaoPage() {
   const [filledSpotsPercent] = useState(() => {
     const now = new Date();
     const year = now.getFullYear();
-    const startDate = new Date(year, 8, 13, 0, 0, 0).getTime();
+    const startDate = new Date(year, 8, 14, 0, 0, 0).getTime();
     const diffDays = Math.floor((now.getTime() - startDate) / (1000 * 60 * 60 * 24));
     const progression = [18, 29, 42, 56, 70, 81, 89, 94];
 
@@ -754,7 +754,7 @@ export default function ImersaoPage() {
 
               <div className="rounded-2xl border border-emerald-500/30 bg-emerald-950/20 p-5 shadow-[0_4px_24px_rgba(16,185,129,0.1)] flex flex-col items-center sm:items-start text-center sm:text-left">
                 <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">
-                  Com a Imersão de Natalia Rodolfo
+                  Com a Imersão de Natália Rodolfo
                 </span>
                 <ul className="mt-2.5 flex flex-col gap-2 text-xs sm:text-sm text-stone-200 text-left">
                   <li className="flex items-start gap-2">
@@ -1090,7 +1090,7 @@ export default function ImersaoPage() {
                 <li className="flex items-center gap-2.5">
                   <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
                   <span>
-                    Sessão ao vivo de tira-dúvidas e mentoria com Natalia Rodolfo
+                    Sessão ao vivo de tira-dúvidas e mentoria com Natália Rodolfo
                   </span>
                 </li>
                 <li className="flex items-center gap-2.5">
@@ -1182,7 +1182,7 @@ export default function ImersaoPage() {
               <strong className="text-amber-300">
                 Certificado Oficial de IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ
               </strong>
-              , emitido com chancela de Natalia Rodolfo, comprovando sua
+              , emitido com chancela de Natália Rodolfo, comprovando sua
               capacitação na organização e gestão orçamentária.
             </p>
           </div>
@@ -1205,7 +1205,7 @@ export default function ImersaoPage() {
                 Concedido a você por participação na 1ª Edição Oficial
               </p>
               <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-[0.6rem] text-stone-400">
-                <span>Natalia Rodolfo</span>
+                <span>Natália Rodolfo</span>
                 <span>25 de Outubro</span>
               </div>
             </div>
@@ -1222,7 +1222,7 @@ export default function ImersaoPage() {
             <div className="relative mx-auto aspect-[4/5] w-full max-w-sm overflow-hidden rounded-2xl border border-amber-500/30 bg-stone-900 shadow-xl">
               <img
                 src="/natalia-original.png"
-                alt="Natalia Rodolfo"
+                alt="Natália Rodolfo"
                 className="h-full w-full object-cover object-top filter brightness-95"
               />
             </div>
@@ -1235,11 +1235,11 @@ export default function ImersaoPage() {
             </div>
 
             <h2 className="text-2xl sm:text-3xl font-extrabold text-white text-center lg:text-left">
-              Quem é Natalia Rodolfo?
+              Quem é Natália Rodolfo?
             </h2>
 
             <p className="text-xs sm:text-sm text-stone-300 leading-relaxed text-center lg:text-left">
-              Educadora Financeira, mentora e estrategista, Natalia Rodolfo tem
+              Educadora Financeira, mentora e estrategista, Natália Rodolfo tem
               como missão simplificar o que as instituições financeiras tornaram
               complexo.
             </p>
@@ -1371,12 +1371,12 @@ export default function ImersaoPage() {
         <div className="mx-auto flex max-w-7xl flex-col items-center gap-3 px-5">
           <div className="flex items-center gap-2">
             <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
-            <span className="font-bold text-white">Natalia Rodolfo</span>
+            <span className="font-bold text-white">Natália Rodolfo</span>
             <span>•</span>
             <span>IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ</span>
           </div>
           <p className="text-[0.7rem] text-stone-400">
-            &copy; {new Date().getFullYear()} Natalia Rodolfo. Todos os direitos
+            &copy; {new Date().getFullYear()} Natália Rodolfo. Todos os direitos
             reservados.
           </p>
         </div>

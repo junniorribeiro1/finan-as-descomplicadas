@@ -643,7 +643,7 @@ function LoginPage() {
 
       {/* Footer minimalista */}
       <footer className="relative z-10 w-full max-w-7xl mx-auto px-6 py-6 text-center text-xs text-stone-600">
-        © {new Date().getFullYear()} OrganizAI · Natalia Rodolfo · Todos os direitos reservados.
+        © {new Date().getFullYear()} OrganizAI · Natália Rodolfo · Todos os direitos reservados.
       </footer>
     </div>
   );
