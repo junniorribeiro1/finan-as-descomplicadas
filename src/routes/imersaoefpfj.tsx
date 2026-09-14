@@ -27,15 +27,15 @@ import {
 export const Route = createFileRoute("/imersaoefpfj")({
   head: () => ({
     meta: [
-      { title: "Imersão Educação Financeira PF e PJ — Natalia Rodolfo" },
+      { title: "IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ — Natalia Rodolfo" },
       {
         name: "description",
         content:
-          "Participe da Imersão Educação Financeira para Pessoas Física e Jurídica com Natalia Rodolfo. Aprenda a organizar suas finanças, sair do vermelho e ter fluxo de caixa previsível. 25 de Outubro, 100% ao vivo no Zoom.",
+          "Participe da IMER$ÃO EDUCAÇÃO FINANCEIRA para Pessoas Física e Jurídica com Natalia Rodolfo. Aprenda a organizar suas finanças, sair do vermelho e ter fluxo de caixa previsível. 25 de Outubro, 100% ao vivo no Zoom.",
       },
       {
         property: "og:title",
-        content: "Imersão Educação Financeira PF e PJ — Natalia Rodolfo",
+        content: "IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ — Natalia Rodolfo",
       },
       {
         property: "og:description",
@@ -54,10 +54,10 @@ export default function ImersaoPage() {
   // 1. WhatsApp link
   const wppNumber = "5577981381477";
   const defaultWppUrl = `https://wa.me/${wppNumber}?text=${encodeURIComponent(
-    "Olá, Natalia! Gostaria de garantir minha vaga no 1º Lote (R$ 27,00) da Imersão Educação Financeira PF e PJ."
+    "Olá, Natalia! Gostaria de garantir minha vaga no 1º Lote (R$ 27,00) da IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ."
   )}`;
   const supportWppUrl = `https://wa.me/${wppNumber}?text=${encodeURIComponent(
-    "Olá! Tenho uma dúvida sobre a Imersão Educação Financeira PF e PJ."
+    "Olá! Tenho uma dúvida sobre a IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ."
   )}`;
 
   // 2. Scroll progress indicator
@@ -192,7 +192,7 @@ export default function ImersaoPage() {
           <div className="flex shrink-0 items-center gap-6 whitespace-nowrap text-[0.72rem] md:text-xs font-black tracking-widest uppercase pr-6">
             <span className="flex items-center gap-1.5">
               <Flame className="h-3.5 w-3.5 fill-stone-950 text-stone-950" />
-              IMERSÃO EDUCAÇÃO FINANCEIRA PF E PJ - 1ª EDIÇÃO
+              IMER$ÃO EDUCAÇÃO FINANCEIRA PF E PJ - 1ª EDIÇÃO
             </span>
             <span>•</span>
             <span className="font-extrabold text-stone-900">
@@ -209,7 +209,7 @@ export default function ImersaoPage() {
             <span>•</span>
             <span className="flex items-center gap-1.5">
               <Flame className="h-3.5 w-3.5 fill-stone-950 text-stone-950" />
-              IMERSÃO EDUCAÇÃO FINANCEIRA PF E PJ - 1ª EDIÇÃO
+              IMER$ÃO EDUCAÇÃO FINANCEIRA PF E PJ - 1ª EDIÇÃO
             </span>
             <span>•</span>
             <span className="font-extrabold text-stone-900">
@@ -233,7 +233,7 @@ export default function ImersaoPage() {
           >
             <span className="flex items-center gap-1.5">
               <Flame className="h-3.5 w-3.5 fill-stone-950 text-stone-950" />
-              IMERSÃO EDUCAÇÃO FINANCEIRA PF E PJ - 1ª EDIÇÃO
+              IMER$ÃO EDUCAÇÃO FINANCEIRA PF E PJ - 1ª EDIÇÃO
             </span>
             <span>•</span>
             <span className="font-extrabold text-stone-900">
@@ -250,7 +250,7 @@ export default function ImersaoPage() {
             <span>•</span>
             <span className="flex items-center gap-1.5">
               <Flame className="h-3.5 w-3.5 fill-stone-950 text-stone-950" />
-              IMERSÃO EDUCAÇÃO FINANCEIRA PF E PJ - 1ª EDIÇÃO
+              IMER$ÃO EDUCAÇÃO FINANCEIRA PF E PJ - 1ª EDIÇÃO
             </span>
             <span>•</span>
             <span className="font-extrabold text-stone-900">
@@ -320,10 +320,10 @@ export default function ImersaoPage() {
                 </div>
               </div>
 
-              {/* TÍTULO PRINCIPAL — IMERSÃO EDUCAÇÃO FINANCEIRA COM GRANDE DESTAQUE */}
+              {/* TÍTULO PRINCIPAL — IMER$ÃO EDUCAÇÃO FINANCEIRA COM GRANDE DESTAQUE */}
               <div className="w-full text-center lg:text-left">
                 <h1 className="text-[2.45rem] sm:text-4xl md:text-5xl lg:text-[3.3rem] xl:text-[3.7rem] font-black tracking-tight leading-[1.04] text-white">
-                  IMERSÃO
+                  IMER$ÃO
                   <span className="block text-white mt-0.5">EDUCAÇÃO</span>
                   <span className="block bg-gradient-to-r from-[#ffe494] via-[#f59e0b] to-[#d97706] bg-clip-text text-transparent drop-shadow-[0_4px_28px_rgba(245,158,11,0.35)] mt-0.5">
                     FINANCEIRA
@@ -960,7 +960,7 @@ export default function ImersaoPage() {
             Público Ideal
           </span>
           <h2 className="mt-2 text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
-            Para quem é a Imersão Educação Financeira?
+            Para quem é a IMER$ÃO EDUCAÇÃO FINANCEIRA?
           </h2>
         </div>
 
@@ -1180,7 +1180,7 @@ export default function ImersaoPage() {
               <strong className="text-white">Sim!</strong> Todos os participantes
               que concluírem a Imersão receberão o{" "}
               <strong className="text-amber-300">
-                Certificado Oficial de Educação Financeira PF e PJ
+                Certificado Oficial de IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ
               </strong>
               , emitido com chancela de Natalia Rodolfo, comprovando sua
               capacitação na organização e gestão orçamentária.
@@ -1199,7 +1199,7 @@ export default function ImersaoPage() {
                 CERTIFICADO DE CONCLUSÃO
               </span>
               <h4 className="text-sm font-bold text-white mt-2">
-                Imersão Educação Financeira PF e PJ
+                IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ
               </h4>
               <p className="text-[0.65rem] text-stone-400 mt-1">
                 Concedido a você por participação na 1ª Edição Oficial
@@ -1373,7 +1373,7 @@ export default function ImersaoPage() {
             <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
             <span className="font-bold text-white">Natalia Rodolfo</span>
             <span>•</span>
-            <span>Imersão Educação Financeira PF e PJ</span>
+            <span>IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ</span>
           </div>
           <p className="text-[0.7rem] text-stone-400">
             &copy; {new Date().getFullYear()} Natalia Rodolfo. Todos os direitos

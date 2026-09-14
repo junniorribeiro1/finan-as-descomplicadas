@@ -15,17 +15,17 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Natalia Rodolfo — Links Oficiais" },
+      { title: "Natalia Rodolfo — Links Oficiais & Plataforma OrganizAI" },
       {
         name: "description",
         content:
-          "Educadora Financeira e Estrategista de Gestão. Conheça a Imersão Educação Financeira PF e PJ, a plataforma OrganizAI e canais oficiais.",
+          "Educadora Financeira e Estrategista de Gestão. Conheça a IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ, a plataforma OrganizAI e canais oficiais.",
       },
-      { property: "og:title", content: "Natalia Rodolfo — Links Oficiais" },
+      { property: "og:title", content: "Natalia Rodolfo — Links Oficiais & OrganizAI" },
       {
         property: "og:description",
         content:
-          "Educadora Financeira e Estrategista. Acesse a Imersão Educação Financeira PF e PJ, plataforma OrganizAI e canais de contato.",
+          "Educadora Financeira e Estrategista. Acesse a IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ, plataforma OrganizAI e canais de contato.",
       },
       { property: "og:image", content: "/natalia-profile.jpg" },
       { property: "og:type", content: "website" },
@@ -95,7 +95,7 @@ function NataliaLinksPage() {
 
         {/* 2. LINKS PRINCIPAIS */}
         <section className="mt-8 flex w-full flex-col gap-3.5" aria-label="Links Oficiais">
-          {/* LINK 1: DESTAQUE PRINCIPAL — Imersão Educação Financeira PF e PJ */}
+          {/* LINK 1: DESTAQUE PRINCIPAL — IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ */}
           <Link
             to="/imersaoefpfj"
             className="group relative overflow-hidden rounded-2xl border border-amber-500/40 bg-gradient-to-br from-[#29170e]/95 via-[#1d120a]/90 to-[#130b06]/95 p-5 shadow-[0_4px_28px_rgba(245,158,11,0.18)] transition-all duration-300 hover:-translate-y-1 hover:border-amber-400/80 hover:shadow-[0_8px_36px_rgba(245,158,11,0.3)] active:translate-y-0"
@@ -115,7 +115,7 @@ function NataliaLinksPage() {
                     <span>Destaque Oficial</span>
                   </div>
                   <h2 className="mt-1 text-base font-bold text-white leading-snug group-hover:text-amber-200 transition-colors">
-                    Imersão Educação Financeira PF e PJ
+                    IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ
                   </h2>
                 </div>
               </div>
