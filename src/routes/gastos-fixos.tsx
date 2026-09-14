@@ -6,7 +6,6 @@ import { brl } from "@/lib/mock-data";
 import {
   ChevronDown,
   Plus,
-  Tag,
   Trash2,
   Edit2,
   X,
@@ -23,7 +22,6 @@ import { supabase } from "@/lib/supabase";
 import {
   notificarAtualizacaoFinanceira,
   carregarCategoriasUsuario,
-  notificarAtualizacaoCategorias,
   type GastoFixoItem,
 } from "@/lib/financial-service";
 import { toast } from "sonner";
@@ -152,7 +150,6 @@ function GastosFixos() {
   });
 
   const categoriasAtuais = tipoConta === "pessoal" ? categoriasPessoal : categoriasEmpresa;
-  const [novaCategoria, setNovaCategoria] = useState("");
 
   // Carregar e sincronizar categorias em tempo real com /categorias
   const recarregarCategorias = async () => {
@@ -477,49 +474,6 @@ function GastosFixos() {
     }
   };
 
-  // Criar Nova Categoria
-  const handleCriarCategoria = async () => {
-    const limpo = novaCategoria.trim();
-    if (!limpo) return;
-
-    if (tipoConta === "pessoal") {
-      if (!categoriasPessoal.includes(limpo)) {
-        const novas = [...categoriasPessoal, limpo];
-        setCategoriasPessoal(novas);
-        if (typeof window !== "undefined") {
-          localStorage.setItem("organizai_cat_pessoal", JSON.stringify(novas));
-        }
-        setCategoria(limpo);
-        toast.success(`Categoria "${limpo}" criada para Pessoal!`);
-      }
-    } else {
-      if (!categoriasEmpresa.includes(limpo)) {
-        const novas = [...categoriasEmpresa, limpo];
-        setCategoriasEmpresa(novas);
-        if (typeof window !== "undefined") {
-          localStorage.setItem("organizai_cat_empresa", JSON.stringify(novas));
-        }
-        setCategoria(limpo);
-        toast.success(`Categoria "${limpo}" criada para Empresa!`);
-      }
-    }
-
-    if (user?.id) {
-      try {
-        await supabase.from("categorias").insert({
-          user_id: user.id,
-          nome: limpo,
-          tipo: "despesa",
-          tipo_conta: tipoConta,
-          icone: "Tag",
-        });
-        notificarAtualizacaoCategorias(tipoConta, "despesa");
-      } catch (err) {
-        console.error("Erro ao persistir categoria:", err);
-      }
-    }
-    setNovaCategoria("");
-  };
 
   return (
     <AppShell>
@@ -952,30 +906,7 @@ function GastosFixos() {
             </form>
           </div>
 
-          {/* Card: Nova categoria */}
-          <div className="rounded-2xl border border-white/[0.06] bg-[#151515] p-4 shadow-sm">
-            <div className="flex items-center gap-2 text-xs font-semibold text-stone-200 mb-3">
-              <Tag className="h-3.5 w-3.5 text-[#F97316]" /> Nova categoria (
-              {tipoConta === "pessoal" ? "Pessoal" : "Empresa"})
-            </div>
-            <div className="flex items-center gap-2">
-              <input
-                type="text"
-                placeholder="Nome da categoria"
-                value={novaCategoria}
-                onChange={(e) => setNovaCategoria(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleCriarCategoria())}
-                className="flex-1 rounded-xl border border-white/[0.08] bg-[#1e1e1e] px-3.5 py-2 text-xs text-white placeholder:text-stone-500 outline-none focus:border-orange-500/60"
-              />
-              <button
-                type="button"
-                onClick={handleCriarCategoria}
-                className="rounded-xl border border-white/10 bg-[#252525] hover:bg-[#2f2f2f] px-4 py-2 text-xs font-semibold text-stone-200 transition-colors cursor-pointer"
-              >
-                Criar
-              </button>
-            </div>
-          </div>
+
         </div>
 
         {/* Coluna da Direita: Lista de Gastos Fixos */}

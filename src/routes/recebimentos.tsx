@@ -13,7 +13,6 @@ import {
   Search,
   User,
   Building2,
-  Tag,
   CheckCircle2,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
@@ -21,7 +20,6 @@ import { supabase } from "@/lib/supabase";
 import {
   notificarAtualizacaoFinanceira,
   carregarCategoriasUsuario,
-  notificarAtualizacaoCategorias,
   type RecebimentoItem,
 } from "@/lib/financial-service";
 import { toast } from "sonner";
@@ -260,9 +258,6 @@ function Recebimentos() {
     }
   }, [tipoConta, categoriasAtivas]);
 
-  // Modal de Criação de Categoria
-  const [modalNovaCategoria, setModalNovaCategoria] = useState(false);
-  const [novaCategoriaNome, setNovaCategoriaNome] = useState("");
 
   // Modal de Edição
   const [itemEditando, setItemEditando] = useState<RecebimentoItem | null>(null);
@@ -530,50 +525,6 @@ function Recebimentos() {
     }
   };
 
-  // Criar nova categoria
-  const handleCriarCategoria = async () => {
-    const limpo = novaCategoriaNome.trim();
-    if (!limpo) return;
-
-    if (tipoConta === "pessoal") {
-      if (!categoriasPessoal.includes(limpo)) {
-        const novas = [...categoriasPessoal, limpo];
-        setCategoriasPessoal(novas);
-        if (typeof window !== "undefined") {
-          localStorage.setItem("organizai_cat_rec_pessoal", JSON.stringify(novas));
-        }
-        setCategoria(limpo);
-        toast.success(`Categoria "${limpo}" criada para Pessoal!`);
-      }
-    } else {
-      if (!categoriasEmpresa.includes(limpo)) {
-        const novas = [...categoriasEmpresa, limpo];
-        setCategoriasEmpresa(novas);
-        if (typeof window !== "undefined") {
-          localStorage.setItem("organizai_cat_rec_empresa", JSON.stringify(novas));
-        }
-        setCategoria(limpo);
-        toast.success(`Categoria "${limpo}" criada para Empresa!`);
-      }
-    }
-
-    if (user?.id) {
-      try {
-        await supabase.from("categorias").insert({
-          user_id: user.id,
-          nome: limpo,
-          tipo: "receita",
-          tipo_conta: tipoConta,
-          icone: "Tag",
-        });
-        notificarAtualizacaoCategorias(tipoConta, "receita");
-      } catch (err) {
-        console.error("Erro ao persistir categoria de receita:", err);
-      }
-    }
-    setNovaCategoriaNome("");
-    setModalNovaCategoria(false);
-  };
 
   return (
     <AppShell>
@@ -686,54 +637,6 @@ function Recebimentos() {
         </div>
       )}
 
-      {/* Modal de Criação de Categoria */}
-      {modalNovaCategoria && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="w-full max-w-sm rounded-2xl border border-white/10 bg-[#161616] p-5 shadow-2xl relative">
-            <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
-              <div className="flex items-center gap-2">
-                <Tag className="h-4 w-4 text-orange-400" />
-                <h3 className="text-xs font-bold text-white">
-                  Nova Categoria ({tipoConta === "pessoal" ? "Pessoal" : "Empresa"})
-                </h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setModalNovaCategoria(false)}
-                className="text-stone-400 hover:text-white"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-            <div className="mt-3.5 space-y-3">
-              <input
-                type="text"
-                value={novaCategoriaNome}
-                onChange={(e) => setNovaCategoriaNome(e.target.value)}
-                placeholder="Ex.: Dividendos, Royalties, Consultoria..."
-                className="w-full rounded-xl border border-white/[0.08] bg-[#1e1e1e] px-3 py-2 text-xs text-white outline-none focus:border-orange-500/60"
-                autoFocus
-              />
-              <div className="flex items-center justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setModalNovaCategoria(false)}
-                  className="rounded-xl px-3 py-1.5 text-xs text-stone-400 hover:text-white"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="button"
-                  onClick={handleCriarCategoria}
-                  className="rounded-xl bg-[#F97316] px-4 py-1.5 text-xs font-bold text-white hover:brightness-110"
-                >
-                  Criar categoria
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* 1. Cabeçalho da Página com Toggle Pessoal / Empresa Integrado */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -954,20 +857,11 @@ function Recebimentos() {
               </div>
             </div>
 
-            {/* Categoria com botão de adicionar nova */}
+            {/* Categoria */}
             <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs font-medium text-stone-300">
-                  Categoria
-                </label>
-                <button
-                  type="button"
-                  onClick={() => setModalNovaCategoria(true)}
-                  className="text-[10px] text-orange-400 hover:text-orange-300 font-semibold cursor-pointer"
-                >
-                  + Nova categoria
-                </button>
-              </div>
+              <label className="block text-xs font-medium text-stone-300 mb-1.5">
+                Categoria
+              </label>
               <div className="relative">
                 <select
                   value={categoria}
