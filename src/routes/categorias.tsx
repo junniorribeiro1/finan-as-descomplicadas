@@ -527,37 +527,8 @@ function Categorias() {
           </div>
         </div>
 
-        {/* Controles do Topo: Toggle Pessoal/Empresa + Botão Nova Categoria */}
-        <div className="flex flex-wrap items-center gap-3 self-start sm:self-auto">
-          <div className="flex items-center rounded-full bg-[#181818] p-1 border border-white/[0.08] shadow-md">
-            <button
-              type="button"
-              onClick={() => alternarTipoConta("pessoal")}
-              className={cn(
-                "flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-semibold transition-all cursor-pointer",
-                tipoConta === "pessoal"
-                  ? "bg-[#F97316] text-white shadow-md shadow-orange-950/40"
-                  : "text-stone-400 hover:text-stone-200"
-              )}
-            >
-              <User className="h-3.5 w-3.5" />
-              <span>Pessoal</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => alternarTipoConta("empresa")}
-              className={cn(
-                "flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-medium transition-all cursor-pointer",
-                tipoConta === "empresa"
-                  ? "bg-[#F97316] text-white shadow-md shadow-orange-950/40 font-semibold"
-                  : "text-stone-400 hover:text-stone-200"
-              )}
-            >
-              <Building2 className="h-3.5 w-3.5" />
-              <span>Empresa</span>
-            </button>
-          </div>
-
+        {/* Botão Nova Categoria */}
+        <div className="flex items-center gap-3 self-start sm:self-auto">
           <button
             type="button"
             onClick={abrirCriacao}
