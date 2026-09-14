@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { brl } from "@/lib/mock-data";
 import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/lib/supabase";
-import { notificarAtualizacaoFinanceira } from "@/lib/financial-service";
+import { notificarAtualizacaoFinanceira, carregarCategoriasUsuario } from "@/lib/financial-service";
 import { toast } from "sonner";
 import {
   Plus,
@@ -128,6 +128,28 @@ function CartaoCredito() {
   const [compraData, setCompraData] = useState(hoje);
   const [compraCategoria, setCompraCategoria] = useState("Outros");
   const [compraParcelas, setCompraParcelas] = useState("1");
+  const [categorias, setCategorias] = useState<string[]>([]);
+
+  // Sincronizar categorias dinâmicas com /categorias
+  const carregarCategorias = async () => {
+    try {
+      const cats = await carregarCategoriasUsuario(user?.id, tipoConta, "despesa");
+      const nomes = cats.map((c) => c.nome);
+      setCategorias(nomes);
+      if (nomes.length > 0 && (!compraCategoria || compraCategoria === "Outros" || !nomes.includes(compraCategoria))) {
+        setCompraCategoria(nomes[0]);
+      }
+    } catch (err) {
+      console.error("Erro ao carregar categorias no cartão:", err);
+    }
+  };
+
+  useEffect(() => {
+    carregarCategorias();
+    const handler = () => carregarCategorias();
+    window.addEventListener("organizai_categorias_sync", handler);
+    return () => window.removeEventListener("organizai_categorias_sync", handler);
+  }, [user?.id, tipoConta]);
 
   // Carregar cartões e compras do usuário
   useEffect(() => {
@@ -1304,15 +1326,13 @@ function CartaoCredito() {
                   <select
                     value={compraCategoria}
                     onChange={(e) => setCompraCategoria(e.target.value)}
-                    className="w-full rounded-xl border border-white/[0.08] bg-[#1e1e1e] px-3 py-2 text-xs text-white outline-none"
+                    className="w-full rounded-xl border border-white/[0.08] bg-[#1e1e1e] px-3 py-2 text-xs text-white outline-none cursor-pointer"
                   >
-                    <option value="Alimentação">Alimentação</option>
-                    <option value="Transporte">Transporte</option>
-                    <option value="Lazer">Lazer</option>
-                    <option value="Saúde">Saúde</option>
-                    <option value="Serviços">Serviços</option>
-                    <option value="Insumos">Insumos</option>
-                    <option value="Outros">Outros</option>
+                    {categorias.map((catNome) => (
+                      <option key={catNome} value={catNome}>
+                        {catNome}
+                      </option>
+                    ))}
                   </select>
                 </div>
 

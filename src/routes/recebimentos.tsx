@@ -18,7 +18,12 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/lib/supabase";
-import { notificarAtualizacaoFinanceira, type RecebimentoItem } from "@/lib/financial-service";
+import {
+  notificarAtualizacaoFinanceira,
+  carregarCategoriasUsuario,
+  notificarAtualizacaoCategorias,
+  type RecebimentoItem,
+} from "@/lib/financial-service";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/recebimentos")({
@@ -211,6 +216,27 @@ function Recebimentos() {
   });
 
   const categoriasAtivas = tipoConta === "pessoal" ? categoriasPessoal : categoriasEmpresa;
+
+  // Carregar e sincronizar categorias em tempo real com /categorias
+  const recarregarCategorias = async () => {
+    try {
+      const [catsP, catsE] = await Promise.all([
+        carregarCategoriasUsuario(user?.id, "pessoal", "receita"),
+        carregarCategoriasUsuario(user?.id, "empresa", "receita"),
+      ]);
+      setCategoriasPessoal(catsP.map((c) => c.nome));
+      setCategoriasEmpresa(catsE.map((c) => c.nome));
+    } catch (err) {
+      console.error("Erro ao sincronizar categorias em recebimentos:", err);
+    }
+  };
+
+  useEffect(() => {
+    recarregarCategorias();
+    const handler = () => recarregarCategorias();
+    window.addEventListener("organizai_categorias_sync", handler);
+    return () => window.removeEventListener("organizai_categorias_sync", handler);
+  }, [user?.id]);
 
   // Bancos registrados pelo usuário
   const [bancosCadastrados, setBancosCadastrados] = useState<string[]>(BANCOS_PADRAO);
@@ -505,7 +531,7 @@ function Recebimentos() {
   };
 
   // Criar nova categoria
-  const handleCriarCategoria = () => {
+  const handleCriarCategoria = async () => {
     const limpo = novaCategoriaNome.trim();
     if (!limpo) return;
 
@@ -528,6 +554,21 @@ function Recebimentos() {
         }
         setCategoria(limpo);
         toast.success(`Categoria "${limpo}" criada para Empresa!`);
+      }
+    }
+
+    if (user?.id) {
+      try {
+        await supabase.from("categorias").insert({
+          user_id: user.id,
+          nome: limpo,
+          tipo: "receita",
+          tipo_conta: tipoConta,
+          icone: "Tag",
+        });
+        notificarAtualizacaoCategorias(tipoConta, "receita");
+      } catch (err) {
+        console.error("Erro ao persistir categoria de receita:", err);
       }
     }
     setNovaCategoriaNome("");

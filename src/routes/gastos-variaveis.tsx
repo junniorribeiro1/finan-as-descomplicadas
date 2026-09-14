@@ -19,7 +19,12 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/lib/supabase";
-import { notificarAtualizacaoFinanceira, type GastoVariavelItem } from "@/lib/financial-service";
+import {
+  notificarAtualizacaoFinanceira,
+  carregarCategoriasUsuario,
+  notificarAtualizacaoCategorias,
+  type GastoVariavelItem,
+} from "@/lib/financial-service";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/gastos-variaveis")({
@@ -182,6 +187,27 @@ function GastosVariaveis() {
 
   const categoriasAtuais = tipoConta === "pessoal" ? categoriasPessoal : categoriasEmpresa;
   const [novaCategoria, setNovaCategoria] = useState("");
+
+  // Carregar e sincronizar categorias em tempo real com /categorias
+  const recarregarCategorias = async () => {
+    try {
+      const [catsP, catsE] = await Promise.all([
+        carregarCategoriasUsuario(user?.id, "pessoal", "despesa"),
+        carregarCategoriasUsuario(user?.id, "empresa", "despesa"),
+      ]);
+      setCategoriasPessoal(catsP.map((c) => c.nome));
+      setCategoriasEmpresa(catsE.map((c) => c.nome));
+    } catch (err) {
+      console.error("Erro ao sincronizar categorias em gastos-variaveis:", err);
+    }
+  };
+
+  useEffect(() => {
+    recarregarCategorias();
+    const handler = () => recarregarCategorias();
+    window.addEventListener("organizai_categorias_sync", handler);
+    return () => window.removeEventListener("organizai_categorias_sync", handler);
+  }, [user?.id]);
 
   // Ajusta categoria padrão ao trocar de conta
   useEffect(() => {
@@ -448,7 +474,7 @@ function GastosVariaveis() {
   };
 
   // Criar Nova Categoria
-  const handleCriarCategoria = () => {
+  const handleCriarCategoria = async () => {
     const limpo = novaCategoria.trim();
     if (!limpo) return;
 
@@ -471,6 +497,21 @@ function GastosVariaveis() {
         }
         setCategoria(limpo);
         toast.success(`Categoria "${limpo}" criada para Empresa!`);
+      }
+    }
+
+    if (user?.id) {
+      try {
+        await supabase.from("categorias").insert({
+          user_id: user.id,
+          nome: limpo,
+          tipo: "despesa",
+          tipo_conta: tipoConta,
+          icone: "Tag",
+        });
+        notificarAtualizacaoCategorias(tipoConta, "despesa");
+      } catch (err) {
+        console.error("Erro ao persistir categoria:", err);
       }
     }
     setNovaCategoria("");

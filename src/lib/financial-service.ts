@@ -509,3 +509,141 @@ export async function carregarDadosFinanceirosUsuario(userId: string) {
     return vazio;
   }
 }
+
+export interface CategoriaItem {
+  id: string;
+  user_id?: string;
+  nome: string;
+  tipo: "despesa" | "receita";
+  tipoConta?: "pessoal" | "empresa";
+  icone: string;
+  corFundo?: string;
+  corTexto?: string;
+  uso?: string;
+  created_at?: string;
+}
+
+export const CATEGORIAS_PADRAO_DESPESA_PESSOAL: CategoriaItem[] = [
+  { id: "def-moradia", nome: "Moradia", tipo: "despesa", tipoConta: "pessoal", icone: "Home", corFundo: "bg-amber-500/10", corTexto: "text-amber-500" },
+  { id: "def-transporte", nome: "Transporte", tipo: "despesa", tipoConta: "pessoal", icone: "Car", corFundo: "bg-blue-500/10", corTexto: "text-blue-400" },
+  { id: "def-alimentacao", nome: "Alimentação", tipo: "despesa", tipoConta: "pessoal", icone: "Utensils", corFundo: "bg-amber-700/20", corTexto: "text-amber-500" },
+  { id: "def-saude", nome: "Saúde", tipo: "despesa", tipoConta: "pessoal", icone: "HeartPulse", corFundo: "bg-red-500/10", corTexto: "text-red-400" },
+  { id: "def-educacao", nome: "Educação", tipo: "despesa", tipoConta: "pessoal", icone: "GraduationCap", corFundo: "bg-purple-500/10", corTexto: "text-purple-400" },
+  { id: "def-lazer", nome: "Lazer", tipo: "despesa", tipoConta: "pessoal", icone: "Gamepad2", corFundo: "bg-indigo-500/10", corTexto: "text-indigo-400" },
+  { id: "def-servicos", nome: "Serviços", tipo: "despesa", tipoConta: "pessoal", icone: "Wrench", corFundo: "bg-sky-500/10", corTexto: "text-sky-400" },
+  { id: "def-assinaturas", nome: "Assinaturas", tipo: "despesa", tipoConta: "pessoal", icone: "Sparkles", corFundo: "bg-orange-500/10", corTexto: "text-orange-400" },
+  { id: "def-vestuario", nome: "Vestuário", tipo: "despesa", tipoConta: "pessoal", icone: "ShoppingBag", corFundo: "bg-pink-500/10", corTexto: "text-pink-400" },
+  { id: "def-outros-desp", nome: "Outros", tipo: "despesa", tipoConta: "pessoal", icone: "Tag", corFundo: "bg-stone-500/10", corTexto: "text-stone-400" },
+];
+
+export const CATEGORIAS_PADRAO_RECEITA_PESSOAL: CategoriaItem[] = [
+  { id: "def-salario", nome: "Salário", tipo: "receita", tipoConta: "pessoal", icone: "Briefcase", corFundo: "bg-emerald-500/10", corTexto: "text-emerald-400" },
+  { id: "def-freelance", nome: "Freelance", tipo: "receita", tipoConta: "pessoal", icone: "Laptop", corFundo: "bg-blue-500/10", corTexto: "text-blue-400" },
+  { id: "def-investimentos", nome: "Investimentos", tipo: "receita", tipoConta: "pessoal", icone: "TrendingUp", corFundo: "bg-purple-500/10", corTexto: "text-purple-400" },
+  { id: "def-prolabore", nome: "Pró-labore", tipo: "receita", tipoConta: "pessoal", icone: "Building", corFundo: "bg-amber-500/10", corTexto: "text-amber-400" },
+  { id: "def-vendas", nome: "Vendas", tipo: "receita", tipoConta: "pessoal", icone: "ShoppingBag", corFundo: "bg-orange-500/10", corTexto: "text-orange-400" },
+  { id: "def-restituicao", nome: "Restituição IR", tipo: "receita", tipoConta: "pessoal", icone: "Sparkles", corFundo: "bg-teal-500/10", corTexto: "text-teal-400" },
+  { id: "def-presente", nome: "Presente / Bônus", tipo: "receita", tipoConta: "pessoal", icone: "Sparkles", corFundo: "bg-yellow-500/10", corTexto: "text-yellow-400" },
+  { id: "def-outros-rec", nome: "Outros", tipo: "receita", tipoConta: "pessoal", icone: "Tag", corFundo: "bg-stone-500/10", corTexto: "text-stone-400" },
+];
+
+export const CATEGORIAS_PADRAO_DESPESA_EMPRESA: CategoriaItem[] = [
+  { id: "def-emp-folha", nome: "Folha / Pró-labore", tipo: "despesa", tipoConta: "empresa", icone: "Briefcase", corFundo: "bg-emerald-500/10", corTexto: "text-emerald-400" },
+  { id: "def-emp-impostos", nome: "Impostos / DAS", tipo: "despesa", tipoConta: "empresa", icone: "Building", corFundo: "bg-red-500/10", corTexto: "text-red-400" },
+  { id: "def-emp-aluguel", nome: "Aluguel Comercial", tipo: "despesa", tipoConta: "empresa", icone: "Home", corFundo: "bg-amber-500/10", corTexto: "text-amber-500" },
+  { id: "def-emp-sistemas", nome: "Sistemas / SaaS", tipo: "despesa", tipoConta: "empresa", icone: "Laptop", corFundo: "bg-blue-500/10", corTexto: "text-blue-400" },
+  { id: "def-emp-contabil", nome: "Contabilidade", tipo: "despesa", tipoConta: "empresa", icone: "Briefcase", corFundo: "bg-indigo-500/10", corTexto: "text-indigo-400" },
+  { id: "def-emp-marketing", nome: "Marketing / Anúncios", tipo: "despesa", tipoConta: "empresa", icone: "TrendingUp", corFundo: "bg-purple-500/10", corTexto: "text-purple-400" },
+  { id: "def-emp-fornecedores", nome: "Fornecedores", tipo: "despesa", tipoConta: "empresa", icone: "ShoppingBag", corFundo: "bg-orange-500/10", corTexto: "text-orange-400" },
+  { id: "def-emp-insumos", nome: "Insumos / Matéria-prima", tipo: "despesa", tipoConta: "empresa", icone: "Wrench", corFundo: "bg-amber-700/20", corTexto: "text-amber-500" },
+  { id: "def-emp-servicos", nome: "Serviços", tipo: "despesa", tipoConta: "empresa", icone: "Wrench", corFundo: "bg-sky-500/10", corTexto: "text-sky-400" },
+  { id: "def-emp-logistica", nome: "Logística / Entregas", tipo: "despesa", tipoConta: "empresa", icone: "Car", corFundo: "bg-cyan-500/10", corTexto: "text-cyan-400" },
+  { id: "def-emp-outros", nome: "Outros", tipo: "despesa", tipoConta: "empresa", icone: "Tag", corFundo: "bg-stone-500/10", corTexto: "text-stone-400" },
+];
+
+export const CATEGORIAS_PADRAO_RECEITA_EMPRESA: CategoriaItem[] = [
+  { id: "def-emp-vendas-prod", nome: "Vendas de Produtos", tipo: "receita", tipoConta: "empresa", icone: "ShoppingBag", corFundo: "bg-orange-500/10", corTexto: "text-orange-400" },
+  { id: "def-emp-prestacao", nome: "Prestação de Serviços", tipo: "receita", tipoConta: "empresa", icone: "Wrench", corFundo: "bg-blue-500/10", corTexto: "text-blue-400" },
+  { id: "def-emp-contratos", nome: "Contratos Recorrentes", tipo: "receita", tipoConta: "empresa", icone: "Sparkles", corFundo: "bg-emerald-500/10", corTexto: "text-emerald-400" },
+  { id: "def-emp-comissoes", nome: "Comissões", tipo: "receita", tipoConta: "empresa", icone: "TrendingUp", corFundo: "bg-purple-500/10", corTexto: "text-purple-400" },
+  { id: "def-emp-rendimentos", nome: "Rendimentos PJ", tipo: "receita", tipoConta: "empresa", icone: "TrendingUp", corFundo: "bg-teal-500/10", corTexto: "text-teal-400" },
+  { id: "def-emp-aportes", nome: "Aportes", tipo: "receita", tipoConta: "empresa", icone: "Briefcase", corFundo: "bg-amber-500/10", corTexto: "text-amber-400" },
+  { id: "def-emp-reembolsos", nome: "Reembolsos PJ", tipo: "receita", tipoConta: "empresa", icone: "Sparkles", corFundo: "bg-sky-500/10", corTexto: "text-sky-400" },
+  { id: "def-emp-outros-rec", nome: "Outros", tipo: "receita", tipoConta: "empresa", icone: "Tag", corFundo: "bg-stone-500/10", corTexto: "text-stone-400" },
+];
+
+export function getCategoriasPadrao(
+  tipoConta: "pessoal" | "empresa",
+  tipo: "despesa" | "receita"
+): CategoriaItem[] {
+  if (tipoConta === "empresa") {
+    return tipo === "despesa" ? CATEGORIAS_PADRAO_DESPESA_EMPRESA : CATEGORIAS_PADRAO_RECEITA_EMPRESA;
+  }
+  return tipo === "despesa" ? CATEGORIAS_PADRAO_DESPESA_PESSOAL : CATEGORIAS_PADRAO_RECEITA_PESSOAL;
+}
+
+export async function carregarCategoriasUsuario(
+  userId?: string | null,
+  tipoConta: "pessoal" | "empresa" = "pessoal",
+  tipo?: "despesa" | "receita"
+): Promise<CategoriaItem[]> {
+  const padroes = tipo
+    ? getCategoriasPadrao(tipoConta, tipo)
+    : [...getCategoriasPadrao(tipoConta, "despesa"), ...getCategoriasPadrao(tipoConta, "receita")];
+
+  if (!userId) return padroes;
+
+  try {
+    let query = supabase
+      .from("categorias")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("tipo_conta", tipoConta);
+
+    if (tipo) {
+      query = query.eq("tipo", tipo);
+    }
+
+    const { data, error } = await query.order("created_at", { ascending: true });
+
+    if (error || !data || data.length === 0) {
+      return padroes;
+    }
+
+    const custom: CategoriaItem[] = data.map((c: any) => ({
+      id: c.id,
+      user_id: c.user_id,
+      nome: c.nome,
+      tipo: c.tipo as "despesa" | "receita",
+      tipoConta: (c.tipo_conta as "pessoal" | "empresa") || tipoConta,
+      icone: c.icone || "Tag",
+      corFundo: c.cor_fundo || "bg-orange-500/10",
+      corTexto: c.cor_texto || "text-[#F97316]",
+      created_at: c.created_at,
+    }));
+
+    // Merge: custom categories take precedence or are added, ensuring unique names
+    const nomesCustom = new Set(custom.map((c) => c.nome.trim().toLowerCase()));
+    const padroesNaoSobrescritos = padroes.filter(
+      (p) => !nomesCustom.has(p.nome.trim().toLowerCase())
+    );
+
+    return [...custom, ...padroesNaoSobrescritos];
+  } catch (err) {
+    console.error("Erro ao carregar categorias do usuário:", err);
+    return padroes;
+  }
+}
+
+export function notificarAtualizacaoCategorias(
+  tipoConta?: "pessoal" | "empresa",
+  tipo?: "despesa" | "receita"
+) {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(
+      new CustomEvent("organizai_categorias_sync", { detail: { tipoConta, tipo } })
+    );
+    window.dispatchEvent(new Event("organizai_finance_sync"));
+  }
+}
+
