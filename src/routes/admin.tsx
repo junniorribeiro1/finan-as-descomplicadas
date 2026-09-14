@@ -154,7 +154,7 @@ const ALUNOS_EXEMPLO: AlunoFinanceiro[] = [
 ];
 
 function AdminPage() {
-  const { session, isAdmin, loading: authLoading, signOut } = useAuth();
+  const { user, session, isAdmin, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
 
   const [alunos, setAlunos] = useState<AlunoFinanceiro[]>([]);
@@ -508,7 +508,7 @@ function AdminPage() {
               </div>
               <div className="hidden md:flex flex-col text-left">
                 <span className="text-xs font-medium text-stone-200 max-w-[150px] truncate">
-                  {user?.user_metadata?.full_name || user?.email?.split("@")[0]}
+                  {(user?.user_metadata?.["full_name"] as string | undefined) || user?.email?.split("@")[0]}
                 </span>
                 <span className="text-[10px] text-stone-500 truncate max-w-[150px]">
                   {user?.email}

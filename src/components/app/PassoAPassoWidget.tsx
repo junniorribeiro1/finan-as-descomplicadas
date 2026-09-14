@@ -107,7 +107,7 @@ function FloatingBalloons() {
       id: i,
       left: Math.floor(Math.random() * 92) + 4, // 4% to 96%
       size: Math.floor(Math.random() * 24) + 48, // 48px to 72px
-      color: BALLOON_COLORS[i % BALLOON_COLORS.length],
+      color: BALLOON_COLORS[i % BALLOON_COLORS.length] || "#F97316",
       riseDuration: 4.5 + Math.random() * 2.5,
       swayDuration: 2 + Math.random() * 1.5,
       delay: Math.random() * 1.2,

@@ -4,11 +4,13 @@ import type { ReactNode } from "react";
 export function Panel({
   className,
   children,
+  id,
 }: {
   className?: string;
   children: ReactNode;
+  id?: string;
 }) {
-  return <section className={cn("panel", className)}>{children}</section>;
+  return <section id={id} className={cn("panel", className)}>{children}</section>;
 }
 
 export function PanelHead({

@@ -123,9 +123,7 @@ export async function perguntarParaVera(
   }
 
   // Fallback local seguro e imediato
-  const respostaFallback =
-    RESPOSTAS_FALLBACK[pergunta] ||
-    `Entendi perfeitamente sua dúvida sobre "${pergunta}". Analisando seus dados no OrganizAI, você tem mantido seus gastos essenciais estáveis. Minha sugestão prática é focar no controle dos gastos variáveis desta semana para garantir sobra no fluxo de caixa e poder fortalecer seus cofrinhos!`;
+  const respostaFallback = getRespostasFallback(pergunta, nomeUsuario);
 
   return { texto: respostaFallback };
 }

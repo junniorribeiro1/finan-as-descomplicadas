@@ -196,12 +196,13 @@ export function EscudoPatente({
 }) {
   const info = PATENTES.find((p) => p.nivel === nivel) || PATENTES[0];
 
-  const dimensoes = {
-    sm: "w-10 h-12 text-[9px]",
-    md: "w-16 h-20 text-xs",
-    lg: "w-24 h-28 text-sm",
-    xl: "w-32 h-38 text-base",
-  }[tamanho];
+  const dimensoes =
+    {
+      sm: "w-10 h-12 text-[9px]",
+      md: "w-16 h-20 text-xs",
+      lg: "w-24 h-28 text-sm",
+      xl: "w-32 h-38 text-base",
+    }[tamanho] || "w-16 h-20 text-xs";
 
   // Cores por nível
   const coresNivel = [
@@ -242,7 +243,14 @@ export function EscudoPatente({
     },
   ];
 
-  const cor = coresNivel[Math.min(nivel - 1, 4)] || coresNivel[0];
+  const corPadrao = {
+    fillTopo: "#b45309",
+    fillBase: "#78350f",
+    stroke: "#f59e0b",
+    glow: "rgba(245, 158, 11, 0.4)",
+  };
+  const indice = Math.max(0, Math.min(nivel - 1, 4));
+  const cor = coresNivel[indice] ?? corPadrao;
 
   return (
     <div
