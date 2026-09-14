@@ -35,6 +35,7 @@ export interface GastoVariavelItem {
   status: "Pago" | "Pendente";
   categoria: string;
   formaPagamento: string;
+  tipoConta?: "pessoal" | "empresa";
   created_at?: string;
 }
 
@@ -377,6 +378,7 @@ export async function carregarDadosFinanceirosUsuario(userId: string) {
       status: v.status || "Pago",
       categoria: v.categoria || "Outros",
       formaPagamento: v.forma_pagamento || "PIX",
+      tipoConta: (v.tipo_conta as "pessoal" | "empresa") || "pessoal",
       created_at: v.created_at,
     }));
 
