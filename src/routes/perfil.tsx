@@ -20,6 +20,9 @@ import {
   ShieldAlert,
   Trophy,
   ChevronDown,
+  Pencil,
+  Save,
+  Loader2,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/lib/supabase";
@@ -44,7 +47,7 @@ export const Route = createFileRoute("/perfil")({
 });
 
 function Perfil() {
-  const { user, profile, signOut } = useAuth();
+  const { user, profile, signOut, refreshProfile } = useAuth();
   const navigate = useNavigate();
 
   // Estados de alteração de senha
@@ -57,6 +60,12 @@ function Perfil() {
   const [mostrarConfirmarSenha, setMostrarConfirmarSenha] = useState(false);
   const [alterandoSenha, setAlterandoSenha] = useState(false);
 
+  // Estados de edição de dados pessoais
+  const [editandoDados, setEditandoDados] = useState(false);
+  const [nomeEditado, setNomeEditado] = useState("");
+  const [telefoneEditado, setTelefoneEditado] = useState("");
+  const [salvandoDados, setSalvandoDados] = useState(false);
+
   // Se vier com ?acao=alterar-senha na URL, abre automaticamente o formulário
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -68,15 +77,22 @@ function Perfil() {
   }, []);
 
   const nomeCompleto =
-    user?.user_metadata?.full_name ||
+    profile?.full_name ||
+    (user?.user_metadata as any)?.full_name ||
     user?.email?.split("@")[0] ||
     "Usuário";
 
   const iniciais = (
-    user?.user_metadata?.full_name?.[0] ||
+    profile?.full_name?.[0] ||
+    (user?.user_metadata as any)?.full_name?.[0] ||
     user?.email?.[0] ||
     "U"
   ).toUpperCase();
+
+  const telefoneAtual =
+    profile?.phone ||
+    (user?.user_metadata as any)?.phone ||
+    "";
 
   const dataMembro = user?.created_at
     ? new Date(user.created_at).toLocaleDateString("pt-BR", {
@@ -88,9 +104,11 @@ function Perfil() {
   const nivelAtual = profile?.patente_nivel || 0;
   const patenteAtual = getPatentePorNivel(nivelAtual);
 
-  // Acordão de Patentes: por padrão abre a próxima meta
-  const nivelProxima = nivelAtual + 1;
-  const [patenteAberta, setPatenteAberta] = useState<number | null>(nivelProxima);
+  // Controle sanfonado da seção Metas & Patentes (inicia fechada por padrão)
+  const [secaoMetasAberta, setSecaoMetasAberta] = useState(false);
+
+  // Controle das abas de níveis de patentes (todas fechadas por padrão)
+  const [patenteAberta, setPatenteAberta] = useState<number | null>(null);
   const togglePatente = (nivel: number) =>
     setPatenteAberta((prev) => (prev === nivel ? null : nivel));
 
@@ -101,6 +119,69 @@ function Perfil() {
       navigate({ to: "/login" });
     } catch {
       toast.error("Erro ao encerrar sessão.");
+    }
+  };
+
+  const iniciarEdicao = () => {
+    setNomeEditado(
+      profile?.full_name ||
+      (user?.user_metadata as any)?.full_name ||
+      user?.email?.split("@")[0] ||
+      ""
+    );
+    setTelefoneEditado(
+      profile?.phone ||
+      (user?.user_metadata as any)?.phone ||
+      ""
+    );
+    setEditandoDados(true);
+  };
+
+  const cancelarEdicao = () => {
+    setEditandoDados(false);
+  };
+
+  const handleSalvarDados = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+    if (!nomeEditado.trim()) {
+      toast.error("O nome completo não pode ficar em branco.");
+      return;
+    }
+
+    setSalvandoDados(true);
+    try {
+      // 1. Atualizar tabela profiles no Supabase
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .update({
+          full_name: nomeEditado.trim(),
+          phone: telefoneEditado.trim() || null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", user.id);
+
+      if (profileError) {
+        throw profileError;
+      }
+
+      // 2. Atualizar user_metadata no Auth do Supabase
+      await supabase.auth.updateUser({
+        data: {
+          full_name: nomeEditado.trim(),
+          phone: telefoneEditado.trim() || null,
+        },
+      });
+
+      // 3. Atualizar contexto local de autenticação
+      await refreshProfile();
+
+      toast.success("Dados do perfil atualizados com sucesso!");
+      setEditandoDados(false);
+    } catch (err: any) {
+      toast.error(`Erro ao salvar dados: ${err?.message || "Tente novamente."}`);
+    } finally {
+      setSalvandoDados(false);
     }
   };
 
@@ -198,75 +279,218 @@ function Perfil() {
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="inline-flex items-center justify-center gap-2 self-start sm:self-auto rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-2.5 text-xs font-semibold text-rose-400 hover:bg-rose-500/20 transition-all cursor-pointer"
+            <div className="flex items-center gap-2.5 self-start sm:self-auto flex-wrap">
+              {!editandoDados ? (
+                <button
+                  type="button"
+                  onClick={iniciarEdicao}
+                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 px-4 py-2.5 text-xs font-semibold text-amber-400 transition-all cursor-pointer shadow-sm"
+                >
+                  <Pencil className="h-4 w-4" />
+                  <span>Editar Dados</span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={cancelarEdicao}
+                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 hover:bg-white/5 px-4 py-2.5 text-xs font-semibold text-stone-300 transition-all cursor-pointer"
+                >
+                  <span>Cancelar</span>
+                </button>
+              )}
+
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-2.5 text-xs font-semibold text-rose-400 hover:bg-rose-500/20 transition-all cursor-pointer"
+              >
+                <LogOut className="h-4 w-4" />
+                <span>Sair da Conta</span>
+              </button>
+            </div>
+          </div>
+
+          {/* FORMULÁRIO DE EDIÇÃO DE DADOS PESSOAIS */}
+          {editandoDados ? (
+            <form
+              onSubmit={handleSalvarDados}
+              className="mt-8 rounded-2xl border border-amber-500/25 bg-amber-500/[0.03] p-5 sm:p-6 space-y-4 animate-in fade-in duration-200"
             >
-              <LogOut className="h-4 w-4" />
-              <span>Sair da Conta</span>
-            </button>
-          </div>
-
-          {/* Dados Pessoais da Conta */}
-          <div className="mt-8 divide-y divide-white/[0.06] rounded-2xl border border-white/[0.08] bg-surface/30">
-            <div className="flex items-center justify-between p-4 sm:p-5">
-              <div className="flex items-center gap-3">
-                <User className="h-4 w-4 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">Nome Completo</span>
+              <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
+                <div className="flex items-center gap-2 text-xs font-bold text-amber-400 uppercase tracking-wider">
+                  <Pencil className="h-4 w-4" />
+                  <span>Editar Informações Pessoais</span>
+                </div>
+                <span className="text-[11px] text-stone-400">
+                  Atualização instantânea
+                </span>
               </div>
-              <span className="text-xs font-semibold text-foreground">{nomeCompleto}</span>
-            </div>
 
-            <div className="flex items-center justify-between p-4 sm:p-5">
-              <div className="flex items-center gap-3">
-                <Mail className="h-4 w-4 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">E-mail</span>
-              </div>
-              <span className="text-xs font-semibold text-foreground">{user?.email || "—"}</span>
-            </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                {/* Campo Nome Completo */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-stone-300 flex items-center gap-1.5">
+                    <User className="h-3.5 w-3.5 text-amber-400" />
+                    Nome Completo *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={nomeEditado}
+                    onChange={(e) => setNomeEditado(e.target.value)}
+                    placeholder="Ex: João da Silva"
+                    className="w-full rounded-xl border border-white/10 bg-black/40 px-3.5 py-2.5 text-xs text-white placeholder-stone-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 transition-colors"
+                  />
+                </div>
 
-            <div className="flex items-center justify-between p-4 sm:p-5">
-              <div className="flex items-center gap-3">
-                <Phone className="h-4 w-4 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">Telefone</span>
+                {/* Campo Telefone */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-stone-300 flex items-center gap-1.5">
+                    <Phone className="h-3.5 w-3.5 text-amber-400" />
+                    Telefone / WhatsApp
+                  </label>
+                  <input
+                    type="tel"
+                    value={telefoneEditado}
+                    onChange={(e) => setTelefoneEditado(e.target.value)}
+                    placeholder="Ex: (11) 98765-4321"
+                    className="w-full rounded-xl border border-white/10 bg-black/40 px-3.5 py-2.5 text-xs text-white placeholder-stone-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 transition-colors"
+                  />
+                </div>
               </div>
-              <span className="text-xs font-semibold text-foreground">
-                {profile?.phone || (user?.user_metadata as any)?.phone || "—"}
-              </span>
-            </div>
 
-            <div className="flex items-center justify-between p-4 sm:p-5">
-              <div className="flex items-center gap-3">
-                <Calendar className="h-4 w-4 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">Conta criada em</span>
+              {/* Campo E-mail Informativo (Desabilitado) */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-stone-400 flex items-center gap-1.5">
+                  <Mail className="h-3.5 w-3.5 text-stone-500" />
+                  E-mail (vinculado ao login)
+                </label>
+                <input
+                  type="text"
+                  disabled
+                  value={user?.email || ""}
+                  className="w-full rounded-xl border border-white/[0.05] bg-white/[0.02] px-3.5 py-2.5 text-xs text-stone-400 cursor-not-allowed opacity-75"
+                />
+                <span className="text-[10px] text-stone-500 block">
+                  Para alterar seu e-mail de acesso, entre em contato com o suporte ou use a redefinição de login.
+                </span>
               </div>
-              <span className="text-xs font-semibold text-foreground">{dataMembro}</span>
-            </div>
 
-            <div className="flex items-center justify-between p-4 sm:p-5">
-              <div className="flex items-center gap-3">
-                <Shield className="h-4 w-4 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">Status do Plano</span>
+              {/* Ações do Formulário */}
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  disabled={salvandoDados}
+                  onClick={cancelarEdicao}
+                  className="rounded-xl border border-white/10 hover:bg-white/5 px-4 py-2.5 text-xs font-semibold text-stone-300 transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  Cancelar
+                </button>
+
+                <button
+                  type="submit"
+                  disabled={salvandoDados}
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-5 py-2.5 text-xs font-bold text-white shadow-lg shadow-orange-950/40 hover:brightness-110 active:scale-95 transition-all cursor-pointer disabled:opacity-50"
+                >
+                  {salvandoDados ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span>Salvando...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Save className="h-4 w-4" />
+                      <span>Salvar Alterações</span>
+                    </>
+                  )}
+                </button>
               </div>
-              <span className="rounded-full bg-emerald-500/20 border border-emerald-500/30 px-3 py-1 text-xs font-bold text-emerald-400">
-                Plano Free Ativo
-              </span>
+            </form>
+          ) : (
+            /* Dados Pessoais da Conta (Modo Visualização) */
+            <div className="mt-8 divide-y divide-white/[0.06] rounded-2xl border border-white/[0.08] bg-surface/30">
+              <div className="flex items-center justify-between p-4 sm:p-5">
+                <div className="flex items-center gap-3">
+                  <User className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground">Nome Completo</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-semibold text-foreground">{nomeCompleto}</span>
+                  <button
+                    type="button"
+                    onClick={iniciarEdicao}
+                    title="Editar dados"
+                    className="p-1 rounded-lg text-stone-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors cursor-pointer"
+                  >
+                    <Pencil className="h-3 w-3" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between p-4 sm:p-5">
+                <div className="flex items-center gap-3">
+                  <Mail className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground">E-mail</span>
+                </div>
+                <span className="text-xs font-semibold text-foreground">{user?.email || "—"}</span>
+              </div>
+
+              <div className="flex items-center justify-between p-4 sm:p-5">
+                <div className="flex items-center gap-3">
+                  <Phone className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground">Telefone</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-semibold text-foreground">
+                    {telefoneAtual || "Não informado"}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={iniciarEdicao}
+                    title="Editar dados"
+                    className="p-1 rounded-lg text-stone-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors cursor-pointer"
+                  >
+                    <Pencil className="h-3 w-3" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between p-4 sm:p-5">
+                <div className="flex items-center gap-3">
+                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground">Conta criada em</span>
+                </div>
+                <span className="text-xs font-semibold text-foreground">{dataMembro}</span>
+              </div>
+
+              <div className="flex items-center justify-between p-4 sm:p-5">
+                <div className="flex items-center gap-3">
+                  <Shield className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground">Status do Plano</span>
+                </div>
+                <span className="rounded-full bg-emerald-500/20 border border-emerald-500/30 px-3 py-1 text-xs font-bold text-emerald-400">
+                  Plano Free Ativo
+                </span>
+              </div>
             </div>
-          </div>
+          )}
         </Panel>
 
         {/* 2. SEÇÃO METAS & ESCUDOS DA MENTORIA */}
-        <Panel id="metas" className="p-6 sm:p-8 relative overflow-hidden">
-          {/* Header da Seção */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/[0.08]">
+        <Panel id="metas" className="p-0 relative overflow-hidden transition-all duration-300">
+          {/* Header da Seção - Botão Clicável Sanfonado */}
+          <button
+            type="button"
+            onClick={() => setSecaoMetasAberta((prev) => !prev)}
+            className="w-full text-left p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-white/[0.02] transition-colors cursor-pointer group"
+          >
             <div className="flex items-start gap-4">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-400 shadow-md">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-400 shadow-md group-hover:scale-105 transition-transform">
                 <Trophy className="h-6 w-6" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-lg sm:text-xl font-bold text-white">
+                  <h3 className="text-lg sm:text-xl font-bold text-white group-hover:text-amber-300 transition-colors">
                     Metas & Patentes da Mentoria
                   </h3>
                   <span className="rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider">
@@ -274,141 +498,161 @@ function Perfil() {
                   </span>
                 </div>
                 <p className="text-xs text-stone-400 mt-1 max-w-xl leading-relaxed">
-                  Seu plano de evolução financeira. As metas e patentes são avaliadas e ativadas pelo administrador conforme seu desempenho. Escudos coloridos representam conquistas já batidas.
+                  Seu plano de evolução financeira. As metas e patentes são avaliadas e ativadas pelo administrador conforme seu desempenho. Clique para {secaoMetasAberta ? "recolher" : "ver os níveis"}.
                 </p>
               </div>
             </div>
 
-            {/* Badge da Patente Atual */}
-            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-3 flex items-center gap-3 self-start sm:self-auto shrink-0">
-              <div className="shrink-0">
-                <EscudoPatente
-                  nivel={nivelAtual > 0 ? nivelAtual : 1}
-                  bloqueado={nivelAtual === 0}
-                  tamanho="sm"
+            {/* Badge da Patente Atual + Botão indicador sanfonado */}
+            <div className="flex items-center gap-3 self-start sm:self-auto shrink-0">
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-2.5 sm:p-3 flex items-center gap-3">
+                <div className="shrink-0">
+                  <EscudoPatente
+                    nivel={nivelAtual > 0 ? nivelAtual : 1}
+                    bloqueado={nivelAtual === 0}
+                    tamanho="sm"
+                  />
+                </div>
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-stone-400 block">
+                    Sua Patente:
+                  </span>
+                  <span className="text-xs font-bold text-white block">
+                    {patenteAtual ? patenteAtual.titulo : "Iniciante (Nível 0)"}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-stone-300 group-hover:bg-amber-500/20 group-hover:text-amber-300 group-hover:border-amber-500/30 transition-all shrink-0">
+                <ChevronDown
+                  className={cn(
+                    "h-5 w-5 transition-transform duration-300",
+                    secaoMetasAberta && "rotate-180 text-amber-400"
+                  )}
                 />
               </div>
-              <div>
-                <span className="text-[10px] uppercase font-bold text-stone-400 block">
-                  Sua Patente:
-                </span>
-                <span className="text-xs font-bold text-white block">
-                  {patenteAtual ? patenteAtual.titulo : "Iniciante (Nível 0)"}
-                </span>
+            </div>
+          </button>
+
+          {/* Conteúdo Sanfonado da Seção (fechado por padrão) */}
+          {secaoMetasAberta && (
+            <div className="px-6 pb-6 sm:px-8 sm:pb-8 pt-0 border-t border-white/[0.08] animate-in fade-in slide-in-from-top-2 duration-300">
+              <p className="text-xs text-stone-400 my-4">
+                Clique nos níveis abaixo para visualizar os critérios, metas e conquistas de cada patente:
+              </p>
+
+              {/* Acordão de Níveis (todos fechados por padrão) */}
+              <div className="divide-y divide-white/[0.06] rounded-2xl border border-white/[0.08] overflow-hidden bg-black/20">
+                {PATENTES.map((patente) => {
+                  const alcancada = (profile?.patente_nivel || 0) >= patente.nivel;
+                  const isProxima = (profile?.patente_nivel || 0) + 1 === patente.nivel;
+                  const isOpen = patenteAberta === patente.nivel;
+
+                  return (
+                    <div key={patente.id}>
+                      {/* Cabeçalho clicavel do nível */}
+                      <button
+                        type="button"
+                        onClick={() => togglePatente(patente.nivel)}
+                        className={cn(
+                          "w-full flex items-center justify-between gap-4 px-5 py-4 text-left transition-colors cursor-pointer",
+                          isOpen ? "bg-white/[0.05]" : "hover:bg-white/[0.02]"
+                        )}
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className="shrink-0 transition-transform hover:scale-105 duration-200">
+                            <EscudoPatente
+                              nivel={patente.nivel}
+                              bloqueado={!alcancada}
+                              tamanho="sm"
+                            />
+                          </div>
+
+                          <div className="flex items-center gap-2.5 flex-wrap">
+                            <span className="text-xs text-stone-500 font-semibold">Nível {patente.nivel}</span>
+                            <span className="text-xs text-stone-600">•</span>
+                            <span className="text-sm font-bold text-white">{patente.titulo}</span>
+
+                            {alcancada ? (
+                              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/20 border border-emerald-500/40 px-2 py-0.5 text-[10px] font-bold text-emerald-300">
+                                <CheckCircle2 className="h-2.5 w-2.5" />
+                                ALCANÇADA
+                              </span>
+                            ) : isProxima ? (
+                              <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 text-[10px] font-bold text-amber-400">
+                                <Sparkles className="h-2.5 w-2.5" />
+                                PRÓXIMA META
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 rounded-full bg-white/[0.06] border border-white/10 px-2 py-0.5 text-[10px] font-medium text-stone-500">
+                                <Lock className="h-2.5 w-2.5" />
+                                BLOQUEADA
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        <ChevronDown
+                          className={cn(
+                            "h-4 w-4 shrink-0 text-stone-400 transition-transform duration-200",
+                            isOpen && "rotate-180 text-amber-400"
+                          )}
+                        />
+                      </button>
+
+                      {/* Conteúdo expandível do nível */}
+                      {isOpen && (
+                        <div
+                          className={cn(
+                            "px-5 pb-5 pt-1 border-t border-white/[0.06] animate-in fade-in slide-in-from-top-1 duration-200",
+                            alcancada
+                              ? `bg-gradient-to-r ${patente.corGradiente}`
+                              : isProxima
+                              ? "bg-white/[0.01]"
+                              : "bg-transparent opacity-70"
+                          )}
+                        >
+                          <p className="text-xs text-stone-300 mt-3 max-w-xl leading-relaxed">
+                            {patente.descricao}
+                          </p>
+
+                          {/* Critério da Meta */}
+                          <div className="mt-3 rounded-xl bg-black/30 border border-white/[0.06] p-3 text-xs">
+                            <span className="font-semibold text-stone-300 block mb-0.5">
+                              Meta para esta patente:
+                            </span>
+                            <span className="text-stone-400">{patente.criterio}</span>
+                          </div>
+
+                          {/* Conquistas da Patente */}
+                          <div className="mt-3 flex items-center gap-2 flex-wrap">
+                            {patente.conquistas.map((conquista) => (
+                              <span
+                                key={conquista.id}
+                                className={cn(
+                                  "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-medium border",
+                                  alcancada
+                                    ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-300"
+                                    : "bg-white/[0.03] border-white/10 text-stone-500"
+                                )}
+                              >
+                                {alcancada ? (
+                                  <CheckCircle2 className="h-3 w-3 text-emerald-400" />
+                                ) : (
+                                  <Lock className="h-3 w-3 text-stone-500" />
+                                )}
+                                <span>{conquista.titulo}</span>
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
-          </div>
-
-          {/* Acordão de Níveis (sanfonado) */}
-          <div className="mt-6 divide-y divide-white/[0.06] rounded-2xl border border-white/[0.08] overflow-hidden">
-            {PATENTES.map((patente) => {
-              const alcancada = (profile?.patente_nivel || 0) >= patente.nivel;
-              const isProxima = (profile?.patente_nivel || 0) + 1 === patente.nivel;
-              const isOpen = patenteAberta === patente.nivel;
-
-              return (
-                <div key={patente.id}>
-                  {/* Cabeçalho clicavel do acordão */}
-                  <button
-                    type="button"
-                    onClick={() => togglePatente(patente.nivel)}
-                    className={cn(
-                      "w-full flex items-center justify-between gap-4 px-5 py-4 text-left transition-colors",
-                      isOpen ? "bg-white/[0.04]" : "hover:bg-white/[0.02]"
-                    )}
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="shrink-0 transition-transform hover:scale-105 duration-200">
-                        <EscudoPatente
-                          nivel={patente.nivel}
-                          bloqueado={!alcancada}
-                          tamanho="sm"
-                        />
-                      </div>
-
-                      <div className="flex items-center gap-2.5 flex-wrap">
-                        <span className="text-xs text-stone-500 font-semibold">Nível {patente.nivel}</span>
-                        <span className="text-xs text-stone-600">•</span>
-                        <span className="text-sm font-bold text-white">{patente.titulo}</span>
-
-                        {alcancada ? (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/20 border border-emerald-500/40 px-2 py-0.5 text-[10px] font-bold text-emerald-300">
-                            <CheckCircle2 className="h-2.5 w-2.5" />
-                            ALCANÇADA
-                          </span>
-                        ) : isProxima ? (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 text-[10px] font-bold text-amber-400">
-                            <Sparkles className="h-2.5 w-2.5" />
-                            PRÓXIMA META
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-white/[0.06] border border-white/10 px-2 py-0.5 text-[10px] font-medium text-stone-500">
-                            <Lock className="h-2.5 w-2.5" />
-                            BLOQUEADA
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
-                    <ChevronDown
-                      className={cn(
-                        "h-4 w-4 shrink-0 text-stone-400 transition-transform duration-200",
-                        isOpen && "rotate-180"
-                      )}
-                    />
-                  </button>
-
-                  {/* Conteúdo expandível */}
-                  {isOpen && (
-                    <div
-                      className={cn(
-                        "px-5 pb-5 pt-1 border-t border-white/[0.06] animate-in fade-in slide-in-from-top-1 duration-200",
-                        alcancada
-                          ? `bg-gradient-to-r ${patente.corGradiente}`
-                          : isProxima
-                          ? "bg-white/[0.01]"
-                          : "bg-transparent opacity-70"
-                      )}
-                    >
-                      <p className="text-xs text-stone-300 mt-3 max-w-xl leading-relaxed">
-                        {patente.descricao}
-                      </p>
-
-                      {/* Critério da Meta */}
-                      <div className="mt-3 rounded-xl bg-black/30 border border-white/[0.06] p-3 text-xs">
-                        <span className="font-semibold text-stone-300 block mb-0.5">
-                          Meta para esta patente:
-                        </span>
-                        <span className="text-stone-400">{patente.criterio}</span>
-                      </div>
-
-                      {/* Conquistas da Patente */}
-                      <div className="mt-3 flex items-center gap-2 flex-wrap">
-                        {patente.conquistas.map((conquista) => (
-                          <span
-                            key={conquista.id}
-                            className={cn(
-                              "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-medium border",
-                              alcancada
-                                ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-300"
-                                : "bg-white/[0.03] border-white/10 text-stone-500"
-                            )}
-                          >
-                            {alcancada ? (
-                              <CheckCircle2 className="h-3 w-3 text-emerald-400" />
-                            ) : (
-                              <Lock className="h-3 w-3 text-stone-500" />
-                            )}
-                            <span>{conquista.titulo}</span>
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
+          )}
         </Panel>
 
         {/* 3. CARD DE SEGURANÇA & ALTERAÇÃO DE SENHA */}

@@ -325,11 +325,13 @@ export function AppShell({
   }
 
   const inicial = (
+    profile?.full_name?.[0] ||
     user?.user_metadata?.full_name?.[0] ||
     user?.email?.[0] ||
     "U"
   ).toUpperCase();
   const nomeUsuario =
+    profile?.full_name ||
     user?.user_metadata?.full_name ||
     user?.email?.split("@")[0] ||
     "Usuário";
