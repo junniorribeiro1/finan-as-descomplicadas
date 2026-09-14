@@ -79,82 +79,6 @@ interface AlunoFinanceiro {
   reserva_emergencia_meta: number;
 }
 
-// Alunos de exemplo para exibição rica de relatórios até que mais alunos se cadastrem
-const ALUNOS_EXEMPLO: AlunoFinanceiro[] = [
-  {
-    id: "exemplo-1",
-    full_name: "Mariana Vasconcelos",
-    email: "mariana.vasconcelos@email.com",
-    phone: "(77) 99123-4567",
-    role: "user",
-    status: "ativo",
-    plan: "Free",
-    account_type: "pessoal",
-    created_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 12).toISOString(),
-    last_active_at: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
-    mentor_notes: "Meta inicial: quitar fatura do cartão de R$ 3.200 e estruturar 3 meses de reserva.",
-    patente_nivel: 2,
-    patente_atualizada_em: new Date().toISOString(),
-    conquistas_desbloqueadas: ["passo_a_passo", "gastos_sob_controle", "cartao_em_dia"],
-    saldo_total: 8450.0,
-    total_receitas: 9800.0,
-    total_gastos_fixos: 4200.0,
-    total_gastos_variaveis: 2150.0,
-    total_investido: 12500.0,
-    total_cofrinhos: 6000.0,
-    cartao_fatura_atual: 1840.0,
-    reserva_emergencia_atual: 6000.0,
-    reserva_emergencia_meta: 18000.0,
-  },
-  {
-    id: "exemplo-2",
-    full_name: "Rodrigo Mendonça",
-    email: "rodrigo.mendonca@gestao.com.br",
-    phone: "(11) 98765-4321",
-    role: "user",
-    status: "ativo",
-    plan: "Free",
-    account_type: "empresa",
-    created_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5).toISOString(),
-    last_active_at: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
-    mentor_notes: "Dificuldade em separar contas da pessoa física e da clínica. Aplicando método das 3 contas.",
-    patente_nivel: 1,
-    patente_atualizada_em: new Date().toISOString(),
-    conquistas_desbloqueadas: ["passo_a_passo", "vera_ativada"],
-    saldo_total: 19800.0,
-    total_receitas: 24500.0,
-    total_gastos_fixos: 11200.0,
-    total_gastos_variaveis: 5400.0,
-    total_investido: 34000.0,
-    total_cofrinhos: 15000.0,
-    cartao_fatura_atual: 4320.0,
-    reserva_emergencia_atual: 15000.0,
-    reserva_emergencia_meta: 45000.0,
-  },
-  {
-    id: "exemplo-3",
-    full_name: "Carla Pimentel",
-    email: "carla.pimentel@advocacia.com",
-    phone: "(71) 99888-7766",
-    role: "user",
-    status: "pendente",
-    plan: "Free",
-    account_type: "pessoal",
-    created_at: new Date(Date.now() - 1000 * 60 * 90).toISOString(),
-    last_active_at: new Date(Date.now() - 1000 * 60 * 90).toISOString(),
-    mentor_notes: "Nova aluna. Aguardando aprovação para iniciar onboarding financeiro.",
-    patente_nivel: 0,
-    saldo_total: 3200.0,
-    total_receitas: 7500.0,
-    total_gastos_fixos: 3100.0,
-    total_gastos_variaveis: 1900.0,
-    total_investido: 2000.0,
-    total_cofrinhos: 1500.0,
-    cartao_fatura_atual: 890.0,
-    reserva_emergencia_atual: 1500.0,
-    reserva_emergencia_meta: 15000.0,
-  },
-];
 
 function AdminPage() {
   const { user, session, isAdmin, loading: authLoading, signOut } = useAuth();
@@ -220,26 +144,19 @@ function AdminPage() {
           patente_nivel: p.patente_nivel ?? 0,
           patente_atualizada_em: p.patente_atualizada_em || null,
           conquistas_desbloqueadas: p.conquistas_desbloqueadas || [],
-          saldo_total: Number(sum.saldo_total) || 12450.0,
-          total_receitas: Number(sum.total_receitas) || 8500.0,
-          total_gastos_fixos: Number(sum.total_gastos_fixos) || 3800.0,
-          total_gastos_variaveis: Number(sum.total_gastos_variaveis) || 2100.0,
-          total_investido: Number(sum.total_investido) || 15000.0,
-          total_cofrinhos: Number(sum.total_cofrinhos) || 7500.0,
-          cartao_fatura_atual: Number(sum.cartao_fatura_atual) || 1920.0,
-          reserva_emergencia_atual: Number(sum.reserva_emergencia_atual) || 7500.0,
-          reserva_emergencia_meta: Number(sum.reserva_emergencia_meta) || 20000.0,
+          saldo_total: Number(sum.saldo_total) || 0,
+          total_receitas: Number(sum.total_receitas) || 0,
+          total_gastos_fixos: Number(sum.total_gastos_fixos) || 0,
+          total_gastos_variaveis: Number(sum.total_gastos_variaveis) || 0,
+          total_investido: Number(sum.total_investido) || 0,
+          total_cofrinhos: Number(sum.total_cofrinhos) || 0,
+          cartao_fatura_atual: Number(sum.cartao_fatura_atual) || 0,
+          reserva_emergencia_atual: Number(sum.reserva_emergencia_atual) || 0,
+          reserva_emergencia_meta: Number(sum.reserva_emergencia_meta) || 0,
         };
       });
 
-      // Mescla com a base de exemplo para a mentora ter visão demonstrativa caso tenha poucos cadastros ainda
-      const idsReais = new Set(alunosReais.map((a) => a.id));
-      const listaFinal = [
-        ...alunosReais,
-        ...ALUNOS_EXEMPLO.filter((ex) => !idsReais.has(ex.id)),
-      ];
-
-      setAlunos(listaFinal);
+      setAlunos(alunosReais);
     } catch (err) {
       console.error(err);
       toast.error("Erro ao sincronizar alunos do banco de dados.");

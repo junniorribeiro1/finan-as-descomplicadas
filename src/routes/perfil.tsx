@@ -19,6 +19,7 @@ import {
   Sparkles,
   ShieldAlert,
   Trophy,
+  ChevronDown,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/lib/supabase";
@@ -26,6 +27,7 @@ import { PATENTES, EscudoPatente, getPatentePorNivel } from "@/lib/patentes";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
+
 
 export const Route = createFileRoute("/perfil")({
   head: () => ({
@@ -85,6 +87,12 @@ function Perfil() {
 
   const nivelAtual = profile?.patente_nivel || 0;
   const patenteAtual = getPatentePorNivel(nivelAtual);
+
+  // Acordão de Patentes: por padrão abre a próxima meta
+  const nivelProxima = nivelAtual + 1;
+  const [patenteAberta, setPatenteAberta] = useState<number | null>(nivelProxima);
+  const togglePatente = (nivel: number) =>
+    setPatenteAberta((prev) => (prev === nivel ? null : nivel));
 
   const handleLogout = async () => {
     try {
@@ -291,99 +299,112 @@ function Perfil() {
             </div>
           </div>
 
-          {/* Grade de Escudos e Metas em Sequência */}
-          <div className="mt-6 space-y-4">
+          {/* Acordão de Níveis (sanfonado) */}
+          <div className="mt-6 divide-y divide-white/[0.06] rounded-2xl border border-white/[0.08] overflow-hidden">
             {PATENTES.map((patente) => {
               const alcancada = (profile?.patente_nivel || 0) >= patente.nivel;
               const isProxima = (profile?.patente_nivel || 0) + 1 === patente.nivel;
+              const isOpen = patenteAberta === patente.nivel;
 
               return (
-                <div
-                  key={patente.id}
-                  className={cn(
-                    "relative rounded-2xl p-5 border transition-all duration-300",
-                    alcancada
-                      ? `border-white/15 bg-gradient-to-r ${patente.corGradiente} shadow-lg`
-                      : isProxima
-                      ? "border-white/10 bg-white/[0.02] ring-1 ring-white/10"
-                      : "border-white/[0.05] bg-white/[0.01] opacity-60"
-                  )}
-                >
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
-                    <div className="flex items-start sm:items-center gap-4 sm:gap-5">
-                      {/* Escudo Visual: Colorido se alcançada, Grayscale se bloqueada */}
+                <div key={patente.id}>
+                  {/* Cabeçalho clicavel do acordão */}
+                  <button
+                    type="button"
+                    onClick={() => togglePatente(patente.nivel)}
+                    className={cn(
+                      "w-full flex items-center justify-between gap-4 px-5 py-4 text-left transition-colors",
+                      isOpen ? "bg-white/[0.04]" : "hover:bg-white/[0.02]"
+                    )}
+                  >
+                    <div className="flex items-center gap-4">
                       <div className="shrink-0 transition-transform hover:scale-105 duration-200">
                         <EscudoPatente
                           nivel={patente.nivel}
                           bloqueado={!alcancada}
-                          tamanho="lg"
+                          tamanho="sm"
                         />
                       </div>
 
-                      <div>
-                        <div className="flex items-center gap-2.5 flex-wrap">
-                          <span className="text-xs font-bold text-white">
-                            Nível {patente.nivel}
+                      <div className="flex items-center gap-2.5 flex-wrap">
+                        <span className="text-xs text-stone-500 font-semibold">Nível {patente.nivel}</span>
+                        <span className="text-xs text-stone-600">•</span>
+                        <span className="text-sm font-bold text-white">{patente.titulo}</span>
+
+                        {alcancada ? (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/20 border border-emerald-500/40 px-2 py-0.5 text-[10px] font-bold text-emerald-300">
+                            <CheckCircle2 className="h-2.5 w-2.5" />
+                            ALCANÇADA
                           </span>
-                          <span className="text-xs text-stone-500">•</span>
-                          <h4 className="text-sm sm:text-base font-bold text-white">
-                            {patente.titulo}
-                          </h4>
-
-                          {alcancada ? (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/20 border border-emerald-500/40 px-2.5 py-0.5 text-[10px] font-bold text-emerald-300">
-                              <CheckCircle2 className="h-3 w-3" />
-                              ALCANÇADA
-                            </span>
-                          ) : isProxima ? (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 border border-amber-500/30 px-2.5 py-0.5 text-[10px] font-bold text-amber-400">
-                              <Sparkles className="h-3 w-3" />
-                              PRÓXIMA META
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-white/[0.06] border border-white/10 px-2.5 py-0.5 text-[10px] font-medium text-stone-400">
-                              <Lock className="h-3 w-3" />
-                              BLOQUEADA
-                            </span>
-                          )}
-                        </div>
-
-                        <p className="text-xs text-stone-300 mt-1 max-w-xl">
-                          {patente.descricao}
-                        </p>
-
-                        {/* Critério da Meta */}
-                        <div className="mt-3 rounded-xl bg-black/30 border border-white/[0.06] p-3 text-xs">
-                          <span className="font-semibold text-stone-300 block mb-0.5">
-                            Meta para esta patente:
+                        ) : isProxima ? (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 text-[10px] font-bold text-amber-400">
+                            <Sparkles className="h-2.5 w-2.5" />
+                            PRÓXIMA META
                           </span>
-                          <span className="text-stone-400">{patente.criterio}</span>
-                        </div>
-
-                        {/* Conquistas da Patente */}
-                        <div className="mt-3 flex items-center gap-2 flex-wrap">
-                          {patente.conquistas.map((conquista) => (
-                            <span
-                              key={conquista.id}
-                              className={cn(
-                                "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-medium border",
-                                alcancada
-                                  ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-300"
-                                  : "bg-white/[0.03] border-white/10 text-stone-500"
-                              )}
-                            >
-                              {alcancada ? (
-                                <CheckCircle2 className="h-3 w-3 text-emerald-400" />
-                              ) : (
-                                <Lock className="h-3 w-3 text-stone-500" />
-                              )}
-                              <span>{conquista.titulo}</span>
-                            </span>
-                          ))}
-                        </div>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-white/[0.06] border border-white/10 px-2 py-0.5 text-[10px] font-medium text-stone-500">
+                            <Lock className="h-2.5 w-2.5" />
+                            BLOQUEADA
+                          </span>
+                        )}
                       </div>
                     </div>
-                  </div>
+
+                    <ChevronDown
+                      className={cn(
+                        "h-4 w-4 shrink-0 text-stone-400 transition-transform duration-200",
+                        isOpen && "rotate-180"
+                      )}
+                    />
+                  </button>
+
+                  {/* Conteúdo expandível */}
+                  {isOpen && (
+                    <div
+                      className={cn(
+                        "px-5 pb-5 pt-1 border-t border-white/[0.06] animate-in fade-in slide-in-from-top-1 duration-200",
+                        alcancada
+                          ? `bg-gradient-to-r ${patente.corGradiente}`
+                          : isProxima
+                          ? "bg-white/[0.01]"
+                          : "bg-transparent opacity-70"
+                      )}
+                    >
+                      <p className="text-xs text-stone-300 mt-3 max-w-xl leading-relaxed">
+                        {patente.descricao}
+                      </p>
+
+                      {/* Critério da Meta */}
+                      <div className="mt-3 rounded-xl bg-black/30 border border-white/[0.06] p-3 text-xs">
+                        <span className="font-semibold text-stone-300 block mb-0.5">
+                          Meta para esta patente:
+                        </span>
+                        <span className="text-stone-400">{patente.criterio}</span>
+                      </div>
+
+                      {/* Conquistas da Patente */}
+                      <div className="mt-3 flex items-center gap-2 flex-wrap">
+                        {patente.conquistas.map((conquista) => (
+                          <span
+                            key={conquista.id}
+                            className={cn(
+                              "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-medium border",
+                              alcancada
+                                ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-300"
+                                : "bg-white/[0.03] border-white/10 text-stone-500"
+                            )}
+                          >
+                            {alcancada ? (
+                              <CheckCircle2 className="h-3 w-3 text-emerald-400" />
+                            ) : (
+                              <Lock className="h-3 w-3 text-stone-500" />
+                            )}
+                            <span>{conquista.titulo}</span>
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               );
             })}
