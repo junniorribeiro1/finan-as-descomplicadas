@@ -60,6 +60,7 @@ export interface CartaoItem {
   diaFechamento: number;
   diaVencimento: number;
   cor: string;
+  tipoConta?: "pessoal" | "empresa";
   created_at?: string;
 }
 
