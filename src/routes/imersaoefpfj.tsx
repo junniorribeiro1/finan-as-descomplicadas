@@ -86,15 +86,25 @@ export default function ImersaoPage() {
   // 3. Reveal-on-scroll with blur effect
   useEffect(() => {
     const reveals = document.querySelectorAll(".reveal-on-scroll");
+
+    // Revela imediatamente blocos que já estão no viewport inicial
+    reveals.forEach((el) => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight - 30) {
+        el.classList.add("is-revealed");
+      }
+    });
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add("is-revealed");
+            observer.unobserve(entry.target);
           }
         });
       },
-      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+      { threshold: 0.08, rootMargin: "0px 0px -30px 0px" }
     );
 
     reveals.forEach((el) => observer.observe(el));
@@ -127,9 +137,18 @@ export default function ImersaoPage() {
       {/* ── CSS FOR REVEAL-ON-SCROLL BLUR EFFECT ── */}
       <style>{`
         .reveal-on-scroll {
+          opacity: 0;
+          filter: blur(14px);
+          transform: translateY(28px);
+          transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+                      filter 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+                      transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+          will-change: opacity, filter, transform;
+        }
+        .reveal-on-scroll.is-revealed {
           opacity: 1;
-          transform: none;
-          transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+          filter: blur(0px);
+          transform: translateY(0);
         }
         .delay-100 { transition-delay: 0.1s; }
         .delay-200 { transition-delay: 0.2s; }
@@ -303,7 +322,7 @@ export default function ImersaoPage() {
 
               {/* TÍTULO PRINCIPAL — IMERSÃO EDUCAÇÃO FINANCEIRA COM GRANDE DESTAQUE */}
               <div className="w-full text-center lg:text-left">
-                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.3rem] xl:text-[3.7rem] font-black tracking-tight leading-[1.06] text-white">
+                <h1 className="text-[2.45rem] sm:text-4xl md:text-5xl lg:text-[3.3rem] xl:text-[3.7rem] font-black tracking-tight leading-[1.04] text-white">
                   IMERSÃO
                   <span className="block text-white mt-0.5">EDUCAÇÃO</span>
                   <span className="block bg-gradient-to-r from-[#ffe494] via-[#f59e0b] to-[#d97706] bg-clip-text text-transparent drop-shadow-[0_4px_28px_rgba(245,158,11,0.35)] mt-0.5">
@@ -443,7 +462,7 @@ export default function ImersaoPage() {
       {/* ═══════════════════════════════════════════════
           DOBRA 2 — TYPEWRITER + TIMELINE DE TRANSFORMAÇÃO (A VIRADA DE CHAVE)
       ═══════════════════════════════════════════════ */}
-      <section id="virada" className="relative z-20 mx-auto w-full max-w-5xl px-5 py-12 md:px-8">
+      <section id="virada" className="reveal-on-scroll relative z-20 mx-auto w-full max-w-5xl px-5 py-12 md:px-8">
         <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-6 sm:p-10 md:p-14 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
           {/* Título da Virada de Chave */}
           <div className="text-center mb-10">
