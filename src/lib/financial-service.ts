@@ -48,6 +48,7 @@ export interface ContaBancariaItem {
   saldo: number;
   agencia?: string | undefined;
   conta?: string | undefined;
+  tipoConta?: "pessoal" | "empresa";
   created_at?: string;
 }
 
@@ -203,8 +204,11 @@ export function calcularResumoFinanceiro(
   const faltaPagar = Math.max(0, totalGastos - totalPago);
   const percentualPago = totalGastos > 0 ? Math.round((totalPago / totalGastos) * 100) : 0;
 
-  const saldoBancos = bancos.reduce((acc, curr) => acc + (Number(curr.saldo) || 0), 0);
-  const saldoDisponivel = bancos.length > 0 ? saldoBancos : totalReceitas - totalPago;
+  const bancosFiltrados = tipoConta
+    ? bancos.filter((b) => (b.tipoConta || "pessoal") === tipoConta)
+    : bancos;
+  const saldoBancos = bancosFiltrados.reduce((acc, curr) => acc + (Number(curr.saldo) || 0), 0);
+  const saldoDisponivel = bancosFiltrados.length > 0 ? saldoBancos : totalReceitas - totalPago;
 
   const investFiltrados = tipoConta
     ? investimentos.filter((i) => (i.tipoConta || "pessoal") === tipoConta)
@@ -415,6 +419,7 @@ export async function carregarDadosFinanceirosUsuario(userId: string) {
       saldo: Number(b.saldo) || 0,
       agencia: b.agencia,
       conta: b.conta,
+      tipoConta: (b.tipo_conta as "pessoal" | "empresa") || "pessoal",
       created_at: b.created_at,
     }));
 
