@@ -1,9 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AppShell } from "@/components/app/AppShell";
 import { cn } from "@/lib/utils";
 import { brl } from "@/lib/mock-data";
 import { ChevronDown, Plus, Calendar, Trash2 } from "lucide-react";
+import { useAuth } from "@/lib/auth-context";
+import { supabase } from "@/lib/supabase";
+import { notificarAtualizacaoFinanceira, type RecebimentoItem } from "@/lib/financial-service";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/recebimentos")({
   head: () => ({
@@ -14,15 +18,6 @@ export const Route = createFileRoute("/recebimentos")({
   }),
   component: Recebimentos,
 });
-
-interface RecebimentoItem {
-  id: string;
-  descricao: string;
-  valor: number;
-  data: string;
-  categoria: string;
-  banco?: string | undefined;
-}
 
 const categoriasDisponiveis = [
   "Salário",
@@ -45,15 +40,54 @@ const bancosDisponiveis = [
 ];
 
 function Recebimentos() {
+  const { user } = useAuth();
   const [recebimentos, setRecebimentos] = useState<RecebimentoItem[]>([]);
+  const [carregando, setCarregando] = useState(true);
   const [filtroPeriodo, setFiltroPeriodo] = useState<"mes" | "ano" | "todos">("mes");
 
   // Form states
   const [descricao, setDescricao] = useState("");
   const [valor, setValor] = useState("");
-  const [data, setData] = useState("13/09/2026");
+  const hoje = new Date().toLocaleDateString("pt-BR");
+  const [data, setData] = useState(hoje);
   const [categoria, setCategoria] = useState("Salário");
   const [banco, setBanco] = useState("Selecionar");
+
+  // Carregar recebimentos do usuário
+  useEffect(() => {
+    if (!user?.id) return;
+    const carregar = async () => {
+      try {
+        setCarregando(true);
+        const { data: recData, error } = await supabase
+          .from("recebimentos")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false });
+
+        if (!error && recData) {
+          setRecebimentos(
+            recData.map((r: any) => ({
+              id: r.id,
+              user_id: r.user_id,
+              descricao: r.descricao,
+              valor: Number(r.valor) || 0,
+              data: r.data,
+              categoria: r.categoria,
+              banco: r.banco,
+              created_at: r.created_at,
+            }))
+          );
+        }
+      } catch (err) {
+        console.error("Erro ao buscar recebimentos:", err);
+      } finally {
+        setCarregando(false);
+      }
+    };
+
+    carregar();
+  }, [user?.id]);
 
   // Calculations
   const totalRecebido = recebimentos.reduce((acc, curr) => acc + curr.valor, 0);
@@ -62,28 +96,71 @@ function Recebimentos() {
     recebimentos.length > 0 ? Math.max(...recebimentos.map((r) => r.valor)) : 0;
   const ticketMedio = registros > 0 ? totalRecebido / registros : 0;
 
-  const handleSalvarRecebimento = (e: React.FormEvent) => {
+  const handleSalvarRecebimento = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!descricao.trim()) return;
 
     const parsedValor = parseFloat(valor.replace(/\./g, "").replace(",", ".")) || 0;
+    if (parsedValor <= 0) {
+      toast.error("Informe um valor válido maior que zero.");
+      return;
+    }
 
-    const novoRecebimento: RecebimentoItem = {
-      id: Date.now().toString(),
+    const dataFinal = data.trim() || hoje;
+    const novoRecebimentoTemp: RecebimentoItem = {
+      id: "temp-" + Date.now(),
+      user_id: user?.id,
       descricao: descricao.trim(),
       valor: parsedValor,
-      data: data.trim() || "13/09/2026",
+      data: dataFinal,
       categoria,
       banco: banco !== "Selecionar" ? banco : undefined,
     };
 
-    setRecebimentos((prev) => [novoRecebimento, ...prev]);
+    // Atualização otimista
+    setRecebimentos((prev) => [novoRecebimentoTemp, ...prev]);
     setDescricao("");
     setValor("");
+
+    try {
+      if (user?.id) {
+        const { data: inserted, error } = await supabase
+          .from("recebimentos")
+          .insert({
+            user_id: user.id,
+            descricao: novoRecebimentoTemp.descricao,
+            valor: novoRecebimentoTemp.valor,
+            data: novoRecebimentoTemp.data,
+            categoria: novoRecebimentoTemp.categoria,
+            banco: novoRecebimentoTemp.banco,
+          })
+          .select()
+          .single();
+
+        if (!error && inserted) {
+          setRecebimentos((prev) =>
+            prev.map((item) => (item.id === novoRecebimentoTemp.id ? inserted : item))
+          );
+        }
+      }
+      notificarAtualizacaoFinanceira();
+      toast.success("Recebimento lançado com sucesso!");
+    } catch {
+      toast.error("Erro ao salvar no banco.");
+    }
   };
 
-  const removerRecebimento = (id: string) => {
+  const removerRecebimento = async (id: string) => {
     setRecebimentos((prev) => prev.filter((r) => r.id !== id));
+    try {
+      if (user?.id && !id.startsWith("temp-")) {
+        await supabase.from("recebimentos").delete().eq("id", id).eq("user_id", user.id);
+      }
+      notificarAtualizacaoFinanceira();
+      toast.info("Recebimento removido.");
+    } catch {
+      toast.error("Erro ao excluir do banco.");
+    }
   };
 
   return (

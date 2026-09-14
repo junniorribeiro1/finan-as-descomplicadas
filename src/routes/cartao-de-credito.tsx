@@ -1,8 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AppShell } from "@/components/app/AppShell";
 import { cn } from "@/lib/utils";
 import { brl } from "@/lib/mock-data";
+import { useAuth } from "@/lib/auth-context";
+import { supabase } from "@/lib/supabase";
+import { notificarAtualizacaoFinanceira } from "@/lib/financial-service";
+import { toast } from "sonner";
 import {
   Plus,
   CreditCard as CreditCardIcon,
@@ -10,6 +14,7 @@ import {
   Trash2,
   Calendar,
   AlertCircle,
+  Loader2,
 } from "lucide-react";
 
 export const Route = createFileRoute("/cartao-de-credito")({
@@ -48,7 +53,9 @@ interface CompraCartaoItem {
 }
 
 function CartaoCredito() {
+  const { user } = useAuth();
   const [cartoes, setCartoes] = useState<CartaoItem[]>([]);
+  const [carregando, setCarregando] = useState(false);
   const [cartaoSelecionadoId, setCartaoSelecionadoId] = useState<string | null>(null);
   const [modalAberto, setModalAberto] = useState(false);
 
@@ -62,14 +69,52 @@ function CartaoCredito() {
 
   const [compras] = useState<CompraCartaoItem[]>([]);
 
-  const handleSalvarCartao = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const carregar = async () => {
+      try {
+        setCarregando(true);
+        const { data, error } = await supabase
+          .from("cartoes_credito")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false });
+
+        if (!error && data) {
+          const list = data.map((c: any) => ({
+            id: c.id,
+            nome: c.nome,
+            ultimosDigitos: c.ultimos_digitos || "0000",
+            limiteTotal: Number(c.limite_total) || 0,
+            faturaAtual: Number(c.fatura_atual) || 0,
+            diaFechamento: Number(c.dia_fechamento) || 3,
+            diaVencimento: Number(c.dia_vencimento) || 10,
+            cor: c.cor || "black",
+          }));
+          setCartoes(list);
+          if (list.length > 0 && !cartaoSelecionadoId) {
+            setCartaoSelecionadoId(list[0].id);
+          }
+        }
+      } catch (err) {
+        console.error("Erro ao carregar cartões:", err);
+      } finally {
+        setCarregando(false);
+      }
+    };
+
+    carregar();
+  }, [user?.id]);
+
+  const handleSalvarCartao = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!nome.trim()) return;
 
     const limiteNum = parseFloat(limiteTotal.replace(/\./g, "").replace(",", ".")) || 0;
 
-    const novoCartao: CartaoItem = {
-      id: Date.now().toString(),
+    const novoCartaoTemp: CartaoItem = {
+      id: "temp-" + Date.now(),
       nome: nome.trim(),
       ultimosDigitos: ultimosDigitos.trim() || "0000",
       limiteTotal: limiteNum,
@@ -79,18 +124,60 @@ function CartaoCredito() {
       cor,
     };
 
-    setCartoes((prev) => [...prev, novoCartao]);
-    setCartaoSelecionadoId(novoCartao.id);
+    setCartoes((prev) => [...prev, novoCartaoTemp]);
+    setCartaoSelecionadoId(novoCartaoTemp.id);
     setNome("");
     setLimiteTotal("");
     setUltimosDigitos("");
     setModalAberto(false);
+
+    if (user?.id) {
+      try {
+        const { data, error } = await supabase
+          .from("cartoes_credito")
+          .insert({
+            user_id: user.id,
+            nome: novoCartaoTemp.nome,
+            ultimos_digitos: novoCartaoTemp.ultimosDigitos,
+            limite_total: novoCartaoTemp.limiteTotal,
+            fatura_atual: 0,
+            dia_fechamento: novoCartaoTemp.diaFechamento,
+            dia_vencimento: novoCartaoTemp.diaVencimento,
+            cor: novoCartaoTemp.cor,
+          })
+          .select()
+          .single();
+
+        if (error) {
+          toast.error("Erro ao salvar cartão no banco. Guardado localmente.");
+        } else if (data) {
+          setCartoes((prev) =>
+            prev.map((c) => (c.id === novoCartaoTemp.id ? { ...c, id: data.id } : c))
+          );
+          setCartaoSelecionadoId(data.id);
+          toast.success("Cartão adicionado com sucesso!");
+        }
+        notificarAtualizacaoFinanceira();
+      } catch (err) {
+        console.error("Erro ao cadastrar cartão:", err);
+      }
+    }
   };
 
-  const removerCartao = (id: string) => {
+  const removerCartao = async (id: string) => {
     setCartoes((prev) => prev.filter((c) => c.id !== id));
     if (cartaoSelecionadoId === id) {
       setCartaoSelecionadoId(null);
+    }
+
+    if (user?.id && !id.startsWith("temp-")) {
+      try {
+        await supabase.from("cartoes_credito").delete().eq("id", id).eq("user_id", user.id);
+        toast.success("Cartão removido!");
+        notificarAtualizacaoFinanceira();
+      } catch (err) {
+        console.error("Erro ao remover cartão:", err);
+      }
     }
   };
 

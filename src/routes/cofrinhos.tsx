@@ -1,8 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AppShell } from "@/components/app/AppShell";
 import { cn } from "@/lib/utils";
 import { brl } from "@/lib/mock-data";
+import { useAuth } from "@/lib/auth-context";
+import { supabase } from "@/lib/supabase";
+import { notificarAtualizacaoFinanceira } from "@/lib/financial-service";
+import { toast } from "sonner";
 import {
   Plus,
   PiggyBank,
@@ -11,6 +15,7 @@ import {
   Calendar,
   ArrowUpRight,
   ArrowDownLeft,
+  Loader2,
 } from "lucide-react";
 
 export const Route = createFileRoute("/cofrinhos")({
@@ -37,7 +42,9 @@ interface CofrinhoItem {
 }
 
 function Cofrinhos() {
+  const { user } = useAuth();
   const [cofrinhos, setCofrinhos] = useState<CofrinhoItem[]>([]);
+  const [carregando, setCarregando] = useState(false);
   const [modalAberto, setModalAberto] = useState(false);
   const [modalAporteId, setModalAporteId] = useState<string | null>(null);
   const [valorAporte, setValorAporte] = useState("");
@@ -49,19 +56,53 @@ function Cofrinhos() {
   const [prazo, setPrazo] = useState("");
   const [cor, setCor] = useState("orange");
 
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const carregar = async () => {
+      try {
+        setCarregando(true);
+        const { data, error } = await supabase
+          .from("cofrinhos")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false });
+
+        if (!error && data) {
+          setCofrinhos(
+            data.map((c: any) => ({
+              id: c.id,
+              nome: c.titulo,
+              valorObjetivo: Number(c.meta_valor) || 0,
+              valorAtual: Number(c.valor_atual) || 0,
+              prazo: c.prazo || undefined,
+              cor: "orange",
+            }))
+          );
+        }
+      } catch (err) {
+        console.error("Erro ao carregar cofrinhos:", err);
+      } finally {
+        setCarregando(false);
+      }
+    };
+
+    carregar();
+  }, [user?.id]);
+
   // Calculations
   const totalPoupado = cofrinhos.reduce((acc, c) => acc + c.valorAtual, 0);
   const totalObjetivos = cofrinhos.reduce((acc, c) => acc + c.valorObjetivo, 0);
 
-  const handleCriarCofrinho = (e: React.FormEvent) => {
+  const handleCriarCofrinho = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!nome.trim()) return;
 
     const parsedObjetivo = parseFloat(valorObjetivo.replace(/\./g, "").replace(",", ".")) || 0;
     const parsedAtual = parseFloat(valorAtual.replace(/\./g, "").replace(",", ".")) || 0;
 
-    const novo: CofrinhoItem = {
-      id: Date.now().toString(),
+    const novoTemp: CofrinhoItem = {
+      id: "temp-" + Date.now(),
       nome: nome.trim(),
       valorObjetivo: parsedObjetivo,
       valorAtual: parsedAtual,
@@ -69,35 +110,92 @@ function Cofrinhos() {
       cor,
     };
 
-    setCofrinhos((prev) => [...prev, novo]);
+    setCofrinhos((prev) => [novoTemp, ...prev]);
     setNome("");
     setValorObjetivo("");
     setValorAtual("");
     setPrazo("");
     setModalAberto(false);
+
+    if (user?.id) {
+      try {
+        const { data, error } = await supabase
+          .from("cofrinhos")
+          .insert({
+            user_id: user.id,
+            titulo: novoTemp.nome,
+            meta_valor: novoTemp.valorObjetivo,
+            valor_atual: novoTemp.valorAtual,
+            prazo: novoTemp.prazo || null,
+          })
+          .select()
+          .single();
+
+        if (error) {
+          toast.error("Erro ao salvar no banco. Guardado localmente.");
+        } else if (data) {
+          setCofrinhos((prev) =>
+            prev.map((c) => (c.id === novoTemp.id ? { ...c, id: data.id } : c))
+          );
+          toast.success("Cofrinho criado com sucesso!");
+        }
+        notificarAtualizacaoFinanceira();
+      } catch (err) {
+        console.error("Erro ao criar cofrinho:", err);
+      }
+    }
   };
 
-  const handleAporte = (e: React.FormEvent) => {
+  const handleAporte = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!modalAporteId) return;
 
     const quantia = parseFloat(valorAporte.replace(/\./g, "").replace(",", ".")) || 0;
     if (quantia <= 0) return;
 
+    const cofreAlvo = cofrinhos.find((c) => c.id === modalAporteId);
+    const novoValor = (cofreAlvo?.valorAtual || 0) + quantia;
+
     setCofrinhos((prev) =>
       prev.map((c) =>
         c.id === modalAporteId
-          ? { ...c, valorAtual: c.valorAtual + quantia }
+          ? { ...c, valorAtual: novoValor }
           : c
       )
     );
 
+    const idAtualizar = modalAporteId;
     setValorAporte("");
     setModalAporteId(null);
+
+    if (user?.id && !idAtualizar.startsWith("temp-")) {
+      try {
+        await supabase
+          .from("cofrinhos")
+          .update({ valor_atual: novoValor })
+          .eq("id", idAtualizar)
+          .eq("user_id", user.id);
+
+        toast.success(`Aporte de ${brl(quantia)} adicionado!`);
+        notificarAtualizacaoFinanceira();
+      } catch (err) {
+        console.error("Erro ao atualizar aporte:", err);
+      }
+    }
   };
 
-  const removerCofrinho = (id: string) => {
+  const removerCofrinho = async (id: string) => {
     setCofrinhos((prev) => prev.filter((c) => c.id !== id));
+
+    if (user?.id && !id.startsWith("temp-")) {
+      try {
+        await supabase.from("cofrinhos").delete().eq("id", id).eq("user_id", user.id);
+        toast.success("Cofrinho removido!");
+        notificarAtualizacaoFinanceira();
+      } catch (err) {
+        console.error("Erro ao remover cofrinho:", err);
+      }
+    }
   };
 
   return (

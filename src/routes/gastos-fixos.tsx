@@ -1,9 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AppShell } from "@/components/app/AppShell";
 import { cn } from "@/lib/utils";
 import { brl } from "@/lib/mock-data";
-import { ChevronDown, Plus, Tag } from "lucide-react";
+import { ChevronDown, Plus, Tag, Trash2 } from "lucide-react";
+import { useAuth } from "@/lib/auth-context";
+import { supabase } from "@/lib/supabase";
+import { notificarAtualizacaoFinanceira, type GastoFixoItem } from "@/lib/financial-service";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/gastos-fixos")({
   head: () => ({
@@ -15,20 +19,10 @@ export const Route = createFileRoute("/gastos-fixos")({
   component: GastosFixos,
 });
 
-interface GastoFixoItem {
-  id: string;
-  nome: string;
-  valor: number;
-  diaVenc: number;
-  status: "Pendente" | "Pago";
-  categoria: string;
-  formaPagamento: string;
-  ativo: boolean;
-  observacao?: string | undefined;
-}
-
 function GastosFixos() {
+  const { user } = useAuth();
   const [gastos, setGastos] = useState<GastoFixoItem[]>([]);
+  const [carregando, setCarregando] = useState(true);
 
   // Form states
   const [nome, setNome] = useState("");
@@ -53,6 +47,45 @@ function GastosFixos() {
   ]);
   const [novaCategoria, setNovaCategoria] = useState("");
 
+  // Carregar gastos fixos do usuário
+  useEffect(() => {
+    if (!user?.id) return;
+    const carregar = async () => {
+      try {
+        setCarregando(true);
+        const { data: fixData, error } = await supabase
+          .from("gastos_fixos")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("dia_venc", { ascending: true });
+
+        if (!error && fixData) {
+          setGastos(
+            fixData.map((f: any) => ({
+              id: f.id,
+              user_id: f.user_id,
+              nome: f.nome,
+              valor: Number(f.valor) || 0,
+              diaVenc: Number(f.dia_venc) || 5,
+              status: f.status || "Pendente",
+              categoria: f.categoria || "Moradia",
+              formaPagamento: f.forma_pagamento || "Boleto",
+              ativo: f.ativo ?? true,
+              observacao: f.observacao,
+              created_at: f.created_at,
+            }))
+          );
+        }
+      } catch (err) {
+        console.error("Erro ao carregar gastos fixos:", err);
+      } finally {
+        setCarregando(false);
+      }
+    };
+
+    carregar();
+  }, [user?.id]);
+
   // Calculations
   const gastosAtivos = gastos.filter((g) => g.ativo);
   const totalMes = gastosAtivos.reduce((acc, curr) => acc + curr.valor, 0);
@@ -63,17 +96,23 @@ function GastosFixos() {
   const pctPago = totalMes > 0 ? Math.round((totalPagos / totalMes) * 100) : 0;
   const pctPendente = totalMes > 0 ? 100 - pctPago : 0;
 
-  const handleSalvarGasto = (e: React.FormEvent) => {
+  const handleSalvarGasto = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!nome.trim()) return;
 
     const parsedValor = parseFloat(valor.replace(/\./g, "").replace(",", ".")) || 0;
+    if (parsedValor <= 0) {
+      toast.error("Informe um valor válido maior que zero.");
+      return;
+    }
 
-    const novoGasto: GastoFixoItem = {
-      id: Date.now().toString(),
+    const diaParsed = parseInt(diaVenc) || 5;
+    const novoGastoTemp: GastoFixoItem = {
+      id: "temp-" + Date.now(),
+      user_id: user?.id,
       nome: nome.trim(),
       valor: parsedValor,
-      diaVenc: parseInt(diaVenc) || 5,
+      diaVenc: diaParsed,
       status: statusGasto,
       categoria,
       formaPagamento,
@@ -81,10 +120,40 @@ function GastosFixos() {
       observacao: observacao.trim() || undefined,
     };
 
-    setGastos((prev) => [novoGasto, ...prev]);
+    setGastos((prev) => [...prev, novoGastoTemp].sort((a, b) => a.diaVenc - b.diaVenc));
     setNome("");
     setValor("");
     setObservacao("");
+
+    try {
+      if (user?.id) {
+        const { data: inserted, error } = await supabase
+          .from("gastos_fixos")
+          .insert({
+            user_id: user.id,
+            nome: novoGastoTemp.nome,
+            valor: novoGastoTemp.valor,
+            dia_venc: novoGastoTemp.diaVenc,
+            status: novoGastoTemp.status,
+            categoria: novoGastoTemp.categoria,
+            forma_pagamento: novoGastoTemp.formaPagamento,
+            ativo: novoGastoTemp.ativo,
+            observacao: novoGastoTemp.observacao,
+          })
+          .select()
+          .single();
+
+        if (!error && inserted) {
+          setGastos((prev) =>
+            prev.map((item) => (item.id === novoGastoTemp.id ? inserted : item))
+          );
+        }
+      }
+      notificarAtualizacaoFinanceira();
+      toast.success("Gasto fixo cadastrado com sucesso!");
+    } catch {
+      toast.error("Erro ao salvar no banco.");
+    }
   };
 
   const handleCriarCategoria = () => {
@@ -96,14 +165,41 @@ function GastosFixos() {
     setNovaCategoria("");
   };
 
-  const alternarStatus = (id: string) => {
+  const alternarStatus = async (id: string) => {
+    const itemAtual = gastos.find((g) => g.id === id);
+    if (!itemAtual) return;
+    const novoStatus = itemAtual.status === "Pago" ? "Pendente" : "Pago";
+
     setGastos((prev) =>
-      prev.map((g) =>
-        g.id === id
-          ? { ...g, status: g.status === "Pago" ? "Pendente" : "Pago" }
-          : g
-      )
+      prev.map((g) => (g.id === id ? { ...g, status: novoStatus } : g))
     );
+
+    try {
+      if (user?.id && !id.startsWith("temp-")) {
+        await supabase
+          .from("gastos_fixos")
+          .update({ status: novoStatus })
+          .eq("id", id)
+          .eq("user_id", user.id);
+      }
+      notificarAtualizacaoFinanceira();
+      toast.success(`Conta alterada para ${novoStatus}!`);
+    } catch {
+      toast.error("Erro ao atualizar status.");
+    }
+  };
+
+  const removerGasto = async (id: string) => {
+    setGastos((prev) => prev.filter((g) => g.id !== id));
+    try {
+      if (user?.id && !id.startsWith("temp-")) {
+        await supabase.from("gastos_fixos").delete().eq("id", id).eq("user_id", user.id);
+      }
+      notificarAtualizacaoFinanceira();
+      toast.info("Gasto fixo removido.");
+    } catch {
+      toast.error("Erro ao excluir gasto fixo.");
+    }
   };
 
   return (
@@ -437,6 +533,15 @@ function GastosFixos() {
                         )}
                       >
                         {g.status}
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => removerGasto(g.id)}
+                        title="Excluir gasto fixo"
+                        className="rounded-lg p-1 text-stone-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
                       </button>
                     </div>
                   </div>

@@ -1,8 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AppShell } from "@/components/app/AppShell";
 import { cn } from "@/lib/utils";
 import { brl } from "@/lib/mock-data";
+import { useAuth } from "@/lib/auth-context";
+import { supabase } from "@/lib/supabase";
+import { notificarAtualizacaoFinanceira } from "@/lib/financial-service";
+import { toast } from "sonner";
 import {
   Plus,
   TrendingUp,
@@ -10,6 +14,7 @@ import {
   Calendar,
   Trash2,
   Percent,
+  Loader2,
 } from "lucide-react";
 
 export const Route = createFileRoute("/investimentos")({
@@ -49,7 +54,9 @@ const tiposInvestimento = [
 ];
 
 function Investimentos() {
+  const { user } = useAuth();
   const [investimentos, setInvestimentos] = useState<InvestimentoItem[]>([]);
+  const [carregando, setCarregando] = useState(false);
 
   // Form states
   const [nome, setNome] = useState("");
@@ -60,6 +67,43 @@ function Investimentos() {
   const [aporteMensal, setAporteMensal] = useState("");
   const [rentabilidadeAnual, setRentabilidadeAnual] = useState("");
   const [prazoMeses, setPrazoMeses] = useState("");
+
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const carregar = async () => {
+      try {
+        setCarregando(true);
+        const { data, error } = await supabase
+          .from("investimentos")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false });
+
+        if (!error && data) {
+          setInvestimentos(
+            data.map((inv: any) => ({
+              id: inv.id,
+              nome: inv.titulo,
+              instituicao: inv.instituicao || undefined,
+              tipo: inv.tipo || "CDB",
+              dataInicio: "13/09/2026",
+              capitalInicial: Number(inv.valor_aplicado) || 0,
+              aporteMensal: 0,
+              rentabilidadeAnual: Number(inv.rendimento_pct) || 0,
+              prazoMeses: 60,
+            }))
+          );
+        }
+      } catch (err) {
+        console.error("Erro ao carregar investimentos:", err);
+      } finally {
+        setCarregando(false);
+      }
+    };
+
+    carregar();
+  }, [user?.id]);
 
   // Calculations
   const totalInvestido = investimentos.reduce((acc, curr) => acc + curr.capitalInicial, 0);
@@ -74,7 +118,7 @@ function Investimentos() {
 
   const patrimonioAtual = totalInvestido + rendimentoTotal;
 
-  const handleSalvarInvestimento = (e: React.FormEvent) => {
+  const handleSalvarInvestimento = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!nome.trim()) return;
 
@@ -83,8 +127,8 @@ function Investimentos() {
     const rent = parseFloat(rentabilidadeAnual.replace(/\./g, "").replace(",", ".")) || 0;
     const prazo = parseInt(prazoMeses) || 60;
 
-    const novo: InvestimentoItem = {
-      id: Date.now().toString(),
+    const novoTemp: InvestimentoItem = {
+      id: "temp-" + Date.now(),
       nome: nome.trim(),
       instituicao: instituicao.trim() || undefined,
       tipo,
@@ -95,17 +139,57 @@ function Investimentos() {
       prazoMeses: prazo,
     };
 
-    setInvestimentos((prev) => [...prev, novo]);
+    setInvestimentos((prev) => [novoTemp, ...prev]);
     setNome("");
     setInstituicao("");
     setCapitalInicial("");
     setAporteMensal("");
     setRentabilidadeAnual("");
     setPrazoMeses("");
+
+    if (user?.id) {
+      try {
+        const { data, error } = await supabase
+          .from("investimentos")
+          .insert({
+            user_id: user.id,
+            titulo: novoTemp.nome,
+            tipo: novoTemp.tipo,
+            valor_aplicado: novoTemp.capitalInicial,
+            saldo_atual: novoTemp.capitalInicial,
+            instituicao: novoTemp.instituicao || null,
+            rendimento_pct: novoTemp.rentabilidadeAnual,
+          })
+          .select()
+          .single();
+
+        if (error) {
+          toast.error("Erro ao salvar no banco. Guardado localmente.");
+        } else if (data) {
+          setInvestimentos((prev) =>
+            prev.map((i) => (i.id === novoTemp.id ? { ...i, id: data.id } : i))
+          );
+          toast.success("Investimento registrado com sucesso!");
+        }
+        notificarAtualizacaoFinanceira();
+      } catch (err) {
+        console.error("Erro ao salvar investimento:", err);
+      }
+    }
   };
 
-  const removerInvestimento = (id: string) => {
+  const removerInvestimento = async (id: string) => {
     setInvestimentos((prev) => prev.filter((i) => i.id !== id));
+
+    if (user?.id && !id.startsWith("temp-")) {
+      try {
+        await supabase.from("investimentos").delete().eq("id", id).eq("user_id", user.id);
+        toast.success("Investimento removido!");
+        notificarAtualizacaoFinanceira();
+      } catch (err) {
+        console.error("Erro ao remover investimento:", err);
+      }
+    }
   };
 
   return (

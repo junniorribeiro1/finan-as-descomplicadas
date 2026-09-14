@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AppShell } from "@/components/app/AppShell";
 import { cn } from "@/lib/utils";
 import { brl } from "@/lib/mock-data";
@@ -11,6 +11,10 @@ import {
   Edit2,
   Check,
 } from "lucide-react";
+import { useAuth } from "@/lib/auth-context";
+import { supabase } from "@/lib/supabase";
+import { notificarAtualizacaoFinanceira, type ContaBancariaItem } from "@/lib/financial-service";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/bancos")({
   head: () => ({
@@ -24,15 +28,6 @@ export const Route = createFileRoute("/bancos")({
   }),
   component: Bancos,
 });
-
-interface ContaBancariaItem {
-  id: string;
-  banco: string;
-  tipo: string;
-  saldo: number;
-  agencia?: string | undefined;
-  conta?: string | undefined;
-}
 
 const bancosPredefinidos = [
   "Nubank",
@@ -56,7 +51,9 @@ const tiposConta = [
 ];
 
 function Bancos() {
+  const { user } = useAuth();
   const [contas, setContas] = useState<ContaBancariaItem[]>([]);
+  const [carregando, setCarregando] = useState(true);
   const [modalAberto, setModalAberto] = useState(false);
   const [editandoSaldoId, setEditandoSaldoId] = useState<string | null>(null);
   const [novoSaldoInput, setNovoSaldoInput] = useState("");
@@ -69,18 +66,55 @@ function Bancos() {
   const [agencia, setAgencia] = useState("");
   const [numeroConta, setNumeroConta] = useState("");
 
+  // Carregar contas do usuário
+  useEffect(() => {
+    if (!user?.id) return;
+    const carregar = async () => {
+      try {
+        setCarregando(true);
+        const { data: bData, error } = await supabase
+          .from("bancos_contas")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false });
+
+        if (!error && bData) {
+          setContas(
+            bData.map((b: any) => ({
+              id: b.id,
+              user_id: b.user_id,
+              banco: b.banco,
+              tipo: b.tipo,
+              saldo: Number(b.saldo) || 0,
+              agencia: b.agencia,
+              conta: b.conta,
+              created_at: b.created_at,
+            }))
+          );
+        }
+      } catch (err) {
+        console.error("Erro ao carregar bancos:", err);
+      } finally {
+        setCarregando(false);
+      }
+    };
+
+    carregar();
+  }, [user?.id]);
+
   // Calculations
   const saldoTotal = contas.reduce((acc, c) => acc + c.saldo, 0);
 
-  const handleSalvarBanco = (e: React.FormEvent) => {
+  const handleSalvarBanco = async (e: React.FormEvent) => {
     e.preventDefault();
     const nomeBanco = banco === "Outro" ? outroBanco.trim() : banco;
     if (!nomeBanco) return;
 
     const parsedSaldo = parseFloat(saldo.replace(/\./g, "").replace(",", ".")) || 0;
 
-    const novaConta: ContaBancariaItem = {
-      id: Date.now().toString(),
+    const novaContaTemp: ContaBancariaItem = {
+      id: "temp-" + Date.now(),
+      user_id: user?.id,
       banco: nomeBanco,
       tipo,
       saldo: parsedSaldo,
@@ -88,25 +122,75 @@ function Bancos() {
       conta: numeroConta.trim() || undefined,
     };
 
-    setContas((prev) => [...prev, novaConta]);
+    setContas((prev) => [novaContaTemp, ...prev]);
     setSaldo("");
     setAgencia("");
     setNumeroConta("");
     setOutroBanco("");
     setModalAberto(false);
+
+    try {
+      if (user?.id) {
+        const { data: inserted, error } = await supabase
+          .from("bancos_contas")
+          .insert({
+            user_id: user.id,
+            banco: novaContaTemp.banco,
+            tipo: novaContaTemp.tipo,
+            saldo: novaContaTemp.saldo,
+            agencia: novaContaTemp.agencia,
+            conta: novaContaTemp.conta,
+          })
+          .select()
+          .single();
+
+        if (!error && inserted) {
+          setContas((prev) =>
+            prev.map((item) => (item.id === novaContaTemp.id ? inserted : item))
+          );
+        }
+      }
+      notificarAtualizacaoFinanceira();
+      toast.success("Conta bancária cadastrada com sucesso!");
+    } catch {
+      toast.error("Erro ao salvar conta bancária.");
+    }
   };
 
-  const handleAtualizarSaldo = (id: string) => {
+  const handleAtualizarSaldo = async (id: string) => {
     const parsed = parseFloat(novoSaldoInput.replace(/\./g, "").replace(",", ".")) || 0;
     setContas((prev) =>
       prev.map((c) => (c.id === id ? { ...c, saldo: parsed } : c))
     );
     setEditandoSaldoId(null);
     setNovoSaldoInput("");
+
+    try {
+      if (user?.id && !id.startsWith("temp-")) {
+        await supabase
+          .from("bancos_contas")
+          .update({ saldo: parsed })
+          .eq("id", id)
+          .eq("user_id", user.id);
+      }
+      notificarAtualizacaoFinanceira();
+      toast.success("Saldo atualizado!");
+    } catch {
+      toast.error("Erro ao salvar novo saldo.");
+    }
   };
 
-  const removerConta = (id: string) => {
+  const removerConta = async (id: string) => {
     setContas((prev) => prev.filter((c) => c.id !== id));
+    try {
+      if (user?.id && !id.startsWith("temp-")) {
+        await supabase.from("bancos_contas").delete().eq("id", id).eq("user_id", user.id);
+      }
+      notificarAtualizacaoFinanceira();
+      toast.info("Conta removida.");
+    } catch {
+      toast.error("Erro ao excluir conta.");
+    }
   };
 
   return (

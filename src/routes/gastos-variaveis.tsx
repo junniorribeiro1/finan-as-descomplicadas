@@ -1,9 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AppShell } from "@/components/app/AppShell";
 import { cn } from "@/lib/utils";
 import { brl } from "@/lib/mock-data";
 import { ChevronDown, Plus, Calendar, Trash2 } from "lucide-react";
+import { useAuth } from "@/lib/auth-context";
+import { supabase } from "@/lib/supabase";
+import { notificarAtualizacaoFinanceira, type GastoVariavelItem } from "@/lib/financial-service";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/gastos-variaveis")({
   head: () => ({
@@ -14,16 +18,6 @@ export const Route = createFileRoute("/gastos-variaveis")({
   }),
   component: GastosVariaveis,
 });
-
-interface GastoVariavelItem {
-  id: string;
-  descricao: string;
-  valor: number;
-  data: string;
-  status: "Pago" | "Pendente";
-  categoria: string;
-  formaPagamento: string;
-}
 
 const categoriasDisponiveis = [
   "Moradia",
@@ -37,15 +31,55 @@ const categoriasDisponiveis = [
 ];
 
 function GastosVariaveis() {
+  const { user } = useAuth();
   const [gastos, setGastos] = useState<GastoVariavelItem[]>([]);
+  const [carregando, setCarregando] = useState(true);
 
   // Form states
   const [descricao, setDescricao] = useState("");
   const [valor, setValor] = useState("");
-  const [data, setData] = useState("13/09/2026");
+  const hoje = new Date().toLocaleDateString("pt-BR");
+  const [data, setData] = useState(hoje);
   const [statusGasto, setStatusGasto] = useState<"Pago" | "Pendente">("Pago");
   const [categoria, setCategoria] = useState("Moradia");
   const [formaPagamento, setFormaPagamento] = useState("PIX");
+
+  // Carregar gastos variáveis do usuário
+  useEffect(() => {
+    if (!user?.id) return;
+    const carregar = async () => {
+      try {
+        setCarregando(true);
+        const { data: varData, error } = await supabase
+          .from("gastos_variaveis")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false });
+
+        if (!error && varData) {
+          setGastos(
+            varData.map((v: any) => ({
+              id: v.id,
+              user_id: v.user_id,
+              descricao: v.descricao,
+              valor: Number(v.valor) || 0,
+              data: v.data,
+              status: v.status || "Pago",
+              categoria: v.categoria || "Outros",
+              formaPagamento: v.forma_pagamento || "PIX",
+              created_at: v.created_at,
+            }))
+          );
+        }
+      } catch (err) {
+        console.error("Erro ao carregar gastos variáveis:", err);
+      } finally {
+        setCarregando(false);
+      }
+    };
+
+    carregar();
+  }, [user?.id]);
 
   // Calculations
   const totalMes = gastos.reduce((acc, curr) => acc + curr.valor, 0);
@@ -59,39 +93,96 @@ function GastosVariaveis() {
   const liderEntry = Object.entries(categoriaTotais).sort((a, b) => b[1] - a[1])[0];
   const categoriaLider = liderEntry ? { nome: liderEntry[0], total: liderEntry[1] } : null;
 
-  const handleSalvarGasto = (e: React.FormEvent) => {
+  const handleSalvarGasto = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!descricao.trim()) return;
 
     const parsedValor = parseFloat(valor.replace(/\./g, "").replace(",", ".")) || 0;
+    if (parsedValor <= 0) {
+      toast.error("Informe um valor válido maior que zero.");
+      return;
+    }
 
-    const novoGasto: GastoVariavelItem = {
-      id: Date.now().toString(),
+    const dataFinal = data.trim() || hoje;
+    const novoGastoTemp: GastoVariavelItem = {
+      id: "temp-" + Date.now(),
+      user_id: user?.id,
       descricao: descricao.trim(),
       valor: parsedValor,
-      data: data.trim() || "13/09/2026",
+      data: dataFinal,
       status: statusGasto,
       categoria,
       formaPagamento,
     };
 
-    setGastos((prev) => [novoGasto, ...prev]);
+    setGastos((prev) => [novoGastoTemp, ...prev]);
     setDescricao("");
     setValor("");
+
+    try {
+      if (user?.id) {
+        const { data: inserted, error } = await supabase
+          .from("gastos_variaveis")
+          .insert({
+            user_id: user.id,
+            descricao: novoGastoTemp.descricao,
+            valor: novoGastoTemp.valor,
+            data: novoGastoTemp.data,
+            status: novoGastoTemp.status,
+            categoria: novoGastoTemp.categoria,
+            forma_pagamento: novoGastoTemp.formaPagamento,
+          })
+          .select()
+          .single();
+
+        if (!error && inserted) {
+          setGastos((prev) =>
+            prev.map((item) => (item.id === novoGastoTemp.id ? inserted : item))
+          );
+        }
+      }
+      notificarAtualizacaoFinanceira();
+      toast.success("Gasto variável lançado com sucesso!");
+    } catch {
+      toast.error("Erro ao salvar no banco.");
+    }
   };
 
-  const alternarStatus = (id: string) => {
+  const alternarStatus = async (id: string) => {
+    const itemAtual = gastos.find((g) => g.id === id);
+    if (!itemAtual) return;
+    const novoStatus = itemAtual.status === "Pago" ? "Pendente" : "Pago";
+
     setGastos((prev) =>
-      prev.map((g) =>
-        g.id === id
-          ? { ...g, status: g.status === "Pago" ? "Pendente" : "Pago" }
-          : g
-      )
+      prev.map((g) => (g.id === id ? { ...g, status: novoStatus } : g))
     );
+
+    try {
+      if (user?.id && !id.startsWith("temp-")) {
+        await supabase
+          .from("gastos_variaveis")
+          .update({ status: novoStatus })
+          .eq("id", id)
+          .eq("user_id", user.id);
+      }
+      notificarAtualizacaoFinanceira();
+      toast.success(`Gasto marcado como ${novoStatus}!`);
+    } catch {
+      toast.error("Erro ao atualizar status.");
+    }
   };
 
-  const removerGasto = (id: string) => {
+  const removerGasto = async (id: string) => {
     setGastos((prev) => prev.filter((g) => g.id !== id));
+    try {
+      if (user?.id && !id.startsWith("temp-")) {
+        await supabase.from("gastos_variaveis").delete().eq("id", id).eq("user_id", user.id);
+      }
+      notificarAtualizacaoFinanceira();
+      toast.info("Gasto variável removido.");
+    } catch {
+      toast.error("Erro ao remover gasto.");
+    }
   };
 
   return (
