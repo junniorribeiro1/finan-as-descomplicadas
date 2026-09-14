@@ -57,7 +57,7 @@ const faqList: FaqItem[] = [
     id: "faq-4",
     pergunta: "Como a Vera funciona?",
     resposta:
-      "A Vera é sua gerente financeira com inteligência artificial. Ela analisa seus hábitos de consumo, identifica oportunidades de corte e economia, projeta seus cofrinhos e responde a qualquer dúvida sobre finanças pessoais e empresariais.\n\nRegras de Uso e Créditos Diários:\n• Plano Free: Cada usuário tem direito a 10 mensagens (créditos) enviadas por dia ao assistente.\n• Renovação Diária: Os créditos são renovados todos os dias pontualmente às 06h da manhã, sem acúmulo de créditos não utilizados.\n• Administradores: Usuários administradores possuem acesso 100% ilimitado, sem restrição diária de mensagens.",
+      "A Vera é sua gerente financeira com inteligência artificial. Ela analisa seus hábitos de consumo, identifica oportunidades de corte e economia, projeta seus cofrinhos e responde a qualquer dúvida sobre finanças pessoais e empresariais.\n\nRegras de Uso e Créditos Diários:\n• Plano Free: Cada usuário tem direito a 10 mensagens (créditos) enviadas por dia ao assistente.\n• Renovação Diária: Os créditos são renovados todos os dias pontualmente às 06h da manhã, sem acúmulo de créditos não utilizados.",
   },
   {
     id: "faq-5",
