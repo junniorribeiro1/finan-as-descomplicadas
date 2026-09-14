@@ -146,7 +146,38 @@ export function AppShell({
   const [aberto, setAberto] = useState(false);
   const [menuUsuarioAberto, setMenuUsuarioAberto] = useState(false);
   const [menuUsuarioMobileAberto, setMenuUsuarioMobileAberto] = useState(false);
-  const [tipoConta, setTipoConta] = useState<"pessoal" | "empresa">("pessoal");
+  const [tipoConta, setTipoConta] = useState<"pessoal" | "empresa">(() => {
+    if (typeof window !== "undefined") {
+      return (localStorage.getItem("organizai_tipo_conta") as "pessoal" | "empresa") || "pessoal";
+    }
+    return "pessoal";
+  });
+
+  const mudarTipoConta = (novo: "pessoal" | "empresa") => {
+    setTipoConta(novo);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("organizai_tipo_conta", novo);
+      window.dispatchEvent(new CustomEvent("organizai_tipo_conta_sync", { detail: novo }));
+    }
+  };
+
+  useEffect(() => {
+    const handler = (e: any) => {
+      if (e.detail) {
+        setTipoConta(e.detail);
+      } else if (typeof window !== "undefined") {
+        const stored = localStorage.getItem("organizai_tipo_conta") as "pessoal" | "empresa";
+        if (stored) setTipoConta(stored);
+      }
+    };
+    window.addEventListener("organizai_tipo_conta_sync", handler);
+    window.addEventListener("storage", handler);
+    return () => {
+      window.removeEventListener("organizai_tipo_conta_sync", handler);
+      window.removeEventListener("storage", handler);
+    };
+  }, []);
+
   const [mes, setMes] = useState("Este mês");
   const [ano, setAno] = useState("2026");
   const [tema, setTema] = useState<"dark" | "light">(() => {
@@ -619,9 +650,9 @@ export function AppShell({
               <div className="flex items-center rounded-full bg-[#181818] p-1 border border-white/[0.08]">
                 <button
                   type="button"
-                  onClick={() => setTipoConta("pessoal")}
+                  onClick={() => mudarTipoConta("pessoal")}
                   className={cn(
-                    "rounded-full px-4 py-1.5 text-xs font-semibold transition-all",
+                    "rounded-full px-4 py-1.5 text-xs font-semibold transition-all cursor-pointer",
                     tipoConta === "pessoal"
                       ? "bg-[#F97316] text-white shadow-md shadow-orange-950/40"
                       : "text-stone-400 hover:text-stone-200"
@@ -631,9 +662,9 @@ export function AppShell({
                 </button>
                 <button
                   type="button"
-                  onClick={() => setTipoConta("empresa")}
+                  onClick={() => mudarTipoConta("empresa")}
                   className={cn(
-                    "rounded-full px-4 py-1.5 text-xs font-medium transition-all",
+                    "rounded-full px-4 py-1.5 text-xs font-medium transition-all cursor-pointer",
                     tipoConta === "empresa"
                       ? "bg-[#F97316] text-white shadow-md shadow-orange-950/40"
                       : "text-stone-400 hover:text-stone-200"

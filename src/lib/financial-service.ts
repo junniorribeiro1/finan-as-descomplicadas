@@ -21,6 +21,7 @@ export interface GastoFixoItem {
   categoria: string;
   formaPagamento: string;
   ativo: boolean;
+  tipoConta?: "pessoal" | "empresa";
   observacao?: string | undefined;
   created_at?: string;
 }
@@ -362,6 +363,7 @@ export async function carregarDadosFinanceirosUsuario(userId: string) {
       categoria: f.categoria || "Moradia",
       formaPagamento: f.forma_pagamento || "Boleto",
       ativo: f.ativo ?? true,
+      tipoConta: (f.tipo_conta as "pessoal" | "empresa") || "pessoal",
       observacao: f.observacao,
       created_at: f.created_at,
     }));
