@@ -8,6 +8,7 @@ export interface RecebimentoItem {
   data: string; // YYYY-MM-DD or DD/MM/YYYY
   categoria: string;
   banco?: string | undefined;
+  tipoConta?: "pessoal" | "empresa";
   created_at?: string;
 }
 
@@ -165,20 +166,31 @@ export function calcularResumoFinanceiro(
   gastosVariaveis: GastoVariavelItem[],
   bancos: ContaBancariaItem[],
   investimentos: InvestimentoItem[] = [],
-  cofrinhos: CofrinhoItem[] = []
+  cofrinhos: CofrinhoItem[] = [],
+  tipoConta?: "pessoal" | "empresa"
 ): ResumoFinanceiro {
-  const totalReceitas = recebimentos.reduce((acc, curr) => acc + (Number(curr.valor) || 0), 0);
+  const recFiltrados = tipoConta
+    ? recebimentos.filter((r) => (r.tipoConta || "pessoal") === tipoConta)
+    : recebimentos;
+  const fixosBase = tipoConta
+    ? gastosFixos.filter((g) => (g.tipoConta || "pessoal") === tipoConta)
+    : gastosFixos;
+  const varFiltrados = tipoConta
+    ? gastosVariaveis.filter((v) => (v.tipoConta || "pessoal") === tipoConta)
+    : gastosVariaveis;
+
+  const totalReceitas = recFiltrados.reduce((acc, curr) => acc + (Number(curr.valor) || 0), 0);
   
-  const gastosFixosAtivos = gastosFixos.filter((g) => g.ativo);
+  const gastosFixosAtivos = fixosBase.filter((g) => g.ativo);
   const gastosFixosTotal = gastosFixosAtivos.reduce((acc, curr) => acc + (Number(curr.valor) || 0), 0);
-  const gastosVariaveisTotal = gastosVariaveis.reduce((acc, curr) => acc + (Number(curr.valor) || 0), 0);
+  const gastosVariaveisTotal = varFiltrados.reduce((acc, curr) => acc + (Number(curr.valor) || 0), 0);
   
   const totalGastos = gastosFixosTotal + gastosVariaveisTotal;
 
   const fixosPagos = gastosFixosAtivos
     .filter((g) => g.status === "Pago")
     .reduce((acc, curr) => acc + (Number(curr.valor) || 0), 0);
-  const variaveisPagos = gastosVariaveis
+  const variaveisPagos = varFiltrados
     .filter((g) => g.status === "Pago")
     .reduce((acc, curr) => acc + (Number(curr.valor) || 0), 0);
   const totalPago = fixosPagos + variaveisPagos;
@@ -198,7 +210,7 @@ export function calcularResumoFinanceiro(
     const c = g.categoria || "Outros";
     catMap[c] = (catMap[c] || 0) + (Number(g.valor) || 0);
   });
-  gastosVariaveis.forEach((g) => {
+  varFiltrados.forEach((g) => {
     const c = g.categoria || "Outros";
     catMap[c] = (catMap[c] || 0) + (Number(g.valor) || 0);
   });
@@ -218,7 +230,7 @@ export function calcularResumoFinanceiro(
     diaMovimentos[i] = { entradas: 0, saidas: 0 };
   }
 
-  recebimentos.forEach((r) => {
+  recFiltrados.forEach((r) => {
     const dia = Math.min(30, Math.max(1, extrairDia(r.data)));
     if (diaMovimentos[dia]) {
       diaMovimentos[dia].entradas += Number(r.valor) || 0;
@@ -232,7 +244,7 @@ export function calcularResumoFinanceiro(
     }
   });
 
-  gastosVariaveis.forEach((g) => {
+  varFiltrados.forEach((g) => {
     const dia = Math.min(30, Math.max(1, extrairDia(g.data)));
     if (diaMovimentos[dia]) {
       diaMovimentos[dia].saidas += Number(g.valor) || 0;
@@ -251,7 +263,7 @@ export function calcularResumoFinanceiro(
   const mesReceitas: number[] = new Array(12).fill(0);
   const mesDespesas: number[] = new Array(12).fill(0);
 
-  recebimentos.forEach((r) => {
+  recFiltrados.forEach((r) => {
     const mes = extrairMes(r.data);
     mesReceitas[mes] = (mesReceitas[mes] || 0) + (Number(r.valor) || 0);
   });
@@ -262,7 +274,7 @@ export function calcularResumoFinanceiro(
     }
   });
 
-  gastosVariaveis.forEach((g) => {
+  varFiltrados.forEach((g) => {
     const mes = extrairMes(g.data);
     mesDespesas[mes] = (mesDespesas[mes] || 0) + (Number(g.valor) || 0);
   });
@@ -352,6 +364,7 @@ export async function carregarDadosFinanceirosUsuario(userId: string) {
       data: r.data,
       categoria: r.categoria,
       banco: r.banco,
+      tipoConta: (r.tipo_conta as "pessoal" | "empresa") || "pessoal",
       created_at: r.created_at,
     }));
 

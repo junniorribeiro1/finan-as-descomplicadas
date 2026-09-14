@@ -78,6 +78,43 @@ function Dashboard() {
   const nivelAtual = profile?.patente_nivel || 0;
   const patenteAtual = getPatentePorNivel(nivelAtual);
 
+  const [tipoConta, setTipoConta] = useState<"pessoal" | "empresa">(() => {
+    if (typeof window !== "undefined") {
+      return (localStorage.getItem("organizai_tipo_conta") as "pessoal" | "empresa") || "pessoal";
+    }
+    return "pessoal";
+  });
+  const [dadosBrutos, setDadosBrutos] = useState<any>(null);
+
+  // Ouve alterações no tipo de conta (Pessoal / Empresa)
+  useEffect(() => {
+    const handler = (e: any) => {
+      if (e.detail) {
+        setTipoConta(e.detail);
+      } else if (typeof window !== "undefined") {
+        const stored = localStorage.getItem("organizai_tipo_conta") as "pessoal" | "empresa";
+        if (stored) setTipoConta(stored);
+      }
+    };
+    window.addEventListener("organizai_tipo_conta_sync", handler);
+    return () => window.removeEventListener("organizai_tipo_conta_sync", handler);
+  }, []);
+
+  // Recalcula o resumo quando tipoConta ou dadosBrutos mudam
+  useEffect(() => {
+    if (!dadosBrutos) return;
+    const res = calcularResumoFinanceiro(
+      dadosBrutos.recebimentos || [],
+      dadosBrutos.gastosFixos || [],
+      dadosBrutos.gastosVariaveis || [],
+      dadosBrutos.bancos || [],
+      dadosBrutos.investimentos || [],
+      dadosBrutos.cofrinhos || [],
+      tipoConta
+    );
+    setResumo(res);
+  }, [dadosBrutos, tipoConta]);
+
   // Carrega e sincroniza dados financeiros do usuário
   useEffect(() => {
     if (!user?.id) return;
@@ -88,7 +125,17 @@ function Dashboard() {
       try {
         const dados = await carregarDadosFinanceirosUsuario(user.id);
         if (!cancelado) {
-          setResumo(dados.resumo);
+          setDadosBrutos(dados);
+          const res = calcularResumoFinanceiro(
+            dados.recebimentos || [],
+            dados.gastosFixos || [],
+            dados.gastosVariaveis || [],
+            dados.bancos || [],
+            dados.investimentos || [],
+            dados.cofrinhos || [],
+            tipoConta
+          );
+          setResumo(res);
           setCofrinhosLista(dados.cofrinhos || []);
           setCarregando(false);
         }

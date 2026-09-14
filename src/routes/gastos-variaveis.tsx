@@ -57,6 +57,42 @@ const CATEGORIAS_PADRAO_EMPRESA = [
   "Outros",
 ];
 
+function parseDataParaISO(dataStr: string): string {
+  if (!dataStr) return new Date().toISOString().split("T")[0];
+  const limpo = dataStr.trim();
+  if (limpo.includes("/")) {
+    const parts = limpo.split("/");
+    if (parts.length === 3) {
+      const d = parts[0].padStart(2, "0");
+      const m = parts[1].padStart(2, "0");
+      const y = parts[2].length === 2 ? `20${parts[2]}` : parts[2];
+      return `${y}-${m}-${d}`;
+    }
+  }
+  if (limpo.includes("-")) {
+    const parts = limpo.split("-");
+    if (parts.length === 3 && parts[0].length === 4) {
+      return limpo;
+    }
+    if (parts.length === 3 && parts[2].length === 4) {
+      return `${parts[2]}-${parts[1].padStart(2, "0")}-${parts[0].padStart(2, "0")}`;
+    }
+  }
+  return new Date().toISOString().split("T")[0];
+}
+
+function formatarDataExibicao(dataStr: string): string {
+  if (!dataStr) return "";
+  const limpo = dataStr.trim();
+  if (limpo.includes("-")) {
+    const parts = limpo.split("-");
+    if (parts.length === 3 && parts[0].length === 4) {
+      return `${parts[2].slice(0, 2)}/${parts[1]}/${parts[0]}`;
+    }
+  }
+  return limpo;
+}
+
 function GastosVariaveis() {
   const { user } = useAuth();
   const [gastos, setGastos] = useState<GastoVariavelItem[]>([]);
@@ -245,7 +281,7 @@ function GastosVariaveis() {
       return;
     }
 
-    const dataFinal = data.trim() || hoje;
+    const dataFinal = parseDataParaISO(data.trim() || hoje);
     const novoGastoTemp: GastoVariavelItem = {
       id: "temp-" + Date.now(),
       user_id: user?.id,
@@ -339,7 +375,7 @@ function GastosVariaveis() {
     setGastoEditando(g);
     setEditDescricao(g.descricao);
     setEditValor(g.valor.toFixed(2).replace(".", ","));
-    setEditData(g.data);
+    setEditData(formatarDataExibicao(g.data));
     setEditStatus(g.status);
     setEditCategoria(g.categoria);
     setEditFormaPagamento(g.formaPagamento);
@@ -364,7 +400,7 @@ function GastosVariaveis() {
       ...gastoEditando,
       descricao: editDescricao.trim(),
       valor: valNum,
-      data: editData.trim() || hoje,
+      data: parseDataParaISO(editData.trim() || hoje),
       status: editStatus,
       categoria: editCategoria,
       formaPagamento: editFormaPagamento,
@@ -946,7 +982,7 @@ function GastosVariaveis() {
                           {g.descricao}
                         </p>
                         <p className="text-[11px] text-stone-400 mt-0.5 truncate">
-                          {g.categoria} • {g.formaPagamento} • {g.data}
+                          {g.categoria} • {g.formaPagamento} • {formatarDataExibicao(g.data)}
                         </p>
                       </div>
                     </div>
