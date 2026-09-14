@@ -73,6 +73,7 @@ export interface CofrinhoItem {
   valorAtual: number;
   prazo?: string | undefined;
   categoria?: string | undefined;
+  tipoConta?: "pessoal" | "empresa";
   created_at?: string;
 }
 
@@ -202,7 +203,10 @@ export function calcularResumoFinanceiro(
   const saldoDisponivel = bancos.length > 0 ? saldoBancos : totalReceitas - totalPago;
 
   const totalInvestido = investimentos.reduce((acc, curr) => acc + (Number(curr.saldoAtual) || 0), 0);
-  const totalCofrinhos = cofrinhos.reduce((acc, curr) => acc + (Number(curr.valorAtual) || 0), 0);
+  const cofrinhosFiltrados = tipoConta
+    ? cofrinhos.filter((c) => (c.tipoConta || "pessoal") === tipoConta)
+    : cofrinhos;
+  const totalCofrinhos = cofrinhosFiltrados.reduce((acc, curr) => acc + (Number(curr.valorAtual) || 0), 0);
 
   // Gastos por categoria
   const catMap: Record<string, number> = {};
@@ -427,6 +431,7 @@ export async function carregarDadosFinanceirosUsuario(userId: string) {
       valorAtual: Number(c.valor_atual) || 0,
       prazo: c.prazo,
       categoria: c.categoria,
+      tipoConta: (c.tipo_conta as "pessoal" | "empresa") || "pessoal",
       created_at: c.created_at,
     }));
 
