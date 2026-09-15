@@ -1167,7 +1167,7 @@ export default function ImersaoPage() {
           DOBRA 9 — CERTIFICADO OFICIAL
       ═══════════════════════════════════════════════ */}
       <section className="reveal-on-scroll relative z-20 mx-auto w-full max-w-5xl px-5 py-12 md:px-8">
-        <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-8 md:p-12 flex flex-col md:flex-row items-center gap-8">
+        <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-8 md:p-12 flex flex-col md:flex-row items-center gap-8 lg:gap-12">
           <div className="md:w-1/2 flex flex-col items-center text-center md:items-start md:text-left">
             <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-300 uppercase tracking-wider mb-3 mx-auto md:mx-0">
               <Award className="h-3.5 w-3.5" />
@@ -1180,34 +1180,45 @@ export default function ImersaoPage() {
               <strong className="text-white">Sim!</strong> Todos os participantes
               que concluírem a Imersão receberão o{" "}
               <strong className="text-amber-300">
-                Certificado Oficial de IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ
+                Certificado Oficial de Imersão Educação Financeira
               </strong>
-              , emitido com chancela de Natália Rodolfo, comprovando sua
+              , emitido com chancela e assinatura de Natália Rodolfo, com carga horária de 8 horas, comprovando sua
               capacitação na organização e gestão orçamentária.
             </p>
+
+            <div className="mt-5 flex flex-wrap items-center justify-center md:justify-start gap-2.5">
+              <div className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-black/40 px-3 py-1.5 text-xs text-stone-300 font-medium">
+                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+                <span>Carga Horária de 8 Horas</span>
+              </div>
+              <div className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-black/40 px-3 py-1.5 text-xs text-stone-300 font-medium">
+                <CheckCircle2 className="h-3.5 w-3.5 text-amber-400" />
+                <span>Chancela Oficial da Mentora</span>
+              </div>
+            </div>
           </div>
 
-          <div className="md:w-1/2 flex justify-center w-full">
-            {/* Mockup estilizado do Certificado */}
-            <div className="relative w-full max-w-sm rounded-2xl border-2 border-amber-400/40 bg-gradient-to-br from-[#1b150c] via-[#0f0c08] to-stone-950 p-6 shadow-[0_10px_40px_rgba(245,158,11,0.15)] text-center">
-              <div className="flex justify-center mb-3">
-                <div className="h-10 w-10 rounded-full bg-amber-500/20 border border-amber-400 flex items-center justify-center text-amber-300">
-                  <Award className="h-6 w-6" />
-                </div>
+          <div className="md:w-1/2 flex flex-col items-center justify-center w-full">
+            {/* Modelo Oficial do Certificado com Proporção Perfeita */}
+            <div className="group relative w-full max-w-md lg:max-w-lg flex flex-col items-center">
+              {/* Efeito de brilho de fundo dourado / esmeralda */}
+              <div className="absolute -inset-3 rounded-3xl bg-gradient-to-r from-amber-500/20 via-emerald-500/15 to-orange-500/20 blur-xl opacity-70 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
+              <div className="relative w-full overflow-hidden rounded-2xl transition-transform duration-500 group-hover:scale-[1.02]">
+                <img
+                  src="/certificado-imersao.png"
+                  alt="Modelo do Certificado Oficial da Imersão Educação Financeira - Natália Rodolfo"
+                  className="w-full h-auto object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.7)]"
+                  loading="lazy"
+                  width={1024}
+                  height={682}
+                />
               </div>
-              <span className="font-mono text-[0.65rem] tracking-[0.25em] text-amber-400 uppercase font-bold">
-                CERTIFICADO DE CONCLUSÃO
+
+              <span className="mt-3 text-[11px] text-stone-400 font-medium tracking-wide flex items-center gap-1.5 text-center">
+                <Award className="h-3.5 w-3.5 text-amber-400" />
+                Modelo Oficial do Certificado entregue na Imersão
               </span>
-              <h4 className="text-sm font-bold text-white mt-2">
-                IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ
-              </h4>
-              <p className="text-[0.65rem] text-stone-400 mt-1">
-                Concedido a você por participação na 1ª Edição Oficial
-              </p>
-              <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-[0.6rem] text-stone-400">
-                <span>Natália Rodolfo</span>
-                <span>25 de Outubro</span>
-              </div>
             </div>
           </div>
         </div>
