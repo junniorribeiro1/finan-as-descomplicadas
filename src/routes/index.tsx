@@ -10,6 +10,10 @@ import {
   WalletCards,
   Award,
   Mail,
+  Target,
+  Building2,
+  LineChart,
+  Scale,
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -36,6 +40,25 @@ export const Route = createFileRoute("/")({
 });
 
 function NataliaLinksPage() {
+  const wppNumber = "5577981381477";
+
+  // Links com mensagens pré-digitadas para os serviços e mentorias
+  const mentoriaIndividualUrl = `https://wa.me/${wppNumber}?text=${encodeURIComponent(
+    "Olá, Natália! Tenho interesse na Mentoria Individual em Educação Financeira. Ganho acima de R$ 5 mil e gostaria de entender como funciona a mentoria para organizar minha vida financeira e assumir o controle do meu dinheiro."
+  )}`;
+
+  const terceirizacaoFinanceiraUrl = `https://wa.me/${wppNumber}?text=${encodeURIComponent(
+    "Olá, Natália! Gostaria de mais informações sobre a Terceirização Financeira Empresarial para manter o financeiro da minha empresa organizado e focar no crescimento."
+  )}`;
+
+  const consultoriaPequenasEmpresasUrl = `https://wa.me/${wppNumber}?text=${encodeURIComponent(
+    "Olá, Natália! Tenho interesse na Consultoria para Pequenas Empresas. Gostaria de uma orientação prática para organizar as finanças e melhorar a gestão do meu negócio."
+  )}`;
+
+  const recuperacaoFinanceiraUrl = `https://wa.me/${wppNumber}?text=${encodeURIComponent(
+    "Olá, Natália! Gostaria de entender mais sobre a Recuperação Financeira Empresarial para reduzir a inadimplência e recuperar valores em aberto com soluções administrativas e suporte jurídico especializado."
+  )}`;
+
   return (
     <div className="relative min-h-screen w-full bg-[#08090b] text-white selection:bg-amber-500/30 selection:text-amber-200 overflow-x-hidden font-sans">
       {/* Luzes de fundo / Ambient Glows */}
@@ -165,6 +188,200 @@ function NataliaLinksPage() {
               <ChevronRight className="h-4 w-4 stroke-[2.2] transition-transform duration-300 group-hover:translate-x-0.5" />
             </div>
           </Link>
+
+          {/* DIVISOR: MENTORIAS & SOLUÇÕES */}
+          <div className="my-1.5 flex items-center gap-2 px-1">
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+            <span className="text-[0.675rem] font-bold uppercase tracking-wider text-amber-400/90">
+              Mentorias &amp; Soluções Financeiras
+            </span>
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+          </div>
+
+          {/* PRODUTO 1: MENTORIA INDIVIDUAL EM EDUCAÇÃO FINANCEIRA */}
+          <a
+            href={mentoriaIndividualUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative flex flex-col gap-2.5 rounded-2xl border border-white/[0.08] bg-white/[0.04] p-4 backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-amber-500/40 hover:bg-white/[0.07] hover:shadow-[0_4px_24px_rgba(245,158,11,0.12)] active:translate-y-0"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0 flex-1">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-amber-500 to-orange-400 text-stone-950 shadow-sm shadow-amber-950/30">
+                  <Target className="h-5 w-5 stroke-[2.2]" />
+                </div>
+                <div className="flex flex-col min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-[0.925rem] font-semibold text-white group-hover:text-amber-300 transition-colors leading-snug">
+                      Mentoria Individual em Educação Financeira
+                    </span>
+                  </div>
+                  <div className="mt-0.5">
+                    <span className="inline-block rounded bg-amber-500/10 px-1.5 py-0.5 text-[0.625rem] font-medium text-amber-300 border border-amber-500/20">
+                      Pessoa Física
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 transition-all duration-300 group-hover:bg-emerald-500 group-hover:text-stone-950 group-hover:scale-105"
+                title="Conversar no WhatsApp"
+              >
+                <MessageCircle className="h-4 w-4 stroke-[2.2]" />
+              </div>
+            </div>
+
+            <p className="text-[0.80rem] text-stone-300/85 leading-relaxed">
+              Para quem ganha acima de R$ 5 mil, mas continua no vermelho. Organize sua vida financeira, saia das dívidas e assuma o controle do seu dinheiro.
+            </p>
+
+            <div className="flex items-center gap-1 text-[0.72rem] font-medium text-emerald-400 group-hover:text-emerald-300 transition-colors pt-0.5">
+              <span>Conversar sobre a mentoria no WhatsApp</span>
+              <ArrowUpRight className="h-3 w-3 stroke-[2.2] transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </div>
+          </a>
+
+          {/* PRODUTO 2: TERCEIRIZAÇÃO FINANCEIRA EMPRESARIAL */}
+          <a
+            href={terceirizacaoFinanceiraUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative flex flex-col gap-2.5 rounded-2xl border border-white/[0.08] bg-white/[0.04] p-4 backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-blue-500/40 hover:bg-white/[0.07] hover:shadow-[0_4px_24px_rgba(59,130,246,0.12)] active:translate-y-0"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0 flex-1">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-500 text-white shadow-sm shadow-blue-950/30">
+                  <Building2 className="h-5 w-5 stroke-[2.2]" />
+                </div>
+                <div className="flex flex-col min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-[0.925rem] font-semibold text-white group-hover:text-cyan-300 transition-colors leading-snug">
+                      Terceirização Financeira Empresarial
+                    </span>
+                  </div>
+                  <div className="mt-0.5">
+                    <span className="inline-block rounded bg-blue-500/10 px-1.5 py-0.5 text-[0.625rem] font-medium text-cyan-300 border border-blue-500/20">
+                      BPO Financeiro PJ
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 transition-all duration-300 group-hover:bg-emerald-500 group-hover:text-stone-950 group-hover:scale-105"
+                title="Conversar no WhatsApp"
+              >
+                <MessageCircle className="h-4 w-4 stroke-[2.2]" />
+              </div>
+            </div>
+
+            <p className="text-[0.80rem] text-stone-300/85 leading-relaxed">
+              Seu financeiro organizado para você focar no crescimento da sua empresa.
+            </p>
+
+            <div className="flex items-center gap-1 text-[0.72rem] font-medium text-emerald-400 group-hover:text-emerald-300 transition-colors pt-0.5">
+              <span>Conversar sobre terceirização no WhatsApp</span>
+              <ArrowUpRight className="h-3 w-3 stroke-[2.2] transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </div>
+          </a>
+
+          {/* PRODUTO 3: CONSULTORIA PARA PEQUENAS EMPRESAS */}
+          <a
+            href={consultoriaPequenasEmpresasUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative flex flex-col gap-2.5 rounded-2xl border border-white/[0.08] bg-white/[0.04] p-4 backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-500/40 hover:bg-white/[0.07] hover:shadow-[0_4px_24px_rgba(16,185,129,0.12)] active:translate-y-0"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0 flex-1">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white shadow-sm shadow-emerald-950/30">
+                  <LineChart className="h-5 w-5 stroke-[2.2]" />
+                </div>
+                <div className="flex flex-col min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-[0.925rem] font-semibold text-white group-hover:text-emerald-300 transition-colors leading-snug">
+                      Consultoria para Pequenas Empresas
+                    </span>
+                  </div>
+                  <div className="mt-0.5">
+                    <span className="inline-block rounded bg-emerald-500/10 px-1.5 py-0.5 text-[0.625rem] font-medium text-emerald-300 border border-emerald-500/20">
+                      Gestão Prática PJ
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 transition-all duration-300 group-hover:bg-emerald-500 group-hover:text-stone-950 group-hover:scale-105"
+                title="Conversar no WhatsApp"
+              >
+                <MessageCircle className="h-4 w-4 stroke-[2.2]" />
+              </div>
+            </div>
+
+            <p className="text-[0.80rem] text-stone-300/85 leading-relaxed">
+              Orientação prática para organizar as finanças e melhorar a gestão do seu negócio.
+            </p>
+
+            <div className="flex items-center gap-1 text-[0.72rem] font-medium text-emerald-400 group-hover:text-emerald-300 transition-colors pt-0.5">
+              <span>Conversar sobre consultoria no WhatsApp</span>
+              <ArrowUpRight className="h-3 w-3 stroke-[2.2] transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </div>
+          </a>
+
+          {/* PRODUTO 4: RECUPERAÇÃO FINANCEIRA EMPRESARIAL */}
+          <a
+            href={recuperacaoFinanceiraUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative flex flex-col gap-2.5 rounded-2xl border border-white/[0.08] bg-white/[0.04] p-4 backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-purple-500/40 hover:bg-white/[0.07] hover:shadow-[0_4px_24px_rgba(168,85,247,0.12)] active:translate-y-0"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0 flex-1">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-purple-600 via-pink-600 to-rose-500 text-white shadow-sm shadow-purple-950/30">
+                  <Scale className="h-5 w-5 stroke-[2.2]" />
+                </div>
+                <div className="flex flex-col min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-[0.925rem] font-semibold text-white group-hover:text-purple-300 transition-colors leading-snug">
+                      Recuperação Financeira Empresarial
+                    </span>
+                  </div>
+                  <div className="mt-0.5">
+                    <span className="inline-block rounded bg-purple-500/10 px-1.5 py-0.5 text-[0.625rem] font-medium text-purple-300 border border-purple-500/20">
+                      Suporte Jurídico &amp; Adm
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 transition-all duration-300 group-hover:bg-emerald-500 group-hover:text-stone-950 group-hover:scale-105"
+                title="Conversar no WhatsApp"
+              >
+                <MessageCircle className="h-4 w-4 stroke-[2.2]" />
+              </div>
+            </div>
+
+            <p className="text-[0.80rem] text-stone-300/85 leading-relaxed">
+              Reduza a inadimplência e recupere valores em aberto com soluções administrativas e suporte jurídico especializado. (Combos especiais para cada necessidade.)
+            </p>
+
+            <div className="flex items-center gap-1 text-[0.72rem] font-medium text-emerald-400 group-hover:text-emerald-300 transition-colors pt-0.5">
+              <span>Conversar sobre recuperação no WhatsApp</span>
+              <ArrowUpRight className="h-3 w-3 stroke-[2.2] transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </div>
+          </a>
+
+          {/* DIVISOR: CANAIS OFICIAIS */}
+          <div className="my-1.5 flex items-center gap-2 px-1">
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+            <span className="text-[0.675rem] font-bold uppercase tracking-wider text-stone-400">
+              Canais Oficiais &amp; Redes
+            </span>
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+          </div>
 
           {/* LINK 3: Instagram */}
           <a
