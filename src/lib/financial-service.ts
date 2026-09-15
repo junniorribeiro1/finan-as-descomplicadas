@@ -31,6 +31,8 @@ export interface GastoFixoItem {
   ativo: boolean;
   tipoConta?: "pessoal" | "empresa";
   observacao?: string | undefined;
+  cartaoId?: string | undefined;
+  compraCartaoId?: string | undefined;
   created_at?: string;
 }
 
@@ -44,6 +46,9 @@ export interface GastoVariavelItem {
   categoria: string;
   formaPagamento: string;
   tipoConta?: "pessoal" | "empresa";
+  cartaoId?: string | undefined;
+  parcelasTotal?: number | undefined;
+  compraCartaoId?: string | undefined;
   created_at?: string;
 }
 
@@ -83,6 +88,8 @@ export interface CompraCartaoItem {
   parcelaAtual?: number;
   parcelasTotal?: number;
   tipoConta?: "pessoal" | "empresa";
+  gastoOrigemId?: string | undefined;
+  origemTipo?: "gasto_variavel" | "gasto_fixo" | undefined;
   created_at?: string;
 }
 
@@ -196,14 +203,22 @@ export function calcularResumoFinanceiro(
   
   // Gastos fixos ativos (recorrentes mensalmente)
   const gastosFixosAtivos = fixosBase.filter((g) => g.ativo);
-  const gastosFixosTotal = gastosFixosAtivos.reduce((acc, curr) => acc + (Number(curr.valor) || 0), 0);
+  // Se for pago no cartão de crédito E já estiver vinculado à compras_cartao, evita duplicidade com a fatura
+  const gastosFixosSemCartao = gastosFixosAtivos.filter(
+    (g) => !(g.formaPagamento === "Cartão de Crédito" && g.compraCartaoId)
+  );
+  const gastosFixosTotal = gastosFixosSemCartao.reduce((acc, curr) => acc + (Number(curr.valor) || 0), 0);
 
   // Gastos variáveis do mês/ano ativo
   const varMes = varConta.filter((v) => {
     const { ano, mesIndex } = extrairAnoMes(v.data);
     return ano === anoAlvo && mesIndex === mesAlvo;
   });
-  const gastosVariaveisTotal = varMes.reduce((acc, curr) => acc + (Number(curr.valor) || 0), 0);
+  // Se for pago no cartão de crédito, o impacto mensal da fatura entra em faturaCartaoTotal
+  const gastosVariaveisSemCartao = varMes.filter(
+    (v) => !(v.formaPagamento === "Cartão de Crédito" && (v.compraCartaoId || v.cartaoId))
+  );
+  const gastosVariaveisTotal = gastosVariaveisSemCartao.reduce((acc, curr) => acc + (Number(curr.valor) || 0), 0);
   
   // Projeção das parcelas de cartão de crédito no mês/ano ativo
   const comprasCartaoProjetadas: CompraProjetada[] = [];
@@ -221,10 +236,10 @@ export function calcularResumoFinanceiro(
   // Total de gastos consolidados do período selecionado
   const totalGastos = gastosFixosTotal + gastosVariaveisTotal + faturaCartaoTotal;
 
-  const fixosPagos = gastosFixosAtivos
+  const fixosPagos = gastosFixosSemCartao
     .filter((g) => g.status === "Pago")
     .reduce((acc, curr) => acc + (Number(curr.valor) || 0), 0);
-  const variaveisPagos = varMes
+  const variaveisPagos = gastosVariaveisSemCartao
     .filter((v) => v.status === "Pago")
     .reduce((acc, curr) => acc + (Number(curr.valor) || 0), 0);
   const totalPago = fixosPagos + variaveisPagos;
@@ -249,11 +264,11 @@ export function calcularResumoFinanceiro(
 
   // Gastos por categoria no mês/ano ativo
   const catMap: Record<string, number> = {};
-  gastosFixosAtivos.forEach((g) => {
+  gastosFixosSemCartao.forEach((g) => {
     const c = g.categoria || "Outros";
     catMap[c] = (catMap[c] || 0) + (Number(g.valor) || 0);
   });
-  varMes.forEach((g) => {
+  gastosVariaveisSemCartao.forEach((g) => {
     const c = g.categoria || "Outros";
     catMap[c] = (catMap[c] || 0) + (Number(g.valor) || 0);
   });
@@ -458,6 +473,8 @@ export async function carregarDadosFinanceirosUsuario(userId: string) {
       ativo: f.ativo ?? true,
       tipoConta: (f.tipo_conta as "pessoal" | "empresa") || "pessoal",
       observacao: f.observacao,
+      cartaoId: f.cartao_id || undefined,
+      compraCartaoId: f.compra_cartao_id || undefined,
       created_at: f.created_at,
     }));
 
@@ -471,6 +488,9 @@ export async function carregarDadosFinanceirosUsuario(userId: string) {
       categoria: v.categoria || "Outros",
       formaPagamento: v.forma_pagamento || "PIX",
       tipoConta: (v.tipo_conta as "pessoal" | "empresa") || "pessoal",
+      cartaoId: v.cartao_id || undefined,
+      compraCartaoId: v.compra_cartao_id || undefined,
+      parcelasTotal: v.parcelas_total || 1,
       created_at: v.created_at,
     }));
 
@@ -538,6 +558,8 @@ export async function carregarDadosFinanceirosUsuario(userId: string) {
       parcelaAtual: cp.parcela_atual || 1,
       parcelasTotal: cp.parcelas_total || 1,
       tipoConta: (cp.tipo_conta as "pessoal" | "empresa") || "pessoal",
+      gastoOrigemId: cp.gasto_origem_id || undefined,
+      origemTipo: cp.origem_tipo || undefined,
       created_at: cp.created_at,
     }));
 

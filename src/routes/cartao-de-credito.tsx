@@ -65,6 +65,8 @@ interface CompraCartaoItem {
   parcelaAtual?: number | undefined;
   parcelasTotal?: number | undefined;
   tipoConta?: "pessoal" | "empresa";
+  gastoOrigemId?: string | undefined;
+  origemTipo?: "gasto_variavel" | "gasto_fixo" | undefined;
 }
 
 const formatarDataParaExibicao = (dataStr?: string | null) => {
@@ -227,6 +229,8 @@ function CartaoCredito() {
             parcelaAtual: cp.parcela_atual || 1,
             parcelasTotal: cp.parcelas_total || 1,
             tipoConta: (cp.tipo_conta as "pessoal" | "empresa") || "pessoal",
+            gastoOrigemId: cp.gasto_origem_id || undefined,
+            origemTipo: cp.origem_tipo || undefined,
           }));
           setCompras(cList);
         }
@@ -238,6 +242,9 @@ function CartaoCredito() {
     };
 
     carregar();
+    const syncHandler = () => carregar();
+    window.addEventListener("organizai_finance_sync", syncHandler);
+    return () => window.removeEventListener("organizai_finance_sync", syncHandler);
   }, [user?.id]);
 
   // Cartões filtrados por Pessoal / Empresa
@@ -669,9 +676,27 @@ function CartaoCredito() {
       prev.map((c) => (c.id === cartaoAtivo.id ? { ...c, faturaAtual: novaFatura } : c))
     );
 
+    const compraAlvo = compras.find((cp) => cp.id === compraId);
     if (user?.id && !compraId.startsWith("temp-")) {
       try {
         await supabase.from("compras_cartao").delete().eq("id", compraId).eq("user_id", user.id);
+
+        if (compraAlvo?.gastoOrigemId) {
+          if (compraAlvo.origemTipo === "gasto_variavel") {
+            await supabase
+              .from("gastos_variaveis")
+              .delete()
+              .eq("id", compraAlvo.gastoOrigemId)
+              .eq("user_id", user.id);
+          } else if (compraAlvo.origemTipo === "gasto_fixo") {
+            await supabase
+              .from("gastos_fixos")
+              .update({ compra_cartao_id: null, cartao_id: null, forma_pagamento: "Boleto" })
+              .eq("id", compraAlvo.gastoOrigemId)
+              .eq("user_id", user.id);
+          }
+        }
+
         if (!cartaoAtivo.id.startsWith("temp-")) {
           await supabase
             .from("cartoes_credito")
@@ -1042,7 +1067,19 @@ function CartaoCredito() {
                           className="flex items-center justify-between py-3.5 hover:bg-white/[0.02] px-2 rounded-xl transition-colors"
                         >
                           <div className="min-w-0">
-                            <p className="text-xs font-bold text-white truncate">{compra.descricao}</p>
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <p className="text-xs font-bold text-white truncate">{compra.descricao}</p>
+                              {compra.origemTipo === "gasto_variavel" && (
+                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-semibold bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                                  Gasto Variável
+                                </span>
+                              )}
+                              {compra.origemTipo === "gasto_fixo" && (
+                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                                  Gasto Fixo
+                                </span>
+                              )}
+                            </div>
                             <p className="text-[11px] text-stone-400 mt-0.5">
                               {compra.categoria} • {compra.dataParcela}
                               {compra.parcelasTotal > 1 && (

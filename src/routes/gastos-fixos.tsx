@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect, useMemo } from "react";
 import { AppShell } from "@/components/app/AppShell";
 import { cn } from "@/lib/utils";
@@ -17,6 +17,8 @@ import {
   CheckCircle2,
   Clock,
   Power,
+  CreditCard as CreditCardIcon,
+  AlertCircle,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/lib/supabase";
@@ -24,6 +26,7 @@ import {
   notificarAtualizacaoFinanceira,
   carregarCategoriasUsuario,
   type GastoFixoItem,
+  type CartaoItem,
 } from "@/lib/financial-service";
 import { toast } from "sonner";
 
@@ -108,6 +111,7 @@ function GastosFixos() {
   const [statusGasto, setStatusGasto] = useState<"Pendente" | "Pago">("Pendente");
   const [categoria, setCategoria] = useState("Moradia");
   const [formaPagamento, setFormaPagamento] = useState("Boleto");
+  const [cartaoId, setCartaoId] = useState("");
   const [ativo, setAtivo] = useState(true);
   const [observacao, setObservacao] = useState("");
 
@@ -119,8 +123,12 @@ function GastosFixos() {
   const [editStatus, setEditStatus] = useState<"Pendente" | "Pago">("Pendente");
   const [editCategoria, setEditCategoria] = useState("");
   const [editFormaPagamento, setEditFormaPagamento] = useState("Boleto");
+  const [editCartaoId, setEditCartaoId] = useState("");
   const [editAtivo, setEditAtivo] = useState(true);
   const [editObservacao, setEditObservacao] = useState("");
+
+  // Cartões de crédito do usuário
+  const [cartoes, setCartoes] = useState<CartaoItem[]>([]);
 
   // Filtros na lista
   const [filtroStatus, setFiltroStatus] = useState<"todos" | "pendentes" | "pagos">("todos");
@@ -174,6 +182,67 @@ function GastosFixos() {
     return () => window.removeEventListener("organizai_categorias_sync", handler);
   }, [user?.id]);
 
+  // Carregar cartões de crédito do usuário no Supabase
+  const recarregarCartoes = async () => {
+    if (!user?.id) return;
+    try {
+      const { data: cartData, error } = await supabase
+        .from("cartoes_credito")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
+      if (!error && cartData) {
+        setCartoes(
+          cartData.map((c: any) => ({
+            id: c.id,
+            user_id: c.user_id,
+            nome: c.nome,
+            ultimosDigitos: c.ultimos_digitos || "0000",
+            limiteTotal: Number(c.limite_total) || 0,
+            faturaAtual: Number(c.fatura_atual) || 0,
+            diaFechamento: Number(c.dia_fechamento) || 3,
+            diaVencimento: Number(c.dia_vencimento) || 10,
+            cor: c.cor || "black",
+            tipoConta: (c.tipo_conta as "pessoal" | "empresa") || "pessoal",
+          }))
+        );
+      }
+    } catch (err) {
+      console.error("Erro ao carregar cartões em gastos-fixos:", err);
+    }
+  };
+
+  useEffect(() => {
+    recarregarCartoes();
+    const handler = () => recarregarCartoes();
+    window.addEventListener("organizai_finance_sync", handler);
+    return () => window.removeEventListener("organizai_finance_sync", handler);
+  }, [user?.id]);
+
+  // Cartões disponíveis para o tipo de conta ativo (Pessoal / Empresa)
+  const cartoesDisponiveis = useMemo(() => {
+    return cartoes.filter((c) => (c.tipoConta || "pessoal") === tipoConta);
+  }, [cartoes, tipoConta]);
+
+  // Auto-seleciona o primeiro cartão disponível quando mudar
+  useEffect(() => {
+    if (cartoesDisponiveis.length > 0) {
+      if (!cartaoId || !cartoesDisponiveis.some((c) => c.id === cartaoId)) {
+        setCartaoId(cartoesDisponiveis[0].id);
+      }
+    } else {
+      setCartaoId("");
+    }
+  }, [cartoesDisponiveis, cartaoId]);
+
+  // Mapa rápido de cartões por id
+  const cartaoMap = useMemo(() => {
+    return cartoes.reduce((acc, c) => {
+      acc[c.id] = c;
+      return acc;
+    }, {} as Record<string, CartaoItem>);
+  }, [cartoes]);
+
   // Ajusta categoria padrão ao trocar de conta
   useEffect(() => {
     if (tipoConta === "pessoal") {
@@ -209,6 +278,8 @@ function GastosFixos() {
               ativo: f.ativo ?? true,
               tipoConta: (f.tipo_conta as "pessoal" | "empresa") || "pessoal",
               observacao: f.observacao,
+              cartaoId: f.cartao_id || undefined,
+              compraCartaoId: f.compra_cartao_id || undefined,
               created_at: f.created_at,
             }))
           );
@@ -269,6 +340,17 @@ function GastosFixos() {
       return;
     }
 
+    if (formaPagamento === "Cartão de Crédito") {
+      if (cartoesDisponiveis.length === 0) {
+        toast.error("Cadastre um cartão de crédito na aba Cartões de Crédito antes de vincular.");
+        return;
+      }
+      if (!cartaoId) {
+        toast.error("Selecione qual cartão foi utilizado para este gasto fixo.");
+        return;
+      }
+    }
+
     const diaParsed = Math.min(31, Math.max(1, parseInt(diaVenc) || 5));
     const novoGastoTemp: GastoFixoItem = {
       id: "temp-" + Date.now(),
@@ -282,6 +364,7 @@ function GastosFixos() {
       ativo,
       tipoConta,
       observacao: observacao.trim() || undefined,
+      cartaoId: formaPagamento === "Cartão de Crédito" ? cartaoId : undefined,
     };
 
     setGastos((prev) => [...prev, novoGastoTemp].sort((a, b) => a.diaVenc - b.diaVenc));
@@ -291,6 +374,44 @@ function GastosFixos() {
 
     try {
       if (user?.id) {
+        let compraCartaoIdGerada: string | null = null;
+
+        // Se for cartão de crédito, insere em compras_cartao
+        if (formaPagamento === "Cartão de Crédito" && cartaoId) {
+          const hojeISO = new Date().toISOString().split("T")[0];
+          const { data: compraInserida, error: errCompra } = await supabase
+            .from("compras_cartao")
+            .insert({
+              user_id: user.id,
+              cartao_id: cartaoId,
+              descricao: novoGastoTemp.nome,
+              categoria: novoGastoTemp.categoria,
+              valor: novoGastoTemp.valor,
+              data: hojeISO,
+              parcela_atual: 1,
+              parcelas_total: 1,
+              tipo_conta: tipoConta,
+              origem_tipo: "gasto_fixo",
+            })
+            .select()
+            .single();
+
+          if (!errCompra && compraInserida) {
+            compraCartaoIdGerada = compraInserida.id;
+
+            // Atualiza a fatura do cartão
+            const cartaoAlvo = cartoes.find((c) => c.id === cartaoId);
+            if (cartaoAlvo && !cartaoAlvo.id.startsWith("temp-")) {
+              const novaFatura = Number(cartaoAlvo.faturaAtual) + novoGastoTemp.valor;
+              await supabase
+                .from("cartoes_credito")
+                .update({ fatura_atual: novaFatura })
+                .eq("id", cartaoId)
+                .eq("user_id", user.id);
+            }
+          }
+        }
+
         const { data: inserted, error } = await supabase
           .from("gastos_fixos")
           .insert({
@@ -304,11 +425,20 @@ function GastosFixos() {
             ativo: novoGastoTemp.ativo,
             tipo_conta: tipoConta,
             observacao: novoGastoTemp.observacao,
+            cartao_id: formaPagamento === "Cartão de Crédito" ? cartaoId : null,
+            compra_cartao_id: compraCartaoIdGerada,
           })
           .select()
           .single();
 
         if (!error && inserted) {
+          if (compraCartaoIdGerada) {
+            await supabase
+              .from("compras_cartao")
+              .update({ gasto_origem_id: inserted.id })
+              .eq("id", compraCartaoIdGerada);
+          }
+
           setGastos((prev) =>
             prev.map((item) =>
               item.id === novoGastoTemp.id
@@ -324,6 +454,8 @@ function GastosFixos() {
                     ativo: inserted.ativo ?? true,
                     tipoConta: (inserted.tipo_conta as "pessoal" | "empresa") || "pessoal",
                     observacao: inserted.observacao,
+                    cartaoId: inserted.cartao_id || undefined,
+                    compraCartaoId: inserted.compra_cartao_id || undefined,
                     created_at: inserted.created_at,
                   }
                 : item
@@ -332,9 +464,13 @@ function GastosFixos() {
         }
       }
       notificarAtualizacaoFinanceira();
-      toast.success(
-        `Gasto fixo (${tipoConta === "empresa" ? "Empresa" : "Pessoal"}) salvo com sucesso!`
-      );
+      if (formaPagamento === "Cartão de Crédito") {
+        toast.success("Gasto fixo salvo e vinculado à fatura do cartão com sucesso!");
+      } else {
+        toast.success(
+          `Gasto fixo (${tipoConta === "empresa" ? "Empresa" : "Pessoal"}) salvo com sucesso!`
+        );
+      }
     } catch {
       toast.error("Erro ao salvar no banco de dados.");
     }
@@ -399,6 +535,7 @@ function GastosFixos() {
     setEditStatus(g.status);
     setEditCategoria(g.categoria);
     setEditFormaPagamento(g.formaPagamento);
+    setEditCartaoId(g.cartaoId || (cartoesDisponiveis[0]?.id || ""));
     setEditAtivo(g.ativo);
     setEditObservacao(g.observacao || "");
   };
@@ -418,6 +555,17 @@ function GastosFixos() {
       return;
     }
 
+    if (editFormaPagamento === "Cartão de Crédito") {
+      if (cartoesDisponiveis.length === 0) {
+        toast.error("Cadastre um cartão de crédito primeiro.");
+        return;
+      }
+      if (!editCartaoId) {
+        toast.error("Selecione qual cartão foi utilizado.");
+        return;
+      }
+    }
+
     const diaParsed = Math.min(31, Math.max(1, parseInt(editDiaVenc) || 5));
     const atualizado: GastoFixoItem = {
       ...gastoEditando,
@@ -427,6 +575,7 @@ function GastosFixos() {
       status: editStatus,
       categoria: editCategoria,
       formaPagamento: editFormaPagamento,
+      cartaoId: editFormaPagamento === "Cartão de Crédito" ? editCartaoId : undefined,
       ativo: editAtivo,
       observacao: editObservacao.trim() || undefined,
     };
@@ -440,6 +589,53 @@ function GastosFixos() {
 
     try {
       if (user?.id && !gastoEditando.id.startsWith("temp-")) {
+        let compraIdFinal = gastoEditando.compraCartaoId;
+
+        if (editFormaPagamento === "Cartão de Crédito" && editCartaoId) {
+          if (compraIdFinal) {
+            await supabase
+              .from("compras_cartao")
+              .update({
+                cartao_id: editCartaoId,
+                descricao: atualizado.nome,
+                categoria: atualizado.categoria,
+                valor: atualizado.valor,
+              })
+              .eq("id", compraIdFinal)
+              .eq("user_id", user.id);
+          } else {
+            const hojeISO = new Date().toISOString().split("T")[0];
+            const { data: novaComp } = await supabase
+              .from("compras_cartao")
+              .insert({
+                user_id: user.id,
+                cartao_id: editCartaoId,
+                descricao: atualizado.nome,
+                categoria: atualizado.categoria,
+                valor: atualizado.valor,
+                data: hojeISO,
+                parcela_atual: 1,
+                parcelas_total: 1,
+                tipo_conta: tipoConta,
+                gasto_origem_id: gastoEditando.id,
+                origem_tipo: "gasto_fixo",
+              })
+              .select()
+              .single();
+
+            if (novaComp) {
+              compraIdFinal = novaComp.id;
+            }
+          }
+        } else if (compraIdFinal) {
+          await supabase
+            .from("compras_cartao")
+            .delete()
+            .eq("id", compraIdFinal)
+            .eq("user_id", user.id);
+          compraIdFinal = undefined;
+        }
+
         await supabase
           .from("gastos_fixos")
           .update({
@@ -451,9 +647,29 @@ function GastosFixos() {
             forma_pagamento: atualizado.formaPagamento,
             ativo: atualizado.ativo,
             observacao: atualizado.observacao,
+            cartao_id: editFormaPagamento === "Cartão de Crédito" ? editCartaoId : null,
+            compra_cartao_id: compraIdFinal || null,
           })
           .eq("id", gastoEditando.id)
           .eq("user_id", user.id);
+
+        // Recalcula fatura do cartão
+        if (editCartaoId || gastoEditando.cartaoId) {
+          const idsParaRecalcular = new Set([editCartaoId, gastoEditando.cartaoId].filter(Boolean));
+          for (const cId of idsParaRecalcular) {
+            const { data: compRest } = await supabase
+              .from("compras_cartao")
+              .select("valor")
+              .eq("cartao_id", cId)
+              .eq("user_id", user.id);
+            const soma = (compRest || []).reduce((acc, c) => acc + (Number(c.valor) || 0), 0);
+            await supabase
+              .from("cartoes_credito")
+              .update({ fatura_atual: soma })
+              .eq("id", cId)
+              .eq("user_id", user.id);
+          }
+        }
       }
       notificarAtualizacaoFinanceira();
       toast.success("Gasto fixo atualizado com sucesso!");
@@ -464,10 +680,39 @@ function GastosFixos() {
 
   // Excluir Gasto
   const removerGasto = async (id: string) => {
+    const itemAlvo = gastos.find((g) => g.id === id);
     setGastos((prev) => prev.filter((g) => g.id !== id));
     try {
       if (user?.id && !id.startsWith("temp-")) {
         await supabase.from("gastos_fixos").delete().eq("id", id).eq("user_id", user.id);
+
+        if (itemAlvo?.compraCartaoId) {
+          await supabase
+            .from("compras_cartao")
+            .delete()
+            .eq("id", itemAlvo.compraCartaoId)
+            .eq("user_id", user.id);
+        } else {
+          await supabase
+            .from("compras_cartao")
+            .delete()
+            .eq("gasto_origem_id", id)
+            .eq("user_id", user.id);
+        }
+
+        if (itemAlvo?.cartaoId) {
+          const { data: compRest } = await supabase
+            .from("compras_cartao")
+            .select("valor")
+            .eq("cartao_id", itemAlvo.cartaoId)
+            .eq("user_id", user.id);
+          const soma = (compRest || []).reduce((acc, c) => acc + (Number(c.valor) || 0), 0);
+          await supabase
+            .from("cartoes_credito")
+            .update({ fatura_atual: soma })
+            .eq("id", itemAlvo.cartaoId)
+            .eq("user_id", user.id);
+        }
       }
       notificarAtualizacaoFinanceira();
       toast.info("Gasto fixo removido.");
@@ -564,6 +809,29 @@ function GastosFixos() {
                   </select>
                 </div>
               </div>
+
+              {editFormaPagamento === "Cartão de Crédito" && (
+                <div className="p-3 rounded-2xl bg-[#1c1c1c] border border-orange-500/20">
+                  <label className="text-xs font-medium text-stone-300 mb-1 block">
+                    Qual cartão? <span className="text-orange-400">*</span>
+                  </label>
+                  {cartoesDisponiveis.length === 0 ? (
+                    <p className="text-[11px] text-amber-300">Nenhum cartão cadastrado neste perfil</p>
+                  ) : (
+                    <select
+                      value={editCartaoId}
+                      onChange={(e) => setEditCartaoId(e.target.value)}
+                      className="w-full rounded-xl border border-white/[0.08] bg-[#242424] px-3 py-2 text-xs text-white outline-none focus:border-orange-500/60"
+                    >
+                      {cartoesDisponiveis.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.nome} {c.ultimosDigitos ? `•••• ${c.ultimosDigitos}` : ""}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                </div>
+              )}
 
               <div>
                 <label className="text-xs font-medium text-stone-300 mb-1 block">Categoria</label>
@@ -858,6 +1126,56 @@ function GastosFixos() {
                 </div>
               </div>
 
+              {/* Seleção de Cartão de Crédito */}
+              {formaPagamento === "Cartão de Crédito" && (
+                <div className="space-y-2 p-3.5 rounded-2xl bg-[#1a1a1a] border border-orange-500/20 animate-in fade-in duration-200">
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-xs font-medium text-stone-300 block">
+                      Qual cartão? <span className="text-orange-400">*</span>
+                    </label>
+                    <Link
+                      to="/cartao-de-credito"
+                      className="text-[10px] text-orange-400 hover:text-orange-300 transition-colors"
+                    >
+                      Gerenciar cartões →
+                    </Link>
+                  </div>
+                  {cartoesDisponiveis.length === 0 ? (
+                    <div className="rounded-xl border border-amber-500/20 bg-amber-500/10 p-2.5 text-xs text-amber-300 flex items-start gap-2">
+                      <AlertCircle className="h-4 w-4 shrink-0 mt-0.5 text-amber-400" />
+                      <div>
+                        <span className="font-semibold block">Nenhum cartão cadastrado</span>
+                        <span className="text-[11px] text-amber-200/80">
+                          Cadastre um cartão em{" "}
+                          <Link
+                            to="/cartao-de-credito"
+                            className="underline font-bold text-amber-200 hover:text-white"
+                          >
+                            Cartões de Crédito
+                          </Link>{" "}
+                          para vincular gastos fixos.
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="relative">
+                      <select
+                        value={cartaoId}
+                        onChange={(e) => setCartaoId(e.target.value)}
+                        className="w-full appearance-none rounded-xl border border-white/[0.08] bg-[#222222] px-3.5 py-2.5 pr-8 text-xs text-white outline-none cursor-pointer focus:border-orange-500/60"
+                      >
+                        {cartoesDisponiveis.map((c) => (
+                          <option key={c.id} value={c.id} className="bg-[#1e1e1e]">
+                            {c.nome} {c.ultimosDigitos ? `•••• ${c.ultimosDigitos}` : ""}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-stone-400" />
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Toggle Ativo */}
               <div className="flex items-center justify-between py-1">
                 <div>
@@ -1027,9 +1345,27 @@ function GastosFixos() {
                             </span>
                           )}
                         </div>
-                        <p className="text-[11px] text-stone-400 mt-0.5 truncate">
-                          Vence dia {g.diaVenc} de {periodo.mesTexto} • {g.categoria} • {g.formaPagamento}
-                          {g.observacao && ` — ${g.observacao}`}
+                        <p className="text-[11px] text-stone-400 mt-0.5 truncate flex items-center flex-wrap gap-1.5">
+                          <span>Vence dia {g.diaVenc} de {periodo.mesTexto}</span>
+                          <span>•</span>
+                          <span>{g.categoria}</span>
+                          <span>•</span>
+                          {g.formaPagamento === "Cartão de Crédito" ? (
+                            <span className="inline-flex items-center gap-1 text-orange-300 font-medium bg-orange-500/10 px-1.5 py-0.5 rounded-md border border-orange-500/20 text-[10px]">
+                              <CreditCardIcon className="h-3 w-3 text-[#F97316]" />
+                              {cartaoMap[g.cartaoId || ""]
+                                ? `${cartaoMap[g.cartaoId || ""].nome}${cartaoMap[g.cartaoId || ""].ultimosDigitos ? ` •••• ${cartaoMap[g.cartaoId || ""].ultimosDigitos}` : ""}`
+                                : "Cartão"}
+                            </span>
+                          ) : (
+                            <span>{g.formaPagamento}</span>
+                          )}
+                          {g.observacao && (
+                            <>
+                              <span>—</span>
+                              <span>{g.observacao}</span>
+                            </>
+                          )}
                         </p>
                       </div>
                     </div>

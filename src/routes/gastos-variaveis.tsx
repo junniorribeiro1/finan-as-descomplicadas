@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect, useMemo } from "react";
 import { AppShell } from "@/components/app/AppShell";
 import { cn } from "@/lib/utils";
@@ -16,6 +16,8 @@ import {
   Clock,
   Building2,
   User,
+  CreditCard as CreditCardIcon,
+  AlertCircle,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/lib/supabase";
@@ -23,6 +25,7 @@ import {
   notificarAtualizacaoFinanceira,
   carregarCategoriasUsuario,
   type GastoVariavelItem,
+  type CartaoItem,
 } from "@/lib/financial-service";
 import { toast } from "sonner";
 
@@ -147,6 +150,8 @@ function GastosVariaveis() {
   const [statusGasto, setStatusGasto] = useState<"Pago" | "Pendente">("Pago");
   const [categoria, setCategoria] = useState("Alimentação");
   const [formaPagamento, setFormaPagamento] = useState("PIX");
+  const [cartaoId, setCartaoId] = useState("");
+  const [parcelasTotal, setParcelasTotal] = useState("1");
 
   // Modal de EDIÇÃO
   const [gastoEditando, setGastoEditando] = useState<GastoVariavelItem | null>(null);
@@ -156,6 +161,11 @@ function GastosVariaveis() {
   const [editStatus, setEditStatus] = useState<"Pago" | "Pendente">("Pago");
   const [editCategoria, setEditCategoria] = useState("");
   const [editFormaPagamento, setEditFormaPagamento] = useState("PIX");
+  const [editCartaoId, setEditCartaoId] = useState("");
+  const [editParcelasTotal, setEditParcelasTotal] = useState("1");
+
+  // Cartões de crédito do usuário
+  const [cartoes, setCartoes] = useState<CartaoItem[]>([]);
 
   // Filtros na lista
   const [filtroStatus, setFiltroStatus] = useState<"todos" | "pendentes" | "pagos">("todos");
@@ -209,6 +219,67 @@ function GastosVariaveis() {
     return () => window.removeEventListener("organizai_categorias_sync", handler);
   }, [user?.id]);
 
+  // Carregar cartões de crédito do usuário no Supabase
+  const recarregarCartoes = async () => {
+    if (!user?.id) return;
+    try {
+      const { data: cartData, error } = await supabase
+        .from("cartoes_credito")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
+      if (!error && cartData) {
+        setCartoes(
+          cartData.map((c: any) => ({
+            id: c.id,
+            user_id: c.user_id,
+            nome: c.nome,
+            ultimosDigitos: c.ultimos_digitos || "0000",
+            limiteTotal: Number(c.limite_total) || 0,
+            faturaAtual: Number(c.fatura_atual) || 0,
+            diaFechamento: Number(c.dia_fechamento) || 3,
+            diaVencimento: Number(c.dia_vencimento) || 10,
+            cor: c.cor || "black",
+            tipoConta: (c.tipo_conta as "pessoal" | "empresa") || "pessoal",
+          }))
+        );
+      }
+    } catch (err) {
+      console.error("Erro ao carregar cartões em gastos-variaveis:", err);
+    }
+  };
+
+  useEffect(() => {
+    recarregarCartoes();
+    const handler = () => recarregarCartoes();
+    window.addEventListener("organizai_finance_sync", handler);
+    return () => window.removeEventListener("organizai_finance_sync", handler);
+  }, [user?.id]);
+
+  // Cartões disponíveis para o tipo de conta ativo (Pessoal / Empresa)
+  const cartoesDisponiveis = useMemo(() => {
+    return cartoes.filter((c) => (c.tipoConta || "pessoal") === tipoConta);
+  }, [cartoes, tipoConta]);
+
+  // Auto-seleciona o primeiro cartão disponível quando mudar ou quando não houver um selecionado
+  useEffect(() => {
+    if (cartoesDisponiveis.length > 0) {
+      if (!cartaoId || !cartoesDisponiveis.some((c) => c.id === cartaoId)) {
+        setCartaoId(cartoesDisponiveis[0].id);
+      }
+    } else {
+      setCartaoId("");
+    }
+  }, [cartoesDisponiveis, cartaoId]);
+
+  // Mapa rápido de cartões por id
+  const cartaoMap = useMemo(() => {
+    return cartoes.reduce((acc, c) => {
+      acc[c.id] = c;
+      return acc;
+    }, {} as Record<string, CartaoItem>);
+  }, [cartoes]);
+
   // Ajusta categoria padrão ao trocar de conta
   useEffect(() => {
     if (tipoConta === "pessoal") {
@@ -242,6 +313,9 @@ function GastosVariaveis() {
               categoria: v.categoria || (v.tipo_conta === "empresa" ? "Serviços" : "Outros"),
               formaPagamento: v.forma_pagamento || "PIX",
               tipoConta: (v.tipo_conta as "pessoal" | "empresa") || "pessoal",
+              cartaoId: v.cartao_id || undefined,
+              parcelasTotal: v.parcelas_total || 1,
+              compraCartaoId: v.compra_cartao_id || undefined,
               created_at: v.created_at,
             }))
           );
@@ -322,7 +396,22 @@ function GastosVariaveis() {
       return;
     }
 
+    if (formaPagamento === "Cartão de Crédito") {
+      if (cartoesDisponiveis.length === 0) {
+        toast.error("Cadastre um cartão de crédito na aba Cartões de Crédito antes de vincular.");
+        return;
+      }
+      if (!cartaoId) {
+        toast.error("Selecione qual cartão foi utilizado nesta compra.");
+        return;
+      }
+    }
+
+    const parcelasNum =
+      formaPagamento === "Cartão de Crédito" ? Math.max(1, parseInt(parcelasTotal) || 1) : 1;
+    const valorParcela = Number((parsedValor / parcelasNum).toFixed(2));
     const dataFinal = parseDataParaISO(data.trim() || hoje);
+
     const novoGastoTemp: GastoVariavelItem = {
       id: "temp-" + Date.now(),
       user_id: user?.id,
@@ -333,14 +422,55 @@ function GastosVariaveis() {
       categoria,
       formaPagamento,
       tipoConta,
+      cartaoId: formaPagamento === "Cartão de Crédito" ? cartaoId : undefined,
+      parcelasTotal: parcelasNum,
     };
 
     setGastos((prev) => [novoGastoTemp, ...prev]);
     setDescricao("");
     setValor("");
+    setParcelasTotal("1");
 
     try {
       if (user?.id) {
+        let compraCartaoIdGerada: string | null = null;
+
+        // Se for cartão de crédito, insere primeiro em compras_cartao
+        if (formaPagamento === "Cartão de Crédito" && cartaoId) {
+          const { data: compraInserida, error: errCompra } = await supabase
+            .from("compras_cartao")
+            .insert({
+              user_id: user.id,
+              cartao_id: cartaoId,
+              descricao: novoGastoTemp.descricao,
+              categoria: novoGastoTemp.categoria,
+              valor: valorParcela,
+              data: novoGastoTemp.data,
+              parcela_atual: 1,
+              parcelas_total: parcelasNum,
+              tipo_conta: tipoConta,
+              origem_tipo: "gasto_variavel",
+            })
+            .select()
+            .single();
+
+          if (!errCompra && compraInserida) {
+            compraCartaoIdGerada = compraInserida.id;
+
+            // Atualiza a fatura do cartão
+            const cartaoAlvo = cartoes.find((c) => c.id === cartaoId);
+            if (cartaoAlvo && !cartaoAlvo.id.startsWith("temp-")) {
+              const novaFatura = Number(cartaoAlvo.faturaAtual) + valorParcela;
+              await supabase
+                .from("cartoes_credito")
+                .update({ fatura_atual: novaFatura })
+                .eq("id", cartaoId)
+                .eq("user_id", user.id);
+            }
+          }
+        }
+
+        // Insere em gastos_variaveis
         const { data: inserted, error } = await supabase
           .from("gastos_variaveis")
           .insert({
@@ -352,11 +482,22 @@ function GastosVariaveis() {
             categoria: novoGastoTemp.categoria,
             forma_pagamento: novoGastoTemp.formaPagamento,
             tipo_conta: tipoConta,
+            cartao_id: formaPagamento === "Cartão de Crédito" ? cartaoId : null,
+            parcelas_total: parcelasNum,
+            compra_cartao_id: compraCartaoIdGerada,
           })
           .select()
           .single();
 
         if (!error && inserted) {
+          // Se gerou compra, vincula o gasto_origem_id
+          if (compraCartaoIdGerada) {
+            await supabase
+              .from("compras_cartao")
+              .update({ gasto_origem_id: inserted.id })
+              .eq("id", compraCartaoIdGerada);
+          }
+
           setGastos((prev) =>
             prev.map((item) =>
               item.id === novoGastoTemp.id
@@ -370,6 +511,9 @@ function GastosVariaveis() {
                     categoria: inserted.categoria,
                     formaPagamento: inserted.forma_pagamento,
                     tipoConta: (inserted.tipo_conta as "pessoal" | "empresa") || "pessoal",
+                    cartaoId: inserted.cartao_id || undefined,
+                    parcelasTotal: inserted.parcelas_total || 1,
+                    compraCartaoId: inserted.compra_cartao_id || undefined,
                     created_at: inserted.created_at,
                   }
                 : item
@@ -378,9 +522,17 @@ function GastosVariaveis() {
         }
       }
       notificarAtualizacaoFinanceira();
-      toast.success(
-        `Gasto variável (${tipoConta === "empresa" ? "Empresa" : "Pessoal"}) lançado com sucesso!`
-      );
+      if (formaPagamento === "Cartão de Crédito" && parcelasNum > 1) {
+        toast.success(
+          `Gasto lançado em ${parcelasNum}x de ${brl(valorParcela)} e vinculado ao cartão com sucesso!`
+        );
+      } else if (formaPagamento === "Cartão de Crédito") {
+        toast.success(`Gasto no cartão lançado e vinculado à fatura com sucesso!`);
+      } else {
+        toast.success(
+          `Gasto variável (${tipoConta === "empresa" ? "Empresa" : "Pessoal"}) lançado com sucesso!`
+        );
+      }
     } catch {
       toast.error("Erro ao salvar no banco de dados.");
     }
@@ -420,6 +572,8 @@ function GastosVariaveis() {
     setEditStatus(g.status);
     setEditCategoria(g.categoria);
     setEditFormaPagamento(g.formaPagamento);
+    setEditCartaoId(g.cartaoId || (cartoesDisponiveis[0]?.id || ""));
+    setEditParcelasTotal(String(g.parcelasTotal || 1));
   };
 
   // Salvar Edição
@@ -437,6 +591,21 @@ function GastosVariaveis() {
       return;
     }
 
+    if (editFormaPagamento === "Cartão de Crédito") {
+      if (cartoesDisponiveis.length === 0) {
+        toast.error("Cadastre um cartão de crédito primeiro.");
+        return;
+      }
+      if (!editCartaoId) {
+        toast.error("Selecione qual cartão foi utilizado.");
+        return;
+      }
+    }
+
+    const editParcelasNum =
+      editFormaPagamento === "Cartão de Crédito" ? Math.max(1, parseInt(editParcelasTotal) || 1) : 1;
+    const editValorParcela = Number((valNum / editParcelasNum).toFixed(2));
+
     const atualizado: GastoVariavelItem = {
       ...gastoEditando,
       descricao: editDescricao.trim(),
@@ -445,6 +614,8 @@ function GastosVariaveis() {
       status: editStatus,
       categoria: editCategoria,
       formaPagamento: editFormaPagamento,
+      cartaoId: editFormaPagamento === "Cartão de Crédito" ? editCartaoId : undefined,
+      parcelasTotal: editParcelasNum,
     };
 
     setGastos((prev) =>
@@ -454,6 +625,58 @@ function GastosVariaveis() {
 
     try {
       if (user?.id && !gastoEditando.id.startsWith("temp-")) {
+        let compraIdFinal = gastoEditando.compraCartaoId;
+
+        // Se a forma agora é cartão de crédito
+        if (editFormaPagamento === "Cartão de Crédito" && editCartaoId) {
+          if (compraIdFinal) {
+            // Atualiza registro existente em compras_cartao
+            await supabase
+              .from("compras_cartao")
+              .update({
+                cartao_id: editCartaoId,
+                descricao: atualizado.descricao,
+                categoria: atualizado.categoria,
+                valor: editValorParcela,
+                data: atualizado.data,
+                parcelas_total: editParcelasNum,
+              })
+              .eq("id", compraIdFinal)
+              .eq("user_id", user.id);
+          } else {
+            // Cria novo registro em compras_cartao
+            const { data: novaComp } = await supabase
+              .from("compras_cartao")
+              .insert({
+                user_id: user.id,
+                cartao_id: editCartaoId,
+                descricao: atualizado.descricao,
+                categoria: atualizado.categoria,
+                valor: editValorParcela,
+                data: atualizado.data,
+                parcela_atual: 1,
+                parcelas_total: editParcelasNum,
+                tipo_conta: tipoConta,
+                gasto_origem_id: gastoEditando.id,
+                origem_tipo: "gasto_variavel",
+              })
+              .select()
+              .single();
+
+            if (novaComp) {
+              compraIdFinal = novaComp.id;
+            }
+          }
+        } else if (compraIdFinal) {
+          // Mudou de Cartão de Crédito para outra forma (ex.: PIX) -> remove compra vinculada
+          await supabase
+            .from("compras_cartao")
+            .delete()
+            .eq("id", compraIdFinal)
+            .eq("user_id", user.id);
+          compraIdFinal = undefined;
+        }
+
         await supabase
           .from("gastos_variaveis")
           .update({
@@ -463,9 +686,30 @@ function GastosVariaveis() {
             status: atualizado.status,
             categoria: atualizado.categoria,
             forma_pagamento: atualizado.formaPagamento,
+            cartao_id: editFormaPagamento === "Cartão de Crédito" ? editCartaoId : null,
+            parcelas_total: editParcelasNum,
+            compra_cartao_id: compraIdFinal || null,
           })
           .eq("id", gastoEditando.id)
           .eq("user_id", user.id);
+
+        // Recalcula fatura do cartão
+        if (editCartaoId || gastoEditando.cartaoId) {
+          const idsParaRecalcular = new Set([editCartaoId, gastoEditando.cartaoId].filter(Boolean));
+          for (const cId of idsParaRecalcular) {
+            const { data: compRest } = await supabase
+              .from("compras_cartao")
+              .select("valor")
+              .eq("cartao_id", cId)
+              .eq("user_id", user.id);
+            const soma = (compRest || []).reduce((acc, c) => acc + (Number(c.valor) || 0), 0);
+            await supabase
+              .from("cartoes_credito")
+              .update({ fatura_atual: soma })
+              .eq("id", cId)
+              .eq("user_id", user.id);
+          }
+        }
       }
       notificarAtualizacaoFinanceira();
       toast.success("Gasto variável atualizado com sucesso!");
@@ -476,10 +720,40 @@ function GastosVariaveis() {
 
   // Excluir Gasto
   const removerGasto = async (id: string) => {
+    const itemAlvo = gastos.find((g) => g.id === id);
     setGastos((prev) => prev.filter((g) => g.id !== id));
     try {
       if (user?.id && !id.startsWith("temp-")) {
         await supabase.from("gastos_variaveis").delete().eq("id", id).eq("user_id", user.id);
+
+        if (itemAlvo?.compraCartaoId) {
+          await supabase
+            .from("compras_cartao")
+            .delete()
+            .eq("id", itemAlvo.compraCartaoId)
+            .eq("user_id", user.id);
+        } else {
+          await supabase
+            .from("compras_cartao")
+            .delete()
+            .eq("gasto_origem_id", id)
+            .eq("user_id", user.id);
+        }
+
+        // Recalcula fatura do cartão
+        if (itemAlvo?.cartaoId) {
+          const { data: compRestantes } = await supabase
+            .from("compras_cartao")
+            .select("valor")
+            .eq("cartao_id", itemAlvo.cartaoId)
+            .eq("user_id", user.id);
+          const novaFatura = (compRestantes || []).reduce((acc, c) => acc + (Number(c.valor) || 0), 0);
+          await supabase
+            .from("cartoes_credito")
+            .update({ fatura_atual: novaFatura })
+            .eq("id", itemAlvo.cartaoId)
+            .eq("user_id", user.id);
+        }
       }
       notificarAtualizacaoFinanceira();
       toast.info("Gasto variável removido.");
@@ -574,6 +848,48 @@ function GastosVariaveis() {
                   </select>
                 </div>
               </div>
+
+              {editFormaPagamento === "Cartão de Crédito" && (
+                <div className="grid grid-cols-2 gap-3 p-3 rounded-2xl bg-[#1c1c1c] border border-orange-500/20">
+                  <div>
+                    <label className="text-xs font-medium text-stone-300 mb-1 block">
+                      Qual cartão? <span className="text-orange-400">*</span>
+                    </label>
+                    {cartoesDisponiveis.length === 0 ? (
+                      <p className="text-[11px] text-amber-300">Sem cartão cadastrado</p>
+                    ) : (
+                      <select
+                        value={editCartaoId}
+                        onChange={(e) => setEditCartaoId(e.target.value)}
+                        className="w-full rounded-xl border border-white/[0.08] bg-[#242424] px-3 py-2 text-xs text-white outline-none focus:border-orange-500/60"
+                      >
+                        {cartoesDisponiveis.map((c) => (
+                          <option key={c.id} value={c.id}>
+                            {c.nome} {c.ultimosDigitos ? `•••• ${c.ultimosDigitos}` : ""}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-stone-300 mb-1 block">
+                      Parcelas
+                    </label>
+                    <select
+                      value={editParcelasTotal}
+                      onChange={(e) => setEditParcelasTotal(e.target.value)}
+                      className="w-full rounded-xl border border-white/[0.08] bg-[#242424] px-3 py-2 text-xs text-white outline-none focus:border-orange-500/60"
+                    >
+                      <option value="1">1x à vista</option>
+                      {Array.from({ length: 17 }, (_, i) => i + 2).map((n) => (
+                        <option key={n} value={String(n)}>
+                          {n}x
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              )}
 
               <div>
                 <label className="text-xs font-medium text-stone-300 mb-1 block">Categoria</label>
@@ -831,6 +1147,103 @@ function GastosVariaveis() {
                 </div>
               </div>
 
+              {/* Opções de Cartão e Parcelamento quando Cartão de Crédito for selecionado */}
+              {formaPagamento === "Cartão de Crédito" && (
+                <div className="space-y-3 p-3.5 rounded-2xl bg-[#1a1a1a] border border-orange-500/20 animate-in fade-in duration-200">
+                  {/* Seleção do Cartão */}
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <label className="text-xs font-medium text-stone-300 block">
+                        Qual cartão? <span className="text-orange-400">*</span>
+                      </label>
+                      <Link
+                        to="/cartao-de-credito"
+                        className="text-[10px] text-orange-400 hover:text-orange-300 transition-colors"
+                      >
+                        Gerenciar cartões →
+                      </Link>
+                    </div>
+                    {cartoesDisponiveis.length === 0 ? (
+                      <div className="rounded-xl border border-amber-500/20 bg-amber-500/10 p-2.5 text-xs text-amber-300 flex items-start gap-2">
+                        <AlertCircle className="h-4 w-4 shrink-0 mt-0.5 text-amber-400" />
+                        <div>
+                          <span className="font-semibold block">Nenhum cartão cadastrado</span>
+                          <span className="text-[11px] text-amber-200/80">
+                            Cadastre um cartão em{" "}
+                            <Link
+                              to="/cartao-de-credito"
+                              className="underline font-bold text-amber-200 hover:text-white"
+                            >
+                              Cartões de Crédito
+                            </Link>{" "}
+                            para vincular despesas.
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="relative">
+                        <select
+                          value={cartaoId}
+                          onChange={(e) => setCartaoId(e.target.value)}
+                          className="w-full appearance-none rounded-xl border border-white/[0.08] bg-[#222222] px-3.5 py-2.5 pr-8 text-xs text-white outline-none cursor-pointer focus:border-orange-500/60"
+                        >
+                          {cartoesDisponiveis.map((c) => (
+                            <option key={c.id} value={c.id} className="bg-[#1e1e1e]">
+                              {c.nome} {c.ultimosDigitos ? `•••• ${c.ultimosDigitos}` : ""}
+                            </option>
+                          ))}
+                        </select>
+                        <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-stone-400" />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Seleção de Parcelas (1x até 18x) */}
+                  <div>
+                    <label className="text-xs font-medium text-stone-300 mb-1.5 block">
+                      Número de parcelas
+                    </label>
+                    <div className="relative">
+                      <select
+                        value={parcelasTotal}
+                        onChange={(e) => setParcelasTotal(e.target.value)}
+                        className="w-full appearance-none rounded-xl border border-white/[0.08] bg-[#222222] px-3.5 py-2.5 pr-8 text-xs text-white outline-none cursor-pointer focus:border-orange-500/60"
+                      >
+                        <option value="1" className="bg-[#1e1e1e]">
+                          1x à vista {parseFloat(valor.replace(/\./g, "").replace(",", ".")) > 0 ? `(${brl(parseFloat(valor.replace(/\./g, "").replace(",", ".")))})` : ""}
+                        </option>
+                        {Array.from({ length: 17 }, (_, i) => i + 2).map((n) => {
+                          const valNum = parseFloat(valor.replace(/\./g, "").replace(",", ".")) || 0;
+                          return (
+                            <option key={n} value={String(n)} className="bg-[#1e1e1e]">
+                              {n}x {valNum > 0 ? `de ${brl(valNum / n)}` : ""}
+                            </option>
+                          );
+                        })}
+                      </select>
+                      <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-stone-400" />
+                    </div>
+                  </div>
+
+                  {/* Resumo do Parcelamento */}
+                  {parseFloat(valor.replace(/\./g, "").replace(",", ".")) > 0 && (
+                    <div className="rounded-xl border border-orange-500/20 bg-orange-500/10 px-3 py-2 text-xs flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <CreditCardIcon className="h-3.5 w-3.5 text-[#F97316]" />
+                        <span className="text-[11px] text-orange-200">
+                          {Number(parcelasTotal) > 1
+                            ? `${parcelasTotal}x de ${brl((parseFloat(valor.replace(/\./g, "").replace(",", ".")) || 0) / Number(parcelasTotal))}`
+                            : "À vista no cartão"}
+                        </span>
+                      </div>
+                      <span className="text-xs font-bold text-white font-mono">
+                        {brl(parseFloat(valor.replace(/\./g, "").replace(",", ".")) || 0)}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Botão + Lançar gasto */}
               <button
                 type="submit"
@@ -984,8 +1397,22 @@ function GastosVariaveis() {
                         <p className="text-xs font-bold text-white leading-tight truncate">
                           {g.descricao}
                         </p>
-                        <p className="text-[11px] text-stone-400 mt-0.5 truncate">
-                          {g.categoria} • {g.formaPagamento} • {formatarDataExibicao(g.data)}
+                        <p className="text-[11px] text-stone-400 mt-0.5 truncate flex items-center flex-wrap gap-1.5">
+                          <span>{g.categoria}</span>
+                          <span>•</span>
+                          {g.formaPagamento === "Cartão de Crédito" ? (
+                            <span className="inline-flex items-center gap-1 text-orange-300 font-medium bg-orange-500/10 px-1.5 py-0.5 rounded-md border border-orange-500/20 text-[10px]">
+                              <CreditCardIcon className="h-3 w-3 text-[#F97316]" />
+                              {cartaoMap[g.cartaoId || ""]
+                                ? `${cartaoMap[g.cartaoId || ""].nome}${cartaoMap[g.cartaoId || ""].ultimosDigitos ? ` •••• ${cartaoMap[g.cartaoId || ""].ultimosDigitos}` : ""}`
+                                : "Cartão"}
+                              {(g.parcelasTotal || 1) > 1 ? ` (${g.parcelasTotal}x)` : " (à vista)"}
+                            </span>
+                          ) : (
+                            <span>{g.formaPagamento}</span>
+                          )}
+                          <span>•</span>
+                          <span>{formatarDataExibicao(g.data)}</span>
                         </p>
                       </div>
                     </div>

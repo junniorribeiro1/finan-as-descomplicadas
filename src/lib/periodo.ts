@@ -165,6 +165,8 @@ export interface CompraProjetada {
   parcelaAtualNoMes: number; // ex: 2
   parcelasTotal: number; // ex: 3
   tipoConta?: "pessoal" | "empresa";
+  gastoOrigemId?: string | undefined;
+  origemTipo?: "gasto_variavel" | "gasto_fixo" | undefined;
 }
 
 export function projetarCompraParaMes(
@@ -178,6 +180,8 @@ export function projetarCompraParaMes(
     parcelaAtual?: number;
     parcelasTotal?: number;
     tipoConta?: "pessoal" | "empresa";
+    gastoOrigemId?: string | undefined;
+    origemTipo?: "gasto_variavel" | "gasto_fixo" | undefined;
   },
   mesAlvoIndex: number,
   anoAlvo: number
@@ -214,6 +218,8 @@ export function projetarCompraParaMes(
     parcelaAtualNoMes,
     parcelasTotal: totalParcelas,
     tipoConta: compra.tipoConta,
+    gastoOrigemId: compra.gastoOrigemId,
+    origemTipo: compra.origemTipo,
   };
 }
 
