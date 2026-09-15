@@ -25,6 +25,7 @@ import {
   Clock,
   User,
   KeyRound,
+  Building2,
 } from "lucide-react";
 import { useState, useEffect, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
@@ -187,6 +188,18 @@ export function AppShell({
       window.removeEventListener("storage", handler);
     };
   }, []);
+
+  const modalidadeUsuario =
+    (profile?.account_type === "empresa" ? "empresarial" : profile?.account_type) || "ambos";
+
+  // Se o usuário possui apenas controle pessoal ou apenas empresarial, sincroniza tipoConta
+  useEffect(() => {
+    if (modalidadeUsuario === "pessoal" && tipoConta !== "pessoal") {
+      mudarTipoConta("pessoal");
+    } else if (modalidadeUsuario === "empresarial" && tipoConta !== "empresa") {
+      mudarTipoConta("empresa");
+    }
+  }, [modalidadeUsuario, tipoConta]);
 
   const periodo = usePeriodoAtivo();
   const mes = periodo.mesTexto;
@@ -681,33 +694,45 @@ export function AppShell({
                 <Menu className="h-4 w-4" />
               </button>
 
-              {/* Toggle Pessoal / Empresa */}
-              <div className="flex items-center rounded-full bg-[#181818] p-0.5 sm:p-1 border border-white/[0.08] shrink-0">
-                <button
-                  type="button"
-                  onClick={() => mudarTipoConta("pessoal")}
-                  className={cn(
-                    "rounded-full px-2.5 sm:px-4 py-1 sm:py-1.5 text-[11px] sm:text-xs font-semibold transition-all cursor-pointer",
-                    tipoConta === "pessoal"
-                      ? "bg-[#F97316] text-white shadow-md shadow-orange-950/40"
-                      : "text-stone-400 hover:text-stone-200"
-                  )}
-                >
-                  Pessoal
-                </button>
-                <button
-                  type="button"
-                  onClick={() => mudarTipoConta("empresa")}
-                  className={cn(
-                    "rounded-full px-2.5 sm:px-4 py-1 sm:py-1.5 text-[11px] sm:text-xs font-medium transition-all cursor-pointer",
-                    tipoConta === "empresa"
-                      ? "bg-[#F97316] text-white shadow-md shadow-orange-950/40"
-                      : "text-stone-400 hover:text-stone-200"
-                  )}
-                >
-                  Empresa
-                </button>
-              </div>
+              {/* Seletor ou Indicador Pessoal / Empresarial */}
+              {modalidadeUsuario === "pessoal" ? (
+                <div className="flex items-center gap-1.5 rounded-full bg-[#181818] px-3 sm:px-4 py-1 sm:py-1.5 border border-white/[0.08] text-[11px] sm:text-xs font-semibold text-white shadow-sm shrink-0">
+                  <User className="h-3.5 w-3.5 text-[#F97316]" />
+                  <span>Pessoal</span>
+                </div>
+              ) : modalidadeUsuario === "empresarial" ? (
+                <div className="flex items-center gap-1.5 rounded-full bg-[#181818] px-3 sm:px-4 py-1 sm:py-1.5 border border-white/[0.08] text-[11px] sm:text-xs font-semibold text-white shadow-sm shrink-0">
+                  <Building2 className="h-3.5 w-3.5 text-[#F97316]" />
+                  <span>Empresarial</span>
+                </div>
+              ) : (
+                <div className="flex items-center rounded-full bg-[#181818] p-0.5 sm:p-1 border border-white/[0.08] shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => mudarTipoConta("pessoal")}
+                    className={cn(
+                      "rounded-full px-2.5 sm:px-4 py-1 sm:py-1.5 text-[11px] sm:text-xs font-semibold transition-all cursor-pointer",
+                      tipoConta === "pessoal"
+                        ? "bg-[#F97316] text-white shadow-md shadow-orange-950/40"
+                        : "text-stone-400 hover:text-stone-200"
+                    )}
+                  >
+                    Pessoal
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => mudarTipoConta("empresa")}
+                    className={cn(
+                      "rounded-full px-2.5 sm:px-4 py-1 sm:py-1.5 text-[11px] sm:text-xs font-medium transition-all cursor-pointer",
+                      tipoConta === "empresa"
+                        ? "bg-[#F97316] text-white shadow-md shadow-orange-950/40"
+                        : "text-stone-400 hover:text-stone-200"
+                    )}
+                  >
+                    Empresarial
+                  </button>
+                </div>
+              )}
 
               {/* Dropdown Este mês */}
               <div className="relative shrink-0 hidden sm:block">

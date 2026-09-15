@@ -272,6 +272,13 @@ function Perfil() {
                   <span className="rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 text-[11px] font-bold text-emerald-400">
                     Free
                   </span>
+                  <span className="rounded-full bg-orange-500/15 border border-orange-500/30 px-2.5 py-0.5 text-[11px] font-bold text-orange-400">
+                    {profile?.account_type === "empresarial" || profile?.account_type === "empresa"
+                      ? "Controle Empresarial"
+                      : profile?.account_type === "pessoal"
+                      ? "Controle Pessoal"
+                      : "Pessoal & Empresarial"}
+                  </span>
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
                   {user?.email} • Membro desde {dataMembro}

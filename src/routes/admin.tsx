@@ -33,6 +33,9 @@ import {
   Sparkles,
   RotateCcw,
   Lock,
+  Building2,
+  Layers,
+  User,
 } from "lucide-react";
 import { toast } from "sonner";
 import { brl } from "@/lib/mock-data";
@@ -221,7 +224,7 @@ function AdminPage() {
           role: p.role || "user",
           status: p.status || "ativo",
           plan: p.plan || "Free",
-          account_type: p.account_type || "pessoal",
+          account_type: (p.account_type === "empresa" ? "empresarial" : p.account_type) || "ambos",
           created_at: p.created_at || new Date().toISOString(),
           last_active_at: p.last_active_at || p.created_at,
           mentor_notes: p.mentor_notes || "",
@@ -330,6 +333,50 @@ function AdminPage() {
       toast.success(mensagem);
     } catch {
       toast.error("Erro ao alterar status.");
+    }
+  };
+
+  // Alterar modalidade de controle do aluno (Pessoal / Empresarial / Ambos)
+  const alterarTipoConta = async (
+    alunoId: string,
+    novoTipo: "pessoal" | "empresarial" | "ambos"
+  ) => {
+    try {
+      if (!alunoId.startsWith("exemplo-")) {
+        const { error } = await supabase
+          .from("profiles")
+          .update({
+            account_type: novoTipo,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", alunoId);
+
+        if (error) {
+          toast.error("Erro ao atualizar modalidade: " + error.message);
+          return;
+        }
+      }
+
+      setAlunos((prev) =>
+        prev.map((a) => (a.id === alunoId ? { ...a, account_type: novoTipo } : a))
+      );
+
+      if (alunoSelecionado?.id === alunoId) {
+        setAlunoSelecionado((prev) =>
+          prev ? { ...prev, account_type: novoTipo } : null
+        );
+      }
+
+      const rotulo =
+        novoTipo === "ambos"
+          ? "Pessoal e Empresarial (Ambos)"
+          : novoTipo === "empresarial"
+          ? "Empresarial"
+          : "Pessoal";
+
+      toast.success(`Modalidade de controle alterada para: ${rotulo}!`);
+    } catch {
+      toast.error("Erro ao alterar modalidade de controle.");
     }
   };
 
@@ -757,7 +804,7 @@ function AdminPage() {
               <thead>
                 <tr className="border-b border-white/[0.06] text-stone-400 font-medium">
                   <th className="py-3.5 px-3">Aluno</th>
-                  <th className="py-3.5 px-3">Tipo / Plano</th>
+                  <th className="py-3.5 px-3">Modalidade / Plano</th>
                   <th className="py-3.5 px-3">Patente Atual</th>
                   <th className="py-3.5 px-3">Cadastro</th>
                   <th className="py-3.5 px-3">Status</th>
@@ -809,11 +856,25 @@ function AdminPage() {
                           </div>
                         </td>
 
-                        {/* Plano */}
-                        <td className="py-3.5 px-3">
-                          <span className="inline-flex items-center gap-1 rounded-full bg-white/[0.06] px-2.5 py-0.5 text-[10px] font-semibold text-stone-300">
-                            {aluno.plan || "Free"}
-                          </span>
+                        {/* Modalidade / Plano */}
+                        <td className="py-3.5 px-3 min-w-[170px]">
+                          <div className="flex flex-col gap-1.5">
+                            <div className="flex items-center gap-1.5">
+                              <span className="inline-flex items-center gap-1 rounded-full bg-white/[0.06] px-2 py-0.5 text-[10px] font-semibold text-stone-300">
+                                Plano {aluno.plan || "Free"}
+                              </span>
+                            </div>
+                            <select
+                              value={aluno.account_type === "empresa" ? "empresarial" : (aluno.account_type || "ambos")}
+                              onChange={(e) => alterarTipoConta(aluno.id, e.target.value as any)}
+                              className="rounded-lg border border-white/10 bg-[#16151a] px-2 py-1 text-[11px] font-medium text-stone-200 outline-none hover:border-[#F97316] focus:border-[#F97316] transition-colors cursor-pointer w-full max-w-[160px]"
+                              title="Alterar modalidade de controle do aluno"
+                            >
+                              <option value="pessoal" className="bg-[#141417] text-cyan-400">Pessoal</option>
+                              <option value="empresarial" className="bg-[#141417] text-purple-400">Empresarial</option>
+                              <option value="ambos" className="bg-[#141417] text-orange-400">Ambos (Pessoal + Empresarial)</option>
+                            </select>
+                          </div>
                         </td>
 
                         {/* Patente Atual & Controle Direto */}
@@ -1120,6 +1181,85 @@ function AdminPage() {
                       )}%`,
                     }}
                   />
+                </div>
+              </div>
+
+              {/* Gestão da Modalidade de Controle (Pessoal / Empresarial / Ambos) */}
+              <div className="rounded-2xl border border-white/[0.08] bg-[#1a1a1f] p-4 sm:p-5">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <Layers className="h-4 w-4 text-[#F97316]" />
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-white">
+                      Modalidade de Controle do Usuário
+                    </h3>
+                  </div>
+                  <span className="text-[10px] text-stone-400">Configuração de Acesso</span>
+                </div>
+
+                <p className="text-xs text-stone-300 leading-relaxed mb-3.5">
+                  Defina se este usuário terá acesso ao controle financeiro Pessoal, Empresarial ou Ambos integrados na mesma conta.
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                  {/* Pessoal */}
+                  <button
+                    type="button"
+                    onClick={() => alterarTipoConta(alunoSelecionado.id, "pessoal")}
+                    className={cn(
+                      "flex items-center gap-3 p-3 rounded-xl border text-left transition-all cursor-pointer",
+                      (alunoSelecionado.account_type || "ambos") === "pessoal"
+                        ? "border-[#F97316] bg-[#F97316]/15 ring-2 ring-[#F97316]/40 shadow-md text-white"
+                        : "border-white/[0.06] bg-black/30 hover:border-white/20 text-stone-400 hover:text-stone-200"
+                    )}
+                  >
+                    <div className="h-8 w-8 rounded-lg bg-orange-500/20 flex items-center justify-center text-orange-400 shrink-0">
+                      <User className="h-4 w-4" />
+                    </div>
+                    <div className="min-w-0">
+                      <span className="text-xs font-bold block truncate">Controle Pessoal</span>
+                      <span className="text-[10px] opacity-80 block truncate">Individual / Familiar</span>
+                    </div>
+                  </button>
+
+                  {/* Empresarial */}
+                  <button
+                    type="button"
+                    onClick={() => alterarTipoConta(alunoSelecionado.id, "empresarial")}
+                    className={cn(
+                      "flex items-center gap-3 p-3 rounded-xl border text-left transition-all cursor-pointer",
+                      alunoSelecionado.account_type === "empresarial" || alunoSelecionado.account_type === "empresa"
+                        ? "border-[#F97316] bg-[#F97316]/15 ring-2 ring-[#F97316]/40 shadow-md text-white"
+                        : "border-white/[0.06] bg-black/30 hover:border-white/20 text-stone-400 hover:text-stone-200"
+                    )}
+                  >
+                    <div className="h-8 w-8 rounded-lg bg-orange-500/20 flex items-center justify-center text-orange-400 shrink-0">
+                      <Building2 className="h-4 w-4" />
+                    </div>
+                    <div className="min-w-0">
+                      <span className="text-xs font-bold block truncate">Controle Empresarial</span>
+                      <span className="text-[10px] opacity-80 block truncate">Empresa / MEI / PJ</span>
+                    </div>
+                  </button>
+
+                  {/* Ambos */}
+                  <button
+                    type="button"
+                    onClick={() => alterarTipoConta(alunoSelecionado.id, "ambos")}
+                    className={cn(
+                      "flex items-center gap-3 p-3 rounded-xl border text-left transition-all cursor-pointer",
+                      (alunoSelecionado.account_type || "ambos") === "ambos"
+                        ? "border-[#F97316] bg-[#F97316]/15 ring-2 ring-[#F97316]/40 shadow-md text-white"
+                        : "border-white/[0.06] bg-black/30 hover:border-white/20 text-stone-400 hover:text-stone-200"
+                    )}
+                  >
+                    <div className="h-8 w-8 rounded-lg bg-orange-500/20 flex items-center justify-center text-orange-400 shrink-0">
+                      <Layers className="h-4 w-4" />
+                    </div>
+                    <div className="min-w-0">
+                      <span className="text-xs font-bold block truncate">Os Dois (Ambos)</span>
+                      <span className="text-[10px] opacity-80 block truncate">Pessoal + Empresarial</span>
+                    </div>
+                  </button>
                 </div>
               </div>
 

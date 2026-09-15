@@ -943,7 +943,7 @@ function GastosVariaveis() {
             <p className="text-xs text-stone-400 mt-0.5">
               Compras avulsas —{" "}
               <span className="font-semibold text-stone-200">
-                {tipoConta === "pessoal" ? "Pessoal" : "Empresa / PJ"}
+                {tipoConta === "pessoal" ? "Pessoal" : "Empresarial"}
               </span>
               .
             </p>
@@ -1108,7 +1108,7 @@ function GastosVariaveis() {
               {/* Categoria */}
               <div>
                 <label className="text-xs font-medium text-stone-300 mb-1.5 block">
-                  Categoria ({tipoConta === "pessoal" ? "Pessoal" : "Empresa"})
+                  Categoria ({tipoConta === "pessoal" ? "Pessoal" : "Empresarial"})
                 </label>
                 <div className="relative">
                   <select
@@ -1479,7 +1479,7 @@ function GastosVariaveis() {
                 />
               </div>
               <h4 className="mt-4 text-sm font-bold text-white">
-                Nenhum gasto lançado para {tipoConta === "pessoal" ? "Pessoal" : "Empresa"}
+                Nenhum gasto lançado para {tipoConta === "pessoal" ? "Pessoal" : "Empresarial"}
               </h4>
               <p className="mt-1.5 text-xs text-stone-400 max-w-sm text-center leading-relaxed">
                 {tipoConta === "pessoal"

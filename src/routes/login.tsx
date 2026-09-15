@@ -14,6 +14,8 @@ import {
   CheckCircle2,
   ShieldCheck,
   AlertCircle,
+  Building2,
+  Layers,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -51,6 +53,7 @@ function LoginPage() {
   const [senha, setSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
   const [mostrarSenha, setMostrarSenha] = useState(false);
+  const [accountType, setAccountType] = useState<"pessoal" | "empresarial" | "ambos">("ambos");
   const [carregando, setCarregando] = useState(false);
   const [recuperacaoEnviada, setRecuperacaoEnviada] = useState(false);
   const [mensagemErro, setMensagemErro] = useState<string | null>(null);
@@ -171,6 +174,7 @@ function LoginPage() {
           p_password: senha,
           p_full_name: nome.trim(),
           p_phone: telefone.trim(),
+          p_account_type: accountType,
         }
       );
 
@@ -217,6 +221,23 @@ function LoginPage() {
       }
 
       if (loginData?.session) {
+        // Garantia de atualização do tipo de conta selecionado no perfil
+        try {
+          await supabase
+            .from("profiles")
+            .update({ account_type: accountType, updated_at: new Date().toISOString() })
+            .eq("id", loginData.session.user.id);
+
+          if (typeof window !== "undefined") {
+            localStorage.setItem(
+              "organizai_tipo_conta",
+              accountType === "empresarial" ? "empresa" : "pessoal"
+            );
+          }
+        } catch (syncErr) {
+          console.error("Erro ao sincronizar account_type no perfil:", syncErr);
+        }
+
         toast.success(
           "Conta criada! Seu acesso foi enviado para análise e aprovação."
         );
@@ -437,6 +458,56 @@ function LoginPage() {
             {/* Formulário de Cadastro */}
             {modo === "cadastro" && (
               <form onSubmit={handleCadastro} className="space-y-4">
+                {/* Seletor de Modalidade de Controle */}
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-semibold text-stone-200">
+                    Finalidade do App
+                  </label>
+                  <div className="grid grid-cols-3 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setAccountType("pessoal")}
+                      className={`flex flex-col items-center justify-center p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
+                        accountType === "pessoal"
+                          ? "border-[#F97316] bg-[#F97316]/10 text-white shadow-md shadow-orange-950/30"
+                          : "border-white/10 bg-[#19191d] text-stone-400 hover:border-white/20 hover:text-stone-300"
+                      }`}
+                    >
+                      <User className={`h-4 w-4 mb-1 ${accountType === "pessoal" ? "text-[#F97316]" : "text-stone-400"}`} />
+                      <span className="text-[11px] font-bold leading-tight">Pessoal</span>
+                      <span className="text-[9px] text-stone-500 mt-0.5 leading-tight">Controle individual</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setAccountType("empresarial")}
+                      className={`flex flex-col items-center justify-center p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
+                        accountType === "empresarial"
+                          ? "border-[#F97316] bg-[#F97316]/10 text-white shadow-md shadow-orange-950/30"
+                          : "border-white/10 bg-[#19191d] text-stone-400 hover:border-white/20 hover:text-stone-300"
+                      }`}
+                    >
+                      <Building2 className={`h-4 w-4 mb-1 ${accountType === "empresarial" ? "text-[#F97316]" : "text-stone-400"}`} />
+                      <span className="text-[11px] font-bold leading-tight">Empresarial</span>
+                      <span className="text-[9px] text-stone-500 mt-0.5 leading-tight">Para empresa / PJ</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setAccountType("ambos")}
+                      className={`flex flex-col items-center justify-center p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
+                        accountType === "ambos"
+                          ? "border-[#F97316] bg-[#F97316]/10 text-white shadow-md shadow-orange-950/30"
+                          : "border-white/10 bg-[#19191d] text-stone-400 hover:border-white/20 hover:text-stone-300"
+                      }`}
+                    >
+                      <Layers className={`h-4 w-4 mb-1 ${accountType === "ambos" ? "text-[#F97316]" : "text-stone-400"}`} />
+                      <span className="text-[11px] font-bold leading-tight">Os Dois</span>
+                      <span className="text-[9px] text-stone-500 mt-0.5 leading-tight">Pessoal + Empresa</span>
+                    </button>
+                  </div>
+                </div>
+
                 <div>
                   <label className="block text-xs font-medium text-stone-300 mb-1.5">
                     Nome completo

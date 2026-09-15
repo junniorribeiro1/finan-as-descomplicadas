@@ -663,7 +663,7 @@ function Recebimentos() {
             <p className="text-xs text-stone-400 mt-0.5">
               Recebimentos —{" "}
               <span className="font-semibold text-stone-200">
-                {tipoConta === "pessoal" ? "Pessoal" : "Empresa / PJ"}
+                {tipoConta === "pessoal" ? "Pessoal" : "Empresarial"}
               </span>
               .
             </p>
@@ -924,7 +924,7 @@ function Recebimentos() {
               <div className="flex items-center gap-2">
                 <h3 className="text-xs font-bold text-white">Histórico</h3>
                 <span className="text-[10px] text-stone-400 font-normal">
-                  ({tipoConta === "pessoal" ? "Pessoal" : "Empresa"})
+                  ({tipoConta === "pessoal" ? "Pessoal" : "Empresarial"})
                 </span>
               </div>
               <span className="rounded-full bg-white/[0.06] border border-white/10 px-2.5 py-0.5 text-[11px] text-stone-400 font-medium">
@@ -993,7 +993,7 @@ function Recebimentos() {
               <h4 className="mt-4 text-sm font-bold text-white">
                 {busca
                   ? "Nenhum resultado para a busca"
-                  : `Sem recebimentos no período (${tipoConta === "pessoal" ? "Pessoal" : "Empresa"})`}
+                  : `Sem recebimentos no período (${tipoConta === "pessoal" ? "Pessoal" : "Empresarial"})`}
               </h4>
               <p className="mt-1.5 text-xs text-stone-400 max-w-sm text-center leading-relaxed">
                 {busca

@@ -557,7 +557,7 @@ function Investimentos() {
             <p className="text-xs text-stone-400 mt-0.5">
               Sua carteira completa com projeção —{" "}
               <span className="font-semibold text-stone-200">
-                {tipoConta === "pessoal" ? "Pessoal" : "Empresa / PJ"}
+                {tipoConta === "pessoal" ? "Pessoal" : "Empresarial"}
               </span>
               .
             </p>
@@ -805,7 +805,7 @@ function Investimentos() {
                   />
                 </div>
                 <h4 className="mt-3 text-xs font-bold text-white">
-                  Sem projeção ainda ({tipoConta === "pessoal" ? "Pessoal" : "Empresa"})
+                  Sem projeção ainda ({tipoConta === "pessoal" ? "Pessoal" : "Empresarial"})
                 </h4>
                 <p className="mt-1 text-[11px] text-stone-400 max-w-sm leading-relaxed">
                   Adicione um investimento ao lado para calcular a curva patrimonial.
@@ -851,7 +851,7 @@ function Investimentos() {
                 <div className="flex items-center gap-2">
                   <h3 className="text-xs font-bold text-white">Sua carteira</h3>
                   <span className="text-[10px] text-stone-400">
-                    ({tipoConta === "pessoal" ? "Pessoal" : "Empresa"})
+                    ({tipoConta === "pessoal" ? "Pessoal" : "Empresarial"})
                   </span>
                   {investimentosPorConta.length > 0 && (
                     <span className="rounded-full bg-white/[0.06] border border-white/10 px-2 py-0.2 text-[10px] text-stone-400 font-medium">
@@ -894,7 +894,7 @@ function Investimentos() {
                   <h4 className="mt-3 text-xs font-bold text-white">
                     {busca
                       ? "Nenhum ativo encontrado na busca"
-                      : `Nenhum investimento cadastrado (${tipoConta === "pessoal" ? "Pessoal" : "Empresa"})`}
+                      : `Nenhum investimento cadastrado (${tipoConta === "pessoal" ? "Pessoal" : "Empresarial"})`}
                   </h4>
                   <p className="mt-1 text-[11px] text-stone-400 max-w-sm leading-relaxed">
                     {busca
