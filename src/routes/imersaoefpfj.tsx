@@ -52,7 +52,7 @@ export const Route = createFileRoute("/imersaoefpfj")({
 
 export default function ImersaoPage() {
   // 1. Links de Checkout e Suporte
-  const checkoutUrl = "https://go.hotmart.com/X107567504O";
+  const checkoutUrl = "https://pay.hotmart.com/X107567504O?bid=1789504719427";
   const wppNumber = "5577981381477";
   const defaultWppUrl = `https://wa.me/${wppNumber}?text=${encodeURIComponent(
     "Olá, Natália! Gostaria de garantir minha vaga no 1º Lote (R$ 27,00) da IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ."
