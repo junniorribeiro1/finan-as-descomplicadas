@@ -51,7 +51,8 @@ export const Route = createFileRoute("/imersaoefpfj")({
 });
 
 export default function ImersaoPage() {
-  // 1. WhatsApp link
+  // 1. Links de Checkout e Suporte
+  const checkoutUrl = "https://go.hotmart.com/X107567504O";
   const wppNumber = "5577981381477";
   const defaultWppUrl = `https://wa.me/${wppNumber}?text=${encodeURIComponent(
     "Olá, Natália! Gostaria de garantir minha vaga no 1º Lote (R$ 27,00) da IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ."
@@ -414,7 +415,7 @@ export default function ImersaoPage() {
               {/* BOTÕES DE AÇÃO HERO */}
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-2.5 pt-1 w-full max-w-sm sm:max-w-md mx-auto lg:mx-0">
                 <a
-                  href={defaultWppUrl}
+                  href={checkoutUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-orange-400 px-6 py-3 text-xs sm:text-sm font-extrabold text-stone-950 shadow-[0_4px_24px_rgba(245,158,11,0.3)] transition-all duration-300 hover:scale-105 active:scale-95"
@@ -1145,7 +1146,7 @@ export default function ImersaoPage() {
               </span>
 
               <a
-                href={defaultWppUrl}
+                href={checkoutUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-orange-400 px-6 py-4 text-sm font-black uppercase tracking-wider text-stone-950 shadow-[0_4px_24px_rgba(245,158,11,0.35)] transition-all hover:scale-105 active:scale-95"
@@ -1182,20 +1183,9 @@ export default function ImersaoPage() {
               <strong className="text-amber-300">
                 Certificado Oficial de Imersão Educação Financeira
               </strong>
-              , emitido com chancela e assinatura de Natália Rodolfo, com carga horária de 8 horas, comprovando sua
+              , emitido com chancela e assinatura de Natália Rodolfo, com carga horária de 6 horas, comprovando sua
               capacitação na organização e gestão orçamentária.
             </p>
-
-            <div className="mt-5 flex flex-wrap items-center justify-center md:justify-start gap-2.5">
-              <div className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-black/40 px-3 py-1.5 text-xs text-stone-300 font-medium">
-                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
-                <span>Carga Horária de 8 Horas</span>
-              </div>
-              <div className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-black/40 px-3 py-1.5 text-xs text-stone-300 font-medium">
-                <CheckCircle2 className="h-3.5 w-3.5 text-amber-400" />
-                <span>Chancela Oficial da Mentora</span>
-              </div>
-            </div>
           </div>
 
           <div className="md:w-1/2 flex flex-col items-center justify-center w-full">
@@ -1214,11 +1204,6 @@ export default function ImersaoPage() {
                   height={682}
                 />
               </div>
-
-              <span className="mt-3 text-[11px] text-stone-400 font-medium tracking-wide flex items-center gap-1.5 text-center">
-                <Award className="h-3.5 w-3.5 text-amber-400" />
-                Modelo Oficial do Certificado entregue na Imersão
-              </span>
             </div>
           </div>
         </div>
@@ -1410,7 +1395,7 @@ export default function ImersaoPage() {
           </span>
         </div>
         <a
-          href={defaultWppUrl}
+          href={checkoutUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 px-4 py-2.5 text-xs font-black uppercase tracking-wider text-stone-950 shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-transform hover:scale-105 active:scale-95"
