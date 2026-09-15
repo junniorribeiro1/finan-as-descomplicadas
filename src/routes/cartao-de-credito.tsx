@@ -6,6 +6,13 @@ import { brl } from "@/lib/mock-data";
 import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/lib/supabase";
 import { notificarAtualizacaoFinanceira, carregarCategoriasUsuario } from "@/lib/financial-service";
+import {
+  usePeriodoAtivo,
+  projetarCompraParaMes,
+  calcularParcelasRestantesNoMes,
+  NOMES_MESES,
+  type CompraProjetada,
+} from "@/lib/periodo";
 import { toast } from "sonner";
 import {
   Plus,
@@ -60,8 +67,29 @@ interface CompraCartaoItem {
   tipoConta?: "pessoal" | "empresa";
 }
 
+const formatarDataParaExibicao = (dataStr?: string | null) => {
+  if (!dataStr) return new Date().toLocaleDateString("pt-BR");
+  if (/^\d{4}-\d{2}-\d{2}/.test(dataStr)) {
+    const apenasData = dataStr.split("T")[0];
+    const [ano, mes, dia] = apenasData.split("-");
+    return `${dia}/${mes}/${ano}`;
+  }
+  return dataStr;
+};
+
+const formatarDataParaBanco = (dataStr?: string | null) => {
+  if (!dataStr) return new Date().toISOString().split("T")[0];
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dataStr)) return dataStr;
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(dataStr)) {
+    const [dia, mes, ano] = dataStr.split("/");
+    return `${ano}-${mes}-${dia}`;
+  }
+  return new Date().toISOString().split("T")[0];
+};
+
 function CartaoCredito() {
   const { user } = useAuth();
+  const periodo = usePeriodoAtivo();
   const [cartoes, setCartoes] = useState<CartaoItem[]>([]);
   const [compras, setCompras] = useState<CompraCartaoItem[]>([]);
   const [carregando, setCarregando] = useState(false);
@@ -128,6 +156,7 @@ function CartaoCredito() {
   const [compraData, setCompraData] = useState(hoje);
   const [compraCategoria, setCompraCategoria] = useState("Outros");
   const [compraParcelas, setCompraParcelas] = useState("1");
+  const [tipoValorCompra, setTipoValorCompra] = useState<"parcela" | "total">("parcela");
   const [categorias, setCategorias] = useState<string[]>([]);
 
   // Sincronizar categorias dinâmicas com /categorias
@@ -194,7 +223,7 @@ function CartaoCredito() {
             descricao: cp.descricao,
             categoria: cp.categoria,
             valor: Number(cp.valor) || 0,
-            data: cp.data,
+            data: formatarDataParaExibicao(cp.data),
             parcelaAtual: cp.parcela_atual || 1,
             parcelasTotal: cp.parcelas_total || 1,
             tipoConta: (cp.tipo_conta as "pessoal" | "empresa") || "pessoal",
@@ -234,16 +263,69 @@ function CartaoCredito() {
     }
   }, [cartoesFiltrados, cartaoSelecionadoId]);
 
-  // Compras da fatura do cartão ativo
+  // Compras da fatura do cartão ativo projetadas para o período selecionado
   const comprasDoCartaoAtivo = useMemo(() => {
     if (!cartaoAtivo) return [];
-    return compras.filter((cp) => cp.cartaoId === cartaoAtivo.id);
-  }, [compras, cartaoAtivo]);
+    const comprasDoCartao = compras.filter((cp) => cp.cartaoId === cartaoAtivo.id);
 
-  // Totais consolidados dos cartões da conta ativa
-  const totalFaturasConta = cartoesFiltrados.reduce((acc, c) => acc + c.faturaAtual, 0);
+    const projetadas: CompraProjetada[] = [];
+    for (const cp of comprasDoCartao) {
+      const proj = projetarCompraParaMes(cp, periodo.mesIndex, periodo.ano);
+      if (proj) {
+        projetadas.push(proj);
+      }
+    }
+    return projetadas;
+  }, [compras, cartaoAtivo, periodo.mesIndex, periodo.ano]);
+
+  // Valor total da fatura do cartão ativo no período selecionado
+  const faturaPeriodo = useMemo(() => {
+    return comprasDoCartaoAtivo.reduce((acc, cp) => acc + cp.valor, 0);
+  }, [comprasDoCartaoAtivo]);
+
+  // Função para calcular o limite comprometido total de um cartão (todas as parcelas restantes no período)
+  const getLimiteComprometidoCartao = (cartaoId: string) => {
+    const comprasCartao = compras.filter((cp) => cp.cartaoId === cartaoId);
+    if (comprasCartao.length === 0) return 0;
+
+    const somaComprometida = comprasCartao.reduce((acc, cp) => {
+      const restantes = calcularParcelasRestantesNoMes(cp, periodo.mesIndex, periodo.ano);
+      return acc + cp.valor * restantes;
+    }, 0);
+
+    return somaComprometida;
+  };
+
+  // Totais consolidados dos cartões da conta ativa no período
+  const totalFaturasConta = useMemo(() => {
+    return cartoesFiltrados.reduce((acc, c) => {
+      const comprasCartao = compras.filter((cp) => cp.cartaoId === c.id);
+      const faturaMes = comprasCartao.reduce((s, cp) => {
+        const proj = projetarCompraParaMes(cp, periodo.mesIndex, periodo.ano);
+        return s + (proj ? proj.valor : 0);
+      }, 0);
+      return acc + faturaMes;
+    }, 0);
+  }, [cartoesFiltrados, compras, periodo.mesIndex, periodo.ano]);
+
   const totalLimitesConta = cartoesFiltrados.reduce((acc, c) => acc + c.limiteTotal, 0);
-  const totalDisponivelConta = Math.max(0, totalLimitesConta - totalFaturasConta);
+  const totalComprometidoConta = cartoesFiltrados.reduce(
+    (acc, c) => acc + getLimiteComprometidoCartao(c.id),
+    0
+  );
+  const totalDisponivelConta = Math.max(0, totalLimitesConta - totalComprometidoConta);
+
+  // Limites específicos do cartão ativo no período selecionado
+  const limiteComprometidoAtivo = cartaoAtivo
+    ? getLimiteComprometidoCartao(cartaoAtivo.id)
+    : 0;
+  const limiteDisponivelAtivo = cartaoAtivo
+    ? Math.max(0, cartaoAtivo.limiteTotal - limiteComprometidoAtivo)
+    : 0;
+  const percentualUsoAtivo =
+    cartaoAtivo && cartaoAtivo.limiteTotal > 0
+      ? Math.min(100, Math.round((limiteComprometidoAtivo / cartaoAtivo.limiteTotal) * 100))
+      : 0;
 
   // Criar Novo Cartão
   const handleSalvarCartao = async (e: React.FormEvent) => {
@@ -421,19 +503,37 @@ function CartaoCredito() {
     }
 
     const parcelasNum = Math.max(1, parseInt(compraParcelas) || 1);
+
+    // Calcula o valor da parcela individual e o total da compra
+    let valorParcelaIndividual = valorNum;
+    let valorTotalCompra = valorNum;
+
+    if (parcelasNum > 1) {
+      if (tipoValorCompra === "total") {
+        valorTotalCompra = valorNum;
+        valorParcelaIndividual = Number((valorNum / parcelasNum).toFixed(2));
+      } else {
+        valorParcelaIndividual = valorNum;
+        valorTotalCompra = Number((valorNum * parcelasNum).toFixed(2));
+      }
+    }
+
+    const dataFormatadaExibicao = formatarDataParaExibicao(compraData.trim() || hoje);
+    const dataFormatadaBanco = formatarDataParaBanco(compraData.trim() || hoje);
+
     const novaCompraTemp: CompraCartaoItem = {
       id: "temp-" + Date.now(),
       cartaoId: cartaoAtivo.id,
       descricao: compraDescricao.trim(),
       categoria: compraCategoria,
-      valor: valorNum,
-      data: compraData.trim() || hoje,
+      valor: valorParcelaIndividual,
+      data: dataFormatadaExibicao,
       parcelaAtual: 1,
       parcelasTotal: parcelasNum,
       tipoConta,
     };
 
-    const novaFatura = cartaoAtivo.faturaAtual + valorNum;
+    const novaFatura = cartaoAtivo.faturaAtual + valorParcelaIndividual;
 
     // Atualiza localmente
     setCompras((prev) => [novaCompraTemp, ...prev]);
@@ -443,12 +543,14 @@ function CartaoCredito() {
 
     setCompraDescricao("");
     setCompraValor("");
+    setCompraParcelas("1");
+    setTipoValorCompra("parcela");
     setModalNovaCompra(false);
 
     if (user?.id) {
       try {
         // Grava a compra
-        const { data: compInserida } = await supabase
+        const { data: compInserida, error: compErr } = await supabase
           .from("compras_cartao")
           .insert({
             user_id: user.id,
@@ -456,13 +558,17 @@ function CartaoCredito() {
             descricao: novaCompraTemp.descricao,
             categoria: novaCompraTemp.categoria,
             valor: novaCompraTemp.valor,
-            data: novaCompraTemp.data,
+            data: dataFormatadaBanco,
             parcela_atual: novaCompraTemp.parcelaAtual,
             parcelas_total: novaCompraTemp.parcelasTotal,
             tipo_conta: tipoConta,
           })
           .select()
           .single();
+
+        if (compErr) {
+          console.error("Erro ao salvar compra no Supabase:", compErr);
+        }
 
         if (compInserida) {
           setCompras((prev) =>
@@ -480,7 +586,13 @@ function CartaoCredito() {
         }
 
         notificarAtualizacaoFinanceira();
-        toast.success(`Compra de ${brl(valorNum)} lançada no cartão!`);
+        if (parcelasNum > 1) {
+          toast.success(
+            `Compra em ${parcelasNum}x de ${brl(valorParcelaIndividual)} lançada! Limite comprometido: ${brl(valorTotalCompra)}.`
+          );
+        } else {
+          toast.success(`Compra de ${brl(valorParcelaIndividual)} lançada no cartão!`);
+        }
       } catch (err) {
         console.error("Erro ao registrar compra no cartão:", err);
       }
@@ -492,6 +604,21 @@ function CartaoCredito() {
     if (!cartaoAtivo || cartaoAtivo.faturaAtual <= 0) return;
 
     const valorPago = cartaoAtivo.faturaAtual;
+
+    // Atualiza as compras do cartão ativo: avança parcelas ou conclui as quitadas
+    const comprasAtualizadas = compras
+      .map((cp) => {
+        if (cp.cartaoId !== cartaoAtivo.id) return cp;
+        const tot = cp.parcelasTotal || 1;
+        const atu = cp.parcelaAtual || 1;
+        if (atu < tot) {
+          return { ...cp, parcelaAtual: atu + 1 };
+        }
+        return null;
+      })
+      .filter((cp): cp is CompraCartaoItem => cp !== null);
+
+    setCompras(comprasAtualizadas);
     setCartoes((prev) =>
       prev.map((c) => (c.id === cartaoAtivo.id ? { ...c, faturaAtual: 0 } : c))
     );
@@ -503,6 +630,26 @@ function CartaoCredito() {
           .update({ fatura_atual: 0 })
           .eq("id", cartaoAtivo.id)
           .eq("user_id", user.id);
+
+        const comprasDoCartao = compras.filter((cp) => cp.cartaoId === cartaoAtivo.id);
+        for (const cp of comprasDoCartao) {
+          if (cp.id.startsWith("temp-")) continue;
+          const tot = cp.parcelasTotal || 1;
+          const atu = cp.parcelaAtual || 1;
+          if (atu < tot) {
+            await supabase
+              .from("compras_cartao")
+              .update({ parcela_atual: atu + 1 })
+              .eq("id", cp.id)
+              .eq("user_id", user.id);
+          } else {
+            await supabase
+              .from("compras_cartao")
+              .delete()
+              .eq("id", cp.id)
+              .eq("user_id", user.id);
+          }
+        }
 
         notificarAtualizacaoFinanceira();
         toast.success(`Fatura de ${brl(valorPago)} liquidada! Limite restabelecido.`);
@@ -539,6 +686,18 @@ function CartaoCredito() {
       }
     }
   };
+
+  const parcelasNumForm = Math.max(1, parseInt(compraParcelas) || 1);
+  const valorNumDigitado =
+    parseFloat(compraValor.replace(/\./g, "").replace(",", ".")) || 0;
+  const valorParcelaCalculado =
+    parcelasNumForm > 1 && tipoValorCompra === "total"
+      ? Number((valorNumDigitado / parcelasNumForm).toFixed(2))
+      : valorNumDigitado;
+  const valorTotalCalculado =
+    parcelasNumForm > 1 && tipoValorCompra === "parcela"
+      ? Number((valorNumDigitado * parcelasNumForm).toFixed(2))
+      : valorNumDigitado;
 
   return (
     <AppShell>
@@ -771,13 +930,23 @@ function CartaoCredito() {
                     <span className="font-bold text-white font-mono">{brl(cartaoAtivo.limiteTotal)}</span>
                   </div>
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-stone-400">Fatura Atual</span>
-                    <span className="font-bold text-[#FF6B6B] font-mono">{brl(cartaoAtivo.faturaAtual)}</span>
+                    <span className="text-stone-400">
+                      Fatura {periodo.mesTexto === "Este mês" ? "Atual" : `de ${periodo.mesTexto}`}
+                    </span>
+                    <span className="font-bold text-[#FF6B6B] font-mono">{brl(faturaPeriodo)}</span>
                   </div>
+                  {limiteComprometidoAtivo > faturaPeriodo && (
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-stone-400">Total Comprometido (Parcelado)</span>
+                      <span className="font-bold text-amber-400 font-mono">
+                        {brl(limiteComprometidoAtivo)}
+                      </span>
+                    </div>
+                  )}
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-stone-400">Limite Disponível</span>
                     <span className="font-bold text-[#34d399] font-mono">
-                      {brl(Math.max(0, cartaoAtivo.limiteTotal - cartaoAtivo.faturaAtual))}
+                      {brl(limiteDisponivelAtivo)}
                     </span>
                   </div>
 
@@ -786,9 +955,7 @@ function CartaoCredito() {
                     <div className="flex items-center justify-between text-[10px] text-stone-500 mb-1">
                       <span>Uso do limite</span>
                       <span>
-                        {cartaoAtivo.limiteTotal > 0
-                          ? Math.min(100, Math.round((cartaoAtivo.faturaAtual / cartaoAtivo.limiteTotal) * 100))
-                          : 0}
+                        {percentualUsoAtivo}
                         %
                       </span>
                     </div>
@@ -796,11 +963,7 @@ function CartaoCredito() {
                       <div
                         className="h-full rounded-full bg-[#F97316] transition-all duration-300"
                         style={{
-                          width: `${
-                            cartaoAtivo.limiteTotal > 0
-                              ? Math.min(100, Math.round((cartaoAtivo.faturaAtual / cartaoAtivo.limiteTotal) * 100))
-                              : 0
-                          }%`,
+                          width: `${percentualUsoAtivo}%`,
                         }}
                       />
                     </div>
@@ -816,12 +979,12 @@ function CartaoCredito() {
                       <Plus className="h-3.5 w-3.5" />
                       Lançar compra
                     </button>
-                    {cartaoAtivo.faturaAtual > 0 && (
+                    {faturaPeriodo > 0 && (
                       <button
                         type="button"
                         onClick={handlePagarFatura}
                         className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 hover:bg-emerald-500/25 px-3 py-2 text-xs font-bold text-emerald-400 transition-colors cursor-pointer"
-                        title="Zerar fatura atual"
+                        title={`Zerar fatura de ${periodo.rotuloExibicao}`}
                       >
                         <CheckCircle2 className="h-3.5 w-3.5" />
                         Pagar fatura
@@ -836,14 +999,19 @@ function CartaoCredito() {
                 <div>
                   <div className="flex items-center justify-between border-b border-white/[0.06] pb-4">
                     <div>
-                      <h3 className="text-sm font-bold text-white">Compras nesta fatura</h3>
+                      <h3 className="text-sm font-bold text-white">
+                        Compras na fatura ({periodo.rotuloExibicao})
+                      </h3>
                       <p className="text-[11px] text-stone-400 mt-0.5">
-                        Vencimento previsto para dia {cartaoAtivo.diaVencimento}
+                        Vencimento previsto para dia {cartaoAtivo.diaVencimento} de{" "}
+                        {periodo.mesTexto === "Este mês"
+                          ? NOMES_MESES[periodo.mesIndex]
+                          : periodo.mesTexto}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="font-display text-sm font-bold text-[#FF6B6B] font-mono">
-                        {brl(cartaoAtivo.faturaAtual)}
+                        {brl(faturaPeriodo)}
                       </span>
                       <button
                         type="button"
@@ -860,7 +1028,7 @@ function CartaoCredito() {
                     <div className="py-16 flex flex-col items-center justify-center text-center">
                       <AlertCircle className="h-8 w-8 text-stone-600 mb-2" />
                       <p className="text-xs font-medium text-stone-300">
-                        Nenhuma compra registrada nesta fatura
+                        Nenhuma compra registrada nesta fatura ({periodo.rotuloExibicao})
                       </p>
                       <p className="text-[11px] text-stone-500 mt-1 max-w-xs">
                         Clique em "+ Adicionar compra" para registrar suas compras neste cartão.
@@ -876,18 +1044,25 @@ function CartaoCredito() {
                           <div className="min-w-0">
                             <p className="text-xs font-bold text-white truncate">{compra.descricao}</p>
                             <p className="text-[11px] text-stone-400 mt-0.5">
-                              {compra.categoria} • {compra.data}
-                              {compra.parcelasTotal && compra.parcelasTotal > 1 && (
+                              {compra.categoria} • {compra.dataParcela}
+                              {compra.parcelasTotal > 1 && (
                                 <span className="ml-1 text-orange-400 font-semibold">
-                                  ({compra.parcelaAtual || 1}/{compra.parcelasTotal}x)
+                                  ({compra.parcelaAtualNoMes}/{compra.parcelasTotal}x)
                                 </span>
                               )}
                             </p>
                           </div>
                           <div className="flex items-center gap-3 shrink-0">
-                            <span className="font-display text-xs font-bold text-[#FF6B6B] font-mono">
-                              {brl(compra.valor)}
-                            </span>
+                            <div className="text-right">
+                              <span className="font-display text-xs font-bold text-[#FF6B6B] font-mono block">
+                                {brl(compra.valor)}
+                              </span>
+                              {compra.parcelasTotal > 1 && (
+                                <span className="text-[10px] text-stone-500 font-mono block">
+                                  Total: {brl(compra.valorTotalCompra)}
+                                </span>
+                              )}
+                            </div>
                             <button
                               type="button"
                               onClick={() => removerCompra(compra.id, compra.valor)}
@@ -1264,7 +1439,43 @@ function CartaoCredito() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-medium text-stone-300 mb-1.5 block">Valor da compra</label>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="text-xs font-medium text-stone-300">
+                      {parcelasNumForm > 1
+                        ? tipoValorCompra === "parcela"
+                          ? "Valor da parcela"
+                          : "Valor total"
+                        : "Valor da compra"}
+                    </label>
+                    {parcelasNumForm > 1 && (
+                      <div className="flex items-center gap-0.5 bg-white/[0.04] p-0.5 rounded-lg border border-white/[0.06] text-[10px]">
+                        <button
+                          type="button"
+                          onClick={() => setTipoValorCompra("parcela")}
+                          className={`px-1.5 py-0.5 rounded-md font-medium transition-all cursor-pointer ${
+                            tipoValorCompra === "parcela"
+                              ? "bg-[#F97316] text-white shadow-sm"
+                              : "text-stone-400 hover:text-stone-200"
+                          }`}
+                          title="Informar o valor de cada parcela"
+                        >
+                          Por parcela
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setTipoValorCompra("total")}
+                          className={`px-1.5 py-0.5 rounded-md font-medium transition-all cursor-pointer ${
+                            tipoValorCompra === "total"
+                              ? "bg-[#F97316] text-white shadow-sm"
+                              : "text-stone-400 hover:text-stone-200"
+                          }`}
+                          title="Informar o valor total da compra"
+                        >
+                          Total
+                        </button>
+                      </div>
+                    )}
+                  </div>
                   <div className="relative flex items-center rounded-xl border border-white/[0.08] bg-[#1e1e1e] px-3.5 py-2.5 text-xs focus-within:border-orange-500/60">
                     <span className="text-stone-400 font-medium mr-1.5 select-none">R$</span>
                     <input
@@ -1311,17 +1522,40 @@ function CartaoCredito() {
                   <select
                     value={compraParcelas}
                     onChange={(e) => setCompraParcelas(e.target.value)}
-                    className="w-full rounded-xl border border-white/[0.08] bg-[#1e1e1e] px-3 py-2 text-xs text-white outline-none"
+                    className="w-full rounded-xl border border-white/[0.08] bg-[#1e1e1e] px-3 py-2 text-xs text-white outline-none cursor-pointer"
                   >
                     <option value="1">À vista (1x)</option>
-                    <option value="2">2x</option>
-                    <option value="3">3x</option>
-                    <option value="6">6x</option>
-                    <option value="10">10x</option>
-                    <option value="12">12x</option>
+                    {Array.from({ length: 17 }, (_, i) => i + 2).map((num) => (
+                      <option key={num} value={String(num)}>
+                        {num}x
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
+
+              {parcelasNumForm > 1 && valorNumDigitado > 0 && (
+                <div className="rounded-xl border border-orange-500/20 bg-orange-500/[0.06] p-3 text-xs space-y-1.5 animate-in fade-in">
+                  <div className="flex items-center justify-between text-stone-300">
+                    <span>Plano de parcelamento:</span>
+                    <span className="font-bold text-white">
+                      {compraParcelas}x de {brl(valorParcelaCalculado)}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-stone-300">
+                    <span>Total que abaterá do limite:</span>
+                    <span className="font-bold text-amber-400 font-mono">
+                      {brl(valorTotalCalculado)}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-stone-400 text-[11px] pt-1 border-t border-white/[0.06]">
+                    <span>Lançado nesta fatura:</span>
+                    <span className="font-semibold text-stone-200 font-mono">
+                      {brl(valorParcelaCalculado)} (1ª parcela)
+                    </span>
+                  </div>
+                </div>
+              )}
 
               <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-white/[0.08]">
                 <button

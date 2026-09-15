@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell } from "@/components/app/AppShell";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
+import { usePeriodoAtivo } from "@/lib/periodo";
 import { PATENTES, getPatentePorNivel, EscudoPatente, PatenteInfo } from "@/lib/patentes";
 import { CelebracaoPatenteModal } from "@/components/app/CelebracaoPatenteModal";
 import {
@@ -57,6 +58,7 @@ const diasMes = Array.from({ length: 30 }, (_, i) => i + 1);
 
 function Dashboard() {
   const { user, profile, refreshProfile } = useAuth();
+  const periodo = usePeriodoAtivo();
   const [hoverDia, setHoverDia] = useState<number | null>(null);
   const [hoverMesComp, setHoverMesComp] = useState<number | null>(null);
   const [hoverMesRec, setHoverMesRec] = useState<number | null>(null);
@@ -100,7 +102,7 @@ function Dashboard() {
     return () => window.removeEventListener("organizai_tipo_conta_sync", handler);
   }, []);
 
-  // Recalcula o resumo quando tipoConta ou dadosBrutos mudam
+  // Recalcula o resumo quando tipoConta, periodo ou dadosBrutos mudam
   useEffect(() => {
     if (!dadosBrutos) return;
     const res = calcularResumoFinanceiro(
@@ -110,10 +112,12 @@ function Dashboard() {
       dadosBrutos.bancos || [],
       dadosBrutos.investimentos || [],
       dadosBrutos.cofrinhos || [],
-      tipoConta
+      tipoConta,
+      { mesIndex: periodo.mesIndex, ano: periodo.ano },
+      dadosBrutos.comprasCartao || []
     );
     setResumo(res);
-  }, [dadosBrutos, tipoConta]);
+  }, [dadosBrutos, tipoConta, periodo.mesIndex, periodo.ano]);
 
   // Carrega e sincroniza dados financeiros do usuário
   useEffect(() => {
@@ -133,7 +137,9 @@ function Dashboard() {
             dados.bancos || [],
             dados.investimentos || [],
             dados.cofrinhos || [],
-            tipoConta
+            tipoConta,
+            { mesIndex: periodo.mesIndex, ano: periodo.ano },
+            dados.comprasCartao || []
           );
           setResumo(res);
           setCofrinhosLista(dados.cofrinhos || []);
@@ -158,7 +164,7 @@ function Dashboard() {
       window.removeEventListener("organizai_finance_sync", handler);
       window.removeEventListener("storage", handler);
     };
-  }, [user?.id]);
+  }, [user?.id, tipoConta, periodo.mesIndex, periodo.ano]);
 
   // Listener para sincronizar alterações de patente
   useEffect(() => {
@@ -191,12 +197,14 @@ function Dashboard() {
     setPatenteCelebrar(null);
   };
 
-  // KPI cards alimentados com os dados do usuário
+  // KPI cards alimentados com os dados do usuário e do período ativo
   const kpiCards = [
     {
       rotulo: "TOTAL DE GASTOS",
       valor: brl(resumo.totalGastos),
-      descricao: `Fixos ${brl(resumo.gastosFixosTotal)} + Var ${brl(resumo.gastosVariaveisTotal)}`,
+      descricao: `Fixos ${brl(resumo.gastosFixosTotal)} + Var ${brl(resumo.gastosVariaveisTotal)}${
+        resumo.faturaCartaoTotal > 0 ? ` + Cartão ${brl(resumo.faturaCartaoTotal)}` : ""
+      }`,
       icone: "/icons/kpi/gastos@2x.png",
       bordaHover:
         "hover:border-[#d97736]/70 hover:shadow-[0_0_24px_rgba(217,119,54,0.22)] hover:bg-gradient-to-b hover:from-[#241a14] hover:to-[#131212]",
@@ -205,7 +213,7 @@ function Dashboard() {
     {
       rotulo: "TOTAL DE RECEBIMENTOS",
       valor: brl(resumo.totalReceitas),
-      descricao: "Somatório do período",
+      descricao: `Entradas em ${periodo.rotuloExibicao}`,
       icone: "/icons/kpi/recebimentos@2x.png",
       bordaHover:
         "hover:border-emerald-500/70 hover:shadow-[0_0_24px_rgba(16,185,129,0.22)] hover:bg-gradient-to-b hover:from-[#13241b] hover:to-[#131212]",
@@ -214,7 +222,7 @@ function Dashboard() {
     {
       rotulo: "TOTAL PAGO",
       valor: brl(resumo.totalPago),
-      descricao: `${resumo.percentualPago}% das contas`,
+      descricao: `${resumo.percentualPago}% pago em ${periodo.mesTexto}`,
       icone: "/icons/kpi/total_pago@2x.png",
       bordaHover:
         "hover:border-teal-400/70 hover:shadow-[0_0_24px_rgba(45,212,191,0.22)] hover:bg-gradient-to-b hover:from-[#122323] hover:to-[#131212]",
@@ -223,7 +231,7 @@ function Dashboard() {
     {
       rotulo: "FALTA PAGAR",
       valor: brl(resumo.faltaPagar),
-      descricao: "Este mês",
+      descricao: `Em ${periodo.rotuloExibicao}`,
       icone: "/icons/kpi/falta_pagar@2x.png",
       bordaHover:
         "hover:border-orange-500/70 hover:shadow-[0_0_24px_rgba(249,115,22,0.22)] hover:bg-gradient-to-b hover:from-[#261913] hover:to-[#131212]",
@@ -459,7 +467,12 @@ function Dashboard() {
           {/* Card: Evolução do Saldo */}
           <div className="rounded-2xl border border-white/[0.06] bg-[#151515] p-5 sm:p-6 shadow-sm flex flex-col justify-between min-h-[280px]">
             <div>
-              <span className="text-xs text-stone-400">Evolução do saldo</span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-stone-400">Evolução do saldo</span>
+                <span className="rounded-full bg-white/[0.06] border border-white/10 px-2 py-0.5 text-[10px] font-semibold text-[#F97316]">
+                  {periodo.rotuloExibicao}
+                </span>
+              </div>
               <h3 className="font-display text-xl font-bold text-white leading-tight mt-0.5">
                 {brl(resumo.saldoDisponivel)}
               </h3>
@@ -578,7 +591,12 @@ function Dashboard() {
           {/* Card: Despesas x Receitas */}
           <div className="rounded-2xl border border-white/[0.06] bg-[#151515] p-5 sm:p-6 shadow-sm flex flex-col justify-between min-h-[280px]">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-stone-400">Despesas x Receitas</span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-stone-400">Despesas x Receitas</span>
+                <span className="rounded-full bg-white/[0.06] border border-white/10 px-2 py-0.5 text-[10px] font-semibold text-stone-300">
+                  {periodo.ano}
+                </span>
+              </div>
               <div className="flex items-center gap-3 text-[11px]">
                 <span className="flex items-center gap-1.5 text-stone-400">
                   <span className="h-2.5 w-2.5 rounded-sm bg-[#10B981]" /> Receitas
@@ -646,7 +664,7 @@ function Dashboard() {
                       }}
                     >
                       <span className="block font-bold text-white text-sm leading-tight">
-                        {mesesRotulos[hoverMesComp]}
+                        {mesesRotulos[hoverMesComp]} de {periodo.ano}
                       </span>
                       <span className="mt-1.5 block text-xs font-semibold text-[#f87171] whitespace-nowrap">
                         Despesas : {brl(resumo.comparativoMensal[hoverMesComp]?.despesas || 0)}
@@ -693,7 +711,7 @@ function Dashboard() {
             <div>
               <div className="flex items-center justify-between border-b border-white/[0.06] pb-3">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-semibold text-stone-300">Gastos fixos do mês</span>
+                  <span className="text-xs font-semibold text-stone-300">Gastos fixos ({periodo.mesTexto})</span>
                   <span className="text-[11px] text-stone-500">
                     ({resumo.gastosFixosLista.length} itens)
                   </span>
@@ -730,7 +748,7 @@ function Dashboard() {
                         <div className="min-w-0">
                           <p className="font-medium text-white truncate">{g.nome}</p>
                           <p className="text-[11px] text-stone-400">
-                            Vence dia {g.diaVenc} • {g.categoria}
+                            Vence dia {g.diaVenc} de {periodo.mesTexto} • {g.categoria}
                           </p>
                         </div>
                       </div>
@@ -775,7 +793,7 @@ function Dashboard() {
           <div className="flex flex-col justify-between rounded-2xl border border-white/[0.06] bg-[#151515] p-5 sm:p-6 shadow-sm min-h-[260px]">
             <div className="flex items-center justify-between border-b border-white/[0.06] pb-3">
               <span className="text-xs font-semibold text-stone-300">
-                Total de gastos por categoria
+                Gastos por categoria ({periodo.mesTexto})
               </span>
               <span className="text-xs font-bold text-white font-mono">
                 {brl(resumo.totalGastos)}
@@ -784,7 +802,7 @@ function Dashboard() {
 
             {resumo.gastosPorCategoria.length === 0 ? (
               <div className="my-auto py-8 text-center">
-                <p className="text-xs text-stone-400">Sem gastos cadastrados</p>
+                <p className="text-xs text-stone-400">Sem gastos cadastrados em {periodo.rotuloExibicao}</p>
               </div>
             ) : (
               <div className="mt-3 space-y-3">
@@ -816,7 +834,12 @@ function Dashboard() {
           {/* Card: Recebimentos por mês */}
           <div className="rounded-2xl border border-white/[0.06] bg-[#151515] p-5 sm:p-6 shadow-sm flex flex-col justify-between min-h-[250px]">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-stone-400">Recebimentos por mês</span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-stone-400">Recebimentos por mês</span>
+                <span className="rounded-full bg-white/[0.06] border border-white/10 px-2 py-0.5 text-[10px] font-semibold text-blue-400">
+                  {periodo.ano}
+                </span>
+              </div>
               <span className="text-xs font-bold text-white font-mono">
                 {brl(resumo.totalReceitas)}
               </span>

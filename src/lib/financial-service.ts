@@ -1,4 +1,11 @@
 import { supabase } from "@/lib/supabase";
+import {
+  extrairAnoMes,
+  projetarCompraParaMes,
+  getPeriodoAtivo,
+  NOMES_MESES,
+  type CompraProjetada,
+} from "./periodo";
 
 export interface RecebimentoItem {
   id: string;
@@ -66,6 +73,19 @@ export interface CartaoItem {
   created_at?: string;
 }
 
+export interface CompraCartaoItem {
+  id: string;
+  cartaoId: string;
+  descricao: string;
+  categoria: string;
+  valor: number;
+  data: string;
+  parcelaAtual?: number;
+  parcelasTotal?: number;
+  tipoConta?: "pessoal" | "empresa";
+  created_at?: string;
+}
+
 export interface CofrinhoItem {
   id: string;
   user_id?: string;
@@ -112,11 +132,16 @@ export interface ResumoFinanceiro {
   totalCofrinhos: number;
   gastosFixosTotal: number;
   gastosVariaveisTotal: number;
+  faturaCartaoTotal: number;
+  comprasCartaoLista: CompraProjetada[];
   gastosPorCategoria: GastosPorCategoriaItem[];
   gastosFixosLista: GastoFixoItem[];
   evolucaoSaldoDiario: { dia: number; saldo: number }[];
   comparativoMensal: { mes: string; receitas: number; despesas: number }[];
   recebimentosMensal: { mes: string; valor: number }[];
+  rotuloPeriodo: string;
+  mesIndex: number;
+  ano: number;
 }
 
 const CATEGORIA_CORES: Record<string, string> = {
@@ -134,38 +159,6 @@ const MESES_ROTULOS = [
   "Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"
 ];
 
-function extrairMes(dataStr: string): number {
-  if (!dataStr) return new Date().getMonth();
-  if (dataStr.includes("/")) {
-    const parts = dataStr.split("/");
-    if (parts.length >= 2) {
-      const m = parseInt(parts[1] || "1", 10) - 1;
-      return m >= 0 && m <= 11 ? m : new Date().getMonth();
-    }
-  }
-  if (dataStr.includes("-")) {
-    const parts = dataStr.split("-");
-    if (parts.length >= 2) {
-      const m = parseInt(parts[1] || "1", 10) - 1;
-      return m >= 0 && m <= 11 ? m : new Date().getMonth();
-    }
-  }
-  return new Date().getMonth();
-}
-
-function extrairDia(dataStr: string): number {
-  if (!dataStr) return 1;
-  if (dataStr.includes("/")) {
-    const parts = dataStr.split("/");
-    return parseInt(parts[0] || "1", 10) || 1;
-  }
-  if (dataStr.includes("-")) {
-    const parts = dataStr.split("-");
-    return parseInt(parts[2] || "1", 10) || 1;
-  }
-  return 1;
-}
-
 export function calcularResumoFinanceiro(
   recebimentos: RecebimentoItem[],
   gastosFixos: GastoFixoItem[],
@@ -173,31 +166,66 @@ export function calcularResumoFinanceiro(
   bancos: ContaBancariaItem[],
   investimentos: InvestimentoItem[] = [],
   cofrinhos: CofrinhoItem[] = [],
-  tipoConta?: "pessoal" | "empresa"
+  tipoConta?: "pessoal" | "empresa",
+  periodo?: { mesIndex: number; ano: number },
+  comprasCartao: CompraCartaoItem[] = []
 ): ResumoFinanceiro {
-  const recFiltrados = tipoConta
+  const perAtivo = periodo ?? getPeriodoAtivo();
+  const mesAlvo = perAtivo.mesIndex;
+  const anoAlvo = perAtivo.ano;
+
+  const recConta = tipoConta
     ? recebimentos.filter((r) => (r.tipoConta || "pessoal") === tipoConta)
     : recebimentos;
   const fixosBase = tipoConta
     ? gastosFixos.filter((g) => (g.tipoConta || "pessoal") === tipoConta)
     : gastosFixos;
-  const varFiltrados = tipoConta
+  const varConta = tipoConta
     ? gastosVariaveis.filter((v) => (v.tipoConta || "pessoal") === tipoConta)
     : gastosVariaveis;
+  const cartaoConta = tipoConta
+    ? comprasCartao.filter((c) => (c.tipoConta || "pessoal") === tipoConta)
+    : comprasCartao;
 
-  const totalReceitas = recFiltrados.reduce((acc, curr) => acc + (Number(curr.valor) || 0), 0);
+  // Receitas do mês/ano ativo
+  const recMes = recConta.filter((r) => {
+    const { ano, mesIndex } = extrairAnoMes(r.data);
+    return ano === anoAlvo && mesIndex === mesAlvo;
+  });
+  const totalReceitas = recMes.reduce((acc, curr) => acc + (Number(curr.valor) || 0), 0);
   
+  // Gastos fixos ativos (recorrentes mensalmente)
   const gastosFixosAtivos = fixosBase.filter((g) => g.ativo);
   const gastosFixosTotal = gastosFixosAtivos.reduce((acc, curr) => acc + (Number(curr.valor) || 0), 0);
-  const gastosVariaveisTotal = varFiltrados.reduce((acc, curr) => acc + (Number(curr.valor) || 0), 0);
+
+  // Gastos variáveis do mês/ano ativo
+  const varMes = varConta.filter((v) => {
+    const { ano, mesIndex } = extrairAnoMes(v.data);
+    return ano === anoAlvo && mesIndex === mesAlvo;
+  });
+  const gastosVariaveisTotal = varMes.reduce((acc, curr) => acc + (Number(curr.valor) || 0), 0);
   
-  const totalGastos = gastosFixosTotal + gastosVariaveisTotal;
+  // Projeção das parcelas de cartão de crédito no mês/ano ativo
+  const comprasCartaoProjetadas: CompraProjetada[] = [];
+  for (const cp of cartaoConta) {
+    const proj = projetarCompraParaMes(cp, mesAlvo, anoAlvo);
+    if (proj) {
+      comprasCartaoProjetadas.push(proj);
+    }
+  }
+  const faturaCartaoTotal = comprasCartaoProjetadas.reduce(
+    (acc, curr) => acc + (Number(curr.valor) || 0),
+    0
+  );
+
+  // Total de gastos consolidados do período selecionado
+  const totalGastos = gastosFixosTotal + gastosVariaveisTotal + faturaCartaoTotal;
 
   const fixosPagos = gastosFixosAtivos
     .filter((g) => g.status === "Pago")
     .reduce((acc, curr) => acc + (Number(curr.valor) || 0), 0);
-  const variaveisPagos = varFiltrados
-    .filter((g) => g.status === "Pago")
+  const variaveisPagos = varMes
+    .filter((v) => v.status === "Pago")
     .reduce((acc, curr) => acc + (Number(curr.valor) || 0), 0);
   const totalPago = fixosPagos + variaveisPagos;
 
@@ -219,15 +247,19 @@ export function calcularResumoFinanceiro(
     : cofrinhos;
   const totalCofrinhos = cofrinhosFiltrados.reduce((acc, curr) => acc + (Number(curr.valorAtual) || 0), 0);
 
-  // Gastos por categoria
+  // Gastos por categoria no mês/ano ativo
   const catMap: Record<string, number> = {};
   gastosFixosAtivos.forEach((g) => {
     const c = g.categoria || "Outros";
     catMap[c] = (catMap[c] || 0) + (Number(g.valor) || 0);
   });
-  varFiltrados.forEach((g) => {
+  varMes.forEach((g) => {
     const c = g.categoria || "Outros";
     catMap[c] = (catMap[c] || 0) + (Number(g.valor) || 0);
+  });
+  comprasCartaoProjetadas.forEach((cp) => {
+    const c = cp.categoria || "Outros";
+    catMap[c] = (catMap[c] || 0) + (Number(cp.valor) || 0);
   });
 
   const gastosPorCategoria: GastosPorCategoriaItem[] = Object.entries(catMap)
@@ -239,14 +271,14 @@ export function calcularResumoFinanceiro(
     }))
     .sort((a, b) => b.valor - a.valor);
 
-  // Evolução do saldo diário (dias 1 a 30)
+  // Evolução do saldo diário (dias 1 a 30) do mês selecionado
   const diaMovimentos: Record<number, { entradas: number; saidas: number }> = {};
   for (let i = 1; i <= 30; i++) {
     diaMovimentos[i] = { entradas: 0, saidas: 0 };
   }
 
-  recFiltrados.forEach((r) => {
-    const dia = Math.min(30, Math.max(1, extrairDia(r.data)));
+  recMes.forEach((r) => {
+    const dia = Math.min(30, Math.max(1, extrairAnoMes(r.data).dia));
     if (diaMovimentos[dia]) {
       diaMovimentos[dia].entradas += Number(r.valor) || 0;
     }
@@ -259,10 +291,17 @@ export function calcularResumoFinanceiro(
     }
   });
 
-  varFiltrados.forEach((g) => {
-    const dia = Math.min(30, Math.max(1, extrairDia(g.data)));
+  varMes.forEach((g) => {
+    const dia = Math.min(30, Math.max(1, extrairAnoMes(g.data).dia));
     if (diaMovimentos[dia]) {
       diaMovimentos[dia].saidas += Number(g.valor) || 0;
+    }
+  });
+
+  comprasCartaoProjetadas.forEach((cp) => {
+    const dia = Math.min(30, Math.max(1, extrairAnoMes(cp.dataOriginal).dia));
+    if (diaMovimentos[dia]) {
+      diaMovimentos[dia].saidas += Number(cp.valor) || 0;
     }
   });
 
@@ -274,13 +313,15 @@ export function calcularResumoFinanceiro(
     evolucaoSaldoDiario.push({ dia: i, saldo: acumulado });
   }
 
-  // Comparativo Mensal (12 meses)
+  // Comparativo Mensal (12 meses do ano selecionado anoAlvo)
   const mesReceitas: number[] = new Array(12).fill(0);
   const mesDespesas: number[] = new Array(12).fill(0);
 
-  recFiltrados.forEach((r) => {
-    const mes = extrairMes(r.data);
-    mesReceitas[mes] = (mesReceitas[mes] || 0) + (Number(r.valor) || 0);
+  recConta.forEach((r) => {
+    const { ano, mesIndex } = extrairAnoMes(r.data);
+    if (ano === anoAlvo && mesIndex >= 0 && mesIndex < 12) {
+      mesReceitas[mesIndex] = (mesReceitas[mesIndex] || 0) + (Number(r.valor) || 0);
+    }
   });
 
   gastosFixosAtivos.forEach((g) => {
@@ -289,9 +330,20 @@ export function calcularResumoFinanceiro(
     }
   });
 
-  varFiltrados.forEach((g) => {
-    const mes = extrairMes(g.data);
-    mesDespesas[mes] = (mesDespesas[mes] || 0) + (Number(g.valor) || 0);
+  varConta.forEach((g) => {
+    const { ano, mesIndex } = extrairAnoMes(g.data);
+    if (ano === anoAlvo && mesIndex >= 0 && mesIndex < 12) {
+      mesDespesas[mesIndex] = (mesDespesas[mesIndex] || 0) + (Number(g.valor) || 0);
+    }
+  });
+
+  cartaoConta.forEach((cp) => {
+    for (let m = 0; m < 12; m++) {
+      const proj = projetarCompraParaMes(cp, m, anoAlvo);
+      if (proj) {
+        mesDespesas[m] = (mesDespesas[m] || 0) + (Number(proj.valor) || 0);
+      }
+    }
   });
 
   const comparativoMensal = MESES_ROTULOS.map((mes, idx) => ({
@@ -305,6 +357,8 @@ export function calcularResumoFinanceiro(
     valor: mesReceitas[idx] || 0,
   }));
 
+  const rotuloPeriodo = `${NOMES_MESES[mesAlvo]} de ${anoAlvo}`;
+
   return {
     totalGastos,
     totalReceitas,
@@ -316,11 +370,16 @@ export function calcularResumoFinanceiro(
     totalCofrinhos,
     gastosFixosTotal,
     gastosVariaveisTotal,
+    faturaCartaoTotal,
+    comprasCartaoLista: comprasCartaoProjetadas,
     gastosPorCategoria,
     gastosFixosLista: gastosFixosAtivos,
     evolucaoSaldoDiario,
     comparativoMensal,
     recebimentosMensal,
+    rotuloPeriodo,
+    mesIndex: mesAlvo,
+    ano: anoAlvo,
   };
 }
 
@@ -362,6 +421,8 @@ export async function carregarDadosFinanceirosUsuario(userId: string) {
       { data: banData },
       { data: invData },
       { data: cofData },
+      { data: cartData },
+      { data: compData },
     ] = await Promise.all([
       supabase.from("recebimentos").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
       supabase.from("gastos_fixos").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
@@ -369,6 +430,8 @@ export async function carregarDadosFinanceirosUsuario(userId: string) {
       supabase.from("bancos_contas").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
       supabase.from("investimentos").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
       supabase.from("cofrinhos").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
+      supabase.from("cartoes_credito").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
+      supabase.from("compras_cartao").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
     ]);
 
     const recebimentos: RecebimentoItem[] = (recData || []).map((r: any) => ({
@@ -451,6 +514,33 @@ export async function carregarDadosFinanceirosUsuario(userId: string) {
       created_at: c.created_at,
     }));
 
+    const cartoes: CartaoItem[] = (cartData || []).map((c: any) => ({
+      id: c.id,
+      user_id: c.user_id,
+      nome: c.nome,
+      ultimosDigitos: c.ultimos_digitos || "0000",
+      limiteTotal: Number(c.limite_total) || 0,
+      faturaAtual: Number(c.fatura_atual) || 0,
+      diaFechamento: Number(c.dia_fechamento) || 3,
+      diaVencimento: Number(c.dia_vencimento) || 10,
+      cor: c.cor || "black",
+      tipoConta: (c.tipo_conta as "pessoal" | "empresa") || "pessoal",
+      created_at: c.created_at,
+    }));
+
+    const comprasCartao: CompraCartaoItem[] = (compData || []).map((cp: any) => ({
+      id: cp.id,
+      cartaoId: cp.cartao_id,
+      descricao: cp.descricao,
+      categoria: cp.categoria,
+      valor: Number(cp.valor) || 0,
+      data: cp.data,
+      parcelaAtual: cp.parcela_atual || 1,
+      parcelasTotal: cp.parcelas_total || 1,
+      tipoConta: (cp.tipo_conta as "pessoal" | "empresa") || "pessoal",
+      created_at: cp.created_at,
+    }));
+
     const payload = {
       recebimentos,
       gastosFixos,
@@ -458,6 +548,8 @@ export async function carregarDadosFinanceirosUsuario(userId: string) {
       bancos,
       investimentos,
       cofrinhos,
+      cartoes,
+      comprasCartao,
     };
 
     if (typeof window !== "undefined") {
@@ -470,7 +562,10 @@ export async function carregarDadosFinanceirosUsuario(userId: string) {
       gastosVariaveis,
       bancos,
       investimentos,
-      cofrinhos
+      cofrinhos,
+      undefined,
+      undefined,
+      comprasCartao
     );
 
     // Atualiza resumo no Supabase para o Admin
@@ -490,7 +585,10 @@ export async function carregarDadosFinanceirosUsuario(userId: string) {
             parsed.gastosVariaveis || [],
             parsed.bancos || [],
             parsed.investimentos || [],
-            parsed.cofrinhos || []
+            parsed.cofrinhos || [],
+            undefined,
+            undefined,
+            parsed.comprasCartao || []
           );
           return { ...parsed, resumo };
         } catch {}
@@ -504,6 +602,8 @@ export async function carregarDadosFinanceirosUsuario(userId: string) {
       bancos: [],
       investimentos: [],
       cofrinhos: [],
+      cartoes: [],
+      comprasCartao: [],
       resumo: calcularResumoFinanceiro([], [], [], []),
     };
     return vazio;

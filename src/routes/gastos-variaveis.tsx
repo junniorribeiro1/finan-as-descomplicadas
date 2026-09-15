@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from "react";
 import { AppShell } from "@/components/app/AppShell";
 import { cn } from "@/lib/utils";
 import { brl } from "@/lib/mock-data";
+import { usePeriodoAtivo, extrairAnoMes } from "@/lib/periodo";
 import {
   ChevronDown,
   Plus,
@@ -98,8 +99,10 @@ function formatarDataExibicao(dataStr: string): string {
 
 function GastosVariaveis() {
   const { user } = useAuth();
+  const periodo = usePeriodoAtivo();
   const [gastos, setGastos] = useState<GastoVariavelItem[]>([]);
   const [carregando, setCarregando] = useState(true);
+  const [filtroPeriodo, setFiltroPeriodo] = useState<"mes" | "ano" | "todos">("mes");
 
   // Modo da Conta: "pessoal" ou "empresa"
   const [tipoConta, setTipoConta] = useState<"pessoal" | "empresa">(() => {
@@ -258,24 +261,39 @@ function GastosVariaveis() {
     return gastos.filter((g) => (g.tipoConta || "pessoal") === tipoConta);
   }, [gastos, tipoConta]);
 
-  // Cálculos dos Top Cards baseados estritamente na conta ativa (Pessoal ou Empresa)
-  const totalMes = gastosFiltradosPorConta.reduce((acc, curr) => acc + curr.valor, 0);
-  const totalPagos = gastosFiltradosPorConta.filter((g) => g.status === "Pago").length;
+  // Gastos filtrados pelo período ativo (Mês, Ano ou Todos)
+  const gastosFiltradosPorPeriodo = useMemo(() => {
+    return gastosFiltradosPorConta.filter((g) => {
+      if (filtroPeriodo === "todos") return true;
+      const { ano, mesIndex } = extrairAnoMes(g.data);
+      if (filtroPeriodo === "ano") {
+        return ano === periodo.ano;
+      }
+      if (filtroPeriodo === "mes") {
+        return ano === periodo.ano && mesIndex === periodo.mesIndex;
+      }
+      return true;
+    });
+  }, [gastosFiltradosPorConta, filtroPeriodo, periodo.mesIndex, periodo.ano]);
 
-  // Categoria líder da conta ativa
+  // Cálculos dos Top Cards baseados no período selecionado e tipo de conta ativo
+  const totalMes = gastosFiltradosPorPeriodo.reduce((acc, curr) => acc + curr.valor, 0);
+  const totalPagos = gastosFiltradosPorPeriodo.filter((g) => g.status === "Pago").length;
+
+  // Categoria líder do período ativo
   const categoriaTotais = useMemo(() => {
-    return gastosFiltradosPorConta.reduce((acc, g) => {
+    return gastosFiltradosPorPeriodo.reduce((acc, g) => {
       acc[g.categoria] = (acc[g.categoria] || 0) + g.valor;
       return acc;
     }, {} as Record<string, number>);
-  }, [gastosFiltradosPorConta]);
+  }, [gastosFiltradosPorPeriodo]);
 
   const liderEntry = Object.entries(categoriaTotais).sort((a, b) => b[1] - a[1])[0];
   const categoriaLider = liderEntry ? { nome: liderEntry[0], total: liderEntry[1] } : null;
 
   // Lista visível com busca e filtro de status
   const listaVisivel = useMemo(() => {
-    return gastosFiltradosPorConta.filter((g) => {
+    return gastosFiltradosPorPeriodo.filter((g) => {
       if (filtroStatus === "pagos" && g.status !== "Pago") return false;
       if (filtroStatus === "pendentes" && g.status !== "Pendente") return false;
       if (busca.trim()) {
@@ -288,7 +306,7 @@ function GastosVariaveis() {
       }
       return true;
     });
-  }, [gastosFiltradosPorConta, filtroStatus, busca]);
+  }, [gastosFiltradosPorPeriodo, filtroStatus, busca]);
 
   // Criar Novo Gasto Variável
   const handleSalvarGasto = async (e: React.FormEvent) => {
@@ -623,16 +641,16 @@ function GastosVariaveis() {
         <div className="rounded-2xl border border-white/[0.06] bg-[#151515] p-5 shadow-sm">
           <div className="flex items-center gap-2 text-[10px] font-bold tracking-wider text-stone-400 uppercase">
             <span className="h-2 w-2 rounded-full bg-[#FF6B6B] shadow-[0_0_8px_rgba(255,107,107,0.6)]" />
-            TOTAL DO MÊS ({tipoConta.toUpperCase()})
+            TOTAL DE {filtroPeriodo === "mes" ? periodo.mesTexto.toUpperCase() : filtroPeriodo === "ano" ? String(periodo.ano) : "TODOS"} ({tipoConta.toUpperCase()})
           </div>
           <span className="font-display text-2xl font-bold text-[#FF6B6B] mt-3 block leading-none font-mono">
             {brl(totalMes)}
           </span>
           <p className="text-xs text-stone-500 mt-2">
-            {gastosFiltradosPorConta.length === 0
-              ? "Sem compras registradas ainda"
-              : `${gastosFiltradosPorConta.length} ${
-                  gastosFiltradosPorConta.length === 1 ? "compra registrada" : "compras registradas"
+            {gastosFiltradosPorPeriodo.length === 0
+              ? "Sem compras registradas neste período"
+              : `${gastosFiltradosPorPeriodo.length} ${
+                  gastosFiltradosPorPeriodo.length === 1 ? "compra registrada" : "compras registradas"
                 }`}
           </p>
         </div>
@@ -644,11 +662,11 @@ function GastosVariaveis() {
             LANÇAMENTOS ({tipoConta.toUpperCase()})
           </div>
           <span className="font-display text-2xl font-bold text-[#3b82f6] mt-3 block leading-none font-mono">
-            {gastosFiltradosPorConta.length}
+            {gastosFiltradosPorPeriodo.length}
           </span>
-          {gastosFiltradosPorConta.length > 0 && (
+          {gastosFiltradosPorPeriodo.length > 0 && (
             <p className="text-xs text-stone-500 mt-2">
-              {totalPagos} pagos • {gastosFiltradosPorConta.length - totalPagos} pendentes
+              {totalPagos} pagos • {gastosFiltradosPorPeriodo.length - totalPagos} pendentes
             </p>
           )}
         </div>
@@ -850,44 +868,87 @@ function GastosVariaveis() {
                 </p>
               </div>
 
-              {/* Pílulas de Filtro de Status */}
-              <div className="flex items-center gap-1.5 bg-[#1e1e1e] p-1 rounded-xl border border-white/[0.08]">
-                <button
-                  type="button"
-                  onClick={() => setFiltroStatus("todos")}
-                  className={cn(
-                    "px-3 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer",
-                    filtroStatus === "todos"
-                      ? "bg-white/10 text-white font-bold"
-                      : "text-stone-400 hover:text-stone-200"
-                  )}
-                >
-                  Todos ({gastosFiltradosPorConta.length})
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFiltroStatus("pendentes")}
-                  className={cn(
-                    "px-3 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer",
-                    filtroStatus === "pendentes"
-                      ? "bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30"
-                      : "text-stone-400 hover:text-stone-200"
-                  )}
-                >
-                  Pendentes
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFiltroStatus("pagos")}
-                  className={cn(
-                    "px-3 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer",
-                    filtroStatus === "pagos"
-                      ? "bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30"
-                      : "text-stone-400 hover:text-stone-200"
-                  )}
-                >
-                  Pagos
-                </button>
+              {/* Pílulas de Filtro de Período e Status */}
+              <div className="flex flex-wrap items-center gap-2">
+                {/* Período */}
+                <div className="flex items-center gap-1 bg-[#1e1e1e] p-1 rounded-xl border border-white/[0.08]">
+                  <button
+                    type="button"
+                    onClick={() => setFiltroPeriodo("mes")}
+                    className={cn(
+                      "px-2.5 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer",
+                      filtroPeriodo === "mes"
+                        ? "bg-[#F97316] text-white font-bold shadow-sm"
+                        : "text-stone-400 hover:text-stone-200"
+                    )}
+                  >
+                    Mês ({periodo.mesTexto})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFiltroPeriodo("ano")}
+                    className={cn(
+                      "px-2.5 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer",
+                      filtroPeriodo === "ano"
+                        ? "bg-[#F97316] text-white font-bold shadow-sm"
+                        : "text-stone-400 hover:text-stone-200"
+                    )}
+                  >
+                    Ano ({periodo.ano})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFiltroPeriodo("todos")}
+                    className={cn(
+                      "px-2.5 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer",
+                      filtroPeriodo === "todos"
+                        ? "bg-[#F97316] text-white font-bold shadow-sm"
+                        : "text-stone-400 hover:text-stone-200"
+                    )}
+                  >
+                    Todos
+                  </button>
+                </div>
+
+                {/* Status */}
+                <div className="flex items-center gap-1.5 bg-[#1e1e1e] p-1 rounded-xl border border-white/[0.08]">
+                  <button
+                    type="button"
+                    onClick={() => setFiltroStatus("todos")}
+                    className={cn(
+                      "px-3 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer",
+                      filtroStatus === "todos"
+                        ? "bg-white/10 text-white font-bold"
+                        : "text-stone-400 hover:text-stone-200"
+                    )}
+                  >
+                    Todos ({gastosFiltradosPorPeriodo.length})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFiltroStatus("pendentes")}
+                    className={cn(
+                      "px-3 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer",
+                      filtroStatus === "pendentes"
+                        ? "bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30"
+                        : "text-stone-400 hover:text-stone-200"
+                    )}
+                  >
+                    Pendentes
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFiltroStatus("pagos")}
+                    className={cn(
+                      "px-3 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer",
+                      filtroStatus === "pagos"
+                        ? "bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30"
+                        : "text-stone-400 hover:text-stone-200"
+                    )}
+                  >
+                    Pagos
+                  </button>
+                </div>
               </div>
             </div>
 

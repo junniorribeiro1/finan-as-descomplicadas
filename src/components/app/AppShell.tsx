@@ -30,6 +30,7 @@ import { useState, useEffect, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
 import { PassoAPassoWidget } from "@/components/app/PassoAPassoWidget";
+import { usePeriodoAtivo, setPeriodoAtivo } from "@/lib/periodo";
 
 export const menuItens = [
   { rotulo: "Dashboard", to: "/app", icone: LayoutGrid },
@@ -187,8 +188,9 @@ export function AppShell({
     };
   }, []);
 
-  const [mes, setMes] = useState("Este mês");
-  const [ano, setAno] = useState("2026");
+  const periodo = usePeriodoAtivo();
+  const mes = periodo.mesTexto;
+  const ano = String(periodo.ano);
   const [tema, setTema] = useState<"dark" | "light">(() => {
     if (typeof window !== "undefined") {
       return (localStorage.getItem("organizai_theme") as "dark" | "light") || "dark";
@@ -711,7 +713,7 @@ export function AppShell({
               <div className="relative shrink-0 hidden sm:block">
                 <select
                   value={mes}
-                  onChange={(e) => setMes(e.target.value)}
+                  onChange={(e) => setPeriodoAtivo(e.target.value, ano)}
                   className="appearance-none rounded-full bg-[#181818] border border-white/[0.08] px-3 sm:px-4 py-1 sm:py-1.5 pr-7 sm:pr-8 text-xs font-medium text-white outline-none cursor-pointer hover:border-white/20 transition-colors"
                 >
                   <option value="Este mês" className="bg-[#181818]">Este mês</option>
@@ -735,9 +737,11 @@ export function AppShell({
               <div className="relative shrink-0 hidden md:block">
                 <select
                   value={ano}
-                  onChange={(e) => setAno(e.target.value)}
+                  onChange={(e) => setPeriodoAtivo(mes, e.target.value)}
                   className="appearance-none rounded-full bg-[#181818] border border-white/[0.08] px-3.5 py-1.5 pr-7 text-xs font-medium text-white outline-none cursor-pointer hover:border-white/20 transition-colors"
                 >
+                  <option value="2028" className="bg-[#181818]">2028</option>
+                  <option value="2027" className="bg-[#181818]">2027</option>
                   <option value="2026" className="bg-[#181818]">2026</option>
                   <option value="2025" className="bg-[#181818]">2025</option>
                   <option value="2024" className="bg-[#181818]">2024</option>

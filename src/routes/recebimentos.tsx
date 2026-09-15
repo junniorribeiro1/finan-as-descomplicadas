@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from "react";
 import { AppShell } from "@/components/app/AppShell";
 import { cn } from "@/lib/utils";
 import { brl } from "@/lib/mock-data";
+import { usePeriodoAtivo, extrairAnoMes } from "@/lib/periodo";
 import {
   ChevronDown,
   Plus,
@@ -135,21 +136,25 @@ function extrairDataParts(dataStr: string) {
   return { ano: new Date().getFullYear(), mes: new Date().getMonth() };
 }
 
-function dataCorrespondeAoPeriodo(dataStr: string, filtro: "mes" | "ano" | "todos"): boolean {
+function dataCorrespondeAoPeriodo(
+  dataStr: string,
+  filtro: "mes" | "ano" | "todos",
+  periodoAlvo: { mesIndex: number; ano: number }
+): boolean {
   if (filtro === "todos") return true;
-  const hoje = new Date();
-  const { ano, mes } = extrairDataParts(dataStr);
+  const { ano, mesIndex } = extrairAnoMes(dataStr);
   if (filtro === "ano") {
-    return ano === hoje.getFullYear();
+    return ano === periodoAlvo.ano;
   }
   if (filtro === "mes") {
-    return ano === hoje.getFullYear() && mes === hoje.getMonth();
+    return ano === periodoAlvo.ano && mesIndex === periodoAlvo.mesIndex;
   }
   return true;
 }
 
 function Recebimentos() {
   const { user } = useAuth();
+  const periodo = usePeriodoAtivo();
   const [recebimentos, setRecebimentos] = useState<RecebimentoItem[]>([]);
   const [carregando, setCarregando] = useState(true);
 
@@ -239,8 +244,8 @@ function Recebimentos() {
   // Bancos registrados pelo usuário
   const [bancosCadastrados, setBancosCadastrados] = useState<string[]>(BANCOS_PADRAO);
 
-  // Filtros (inicia em "todos" para exibir imediatamente qualquer lançamento no histórico)
-  const [filtroPeriodo, setFiltroPeriodo] = useState<"mes" | "ano" | "todos">("todos");
+  // Filtros (inicia filtrado pelo mês ativo selecionado no topo)
+  const [filtroPeriodo, setFiltroPeriodo] = useState<"mes" | "ano" | "todos">("mes");
   const [busca, setBusca] = useState("");
 
   // Form states para NOVO Recebimento
@@ -341,9 +346,12 @@ function Recebimentos() {
   // Filtra por período ("mes", "ano", "todos")
   const recebimentosFiltradosPorPeriodo = useMemo(() => {
     return recebimentosPorConta.filter((r) =>
-      dataCorrespondeAoPeriodo(r.data, filtroPeriodo)
+      dataCorrespondeAoPeriodo(r.data, filtroPeriodo, {
+        mesIndex: periodo.mesIndex,
+        ano: periodo.ano,
+      })
     );
-  }, [recebimentosPorConta, filtroPeriodo]);
+  }, [recebimentosPorConta, filtroPeriodo, periodo.mesIndex, periodo.ano]);
 
   // Lista final visível (com campo de busca)
   const listaVisivel = useMemo(() => {
@@ -670,7 +678,7 @@ function Recebimentos() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-[10px] font-bold tracking-wider text-stone-400 uppercase">
               <span className="h-2 w-2 rounded-full bg-[#34d399] shadow-[0_0_8px_rgba(52,211,153,0.6)]" />
-              TOTAL RECEBIDO ({tipoConta.toUpperCase()})
+              TOTAL DE {filtroPeriodo === "mes" ? periodo.mesTexto.toUpperCase() : filtroPeriodo === "ano" ? String(periodo.ano) : "TODOS"} ({tipoConta.toUpperCase()})
             </div>
             <div className="h-6 w-6 rounded-lg overflow-hidden bg-emerald-500/10 flex items-center justify-center p-0.5">
               <img
@@ -734,18 +742,6 @@ function Recebimentos() {
         <div className="inline-flex items-center gap-1 rounded-full bg-[#151515] p-1 border border-white/[0.06] self-start">
           <button
             type="button"
-            onClick={() => setFiltroPeriodo("todos")}
-            className={cn(
-              "rounded-full px-3.5 py-1 text-xs font-bold transition-all cursor-pointer",
-              filtroPeriodo === "todos"
-                ? "bg-[#F97316] text-white shadow-sm shadow-orange-950/40"
-                : "text-stone-400 hover:text-white"
-            )}
-          >
-            Todos
-          </button>
-          <button
-            type="button"
             onClick={() => setFiltroPeriodo("mes")}
             className={cn(
               "rounded-full px-3.5 py-1 text-xs font-bold transition-all cursor-pointer",
@@ -754,7 +750,7 @@ function Recebimentos() {
                 : "text-stone-400 hover:text-white"
             )}
           >
-            Este mês
+            Mês ({periodo.mesTexto})
           </button>
           <button
             type="button"
@@ -766,7 +762,19 @@ function Recebimentos() {
                 : "text-stone-400 hover:text-white"
             )}
           >
-            Este ano
+            Ano ({periodo.ano})
+          </button>
+          <button
+            type="button"
+            onClick={() => setFiltroPeriodo("todos")}
+            className={cn(
+              "rounded-full px-3.5 py-1 text-xs font-bold transition-all cursor-pointer",
+              filtroPeriodo === "todos"
+                ? "bg-[#F97316] text-white shadow-sm shadow-orange-950/40"
+                : "text-stone-400 hover:text-white"
+            )}
+          >
+            Todos
           </button>
         </div>
 

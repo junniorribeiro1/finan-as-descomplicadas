@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from "react";
 import { AppShell } from "@/components/app/AppShell";
 import { cn } from "@/lib/utils";
 import { brl } from "@/lib/mock-data";
+import { usePeriodoAtivo } from "@/lib/periodo";
 import {
   ChevronDown,
   Plus,
@@ -61,6 +62,7 @@ const CATEGORIAS_PADRAO_EMPRESA = [
 
 function GastosFixos() {
   const { user } = useAuth();
+  const periodo = usePeriodoAtivo();
   const [gastos, setGastos] = useState<GastoFixoItem[]>([]);
   const [carregando, setCarregando] = useState(true);
 
@@ -658,7 +660,7 @@ function GastosFixos() {
         <div className="rounded-2xl border border-white/[0.06] bg-[#151515] p-5 shadow-sm">
           <div className="flex items-center gap-2 text-[11px] font-bold tracking-wider text-stone-400 uppercase">
             <span className="h-2 w-2 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.6)]" />
-            TOTAL DO MÊS ({tipoConta.toUpperCase()})
+            TOTAL DE {periodo.mesTexto.toUpperCase()} ({tipoConta.toUpperCase()})
           </div>
           <span className="font-display text-2xl font-bold text-white mt-3 block leading-none">
             {brl(totalMes)}
@@ -673,7 +675,7 @@ function GastosFixos() {
         <div className="rounded-2xl border border-white/[0.06] bg-[#151515] p-5 shadow-sm">
           <div className="flex items-center gap-2 text-[11px] font-bold tracking-wider text-stone-400 uppercase">
             <span className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]" />
-            PAGOS
+            PAGOS ({periodo.mesTexto.toUpperCase()})
           </div>
           <span className="font-display text-2xl font-bold text-[#34d399] mt-3 block leading-none">
             {brl(totalPagos)}
@@ -690,7 +692,7 @@ function GastosFixos() {
         <div className="rounded-2xl border border-white/[0.06] bg-[#151515] p-5 shadow-sm flex flex-col justify-between">
           <div className="flex items-center gap-2 text-[11px] font-bold tracking-wider text-stone-400 uppercase">
             <span className="h-2 w-2 rounded-full bg-orange-500 shadow-[0_0_8px_rgba(249,115,22,0.6)]" />
-            PENDENTES
+            PENDENTES ({periodo.mesTexto.toUpperCase()})
           </div>
           <span className="font-display text-2xl font-bold text-[#fb923c] mt-3 block leading-none">
             {brl(totalPendentes)}
@@ -708,7 +710,7 @@ function GastosFixos() {
       <div className="rounded-2xl border border-white/[0.06] bg-[#151515] p-4 px-5 shadow-sm mt-3.5">
         <div className="flex items-center justify-between">
           <span className="text-[11px] font-bold tracking-wider text-stone-400 uppercase">
-            PAGO VS TOTAL DO MÊS ({tipoConta.toUpperCase()})
+            PAGO VS TOTAL DE {periodo.mesTexto.toUpperCase()} ({tipoConta.toUpperCase()})
           </span>
           <span className="text-xs font-bold text-stone-200 font-mono">
             {brl(totalPagos)} / {brl(totalMes)}
@@ -1026,7 +1028,7 @@ function GastosFixos() {
                           )}
                         </div>
                         <p className="text-[11px] text-stone-400 mt-0.5 truncate">
-                          {g.categoria} • {g.formaPagamento}
+                          Vence dia {g.diaVenc} de {periodo.mesTexto} • {g.categoria} • {g.formaPagamento}
                           {g.observacao && ` — ${g.observacao}`}
                         </p>
                       </div>
