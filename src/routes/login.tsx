@@ -18,6 +18,7 @@ import {
   Layers,
 } from "lucide-react";
 import { toast } from "sonner";
+import { PwaInstallPrompt } from "@/components/pwa/PwaInstallPrompt";
 
 interface LoginSearch {
   redirect?: string;
@@ -716,6 +717,9 @@ function LoginPage() {
       <footer className="relative z-10 w-full max-w-7xl mx-auto px-6 py-6 text-center text-xs text-stone-600">
         © {new Date().getFullYear()} OrganizAI · Natália Rodolfo · Todos os direitos reservados.
       </footer>
+
+      {/* Popup de Instalação PWA (exclusivo na tela de login) */}
+      <PwaInstallPrompt />
     </div>
   );
 }
