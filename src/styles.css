@@ -102,10 +102,13 @@
 @layer base {
   * {
     border-color: var(--color-border);
+    -webkit-tap-highlight-color: transparent;
   }
 
   html {
     color-scheme: dark;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 
   body {
@@ -113,6 +116,9 @@
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100dvh;
+    min-height: -webkit-fill-available;
   }
 
   h1,
@@ -531,4 +537,57 @@
   animation: balloonRise var(--rise-duration, 5s) cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards,
              balloonSway var(--sway-duration, 2.5s) ease-in-out infinite alternate;
 }
+
+/* =========================================================
+ * COMPATIBILIDADE IPHONE / SAFARI / WEBKIT (iOS)
+ * ========================================================= */
+
+/* Scroll suave por inércia nos navegadores mobile */
+.overflow-y-auto,
+.overflow-x-auto,
+aside,
+main,
+nav {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Suporte completo a gradiente de máscara no WebKit (Safari/Chrome/Mozilla no iOS) */
+.mask-gradient-b {
+  -webkit-mask-image: linear-gradient(to bottom, black 40%, rgba(0, 0, 0, 0.8) 65%, transparent 95%);
+  mask-image: linear-gradient(to bottom, black 40%, rgba(0, 0, 0, 0.8) 65%, transparent 95%);
+}
+
+.mask-gradient-r {
+  -webkit-mask-image: linear-gradient(to right, black 60%, transparent 100%);
+  mask-image: linear-gradient(to right, black 60%, transparent 100%);
+}
+
+/* Aceleração de hardware e estabilização de renderização no iOS */
+.ios-hardware-accel {
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* Prevenção de zoom automático indesejado do iOS ao focar em inputs em telas pequenas */
+@media screen and (max-width: 768px) {
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Classes utilitárias para Safe Area (iPhone Notch & Home Indicator) */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.mb-safe {
+  margin-bottom: env(safe-area-inset-bottom, 0px);
+}
+
 

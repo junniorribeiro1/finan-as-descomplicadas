@@ -385,14 +385,14 @@ export function AppShell({
   return (
     <div
       className={cn(
-        "min-h-screen font-sans transition-colors duration-200",
+        "min-h-[100dvh] font-sans transition-colors duration-200",
         tema === "light"
           ? "organizai-theme-light bg-[#f8f9fc] text-slate-900"
           : "organizai-theme-dark bg-[#0d0d0d] text-foreground"
       )}
     >
       {/* Sidebar Desktop */}
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-[17rem] flex-col border-r border-white/[0.06] bg-[#0d0d0d] px-4 py-5 lg:flex">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-[17rem] flex-col border-r border-white/[0.06] bg-[#0d0d0d] px-4 pt-5 pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))] lg:flex">
         <Marca />
 
         {/* Botão de Destaque para o Painel Admin (somente Administrador) */}
@@ -524,7 +524,7 @@ export function AppShell({
             className="absolute inset-0 bg-black/80 backdrop-blur-sm"
             onClick={() => setAberto(false)}
           />
-          <div className="absolute inset-y-0 left-0 flex w-[17.5rem] flex-col border-r border-white/10 bg-[#0d0d0d] px-4 py-5 shadow-2xl">
+          <div className="absolute inset-y-0 left-0 flex w-[17.5rem] flex-col border-r border-white/10 bg-[#0d0d0d] px-4 pt-[calc(1.25rem+env(safe-area-inset-top,0px))] pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))] shadow-2xl">
             <div className="flex items-center justify-between">
               <Marca />
               <button
@@ -681,7 +681,7 @@ export function AppShell({
       {/* Main Container */}
       <div className="lg:pl-[17rem]">
         {/* Top Navbar conforme o padrão da imagem */}
-        <header className="sticky top-0 z-20 border-b border-white/[0.06] bg-[#0d0d0d]/95 backdrop-blur-md">
+        <header className="sticky top-0 z-20 border-b border-white/[0.06] bg-[#0d0d0d]/95 backdrop-blur-md pt-[env(safe-area-inset-top,0px)]">
           <div className="mx-auto flex max-w-[1600px] items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
             {/* Lado Esquerdo: Filtros */}
             <div className="flex items-center gap-1.5 sm:gap-3 min-w-0">
@@ -828,7 +828,7 @@ export function AppShell({
         </header>
 
         {/* Conteúdo Principal */}
-        <main className="mx-auto max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8">
+        <main className="mx-auto max-w-[1600px] px-4 pt-6 pb-[calc(2.5rem+env(safe-area-inset-bottom,0px))] sm:px-6 lg:px-8">
           {children}
         </main>
       </div>

@@ -60,19 +60,19 @@ function NataliaLinksPage() {
   )}`;
 
   return (
-    <div className="relative min-h-screen w-full bg-[#08090b] text-white selection:bg-amber-500/30 selection:text-amber-200 overflow-x-hidden font-sans">
+    <div className="relative min-h-[100dvh] w-full bg-[#08090b] text-white selection:bg-amber-500/30 selection:text-amber-200 overflow-x-hidden font-sans">
       {/* Luzes de fundo / Ambient Glows */}
-      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+      <div className="pointer-events-none fixed inset-0 overflow-hidden ios-hardware-accel">
         {/* Glow Superior Âmbar/Dourado suave */}
-        <div className="absolute -top-[120px] left-1/2 -translate-x-1/2 h-[420px] w-[650px] rounded-full bg-gradient-to-b from-amber-500/15 via-orange-500/10 to-transparent blur-[110px]" />
+        <div className="absolute -top-[120px] left-1/2 -translate-x-1/2 h-[420px] w-[650px] rounded-full bg-gradient-to-b from-amber-500/15 via-orange-500/10 to-transparent blur-[80px]" />
         {/* Glow Esquerdo Sutil */}
-        <div className="absolute top-[35%] -left-[180px] h-[360px] w-[360px] rounded-full bg-orange-600/5 blur-[120px]" />
+        <div className="absolute top-[35%] -left-[180px] h-[360px] w-[360px] rounded-full bg-orange-600/5 blur-[90px]" />
         {/* Glow Inferior Violeta/Esmeralda Suave */}
-        <div className="absolute bottom-0 right-0 h-[450px] w-[450px] rounded-full bg-purple-900/10 blur-[130px]" />
+        <div className="absolute bottom-0 right-0 h-[450px] w-[450px] rounded-full bg-purple-900/10 blur-[90px]" />
       </div>
 
       {/* Conteúdo Principal — Max-w-md Mobile First */}
-      <main className="relative z-10 mx-auto flex w-full max-w-[480px] flex-col items-center px-5 py-12 md:py-16">
+      <main className="relative z-10 mx-auto flex w-full max-w-[480px] flex-col items-center px-5 pt-12 pb-[calc(3.5rem+env(safe-area-inset-bottom,0px))] md:py-16">
         {/* 1. SEÇÃO DE PERFIL */}
         <header className="flex flex-col items-center text-center">
           {/* Avatar com moldura dourada e brilho sutil */}
@@ -84,7 +84,8 @@ function NataliaLinksPage() {
               <img
                 src="/natalia-profile.jpg"
                 alt="Natália Rodolfo"
-                className="h-full w-full rounded-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                decoding="async"
+                className="h-full w-full rounded-full object-cover object-center transition-transform duration-500 group-hover:scale-105 ios-hardware-accel"
               />
             </div>
 

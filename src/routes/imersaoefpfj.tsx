@@ -84,32 +84,62 @@ export default function ImersaoPage() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // 3. Reveal-on-scroll with blur effect
+  // 3. Reveal-on-scroll otimizado para compatibilidade universal (iOS Safari, Chrome, Firefox, Android e Desktop)
   useEffect(() => {
     const reveals = document.querySelectorAll(".reveal-on-scroll");
+    if (!reveals.length) return;
 
-    // Revela imediatamente blocos que já estão no viewport inicial
-    reveals.forEach((el) => {
-      const rect = el.getBoundingClientRect();
-      if (rect.top < window.innerHeight - 30) {
-        el.classList.add("is-revealed");
-      }
-    });
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-revealed");
-            observer.unobserve(entry.target);
+    const checkReveals = () => {
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+      reveals.forEach((el) => {
+        if (!el.classList.contains("is-revealed")) {
+          const rect = el.getBoundingClientRect();
+          // Margem generosa para garantir que nunca fique invisível ao usuário no iPhone
+          if (rect.top <= vh + 140 && rect.bottom >= -140) {
+            el.classList.add("is-revealed");
           }
-        });
-      },
-      { threshold: 0.08, rootMargin: "0px 0px -30px 0px" }
-    );
+        }
+      });
+    };
 
-    reveals.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
+    // Verificação inicial imediata
+    checkReveals();
+    const rafId = requestAnimationFrame(checkReveals);
+
+    // IntersectionObserver de alta tolerância com margem positiva
+    let observer: IntersectionObserver | null = null;
+    if (typeof window !== "undefined" && "IntersectionObserver" in window) {
+      observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("is-revealed");
+              observer?.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.01, rootMargin: "140px 0px 140px 0px" }
+      );
+
+      reveals.forEach((el) => observer?.observe(el));
+    }
+
+    // Ouvintes passivos para acompanhar scroll inercial do iOS Safari
+    window.addEventListener("scroll", checkReveals, { passive: true });
+    window.addEventListener("resize", checkReveals, { passive: true });
+
+    // Fallback de segurança: assegura que tudo fique 100% carregado e visível
+    const safetyTimeout = setTimeout(() => {
+      reveals.forEach((el) => el.classList.add("is-revealed"));
+    }, 1200);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      observer?.disconnect();
+      window.removeEventListener("scroll", checkReveals);
+      window.removeEventListener("resize", checkReveals);
+      clearTimeout(safetyTimeout);
+    };
   }, []);
   // 4. Progressão dinâmica de vagas preenchidas (inicia em 18% e cresce até 94% em poucos dias)
   const [filledSpotsPercent] = useState(() => {
@@ -134,21 +164,20 @@ export default function ImersaoPage() {
   const [selectedLot, setSelectedLot] = useState<1 | 2 | 3>(1);
 
   return (
-    <div className="relative min-h-screen w-full bg-[#06080a] text-stone-100 selection:bg-amber-400 selection:text-stone-950 font-sans antialiased overflow-x-hidden">
-      {/* ── CSS FOR REVEAL-ON-SCROLL BLUR EFFECT ── */}
+    <div className="relative min-h-[100dvh] w-full bg-[#06080a] text-stone-100 selection:bg-amber-400 selection:text-stone-950 font-sans antialiased overflow-x-hidden">
+      {/* ── CSS FOR REVEAL-ON-SCROLL OTIMIZADO PARA WEBKIT & SAFARI ── */}
       <style>{`
         .reveal-on-scroll {
           opacity: 0;
-          filter: blur(14px);
-          transform: translateY(28px);
-          transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
-                      filter 0.85s cubic-bezier(0.16, 1, 0.3, 1),
-                      transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
-          will-change: opacity, filter, transform;
+          transform: translateY(20px);
+          transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+                      transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+          -webkit-backface-visibility: hidden;
+          backface-visibility: hidden;
+          will-change: opacity, transform;
         }
         .reveal-on-scroll.is-revealed {
           opacity: 1;
-          filter: blur(0px);
           transform: translateY(0);
         }
         .delay-100 { transition-delay: 0.1s; }
@@ -157,9 +186,11 @@ export default function ImersaoPage() {
 
         @keyframes ticker-marquee {
           0% {
+            -webkit-transform: translate3d(0, 0, 0);
             transform: translate3d(0, 0, 0);
           }
           100% {
+            -webkit-transform: translate3d(-50%, 0, 0);
             transform: translate3d(-50%, 0, 0);
           }
         }
@@ -167,6 +198,9 @@ export default function ImersaoPage() {
           display: flex;
           width: max-content;
           animation: ticker-marquee 32s linear infinite;
+          -webkit-animation: ticker-marquee 32s linear infinite;
+          -webkit-backface-visibility: hidden;
+          backface-visibility: hidden;
           will-change: transform;
         }
         .ticker-track:hover {
@@ -280,14 +314,15 @@ export default function ImersaoPage() {
           <img
             src="/hero-coins-3d.jpg"
             alt=""
-            className="absolute right-0 top-1/2 -translate-y-1/2 h-[115%] sm:h-[110%] lg:h-full w-auto max-w-none lg:w-[60%] object-cover object-center opacity-65 lg:opacity-90 [mask-image:linear-gradient(to_bottom,black_40%,rgba(0,0,0,0.8)_65%,transparent_95%)]"
+            decoding="async"
+            className="absolute right-0 top-1/2 -translate-y-1/2 h-[115%] sm:h-[110%] lg:h-full w-auto max-w-none lg:w-[60%] object-cover object-center opacity-65 lg:opacity-90 mask-gradient-b ios-hardware-accel"
           />
 
           {/* Degradê horizontal: Preto sólido e fosco à esquerda para contraste e legibilidade, transparente à direita */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#06080a] via-[#06080a]/95 via-45% to-transparent lg:via-[#06080a]/85 lg:via-50%" />
 
           {/* Camada de blur suave focada onde ficam as informações de texto à esquerda */}
-          <div className="absolute inset-y-0 left-0 w-full lg:w-[60%] backdrop-blur-[10px] [mask-image:linear-gradient(to_right,black_60%,transparent_100%)]" />
+          <div className="absolute inset-y-0 left-0 w-full lg:w-[60%] backdrop-blur-[10px] mask-gradient-r" />
 
           {/* Fusão suave superior */}
           <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-[#06080a] to-transparent" />
@@ -1198,8 +1233,8 @@ export default function ImersaoPage() {
                 <img
                   src="/certificado-imersao.png"
                   alt="Modelo do Certificado Oficial da Imersão Educação Financeira - Natália Rodolfo"
-                  className="w-full h-auto object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.7)]"
-                  loading="lazy"
+                  className="w-full h-auto object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.7)] ios-hardware-accel"
+                  decoding="async"
                   width={1024}
                   height={682}
                 />
@@ -1219,7 +1254,8 @@ export default function ImersaoPage() {
               <img
                 src="/natalia-original.png"
                 alt="Natália Rodolfo"
-                className="h-full w-full object-cover object-top filter brightness-95"
+                decoding="async"
+                className="h-full w-full object-cover object-top filter brightness-95 ios-hardware-accel"
               />
             </div>
           </div>
@@ -1380,7 +1416,7 @@ export default function ImersaoPage() {
 
       {/* ── STICKY BAR INFERIOR (SURGE NO SCROLL - LOTE 1: R$ 27,00) ── */}
       <div
-        className={`fixed bottom-3 left-1/2 -translate-x-1/2 z-40 w-[94vw] max-w-md rounded-full border border-white/15 bg-black/90 p-2 pl-4 backdrop-blur-xl shadow-[0_10px_40px_rgba(0,0,0,0.8)] transition-all duration-500 flex items-center justify-between ${
+        className={`fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom,0px))] left-1/2 -translate-x-1/2 z-40 w-[94vw] max-w-md rounded-full border border-white/15 bg-black/90 p-2 pl-4 backdrop-blur-xl shadow-[0_10px_40px_rgba(0,0,0,0.8)] transition-all duration-500 flex items-center justify-between ${
           showStickyBar
             ? "translate-y-0 opacity-100"
             : "translate-y-20 opacity-0 pointer-events-none"
@@ -1411,7 +1447,7 @@ export default function ImersaoPage() {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Fale conosco no WhatsApp"
-        className="fixed bottom-20 right-4 sm:bottom-6 sm:right-6 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500 text-stone-950 shadow-[0_0_24px_rgba(16,185,129,0.5)] transition-all duration-300 hover:scale-110 hover:bg-emerald-400"
+        className="fixed bottom-[calc(4.75rem+env(safe-area-inset-bottom,0px))] right-4 sm:bottom-6 sm:right-6 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500 text-stone-950 shadow-[0_0_24px_rgba(16,185,129,0.5)] transition-all duration-300 hover:scale-110 hover:bg-emerald-400"
       >
         <MessageCircle className="h-6 w-6" />
       </a>
