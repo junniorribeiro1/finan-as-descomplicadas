@@ -284,20 +284,26 @@ function LoginPage() {
   return (
     <div className="min-h-screen bg-[#09090b] text-white flex flex-col justify-between selection:bg-[#F97316]/30">
       {/* Background glow ambient */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[600px] h-[500px] bg-gradient-to-b from-[#F97316]/15 via-purple-600/5 to-transparent blur-[140px] rounded-full" />
-        <div className="absolute -bottom-40 right-10 w-[450px] h-[450px] bg-[#F97316]/10 blur-[130px] rounded-full" />
+      <div className="fixed inset-0 pointer-events-none overflow-hidden [contain:paint]">
+        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[600px] h-[500px] bg-gradient-to-b from-[#F97316]/15 via-purple-600/5 to-transparent blur-[40px] sm:blur-[140px] rounded-full" />
+        <div className="absolute -bottom-40 right-10 w-[450px] h-[450px] bg-[#F97316]/10 blur-[35px] sm:blur-[130px] rounded-full" />
       </div>
 
       {/* Header com Logo */}
       <header className="relative z-10 w-full max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
         <a href="/" className="flex items-center gap-3 group">
           <div className="relative flex h-10 w-10 shrink-0 items-center justify-center transition-transform duration-200 group-hover:scale-105">
-            <img
-              src="/logo.png"
-              alt="OrganizAI"
-              className="h-10 w-10 object-contain drop-shadow-[0_2px_12px_rgba(249,115,22,0.35)]"
-            />
+            <picture>
+              <source srcSet="/logo.webp" type="image/webp" />
+              <img
+                src="/logo.png"
+                alt="OrganizAI"
+                width={40}
+                height={40}
+                decoding="async"
+                className="h-10 w-10 object-contain drop-shadow-[0_2px_12px_rgba(249,115,22,0.35)]"
+              />
+            </picture>
           </div>
           <div className="flex flex-col leading-tight">
             <span className="font-display text-lg font-bold tracking-tight text-white">

@@ -51,11 +51,17 @@ function Marca() {
     <Link to="/app" className="flex items-center gap-3 px-1 py-1 group">
       {/* Moeda Dourada IA / Ícone da marca OrganizAI */}
       <div className="relative flex h-10 w-10 shrink-0 items-center justify-center transition-transform duration-200 group-hover:scale-105">
-        <img
-          src="/logo.png"
-          alt="OrganizAI"
-          className="h-10 w-10 object-contain drop-shadow-[0_2px_10px_rgba(249,115,22,0.25)]"
-        />
+        <picture>
+          <source srcSet="/logo.webp" type="image/webp" />
+          <img
+            src="/logo.png"
+            alt="OrganizAI"
+            width={40}
+            height={40}
+            decoding="async"
+            className="h-10 w-10 object-contain drop-shadow-[0_2px_10px_rgba(249,115,22,0.25)]"
+          />
+        </picture>
       </div>
       <div className="flex flex-col leading-tight">
         <span className="font-display text-[1.12rem] font-bold tracking-tight text-white">

@@ -97,10 +97,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "manifest", href: "/manifest.json" },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
       {
-        rel: "preconnect",
-        href: "https://fonts.gstatic.com",
+        rel: "preload",
+        href: "/fonts/inter-latin.woff2",
+        as: "font",
+        type: "font/woff2",
         crossOrigin: "anonymous",
       },
       {
@@ -124,35 +125,19 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="pt-BR">
       <head>
         <HeadContent />
-        {/* Carregamento assíncrono e não-bloqueante da fonte Inter (4 pesos essenciais) para máxima pontuação no PageSpeed Mobile */}
-        <link
-          rel="preload"
-          as="style"
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-        />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-          media="print"
-          // @ts-expect-error atributo onLoad suportado no browser para evitar bloquear o First Contentful Paint
-          onLoad="this.media='all'"
-        />
-        <noscript>
-          <link
-            rel="stylesheet"
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-          />
-        </noscript>
         <script
           dangerouslySetInnerHTML={{
             __html: `
               if ('serviceWorker' in navigator) {
                 window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
-                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
-                  }, function(error) {
-                    console.log('ServiceWorker registration failed: ', error);
-                  });
+                  var regSW = function() {
+                    navigator.serviceWorker.register('/service-worker.js').catch(function() {});
+                  };
+                  if ('requestIdleCallback' in window) {
+                    requestIdleCallback(regSW, { timeout: 3000 });
+                  } else {
+                    setTimeout(regSW, 2500);
+                  }
                 });
               }
               window.addEventListener('beforeinstallprompt', function(e) {

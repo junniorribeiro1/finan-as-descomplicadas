@@ -169,7 +169,7 @@ function NataliaLinksPage() {
           {/* ORGANIZAI — CARD COMPACTO E ELEGANTE (SEM DISPUTAR COM A IMERSÃO) */}
           <Link
             to="/app"
-            className="group relative flex items-center justify-between gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.035] p-4 backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-500/45 hover:bg-emerald-950/20 active:translate-y-0"
+            className="group relative flex items-center justify-between gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.035] p-4 backdrop-blur-sm sm:backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-500/45 hover:bg-emerald-950/20 active:translate-y-0"
           >
             <div className="flex items-center gap-3.5 min-w-0 flex-1">
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-b from-[#102d1d] to-[#08170e] border border-emerald-500/30 p-2 shadow-sm group-hover:border-emerald-400/60 transition-colors">
@@ -221,7 +221,7 @@ function NataliaLinksPage() {
             href={mentoriaIndividualUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative flex flex-col gap-2.5 rounded-2xl border border-white/[0.08] bg-white/[0.035] p-4 backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-500/40 hover:bg-emerald-950/20 hover:shadow-[0_4px_24px_rgba(16,185,129,0.12)] active:translate-y-0"
+            className="group relative flex flex-col gap-2.5 rounded-2xl border border-white/[0.08] bg-white/[0.035] p-4 backdrop-blur-sm sm:backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-500/40 hover:bg-emerald-950/20 hover:shadow-[0_4px_24px_rgba(16,185,129,0.12)] active:translate-y-0"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -263,7 +263,7 @@ function NataliaLinksPage() {
             href={assistenteVirtualUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative flex flex-col gap-2.5 rounded-2xl border border-white/[0.08] bg-white/[0.035] p-4 backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-500/40 hover:bg-emerald-950/20 hover:shadow-[0_4px_24px_rgba(16,185,129,0.12)] active:translate-y-0"
+            className="group relative flex flex-col gap-2.5 rounded-2xl border border-white/[0.08] bg-white/[0.035] p-4 backdrop-blur-sm sm:backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-500/40 hover:bg-emerald-950/20 hover:shadow-[0_4px_24px_rgba(16,185,129,0.12)] active:translate-y-0"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -305,7 +305,7 @@ function NataliaLinksPage() {
             href={terceirizacaoFinanceiraUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative flex flex-col gap-2.5 rounded-2xl border border-white/[0.08] bg-white/[0.035] p-4 backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-500/40 hover:bg-emerald-950/20 hover:shadow-[0_4px_24px_rgba(16,185,129,0.12)] active:translate-y-0"
+            className="group relative flex flex-col gap-2.5 rounded-2xl border border-white/[0.08] bg-white/[0.035] p-4 backdrop-blur-sm sm:backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-500/40 hover:bg-emerald-950/20 hover:shadow-[0_4px_24px_rgba(16,185,129,0.12)] active:translate-y-0"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -347,7 +347,7 @@ function NataliaLinksPage() {
             href={consultoriaPequenasEmpresasUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative flex flex-col gap-2.5 rounded-2xl border border-white/[0.08] bg-white/[0.035] p-4 backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-500/40 hover:bg-emerald-950/20 hover:shadow-[0_4px_24px_rgba(16,185,129,0.12)] active:translate-y-0"
+            className="group relative flex flex-col gap-2.5 rounded-2xl border border-white/[0.08] bg-white/[0.035] p-4 backdrop-blur-sm sm:backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-500/40 hover:bg-emerald-950/20 hover:shadow-[0_4px_24px_rgba(16,185,129,0.12)] active:translate-y-0"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -389,7 +389,7 @@ function NataliaLinksPage() {
             href={recuperacaoFinanceiraUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative flex flex-col gap-2.5 rounded-2xl border border-white/[0.08] bg-white/[0.035] p-4 backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-500/40 hover:bg-emerald-950/20 hover:shadow-[0_4px_24px_rgba(16,185,129,0.12)] active:translate-y-0"
+            className="group relative flex flex-col gap-2.5 rounded-2xl border border-white/[0.08] bg-white/[0.035] p-4 backdrop-blur-sm sm:backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-500/40 hover:bg-emerald-950/20 hover:shadow-[0_4px_24px_rgba(16,185,129,0.12)] active:translate-y-0"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -440,7 +440,7 @@ function NataliaLinksPage() {
             href="https://www.instagram.com/nataliafinancas/"
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative flex items-center justify-between gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.04] p-4 backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-pink-500/40 hover:bg-gradient-to-r hover:from-purple-950/20 hover:to-pink-950/15 hover:shadow-[0_4px_24px_rgba(236,72,153,0.12)] active:translate-y-0"
+            className="group relative flex items-center justify-between gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.04] p-4 backdrop-blur-sm sm:backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-pink-500/40 hover:bg-gradient-to-r hover:from-purple-950/20 hover:to-pink-950/15 hover:shadow-[0_4px_24px_rgba(236,72,153,0.12)] active:translate-y-0"
           >
             <div className="flex items-center gap-3.5 min-w-0 flex-1">
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-purple-600 via-pink-600 to-amber-500 text-white shadow-sm shadow-pink-950/30">
@@ -467,7 +467,7 @@ function NataliaLinksPage() {
             href="https://wa.me/5577981381477?text=Ol%C3%A1%2C%20Nat%C3%A1lia!%20Gostaria%20de%20informa%C3%A7%C3%B5es%20sobre%20a%20Imers%C3%A3o%20e%20mentorias."
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative flex items-center justify-between gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.04] p-4 backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-500/40 hover:bg-emerald-950/20 hover:shadow-[0_4px_24px_rgba(16,185,129,0.12)] active:translate-y-0"
+            className="group relative flex items-center justify-between gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.04] p-4 backdrop-blur-sm sm:backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-500/40 hover:bg-emerald-950/20 hover:shadow-[0_4px_24px_rgba(16,185,129,0.12)] active:translate-y-0"
           >
             <div className="flex items-center gap-3.5 min-w-0 flex-1">
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white shadow-sm shadow-emerald-950/30">
@@ -492,7 +492,7 @@ function NataliaLinksPage() {
           {/* LINK: E-mail de Suporte (Cores originais da marca restauradas) */}
           <a
             href="mailto:suporte@nataliarodolfo.com.br"
-            className="group relative flex items-center justify-between gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.04] p-4 backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-orange-500/40 hover:bg-orange-950/20 hover:shadow-[0_4px_24px_rgba(249,115,22,0.12)] active:translate-y-0"
+            className="group relative flex items-center justify-between gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.04] p-4 backdrop-blur-sm sm:backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-orange-500/40 hover:bg-orange-950/20 hover:shadow-[0_4px_24px_rgba(249,115,22,0.12)] active:translate-y-0"
           >
             <div className="flex items-center gap-3.5 min-w-0 flex-1">
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-orange-500 to-amber-500 text-white shadow-sm shadow-orange-950/30">

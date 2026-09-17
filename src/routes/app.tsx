@@ -42,6 +42,16 @@ export const Route = createFileRoute("/app")({
         content: "OrganizAI — Sua vida financeira simplificada.",
       },
     ],
+    links: [
+      {
+        rel: "preload",
+        as: "image",
+        href: "/hero-banner.webp",
+        type: "image/webp",
+        // @ts-expect-error fetchpriority
+        fetchpriority: "high",
+      },
+    ],
   }),
   component: Dashboard,
 });
@@ -307,13 +317,20 @@ function Dashboard() {
         />
       )}
 
-      {/* 1. Hero Banner de Boas-Vindas com Fluidez 3D */}
+      {/* 1. Hero Banner de Boas-Vindas com Fluidez 3D (LCP Otimizado) */}
       <div className="relative min-h-[175px] sm:min-h-[190px] overflow-hidden rounded-3xl border border-white/[0.06] bg-[#0d0d0d] shadow-xl">
-        <img
-          src="/hero-banner.png"
-          alt="Fluidez OrganizAI"
-          className="absolute right-0 top-0 h-full w-full object-cover object-right pointer-events-none select-none"
-        />
+        <picture>
+          <source srcSet="/hero-banner.webp" type="image/webp" />
+          <img
+            src="/hero-banner.png"
+            alt="Fluidez OrganizAI"
+            width={1200}
+            height={380}
+            fetchPriority="high"
+            decoding="async"
+            className="absolute right-0 top-0 h-full w-full object-cover object-right pointer-events-none select-none"
+          />
+        </picture>
 
         <div className="relative z-10 flex h-full flex-col justify-center p-6 sm:p-8">
           <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#F97316]">
@@ -442,6 +459,10 @@ function Dashboard() {
                 <img
                   src={card.icone}
                   alt={card.rotulo}
+                  width={44}
+                  height={44}
+                  loading="lazy"
+                  decoding="async"
                   className="h-full w-full object-cover select-none pointer-events-none"
                 />
               </div>

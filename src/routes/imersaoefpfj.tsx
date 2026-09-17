@@ -317,8 +317,8 @@ function ImersaoPage() {
           {/* Degradê horizontal: Preto sólido e fosco à esquerda para contraste e legibilidade, transparente à direita */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#06080a] via-[#06080a]/95 via-45% to-transparent lg:via-[#06080a]/85 lg:via-50%" />
 
-          {/* Camada de blur suave focada onde ficam as informações de texto à esquerda */}
-          <div className="absolute inset-y-0 left-0 w-full lg:w-[60%] backdrop-blur-[10px] mask-gradient-r" />
+          {/* Camada de blur suave focada onde ficam as informações de texto à esquerda (apenas telas maiores) */}
+          <div className="absolute inset-y-0 left-0 hidden sm:block sm:w-full lg:w-[60%] backdrop-blur-[10px] mask-gradient-r" />
 
           {/* Fusão suave superior */}
           <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-[#06080a] to-transparent" />
