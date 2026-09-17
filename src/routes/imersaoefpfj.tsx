@@ -1250,12 +1250,12 @@ export default function ImersaoPage() {
       <section className="reveal-on-scroll relative z-20 mx-auto w-full max-w-5xl px-5 py-16 md:px-8">
         <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-8 md:p-12 flex flex-col lg:flex-row items-center gap-10">
           <div className="lg:w-5/12">
-            <div className="relative mx-auto aspect-[4/5] w-full max-w-sm overflow-hidden rounded-2xl border border-amber-500/30 bg-stone-900 shadow-xl">
+            <div className="group relative mx-auto aspect-[4/5] w-full max-w-sm overflow-hidden rounded-2xl border border-amber-500/30 bg-[#0b140e] shadow-2xl shadow-black/60">
               <img
-                src="/natalia-original.png"
-                alt="Natália Rodolfo"
+                src="/natalia-mentora.jpg"
+                alt="Natália Rodolfo - Educadora Financeira e Mentora"
                 decoding="async"
-                className="h-full w-full object-cover object-top filter brightness-95 ios-hardware-accel"
+                className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.02] ios-hardware-accel"
               />
             </div>
           </div>
