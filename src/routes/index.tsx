@@ -80,12 +80,18 @@ function NataliaLinksPage() {
             <div className="absolute -inset-1 rounded-full bg-gradient-to-tr from-emerald-500/35 via-amber-400/30 to-emerald-400/30 opacity-75 blur-md transition-opacity duration-300 group-hover:opacity-100" />
 
             <div className="relative flex h-28 w-28 md:h-32 md:w-32 items-center justify-center overflow-hidden rounded-full p-[2.5px] bg-gradient-to-b from-amber-400/70 via-emerald-950 to-emerald-600/50 ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
-              <img
-                src="/natalia-profile.jpg"
-                alt="Natália Rodolfo"
-                decoding="async"
-                className="h-full w-full rounded-full object-cover object-top transition-transform duration-500 group-hover:scale-105 ios-hardware-accel"
-              />
+              <picture>
+                <source srcSet="/natalia-profile.webp" type="image/webp" />
+                <img
+                  src="/natalia-profile.jpg"
+                  alt="Natália Rodolfo"
+                  width={128}
+                  height={128}
+                  fetchPriority="high"
+                  decoding="async"
+                  className="h-full w-full rounded-full object-cover object-top transition-transform duration-500 group-hover:scale-105 ios-hardware-accel"
+                />
+              </picture>
             </div>
 
             {/* Selo Oficial */}
@@ -157,11 +163,18 @@ function NataliaLinksPage() {
           >
             <div className="flex items-center gap-3.5 min-w-0 flex-1">
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-b from-[#102d1d] to-[#08170e] border border-emerald-500/30 p-2 shadow-sm group-hover:border-emerald-400/60 transition-colors">
-                <img
-                  src="/logo.png"
-                  alt="OrganizAI"
-                  className="h-full w-full object-contain"
-                />
+                <picture>
+                  <source srcSet="/logo.webp" type="image/webp" />
+                  <img
+                    src="/logo.png"
+                    alt="OrganizAI"
+                    width={44}
+                    height={44}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-full w-full object-contain"
+                  />
+                </picture>
               </div>
 
               <div className="flex flex-col text-left min-w-0 flex-1">

@@ -50,7 +50,7 @@ export const Route = createFileRoute("/imersaoefpfj")({
   component: ImersaoPage,
 });
 
-export default function ImersaoPage() {
+function ImersaoPage() {
   // 1. Links de Checkout e Suporte
   const checkoutUrl = "https://pay.hotmart.com/X107567504O?bid=1789504719427";
   const wppNumber = "5577981381477";
@@ -311,12 +311,18 @@ export default function ImersaoPage() {
         {/* ── IMAGEM DE FUNDO 3D (MOEDAS E GRÁFICO ASCENDENTE) ── */}
         <div className="pointer-events-none absolute inset-0 z-0">
           {/* Imagem 3D posicionada e ancorada à direita, com desvanecimento suave nas bordas */}
-          <img
-            src="/hero-coins-3d.jpg"
-            alt=""
-            decoding="async"
-            className="absolute right-0 top-1/2 -translate-y-1/2 h-[115%] sm:h-[110%] lg:h-full w-auto max-w-none lg:w-[60%] object-cover object-center opacity-65 lg:opacity-90 mask-gradient-b ios-hardware-accel"
-          />
+          <picture>
+            <source srcSet="/hero-coins-3d.webp" type="image/webp" />
+            <img
+              src="/hero-coins-3d.jpg"
+              alt=""
+              width={1200}
+              height={800}
+              fetchPriority="high"
+              decoding="async"
+              className="absolute right-0 top-1/2 -translate-y-1/2 h-[115%] sm:h-[110%] lg:h-full w-auto max-w-none lg:w-[60%] object-cover object-center opacity-65 lg:opacity-90 mask-gradient-b ios-hardware-accel"
+            />
+          </picture>
 
           {/* Degradê horizontal: Preto sólido e fosco à esquerda para contraste e legibilidade, transparente à direita */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#06080a] via-[#06080a]/95 via-45% to-transparent lg:via-[#06080a]/85 lg:via-50%" />
@@ -1230,14 +1236,18 @@ export default function ImersaoPage() {
               <div className="absolute -inset-3 rounded-3xl bg-gradient-to-r from-amber-500/20 via-emerald-500/15 to-orange-500/20 blur-xl opacity-70 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
               <div className="relative w-full overflow-hidden rounded-2xl transition-transform duration-500 group-hover:scale-[1.02]">
-                <img
-                  src="/certificado-imersao.png"
-                  alt="Modelo do Certificado Oficial da Imersão Educação Financeira - Natália Rodolfo"
-                  className="w-full h-auto object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.7)] ios-hardware-accel"
-                  decoding="async"
-                  width={1024}
-                  height={682}
-                />
+                <picture>
+                  <source srcSet="/certificado-imersao.webp" type="image/webp" />
+                  <img
+                    src="/certificado-imersao.png"
+                    alt="Modelo do Certificado Oficial da Imersão Educação Financeira - Natália Rodolfo"
+                    className="w-full h-auto object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.7)] ios-hardware-accel"
+                    loading="lazy"
+                    decoding="async"
+                    width={1024}
+                    height={682}
+                  />
+                </picture>
               </div>
             </div>
           </div>
@@ -1251,12 +1261,18 @@ export default function ImersaoPage() {
         <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-8 md:p-12 flex flex-col lg:flex-row items-center gap-10">
           <div className="lg:w-5/12">
             <div className="group relative mx-auto aspect-[4/5] w-full max-w-sm overflow-hidden rounded-2xl border border-amber-500/30 bg-[#0b140e] shadow-2xl shadow-black/60">
-              <img
-                src="/natalia-mentora.jpg"
-                alt="Natália Rodolfo - Educadora Financeira e Mentora"
-                decoding="async"
-                className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.02] ios-hardware-accel"
-              />
+              <picture>
+                <source srcSet="/natalia-mentora.webp" type="image/webp" />
+                <img
+                  src="/natalia-mentora.jpg"
+                  alt="Natália Rodolfo - Educadora Financeira e Mentora"
+                  loading="lazy"
+                  decoding="async"
+                  width={700}
+                  height={875}
+                  className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.02] ios-hardware-accel"
+                />
+              </picture>
             </div>
           </div>
 

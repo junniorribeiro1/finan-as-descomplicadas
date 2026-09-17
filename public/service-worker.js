@@ -1,9 +1,11 @@
-const CACHE_NAME = 'organizai-v1';
+const CACHE_NAME = 'organizai-v2';
 const ASSETS_TO_CACHE = [
   '/',
   '/login',
   '/manifest.json',
   '/favicon.ico',
+  '/natalia-profile.webp',
+  '/logo.webp',
   '/icons/icon-192x192.png',
   '/icons/icon-512x512.png',
 ];
