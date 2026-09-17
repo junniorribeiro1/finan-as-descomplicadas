@@ -22,13 +22,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Educadora Financeira e Estrategista de Gestão. Conheça a IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ, a plataforma OrganizAI e soluções financeiras.",
+          "Educadora Financeira e Estrategista de Gestão. Conheça a IMER$ÃO EDUCAÇÃO FINANCEIRA, a plataforma OrganizAI e soluções financeiras.",
       },
       { property: "og:title", content: "Natália Rodolfo — Links Oficiais & OrganizAI" },
       {
         property: "og:description",
         content:
-          "Educadora Financeira e Estrategista. Acesse a IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ, plataforma OrganizAI e canais de contato.",
+          "Educadora Financeira e Estrategista. Acesse a IMER$ÃO EDUCAÇÃO FINANCEIRA, plataforma OrganizAI e canais de contato.",
       },
       { property: "og:image", content: "/natalia-profile.jpg" },
       { property: "og:type", content: "website" },
@@ -135,7 +135,7 @@ function NataliaLinksPage() {
                     <span>Destaque Oficial</span>
                   </div>
                   <h2 className="mt-1 text-[0.975rem] font-bold text-white leading-snug group-hover:text-amber-200 transition-colors">
-                    IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ
+                    IMER$ÃO EDUCAÇÃO FINANCEIRA
                   </h2>
                 </div>
               </div>
@@ -146,7 +146,7 @@ function NataliaLinksPage() {
             </div>
 
             <p className="mt-2.5 text-[0.825rem] leading-relaxed text-stone-300/90 sm:pl-14">
-              O método definitivo para dominar o fluxo de caixa, separar as contas pessoais das empresariais e construir patrimônio sólido.
+              Para Pessoa Física e Jurídica: o método definitivo para dominar o fluxo de caixa, separar as contas pessoais das empresariais e construir patrimônio sólido.
             </p>
           </Link>
 
