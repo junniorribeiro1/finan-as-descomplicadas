@@ -590,4 +590,10 @@ nav {
   margin-bottom: env(safe-area-inset-bottom, 0px);
 }
 
+/* Otimização de renderização offscreen para PageSpeed Mobile e smartphones */
+.section-defer-render {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 600px;
+}
+
 

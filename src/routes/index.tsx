@@ -34,6 +34,16 @@ export const Route = createFileRoute("/")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [
+      {
+        rel: "preload",
+        as: "image",
+        href: "/natalia-profile.webp",
+        type: "image/webp",
+        // @ts-expect-error fetchpriority para acelerar o LCP no PageSpeed Mobile
+        fetchpriority: "high",
+      },
+    ],
   }),
   component: NataliaLinksPage,
 });
@@ -64,11 +74,11 @@ function NataliaLinksPage() {
 
   return (
     <div className="relative min-h-[100dvh] w-full bg-[#080d0a] text-white selection:bg-emerald-500/25 selection:text-emerald-200 overflow-x-hidden font-sans">
-      {/* Luzes de fundo elegantes — Verde Esmeralda & Dourado Suave */}
-      <div className="pointer-events-none fixed inset-0 overflow-hidden ios-hardware-accel">
-        <div className="absolute -top-[130px] left-1/2 -translate-x-1/2 h-[420px] w-[640px] rounded-full bg-emerald-600/15 blur-[100px]" />
-        <div className="absolute top-[160px] left-1/2 -translate-x-1/2 h-[200px] w-[300px] rounded-full bg-amber-400/10 blur-[90px]" />
-        <div className="absolute bottom-0 right-0 h-[420px] w-[420px] rounded-full bg-emerald-950/20 blur-[110px]" />
+      {/* Luzes de fundo elegantes — Verde Esmeralda & Dourado Suave otimizadas para GPU Mobile */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden ios-hardware-accel [contain:paint]">
+        <div className="absolute -top-[130px] left-1/2 -translate-x-1/2 h-[420px] w-[640px] rounded-full bg-emerald-600/15 blur-[36px] sm:blur-[100px]" />
+        <div className="absolute top-[160px] left-1/2 -translate-x-1/2 h-[200px] w-[300px] rounded-full bg-amber-400/10 blur-[30px] sm:blur-[90px]" />
+        <div className="absolute bottom-0 right-0 h-[420px] w-[420px] rounded-full bg-emerald-950/20 blur-[40px] sm:blur-[110px]" />
       </div>
 
       {/* Conteúdo Principal — Max-w-md Mobile First */}

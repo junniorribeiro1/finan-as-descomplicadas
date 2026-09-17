@@ -105,10 +105,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap",
-      },
-      {
-        rel: "stylesheet",
         href: appCss,
       },
       { rel: "icon", href: "/favicon.ico", sizes: "any" },
@@ -128,6 +124,25 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="pt-BR">
       <head>
         <HeadContent />
+        {/* Carregamento assíncrono e não-bloqueante da fonte Inter (4 pesos essenciais) para máxima pontuação no PageSpeed Mobile */}
+        <link
+          rel="preload"
+          as="style"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+        />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+          media="print"
+          // @ts-expect-error atributo onLoad suportado no browser para evitar bloquear o First Contentful Paint
+          onLoad="this.media='all'"
+        />
+        <noscript>
+          <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+          />
+        </noscript>
         <script
           dangerouslySetInnerHTML={{
             __html: `

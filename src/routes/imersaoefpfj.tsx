@@ -46,6 +46,16 @@ export const Route = createFileRoute("/imersaoefpfj")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [
+      {
+        rel: "preload",
+        as: "image",
+        href: "/hero-coins-3d.webp",
+        type: "image/webp",
+        // @ts-expect-error fetchpriority para acelerar LCP da dobra 1 no mobile
+        fetchpriority: "high",
+      },
+    ],
   }),
   component: ImersaoPage,
 });
@@ -61,22 +71,24 @@ function ImersaoPage() {
     "Olá! Tenho uma dúvida sobre a IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ."
   )}`;
 
-  // 2. Scroll progress indicator
+  // 2. Scroll progress indicator com throttling suave
   const [scrollProgress, setScrollProgress] = useState(0);
   const [showStickyBar, setShowStickyBar] = useState(false);
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      const totalHeight =
-        document.documentElement.scrollHeight - window.innerHeight;
-      const currentProgress =
-        totalHeight > 0 ? (window.scrollY / totalHeight) * 100 : 0;
-      setScrollProgress(currentProgress);
-
-      if (window.scrollY > 500) {
-        setShowStickyBar(true);
-      } else {
-        setShowStickyBar(false);
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const totalHeight =
+            document.documentElement.scrollHeight - window.innerHeight;
+          const currentProgress =
+            totalHeight > 0 ? (window.scrollY / totalHeight) * 100 : 0;
+          setScrollProgress(currentProgress);
+          setShowStickyBar(window.scrollY > 500);
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
@@ -84,29 +96,12 @@ function ImersaoPage() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // 3. Reveal-on-scroll otimizado para compatibilidade universal (iOS Safari, Chrome, Firefox, Android e Desktop)
+  // 3. Reveal-on-scroll assíncrono via IntersectionObserver (Zero layout thrashing no mobile)
   useEffect(() => {
     const reveals = document.querySelectorAll(".reveal-on-scroll");
     if (!reveals.length) return;
 
-    const checkReveals = () => {
-      const vh = window.innerHeight || document.documentElement.clientHeight;
-      reveals.forEach((el) => {
-        if (!el.classList.contains("is-revealed")) {
-          const rect = el.getBoundingClientRect();
-          // Margem generosa para garantir que nunca fique invisível ao usuário no iPhone
-          if (rect.top <= vh + 140 && rect.bottom >= -140) {
-            el.classList.add("is-revealed");
-          }
-        }
-      });
-    };
-
-    // Verificação inicial imediata
-    checkReveals();
-    const rafId = requestAnimationFrame(checkReveals);
-
-    // IntersectionObserver de alta tolerância com margem positiva
+    // IntersectionObserver de alta performance (não bloqueia thread principal do mobile)
     let observer: IntersectionObserver | null = null;
     if (typeof window !== "undefined" && "IntersectionObserver" in window) {
       observer = new IntersectionObserver(
@@ -118,26 +113,21 @@ function ImersaoPage() {
             }
           });
         },
-        { threshold: 0.01, rootMargin: "140px 0px 140px 0px" }
+        { threshold: 0.01, rootMargin: "160px 0px 160px 0px" }
       );
 
       reveals.forEach((el) => observer?.observe(el));
+    } else {
+      reveals.forEach((el) => el.classList.add("is-revealed"));
     }
 
-    // Ouvintes passivos para acompanhar scroll inercial do iOS Safari
-    window.addEventListener("scroll", checkReveals, { passive: true });
-    window.addEventListener("resize", checkReveals, { passive: true });
-
-    // Fallback de segurança: assegura que tudo fique 100% carregado e visível
+    // Fallback de segurança: assegura que tudo fique 100% visível
     const safetyTimeout = setTimeout(() => {
       reveals.forEach((el) => el.classList.add("is-revealed"));
     }, 1200);
 
     return () => {
-      cancelAnimationFrame(rafId);
       observer?.disconnect();
-      window.removeEventListener("scroll", checkReveals);
-      window.removeEventListener("resize", checkReveals);
       clearTimeout(safetyTimeout);
     };
   }, []);
@@ -214,11 +204,11 @@ function ImersaoPage() {
         style={{ width: `${scrollProgress}%` }}
       />
 
-      {/* ── BACKGROUND NOISE & AURORAS ── */}
-      <div className="pointer-events-none fixed inset-0 z-0 opacity-[0.035] mix-blend-overlay bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:24px_24px]" />
-      <div className="pointer-events-none fixed -top-40 left-1/2 -translate-x-1/2 h-[600px] w-[90vw] max-w-[1200px] rounded-full bg-gradient-to-b from-amber-500/10 via-emerald-600/5 to-transparent blur-[140px]" />
-      <div className="pointer-events-none fixed top-[35%] -left-40 h-[500px] w-[500px] rounded-full bg-amber-500/5 blur-[120px]" />
-      <div className="pointer-events-none fixed top-[60%] -right-40 h-[500px] w-[500px] rounded-full bg-emerald-500/5 blur-[120px]" />
+      {/* ── BACKGROUND NOISE & AURORAS OTIMIZADAS PARA MOBILE GPU ── */}
+      <div className="pointer-events-none fixed inset-0 z-0 opacity-[0.035] mix-blend-overlay bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:24px_24px] [contain:paint]" />
+      <div className="pointer-events-none fixed -top-40 left-1/2 -translate-x-1/2 h-[600px] w-[90vw] max-w-[1200px] rounded-full bg-gradient-to-b from-amber-500/10 via-emerald-600/5 to-transparent blur-[45px] sm:blur-[140px] [contain:paint]" />
+      <div className="pointer-events-none fixed top-[35%] -left-40 h-[500px] w-[500px] rounded-full bg-amber-500/5 blur-[35px] sm:blur-[120px] [contain:paint]" />
+      <div className="pointer-events-none fixed top-[60%] -right-40 h-[500px] w-[500px] rounded-full bg-emerald-500/5 blur-[35px] sm:blur-[120px] [contain:paint]" />
 
       {/* ── 0. ANNOUNCEMENT TICKER MARQUEE (LOOP INFINITO: DIREITA -> ESQUERDA) ── */}
       <div className="relative z-40 w-full overflow-hidden bg-gradient-to-r from-amber-500 via-amber-400 to-orange-500 py-2.5 text-stone-950 shadow-md">
@@ -504,7 +494,7 @@ function ImersaoPage() {
       {/* ═══════════════════════════════════════════════
           DOBRA 2 — TYPEWRITER + TIMELINE DE TRANSFORMAÇÃO (A VIRADA DE CHAVE)
       ═══════════════════════════════════════════════ */}
-      <section id="virada" className="reveal-on-scroll relative z-20 mx-auto w-full max-w-5xl px-5 py-12 md:px-8">
+      <section id="virada" className="reveal-on-scroll section-defer-render relative z-20 mx-auto w-full max-w-5xl px-5 py-12 md:px-8">
         <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-6 sm:p-10 md:p-14 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
           {/* Título da Virada de Chave */}
           <div className="text-center mb-10">
@@ -605,7 +595,7 @@ function ImersaoPage() {
       {/* ═══════════════════════════════════════════════
           DOBRA 3 — MÓDULOS DA IMERSÃO (COM BLUR IN EFFECT)
       ═══════════════════════════════════════════════ */}
-      <section id="modulos" className="reveal-on-scroll relative z-20 mx-auto w-full max-w-7xl px-5 py-16 md:px-8">
+      <section id="modulos" className="reveal-on-scroll section-defer-render relative z-20 mx-auto w-full max-w-7xl px-5 py-16 md:px-8">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-emerald-400">
             Grade Curricular Completa
@@ -733,7 +723,7 @@ function ImersaoPage() {
       {/* ═══════════════════════════════════════════════
           DOBRA 4 — O DIAGNÓSTICO REAL (COM BLUR IN EFFECT)
       ═══════════════════════════════════════════════ */}
-      <section className="reveal-on-scroll relative z-20 mx-auto w-full max-w-7xl px-5 py-16 md:px-8">
+      <section className="reveal-on-scroll section-defer-render relative z-20 mx-auto w-full max-w-7xl px-5 py-16 md:px-8">
         <div className="overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-[#12161f] via-[#0b0e14] to-[#07080a] p-8 md:p-14">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
             <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
@@ -821,7 +811,7 @@ function ImersaoPage() {
       {/* ═══════════════════════════════════════════════
           DOBRA 5 — BÔNUS EXCLUSIVOS (AURORA CARD COM BLUR IN EFFECT)
       ═══════════════════════════════════════════════ */}
-      <section className="reveal-on-scroll relative z-20 mx-auto w-full max-w-5xl px-5 py-12 md:px-8">
+      <section className="reveal-on-scroll section-defer-render relative z-20 mx-auto w-full max-w-5xl px-5 py-12 md:px-8">
         <div className="relative overflow-hidden rounded-3xl border border-amber-500/30 bg-gradient-to-br from-[#1a120b] via-[#0d0a06] to-[#070503] p-8 md:p-14 shadow-[0_20px_60px_rgba(245,158,11,0.15)]">
           {/* Luzes de Aurora de Fundo */}
           <div className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full bg-amber-500/20 blur-[90px]" />
@@ -885,7 +875,7 @@ function ImersaoPage() {
       {/* ═══════════════════════════════════════════════
           DOBRA 6 — CRONOGRAMA DA IMERSÃO (25 DE OUTUBRO)
       ═══════════════════════════════════════════════ */}
-      <section id="cronograma" className="reveal-on-scroll relative z-20 mx-auto w-full max-w-5xl px-5 py-16 md:px-8">
+      <section id="cronograma" className="reveal-on-scroll section-defer-render relative z-20 mx-auto w-full max-w-5xl px-5 py-16 md:px-8">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-950/40 px-3.5 py-1 text-xs font-bold text-emerald-300 uppercase tracking-wider mb-2">
             <Clock className="h-3.5 w-3.5" />
@@ -996,7 +986,7 @@ function ImersaoPage() {
       {/* ═══════════════════════════════════════════════
           DOBRA 7 — PARA QUEM É A IMERSÃO?
       ═══════════════════════════════════════════════ */}
-      <section className="reveal-on-scroll relative z-20 mx-auto w-full max-w-7xl px-5 py-16 md:px-8">
+      <section className="reveal-on-scroll section-defer-render relative z-20 mx-auto w-full max-w-7xl px-5 py-16 md:px-8">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-amber-400">
             Público Ideal
@@ -1098,7 +1088,7 @@ function ImersaoPage() {
       {/* ═══════════════════════════════════════════════
           DOBRA 8 — OFERTA / PREÇO (VALORES: 27,00 | 57,00 | 97,00)
       ═══════════════════════════════════════════════ */}
-      <section id="preco" className="reveal-on-scroll relative z-20 mx-auto w-full max-w-5xl px-5 py-16 md:px-8">
+      <section id="preco" className="reveal-on-scroll section-defer-render relative z-20 mx-auto w-full max-w-5xl px-5 py-16 md:px-8">
         <div className="rounded-3xl border border-amber-500/40 bg-gradient-to-b from-[#18120a] via-[#0f0c07] to-[#080808] p-8 md:p-14 shadow-[0_10px_60px_rgba(245,158,11,0.2)]">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             {/* Benefícios Inclusos */}
@@ -1208,7 +1198,7 @@ function ImersaoPage() {
       {/* ═══════════════════════════════════════════════
           DOBRA 9 — CERTIFICADO OFICIAL
       ═══════════════════════════════════════════════ */}
-      <section className="reveal-on-scroll relative z-20 mx-auto w-full max-w-5xl px-5 py-12 md:px-8">
+      <section className="reveal-on-scroll section-defer-render relative z-20 mx-auto w-full max-w-5xl px-5 py-12 md:px-8">
         <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-8 md:p-12 flex flex-col md:flex-row items-center gap-8 lg:gap-12">
           <div className="md:w-1/2 flex flex-col items-center text-center md:items-start md:text-left">
             <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-300 uppercase tracking-wider mb-3 mx-auto md:mx-0">
@@ -1257,7 +1247,7 @@ function ImersaoPage() {
       {/* ═══════════════════════════════════════════════
           DOBRA 10 — SOBRE A ESPECIALISTA (NATALIA RODOLFO)
       ═══════════════════════════════════════════════ */}
-      <section className="reveal-on-scroll relative z-20 mx-auto w-full max-w-5xl px-5 py-16 md:px-8">
+      <section className="reveal-on-scroll section-defer-render relative z-20 mx-auto w-full max-w-5xl px-5 py-16 md:px-8">
         <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-8 md:p-12 flex flex-col lg:flex-row items-center gap-10">
           <div className="lg:w-5/12">
             <div className="group relative mx-auto aspect-[4/5] w-full max-w-sm overflow-hidden rounded-2xl border border-amber-500/30 bg-[#0b140e] shadow-2xl shadow-black/60">
@@ -1318,7 +1308,7 @@ function ImersaoPage() {
       {/* ═══════════════════════════════════════════════
           DOBRA 11 — FAQ (PERGUNTAS FREQUENTES)
       ═══════════════════════════════════════════════ */}
-      <section className="reveal-on-scroll relative z-20 mx-auto w-full max-w-3xl px-5 py-16 md:px-8">
+      <section className="reveal-on-scroll section-defer-render relative z-20 mx-auto w-full max-w-3xl px-5 py-16 md:px-8">
         <div className="text-center mb-10">
           <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-amber-400">
             Tire Suas Dúvidas
@@ -1380,7 +1370,7 @@ function ImersaoPage() {
       {/* ═══════════════════════════════════════════════
           DOBRA 12 — SUPORTE DIRETO NO WHATSAPP
       ═══════════════════════════════════════════════ */}
-      <section className="reveal-on-scroll relative z-20 mx-auto w-full max-w-xl px-5 py-12 md:px-8">
+      <section className="reveal-on-scroll section-defer-render relative z-20 mx-auto w-full max-w-xl px-5 py-12 md:px-8">
         <div className="rounded-3xl border border-emerald-500/30 bg-[#0b1410] p-8 text-center flex flex-col items-center shadow-lg">
           <div className="h-14 w-14 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 mb-4">
             <MessageCircle className="h-7 w-7" />
