@@ -37,6 +37,7 @@ export const Route = createFileRoute("/cartao-de-credito")({
         name: "description",
         content: "Acompanhe o uso do limite, fatura do mês e compras parceladas · Pessoal e Empresa.",
       },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: CartaoCredito,

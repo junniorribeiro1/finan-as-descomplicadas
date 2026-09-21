@@ -25,6 +25,7 @@ export const Route = createFileRoute("/segundo-usuario")({
         name: "description",
         content: "Compartilhe suas finanças com quem organiza junto. Gestão financeira compartilhada.",
       },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: SegundoUsuario,

@@ -27,6 +27,7 @@ export const Route = createFileRoute("/controle-financeiro")({
         property: "og:description",
         content: "A evolução digital da planilha: seus lançamentos com clareza total.",
       },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: ControleFinanceiro,

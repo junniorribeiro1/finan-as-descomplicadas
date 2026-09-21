@@ -8,6 +8,7 @@ export const Route = createFileRoute("/reserva-de-emergencia")({
     meta: [
       { title: "Reserva de Emergência — OrganizAI" },
       { name: "description", content: "Construa sua segurança e colchão financeiro." },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: ReservaEmergencia,

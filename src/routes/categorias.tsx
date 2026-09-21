@@ -48,6 +48,7 @@ export const Route = createFileRoute("/categorias")({
         content: "Gerencie suas categorias financeiras · Pessoal e Empresa.",
       },
       { property: "og:title", content: "Categorias — OrganizAI" },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: Categorias,

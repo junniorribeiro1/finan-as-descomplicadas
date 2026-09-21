@@ -41,6 +41,7 @@ export const Route = createFileRoute("/perfil")({
         content:
           "Gerencie dados da sua conta, segurança, compartilhamento e importação de dados.",
       },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: Perfil,

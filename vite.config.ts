@@ -21,16 +21,7 @@ export default defineConfig({
       },
     },
   },
-  vite: {
-    define: {
-      "import.meta.env.VITE_GROQ_API_KEY": JSON.stringify(
-        process.env.VITE_GROQ_API_KEY || process.env.GROQ_API_KEY || ""
-      ),
-      "import.meta.env.GROQ_API_KEY": JSON.stringify(
-        process.env.GROQ_API_KEY || process.env.VITE_GROQ_API_KEY || ""
-      ),
-    },
-  },
+  vite: {},
 });
 
 

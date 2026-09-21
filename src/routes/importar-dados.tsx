@@ -22,6 +22,7 @@ export const Route = createFileRoute("/importar-dados")({
         name: "description",
         content: "Traga sua planilha do Excel, Google Sheets ou extrato do banco.",
       },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: ImportarDados,
@@ -397,7 +398,7 @@ function ImportarDados() {
 
                 <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
                   <Link
-                    to="/app"
+                    to="/dashboard"
                     className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 px-5 py-2.5 text-xs font-semibold text-white shadow-md shadow-orange-500/20"
                   >
                     Ir para o Dashboard

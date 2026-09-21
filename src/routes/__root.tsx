@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AuthProvider } from "../lib/auth-context";
 import { Toaster } from "../components/ui/sonner";
+import { LgpdConsentBanner } from "../components/common/LgpdConsentBanner";
 
 function NotFoundComponent() {
   return (
@@ -90,10 +91,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "theme-color", content: "#0c0a09" },
       { title: "OrganizAI — Finanças Descomplicadas" },
       { name: "description", content: "Plataforma de gestão financeira inteligente OrganizAI." },
+      { property: "og:site_name", content: "OrganizAI — Natália Rodolfo" },
+      { property: "og:locale", content: "pt_BR" },
       { property: "og:title", content: "OrganizAI — Finanças Descomplicadas" },
       { property: "og:description", content: "Plataforma de gestão financeira inteligente OrganizAI." },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "google-site-verification", content: "google-site-verification-token" },
     ],
     links: [
       { rel: "manifest", href: "/manifest.json" },
@@ -166,6 +170,7 @@ function RootComponent() {
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <Outlet />
         <Toaster richColors position="top-right" />
+        <LgpdConsentBanner />
       </AuthProvider>
     </QueryClientProvider>
   );

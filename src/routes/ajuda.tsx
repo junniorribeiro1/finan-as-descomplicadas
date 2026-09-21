@@ -21,8 +21,18 @@ export const Route = createFileRoute("/ajuda")({
       { title: "Central de Ajuda — OrganizAI" },
       {
         name: "description",
-        content: "Encontre respostas rápidas e tutoriais para organizar sua vida financeira.",
+        content: "Encontre respostas rápidas e tutoriais para organizar sua vida financeira no OrganizAI.",
       },
+      { property: "og:title", content: "Central de Ajuda — OrganizAI" },
+      {
+        property: "og:description",
+        content: "Perguntas frequentes, guias práticos e suporte oficial da plataforma OrganizAI.",
+      },
+      { property: "og:url", content: "https://nataliarodolfo.com.br/ajuda" },
+      { property: "og:type", content: "website" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://nataliarodolfo.com.br/ajuda" },
     ],
   }),
   component: CentralAjuda,
@@ -99,8 +109,25 @@ function CentralAjuda() {
     setAbertoId((prev) => (prev === id ? null : id));
   };
 
+  const schemaOrgFaqData = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqList.map((item) => ({
+      "@type": "Question",
+      name: item.pergunta,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.resposta,
+      },
+    })),
+  };
+
   return (
     <AppShell>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaOrgFaqData) }}
+      />
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
         {/* Header Superior com Ícone 3D em Pod Escuro */}
         <div className="flex items-center gap-4">

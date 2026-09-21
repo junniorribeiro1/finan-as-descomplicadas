@@ -34,7 +34,7 @@ import { PassoAPassoWidget } from "@/components/app/PassoAPassoWidget";
 import { usePeriodoAtivo, setPeriodoAtivo } from "@/lib/periodo";
 
 export const menuItens = [
-  { rotulo: "Dashboard", to: "/app", icone: LayoutGrid },
+  { rotulo: "Dashboard", to: "/dashboard", icone: LayoutGrid },
   { rotulo: "Gastos Fixos", to: "/gastos-fixos", icone: Receipt },
   { rotulo: "Gastos Variáveis", to: "/gastos-variaveis", icone: ShoppingBag },
   { rotulo: "Cartões de Crédito", to: "/cartao-de-credito", icone: CreditCard },
@@ -48,7 +48,7 @@ export const menuItens = [
 
 function Marca() {
   return (
-    <Link to="/app" className="flex items-center gap-3 px-1 py-1 group">
+    <Link to="/dashboard" className="flex items-center gap-3 px-1 py-1 group">
       {/* Moeda Dourada IA / Ícone da marca OrganizAI */}
       <div className="relative flex h-10 w-10 shrink-0 items-center justify-center transition-transform duration-200 group-hover:scale-105">
         <picture>
@@ -90,7 +90,7 @@ function NavItem({
     <Link
       to={to}
       onClick={onClick}
-      activeOptions={{ exact: to === "/app" }}
+      activeOptions={{ exact: to === "/dashboard" }}
       className="group flex items-center gap-3.5 rounded-2xl px-3.5 py-2.5 text-[0.875rem] font-medium text-stone-200 transition-all hover:bg-white/[0.06] hover:text-white data-[status=active]:bg-[#2c170d] data-[status=active]:text-[#f97316] data-[status=active]:font-semibold"
     >
       <Icone
@@ -242,7 +242,11 @@ export function AppShell({
   useEffect(() => {
     if (!loading && !session) {
       const currentPath =
-        typeof window !== "undefined" ? window.location.pathname : "/app";
+        typeof window !== "undefined"
+          ? window.location.pathname === "/app"
+            ? "/dashboard"
+            : window.location.pathname
+          : "/dashboard";
       navigate({ to: "/login", search: { redirect: currentPath } });
     }
   }, [loading, session, navigate]);

@@ -44,86 +44,107 @@ function getRespostasFallback(pergunta: string, nomeUsuario?: string): string {
   );
 }
 
+// Execução segura e isolada exclusivamente no servidor backend via TanStack Start
+import { createServerFn } from "@tanstack/react-start";
+
+export const perguntarParaVeraServerFn = createServerFn({ method: "POST" })
+  .validator(
+    (d: {
+      pergunta: string;
+      historico: MensagemChat[];
+      nomeUsuario?: string;
+    }) => d
+  )
+  .handler(async ({ data }) => {
+    const { pergunta, historico, nomeUsuario } = data;
+
+    // Chave isolada no ambiente de servidor (nunca vazada no bundle client-side)
+    const apiKey =
+      (typeof process !== "undefined" &&
+        (process.env?.["GROQ_API_KEY"] || process.env?.["VITE_GROQ_API_KEY"])) ||
+      "";
+
+    if (!apiKey) {
+      return { texto: getRespostasFallback(pergunta, nomeUsuario) };
+    }
+
+    const messages = [
+      { role: "system", content: getSystemPrompt(nomeUsuario) },
+      ...historico.slice(-6).map((m) => ({
+        role: m.remetente === "vera" ? ("assistant" as const) : ("user" as const),
+        content: m.texto,
+      })),
+      { role: "user", content: pergunta },
+    ];
+
+    try {
+      const response = await fetch(GROQ_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: "openai/gpt-oss-120b",
+          messages,
+          temperature: 0.7,
+          max_tokens: 450,
+        }),
+      });
+
+      if (response.ok) {
+        const resData = (await response.json()) as {
+          choices?: Array<{ message?: { content?: string } }>;
+        };
+        const respostaIA = resData.choices?.[0]?.message?.content;
+        if (respostaIA) {
+          return { texto: respostaIA.trim() };
+        }
+      }
+
+      // Se o modelo principal estiver temporariamente indisponível, tenta com fallback
+      const fallbackResponse = await fetch(GROQ_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: "qwen/qwen3.8-27b",
+          messages,
+          temperature: 0.7,
+          max_tokens: 450,
+        }),
+      });
+
+      if (fallbackResponse.ok) {
+        const dataFallback = (await fallbackResponse.json()) as {
+          choices?: Array<{ message?: { content?: string } }>;
+        };
+        const respostaFallbackIA = dataFallback.choices?.[0]?.message?.content;
+        if (respostaFallbackIA) {
+          return { texto: respostaFallbackIA.trim() };
+        }
+      }
+    } catch (err) {
+      console.error("[Vera AI Server] Erro ao comunicar com Groq API:", err);
+    }
+
+    return { texto: getRespostasFallback(pergunta, nomeUsuario) };
+  });
+
 export async function perguntarParaVera(
   pergunta: string,
   historico: MensagemChat[],
   nomeUsuario?: string
 ): Promise<{ texto: string }> {
-  const apiKey =
-    (typeof import.meta !== "undefined" &&
-      (import.meta.env?.["VITE_GROQ_API_KEY"] ||
-        import.meta.env?.["GROQ_API_KEY"])) ||
-    (typeof process !== "undefined" &&
-      (process.env?.["VITE_GROQ_API_KEY"] ||
-        process.env?.["GROQ_API_KEY"])) ||
-    (typeof window !== "undefined" && localStorage.getItem("groq_api_key")) ||
-    "";
-
-  if (!apiKey) {
+  try {
+    const res = await perguntarParaVeraServerFn({
+      data: { pergunta, historico, nomeUsuario },
+    });
+    return res;
+  } catch (error) {
+    console.warn("[Vera AI Client] Fallback ativado devido a erro na chamada de servidor:", error);
     return { texto: getRespostasFallback(pergunta, nomeUsuario) };
   }
-
-  // Montar histórico de mensagens formatado
-  const messages = [
-    { role: "system", content: getSystemPrompt(nomeUsuario) },
-    ...historico.slice(-6).map((m) => ({
-      role: m.remetente === "vera" ? "assistant" : "user",
-      content: m.texto,
-    })),
-    { role: "user", content: pergunta },
-  ];
-
-  try {
-    const response = await fetch(GROQ_API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: "openai/gpt-oss-120b",
-        messages,
-        temperature: 0.7,
-        max_tokens: 450,
-      }),
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      const respostaIA = data.choices?.[0]?.message?.content;
-      if (respostaIA) {
-        return { texto: respostaIA.trim() };
-      }
-    }
-
-    // Se o modelo principal estiver indisponível, tenta com qwen3.8-27b
-    const fallbackResponse = await fetch(GROQ_API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: "qwen/qwen3.8-27b",
-        messages,
-        temperature: 0.7,
-        max_tokens: 450,
-      }),
-    });
-
-    if (fallbackResponse.ok) {
-      const dataFallback = await fallbackResponse.json();
-      const respostaFallbackIA = dataFallback.choices?.[0]?.message?.content;
-      if (respostaFallbackIA) {
-        return { texto: respostaFallbackIA.trim() };
-      }
-    }
-  } catch {
-    // Continua para o fallback local abaixo
-  }
-
-  // Fallback local seguro e imediato
-  const respostaFallback = getRespostasFallback(pergunta, nomeUsuario);
-
-  return { texto: respostaFallback };
 }

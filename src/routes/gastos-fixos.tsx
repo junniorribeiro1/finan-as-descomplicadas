@@ -35,6 +35,7 @@ export const Route = createFileRoute("/gastos-fixos")({
     meta: [
       { title: "Gastos fixos — OrganizAI" },
       { name: "description", content: "Contas recorrentes - Pessoal e Empresa." },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: GastosFixos,

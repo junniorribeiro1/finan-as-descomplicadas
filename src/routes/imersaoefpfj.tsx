@@ -43,10 +43,12 @@ export const Route = createFileRoute("/imersaoefpfj")({
           "Método definitivo para organizar as contas pessoais e da sua empresa. 25 de Outubro ao vivo no Zoom com certificado oficial. Ingressos do Lote 1 por R$ 27,00.",
       },
       { property: "og:image", content: "/imersao-banner.png" },
+      { property: "og:url", content: "https://nataliarodolfo.com.br/imersaoefpfj" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
+      { rel: "canonical", href: "https://nataliarodolfo.com.br/imersaoefpfj" },
       {
         rel: "preload",
         as: "image",
@@ -71,7 +73,10 @@ function ImersaoPage() {
     "Olá! Tenho uma dúvida sobre a IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ."
   )}`;
 
-  // 2. Scroll progress indicator com throttling suave
+  // 2. Estado do lote selecionado
+  const [selectedLot, setSelectedLot] = useState<number>(1);
+
+  // 3. Scroll progress indicator com throttling suave
   const [scrollProgress, setScrollProgress] = useState(0);
   const [showStickyBar, setShowStickyBar] = useState(false);
 
@@ -150,11 +155,54 @@ function ImersaoPage() {
     setOpenFaq(openFaq === idx ? null : idx);
   };
 
-  // 6. Active Pricing Lot State
-  const [selectedLot, setSelectedLot] = useState<1 | 2 | 3>(1);
+  const schemaOrgImersaoData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Course",
+        name: "IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ",
+        description:
+          "Método definitivo para organizar as contas pessoais e da sua empresa com clareza total, sair do vermelho e ter fluxo de caixa previsível.",
+        provider: {
+          "@type": "Person",
+          name: "Natália Rodolfo",
+          sameAs: "https://nataliarodolfo.com.br",
+        },
+        offers: {
+          "@type": "Offer",
+          category: "Paid",
+          price: "27.00",
+          priceCurrency: "BRL",
+          availability: "https://schema.org/InStock",
+          url: "https://pay.hotmart.com/X107567504O?bid=1789504719427",
+        },
+      },
+      {
+        "@type": "Event",
+        name: "IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ ao Vivo",
+        startDate: "2026-10-25T09:00:00-03:00",
+        endDate: "2026-10-25T18:00:00-03:00",
+        eventAttendanceMode: "https://schema.org/OnlineEventAttendanceMode",
+        eventStatus: "https://schema.org/EventScheduled",
+        location: {
+          "@type": "VirtualLocation",
+          url: "https://nataliarodolfo.com.br/imersaoefpfj",
+        },
+        organizer: {
+          "@type": "Person",
+          name: "Natália Rodolfo",
+          url: "https://nataliarodolfo.com.br",
+        },
+      },
+    ],
+  };
 
   return (
     <div className="relative min-h-[100dvh] w-full bg-[#06080a] text-stone-100 selection:bg-amber-400 selection:text-stone-950 font-sans antialiased overflow-x-hidden">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaOrgImersaoData) }}
+      />
       {/* ── CSS FOR REVEAL-ON-SCROLL OTIMIZADO PARA WEBKIT & SAFARI ── */}
       <style>{`
         .reveal-on-scroll {

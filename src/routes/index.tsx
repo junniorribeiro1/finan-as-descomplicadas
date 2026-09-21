@@ -31,10 +31,12 @@ export const Route = createFileRoute("/")({
           "Educadora Financeira e Estrategista. Acesse a IMER$ÃO EDUCAÇÃO FINANCEIRA, plataforma OrganizAI e canais de contato.",
       },
       { property: "og:image", content: "/natalia-profile.jpg" },
+      { property: "og:url", content: "https://nataliarodolfo.com.br/" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
+      { rel: "canonical", href: "https://nataliarodolfo.com.br/" },
       {
         rel: "preload",
         as: "image",
@@ -49,6 +51,35 @@ export const Route = createFileRoute("/")({
 });
 
 function NataliaLinksPage() {
+  const schemaOrgData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Person",
+        "@id": "https://nataliarodolfo.com.br/#person",
+        name: "Natália Rodolfo",
+        jobTitle: "Educadora Financeira e Estrategista de Gestão",
+        url: "https://nataliarodolfo.com.br",
+        image: "https://nataliarodolfo.com.br/natalia-profile.webp",
+        description:
+          "Educadora Financeira e Estrategista de Gestão. Mentoria financeira para pessoas físicas e jurídicas e criadora do OrganizAI.",
+        sameAs: ["https://www.instagram.com/nataliarodolfo.financas"],
+      },
+      {
+        "@type": "FinancialService",
+        "@id": "https://nataliarodolfo.com.br/#organization",
+        name: "Natália Rodolfo Finanças & OrganizAI",
+        url: "https://nataliarodolfo.com.br",
+        logo: "https://nataliarodolfo.com.br/logo.webp",
+        founder: { "@id": "https://nataliarodolfo.com.br/#person" },
+        description:
+          "Consultoria, mentoria e tecnologia para educação financeira, organização de despesas e planejamento patrimonial PF e PJ.",
+        areaServed: "BR",
+        currenciesAccepted: "BRL",
+      },
+    ],
+  };
+
   const wppNumber = "5577981381477";
 
   // Links pré-digitados com mensagens diretas para cada serviço
@@ -74,6 +105,10 @@ function NataliaLinksPage() {
 
   return (
     <div className="relative min-h-[100dvh] w-full bg-[#080d0a] text-white selection:bg-emerald-500/25 selection:text-emerald-200 overflow-x-hidden font-sans">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaOrgData) }}
+      />
       {/* Luzes de fundo elegantes — Verde Esmeralda & Dourado Suave otimizadas para GPU Mobile */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden ios-hardware-accel [contain:paint]">
         <div className="absolute -top-[130px] left-1/2 -translate-x-1/2 h-[420px] w-[640px] rounded-full bg-emerald-600/15 blur-[36px] sm:blur-[100px]" />

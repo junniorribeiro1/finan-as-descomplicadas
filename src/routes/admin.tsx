@@ -50,6 +50,7 @@ export const Route = createFileRoute("/admin")({
         name: "description",
         content: "Gestão de alunos, autorizações, bloqueios e relatórios da mentoria.",
       },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: AdminPage,
@@ -524,10 +525,10 @@ function AdminPage() {
           </p>
           <div className="mt-6 flex flex-col gap-3">
             <Link
-              to="/app"
+              to="/dashboard"
               className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#F97316] hover:bg-[#ea580c] py-2.5 text-xs font-bold text-white transition-colors"
             >
-              Voltar ao Meu OrganizAI (/app)
+              Voltar ao Meu OrganizAI (Dashboard)
             </Link>
             <button
               onClick={() => signOut()}
@@ -548,7 +549,7 @@ function AdminPage() {
         <div className="mx-auto flex max-w-[1650px] items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
           {/* Logo e Badge Admin */}
           <div className="flex items-center gap-3">
-            <Link to="/app" className="flex items-center gap-2.5 group">
+            <Link to="/dashboard" className="flex items-center gap-2.5 group">
               <div className="relative flex h-9 w-9 shrink-0 items-center justify-center transition-transform group-hover:scale-105">
                 <img
                   src="/logo.png"
@@ -577,13 +578,13 @@ function AdminPage() {
           {/* Ações Topo: Alternar para /app e Usuário Logado */}
           <div className="flex items-center gap-3">
             <Link
-              to="/app"
+              to="/dashboard"
               className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] px-2.5 sm:px-3.5 py-1.5 text-xs font-semibold text-stone-200 hover:bg-white/[0.08] hover:text-white transition-all shadow-sm"
               title="Acessar visão de aluno no aplicativo"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Ir para o OrganizAI (/app)</span>
-              <span className="sm:hidden text-[11px]">App</span>
+              <span className="hidden sm:inline">Ir para o Dashboard</span>
+              <span className="sm:hidden">Dashboard</span>
             </Link>
 
             <button

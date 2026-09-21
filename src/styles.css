@@ -606,4 +606,14 @@ nav {
   contain-intrinsic-size: 1px 600px;
 }
 
+/* Ocultar barra de rolagem em carrosséis mantendo a rolagem nativa e suave */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+
 

@@ -18,17 +18,21 @@ import { Route as CartaoDeCreditoRouteImport } from './routes/cartao-de-credito'
 import { Route as CategoriasRouteImport } from './routes/categorias'
 import { Route as CofrinhosRouteImport } from './routes/cofrinhos'
 import { Route as ControleFinanceiroRouteImport } from './routes/controle-financeiro'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as GastosFixosRouteImport } from './routes/gastos-fixos'
 import { Route as GastosVariaveisRouteImport } from './routes/gastos-variaveis'
 import { Route as ImersaoefpfjRouteImport } from './routes/imersaoefpfj'
 import { Route as ImportarDadosRouteImport } from './routes/importar-dados'
 import { Route as InvestimentosRouteImport } from './routes/investimentos'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as NataliaRouteImport } from './routes/natalia'
 import { Route as PassoAPassoRouteImport } from './routes/passo-a-passo'
 import { Route as PerfilRouteImport } from './routes/perfil'
+import { Route as PoliticaDePrivacidadeRouteImport } from './routes/politica-de-privacidade'
 import { Route as RecebimentosRouteImport } from './routes/recebimentos'
 import { Route as ReservaDeEmergenciaRouteImport } from './routes/reserva-de-emergencia'
 import { Route as SegundoUsuarioRouteImport } from './routes/segundo-usuario'
+import { Route as TermosDeUsoRouteImport } from './routes/termos-de-uso'
 import { Route as VeraGerenteRouteImport } from './routes/vera-gerente'
 
 const IndexRoute = IndexRouteImport.update({
@@ -76,6 +80,11 @@ const ControleFinanceiroRoute = ControleFinanceiroRouteImport.update({
   path: '/controle-financeiro',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GastosFixosRoute = GastosFixosRouteImport.update({
   id: '/gastos-fixos',
   path: '/gastos-fixos',
@@ -106,6 +115,11 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NataliaRoute = NataliaRouteImport.update({
+  id: '/natalia',
+  path: '/natalia',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PassoAPassoRoute = PassoAPassoRouteImport.update({
   id: '/passo-a-passo',
   path: '/passo-a-passo',
@@ -114,6 +128,11 @@ const PassoAPassoRoute = PassoAPassoRouteImport.update({
 const PerfilRoute = PerfilRouteImport.update({
   id: '/perfil',
   path: '/perfil',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PoliticaDePrivacidadeRoute = PoliticaDePrivacidadeRouteImport.update({
+  id: '/politica-de-privacidade',
+  path: '/politica-de-privacidade',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RecebimentosRoute = RecebimentosRouteImport.update({
@@ -129,6 +148,11 @@ const ReservaDeEmergenciaRoute = ReservaDeEmergenciaRouteImport.update({
 const SegundoUsuarioRoute = SegundoUsuarioRouteImport.update({
   id: '/segundo-usuario',
   path: '/segundo-usuario',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermosDeUsoRoute = TermosDeUsoRouteImport.update({
+  id: '/termos-de-uso',
+  path: '/termos-de-uso',
   getParentRoute: () => rootRouteImport,
 } as any)
 const VeraGerenteRoute = VeraGerenteRouteImport.update({
@@ -147,17 +171,21 @@ export interface FileRoutesByFullPath {
   '/categorias': typeof CategoriasRoute
   '/cofrinhos': typeof CofrinhosRoute
   '/controle-financeiro': typeof ControleFinanceiroRoute
+  '/dashboard': typeof DashboardRoute
   '/gastos-fixos': typeof GastosFixosRoute
   '/gastos-variaveis': typeof GastosVariaveisRoute
   '/imersaoefpfj': typeof ImersaoefpfjRoute
   '/importar-dados': typeof ImportarDadosRoute
   '/investimentos': typeof InvestimentosRoute
   '/login': typeof LoginRoute
+  '/natalia': typeof NataliaRoute
   '/passo-a-passo': typeof PassoAPassoRoute
   '/perfil': typeof PerfilRoute
+  '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/recebimentos': typeof RecebimentosRoute
   '/reserva-de-emergencia': typeof ReservaDeEmergenciaRoute
   '/segundo-usuario': typeof SegundoUsuarioRoute
+  '/termos-de-uso': typeof TermosDeUsoRoute
   '/vera-gerente': typeof VeraGerenteRoute
 }
 export interface FileRoutesByTo {
@@ -170,17 +198,21 @@ export interface FileRoutesByTo {
   '/categorias': typeof CategoriasRoute
   '/cofrinhos': typeof CofrinhosRoute
   '/controle-financeiro': typeof ControleFinanceiroRoute
+  '/dashboard': typeof DashboardRoute
   '/gastos-fixos': typeof GastosFixosRoute
   '/gastos-variaveis': typeof GastosVariaveisRoute
   '/imersaoefpfj': typeof ImersaoefpfjRoute
   '/importar-dados': typeof ImportarDadosRoute
   '/investimentos': typeof InvestimentosRoute
   '/login': typeof LoginRoute
+  '/natalia': typeof NataliaRoute
   '/passo-a-passo': typeof PassoAPassoRoute
   '/perfil': typeof PerfilRoute
+  '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/recebimentos': typeof RecebimentosRoute
   '/reserva-de-emergencia': typeof ReservaDeEmergenciaRoute
   '/segundo-usuario': typeof SegundoUsuarioRoute
+  '/termos-de-uso': typeof TermosDeUsoRoute
   '/vera-gerente': typeof VeraGerenteRoute
 }
 export interface FileRoutesById {
@@ -194,17 +226,21 @@ export interface FileRoutesById {
   '/categorias': typeof CategoriasRoute
   '/cofrinhos': typeof CofrinhosRoute
   '/controle-financeiro': typeof ControleFinanceiroRoute
+  '/dashboard': typeof DashboardRoute
   '/gastos-fixos': typeof GastosFixosRoute
   '/gastos-variaveis': typeof GastosVariaveisRoute
   '/imersaoefpfj': typeof ImersaoefpfjRoute
   '/importar-dados': typeof ImportarDadosRoute
   '/investimentos': typeof InvestimentosRoute
   '/login': typeof LoginRoute
+  '/natalia': typeof NataliaRoute
   '/passo-a-passo': typeof PassoAPassoRoute
   '/perfil': typeof PerfilRoute
+  '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/recebimentos': typeof RecebimentosRoute
   '/reserva-de-emergencia': typeof ReservaDeEmergenciaRoute
   '/segundo-usuario': typeof SegundoUsuarioRoute
+  '/termos-de-uso': typeof TermosDeUsoRoute
   '/vera-gerente': typeof VeraGerenteRoute
 }
 export interface FileRouteTypes {
@@ -219,17 +255,21 @@ export interface FileRouteTypes {
     | '/categorias'
     | '/cofrinhos'
     | '/controle-financeiro'
+    | '/dashboard'
     | '/gastos-fixos'
     | '/gastos-variaveis'
     | '/imersaoefpfj'
     | '/importar-dados'
     | '/investimentos'
     | '/login'
+    | '/natalia'
     | '/passo-a-passo'
     | '/perfil'
+    | '/politica-de-privacidade'
     | '/recebimentos'
     | '/reserva-de-emergencia'
     | '/segundo-usuario'
+    | '/termos-de-uso'
     | '/vera-gerente'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -242,17 +282,21 @@ export interface FileRouteTypes {
     | '/categorias'
     | '/cofrinhos'
     | '/controle-financeiro'
+    | '/dashboard'
     | '/gastos-fixos'
     | '/gastos-variaveis'
     | '/imersaoefpfj'
     | '/importar-dados'
     | '/investimentos'
     | '/login'
+    | '/natalia'
     | '/passo-a-passo'
     | '/perfil'
+    | '/politica-de-privacidade'
     | '/recebimentos'
     | '/reserva-de-emergencia'
     | '/segundo-usuario'
+    | '/termos-de-uso'
     | '/vera-gerente'
   id:
     | '__root__'
@@ -265,17 +309,21 @@ export interface FileRouteTypes {
     | '/categorias'
     | '/cofrinhos'
     | '/controle-financeiro'
+    | '/dashboard'
     | '/gastos-fixos'
     | '/gastos-variaveis'
     | '/imersaoefpfj'
     | '/importar-dados'
     | '/investimentos'
     | '/login'
+    | '/natalia'
     | '/passo-a-passo'
     | '/perfil'
+    | '/politica-de-privacidade'
     | '/recebimentos'
     | '/reserva-de-emergencia'
     | '/segundo-usuario'
+    | '/termos-de-uso'
     | '/vera-gerente'
   fileRoutesById: FileRoutesById
 }
@@ -289,17 +337,21 @@ export interface RootRouteChildren {
   CategoriasRoute: typeof CategoriasRoute
   CofrinhosRoute: typeof CofrinhosRoute
   ControleFinanceiroRoute: typeof ControleFinanceiroRoute
+  DashboardRoute: typeof DashboardRoute
   GastosFixosRoute: typeof GastosFixosRoute
   GastosVariaveisRoute: typeof GastosVariaveisRoute
   ImersaoefpfjRoute: typeof ImersaoefpfjRoute
   ImportarDadosRoute: typeof ImportarDadosRoute
   InvestimentosRoute: typeof InvestimentosRoute
   LoginRoute: typeof LoginRoute
+  NataliaRoute: typeof NataliaRoute
   PassoAPassoRoute: typeof PassoAPassoRoute
   PerfilRoute: typeof PerfilRoute
+  PoliticaDePrivacidadeRoute: typeof PoliticaDePrivacidadeRoute
   RecebimentosRoute: typeof RecebimentosRoute
   ReservaDeEmergenciaRoute: typeof ReservaDeEmergenciaRoute
   SegundoUsuarioRoute: typeof SegundoUsuarioRoute
+  TermosDeUsoRoute: typeof TermosDeUsoRoute
   VeraGerenteRoute: typeof VeraGerenteRoute
 }
 
@@ -368,6 +420,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ControleFinanceiroRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/gastos-fixos': {
       id: '/gastos-fixos'
       path: '/gastos-fixos'
@@ -410,6 +469,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/natalia': {
+      id: '/natalia'
+      path: '/natalia'
+      fullPath: '/natalia'
+      preLoaderRoute: typeof NataliaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/passo-a-passo': {
       id: '/passo-a-passo'
       path: '/passo-a-passo'
@@ -422,6 +488,13 @@ declare module '@tanstack/react-router' {
       path: '/perfil'
       fullPath: '/perfil'
       preLoaderRoute: typeof PerfilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/politica-de-privacidade': {
+      id: '/politica-de-privacidade'
+      path: '/politica-de-privacidade'
+      fullPath: '/politica-de-privacidade'
+      preLoaderRoute: typeof PoliticaDePrivacidadeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/recebimentos': {
@@ -445,6 +518,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SegundoUsuarioRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/termos-de-uso': {
+      id: '/termos-de-uso'
+      path: '/termos-de-uso'
+      fullPath: '/termos-de-uso'
+      preLoaderRoute: typeof TermosDeUsoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/vera-gerente': {
       id: '/vera-gerente'
       path: '/vera-gerente'
@@ -465,17 +545,21 @@ const rootRouteChildren: RootRouteChildren = {
   CategoriasRoute: CategoriasRoute,
   CofrinhosRoute: CofrinhosRoute,
   ControleFinanceiroRoute: ControleFinanceiroRoute,
+  DashboardRoute: DashboardRoute,
   GastosFixosRoute: GastosFixosRoute,
   GastosVariaveisRoute: GastosVariaveisRoute,
   ImersaoefpfjRoute: ImersaoefpfjRoute,
   ImportarDadosRoute: ImportarDadosRoute,
   InvestimentosRoute: InvestimentosRoute,
   LoginRoute: LoginRoute,
+  NataliaRoute: NataliaRoute,
   PassoAPassoRoute: PassoAPassoRoute,
   PerfilRoute: PerfilRoute,
+  PoliticaDePrivacidadeRoute: PoliticaDePrivacidadeRoute,
   RecebimentosRoute: RecebimentosRoute,
   ReservaDeEmergenciaRoute: ReservaDeEmergenciaRoute,
   SegundoUsuarioRoute: SegundoUsuarioRoute,
+  TermosDeUsoRoute: TermosDeUsoRoute,
   VeraGerenteRoute: VeraGerenteRoute,
 }
 export const routeTree = rootRouteImport

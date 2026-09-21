@@ -27,7 +27,7 @@ interface LoginSearch {
 export const Route = createFileRoute("/login")({
   validateSearch: (search: Record<string, unknown>): LoginSearch => {
     return {
-      redirect: (search["redirect"] as string) || "/app",
+      redirect: (search["redirect"] as string) || "/dashboard",
     };
   },
   head: () => ({
@@ -37,6 +37,7 @@ export const Route = createFileRoute("/login")({
         name: "description",
         content: "Acesse sua plataforma financeira inteligente OrganizAI.",
       },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: LoginPage,
@@ -77,7 +78,7 @@ function LoginPage() {
   // Se já estiver logado, redirecionar automaticamente para a página solicitada ou /app
   useEffect(() => {
     if (!authLoading && session) {
-      navigate({ to: redirect || "/app" });
+      navigate({ to: redirect && redirect !== "/app" ? redirect : "/dashboard" });
     }
   }, [session, authLoading, navigate, redirect]);
 
@@ -120,7 +121,7 @@ function LoginPage() {
 
       if (data.session) {
         toast.success("Bem-vindo de volta ao OrganizAI!");
-        navigate({ to: redirect || "/app" });
+        navigate({ to: redirect && redirect !== "/app" ? redirect : "/dashboard" });
       }
     } catch (err: any) {
       const msg = "Erro ao conectar ao servidor. Tente novamente.";
@@ -242,7 +243,7 @@ function LoginPage() {
         toast.success(
           "Conta criada! Seu acesso foi enviado para análise e aprovação."
         );
-        navigate({ to: redirect || "/app" });
+        navigate({ to: redirect && redirect !== "/app" ? redirect : "/dashboard" });
       }
     } catch (err: any) {
       console.error("Erro inesperado no cadastro:", err);

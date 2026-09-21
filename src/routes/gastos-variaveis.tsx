@@ -34,6 +34,7 @@ export const Route = createFileRoute("/gastos-variaveis")({
     meta: [
       { title: "Gastos variáveis — OrganizAI" },
       { name: "description", content: "Compras e despesas avulsas · Pessoal e Empresa." },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: GastosVariaveis,

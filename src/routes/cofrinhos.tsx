@@ -35,6 +35,7 @@ export const Route = createFileRoute("/cofrinhos")({
           "Poupe para objetivos específicos. Reserva de emergência, viagens, presentes e metas PJ.",
       },
       { property: "og:title", content: "Cofrinhos — OrganizAI" },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: Cofrinhos,

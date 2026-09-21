@@ -24,6 +24,7 @@ export const Route = createFileRoute("/vera-gerente")({
         name: "description",
         content: "Sua gerente financeira com inteligência artificial.",
       },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: VeraGerente,

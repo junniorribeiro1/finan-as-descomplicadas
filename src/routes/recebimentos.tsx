@@ -31,6 +31,7 @@ export const Route = createFileRoute("/recebimentos")({
       { title: "Entradas — OrganizAI" },
       { name: "description", content: "Entradas e recebimentos · Pessoal e Empresa." },
       { property: "og:title", content: "Entradas — OrganizAI" },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: Recebimentos,

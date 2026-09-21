@@ -13,6 +13,7 @@ export const Route = createFileRoute("/passo-a-passo")({
         name: "description",
         content: "Complete estas etapas para tirar o máximo do OrganizAI.",
       },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: PassoAPasso,

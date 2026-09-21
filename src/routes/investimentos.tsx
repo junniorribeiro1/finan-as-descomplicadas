@@ -34,6 +34,7 @@ export const Route = createFileRoute("/investimentos")({
         content: "Sua carteira completa com projeção de longo prazo · Pessoal e Empresa.",
       },
       { property: "og:title", content: "Investimentos — OrganizAI" },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: Investimentos,

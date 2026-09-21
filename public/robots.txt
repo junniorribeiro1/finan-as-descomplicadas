@@ -1,14 +1,38 @@
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
+# Robots.txt — OrganizAI & Mentoria Natália Rodolfo
+# https://nataliarodolfo.com.br
 
 User-agent: *
-Allow: /
+Allow: /$
+Allow: /imersaoefpfj
+Allow: /app
+Allow: /ajuda
+Allow: /politica-de-privacidade
+Allow: /termos-de-uso
+Allow: /fonts/
+Allow: /images/
+
+# Rotas Privadas e Administrativas (Bloqueadas para Crawlers)
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /dashboard
+Disallow: /dashboard/*
+Disallow: /login
+Disallow: /perfil
+Disallow: /gastos-fixos
+Disallow: /gastos-variaveis
+Disallow: /cartao-de-credito
+Disallow: /bancos
+Disallow: /investimentos
+Disallow: /cofrinhos
+Disallow: /recebimentos
+Disallow: /importar-dados
+Disallow: /segundo-usuario
+Disallow: /vera-gerente
+Disallow: /passo-a-passo
+Disallow: /categorias
+Disallow: /controle-financeiro
+Disallow: /reserva-de-emergencia
+Disallow: /natalia
+Disallow: /api/
+
+Sitemap: https://nataliarodolfo.com.br/sitemap.xml

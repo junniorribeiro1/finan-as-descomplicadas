@@ -31,6 +31,7 @@ export const Route = createFileRoute("/bancos")({
         content: "Todos os seus saldos em um lugar só · Pessoal e Empresa.",
       },
       { property: "og:title", content: "Bancos — OrganizAI" },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: Bancos,
