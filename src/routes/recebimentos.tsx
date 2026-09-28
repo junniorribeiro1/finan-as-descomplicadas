@@ -28,9 +28,9 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/recebimentos")({
   head: () => ({
     meta: [
-      { title: "Entradas — OrganizAI" },
+      { title: "Entradas — Organiz.AI" },
       { name: "description", content: "Entradas e recebimentos · Pessoal e Empresa." },
-      { property: "og:title", content: "Entradas — OrganizAI" },
+      { property: "og:title", content: "Entradas — Organiz.AI" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
@@ -156,8 +156,21 @@ function dataCorrespondeAoPeriodo(
 function Recebimentos() {
   const { user } = useAuth();
   const periodo = usePeriodoAtivo();
-  const [recebimentos, setRecebimentos] = useState<RecebimentoItem[]>([]);
-  const [carregando, setCarregando] = useState(true);
+  const [recebimentos, setRecebimentos] = useState<RecebimentoItem[]>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const cached = localStorage.getItem("organizai_cached_recebimentos");
+        if (cached) return JSON.parse(cached);
+      } catch {}
+    }
+    return [];
+  });
+  const [carregando, setCarregando] = useState(() => {
+    if (typeof window !== "undefined") {
+      return !localStorage.getItem("organizai_cached_recebimentos");
+    }
+    return true;
+  });
 
   // Modo da Conta: "pessoal" ou "empresa"
   const [tipoConta, setTipoConta] = useState<"pessoal" | "empresa">(() => {
@@ -275,17 +288,16 @@ function Recebimentos() {
 
   // Carregar recebimentos e bancos do Supabase
   useEffect(() => {
-    if (!user?.id) return;
+    if (!user?.id) {
+      setCarregando(false);
+      return;
+    }
 
     let cancelado = false;
 
     const carregar = async () => {
       try {
-        setCarregando(true);
-        const [
-          { data: recData, error: recError },
-          { data: banData },
-        ] = await Promise.all([
+        const queriesPromise = Promise.all([
           supabase
             .from("recebimentos")
             .select("*")
@@ -297,21 +309,34 @@ function Recebimentos() {
             .eq("user_id", user.id),
         ]);
 
+        const timeoutPromise = new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 5000)
+        );
+
+        const [
+          { data: recData, error: recError },
+          { data: banData },
+        ] = await Promise.race([queriesPromise, timeoutPromise]);
+
         if (!cancelado) {
           if (!recError && recData) {
-            setRecebimentos(
-              recData.map((r: any) => ({
-                id: r.id,
-                user_id: r.user_id,
-                descricao: r.descricao,
-                valor: Number(r.valor) || 0,
-                data: r.data,
-                categoria: r.categoria,
-                banco: r.banco,
-                tipoConta: (r.tipo_conta as "pessoal" | "empresa") || "pessoal",
-                created_at: r.created_at,
-              }))
-            );
+            const mapeados = recData.map((r: any) => ({
+              id: r.id,
+              user_id: r.user_id,
+              descricao: r.descricao,
+              valor: Number(r.valor) || 0,
+              data: r.data,
+              categoria: r.categoria,
+              banco: r.banco,
+              tipoConta: (r.tipo_conta as "pessoal" | "empresa") || "pessoal",
+              created_at: r.created_at,
+            }));
+            setRecebimentos(mapeados);
+            if (typeof window !== "undefined") {
+              try {
+                localStorage.setItem("organizai_cached_recebimentos", JSON.stringify(mapeados));
+              } catch {}
+            }
           }
 
           if (banData && banData.length > 0) {

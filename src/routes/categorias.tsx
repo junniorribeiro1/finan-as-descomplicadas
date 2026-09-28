@@ -42,12 +42,12 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/categorias")({
   head: () => ({
     meta: [
-      { title: "Categorias — OrganizAI" },
+      { title: "Categorias — Organiz.AI" },
       {
         name: "description",
         content: "Gerencie suas categorias financeiras · Pessoal e Empresa.",
       },
-      { property: "og:title", content: "Categorias — OrganizAI" },
+      { property: "og:title", content: "Categorias — Organiz.AI" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),

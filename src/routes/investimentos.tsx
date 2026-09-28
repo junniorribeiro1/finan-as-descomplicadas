@@ -28,12 +28,12 @@ import {
 export const Route = createFileRoute("/investimentos")({
   head: () => ({
     meta: [
-      { title: "Investimentos — OrganizAI" },
+      { title: "Investimentos — Organiz.AI" },
       {
         name: "description",
         content: "Sua carteira completa com projeção de longo prazo · Pessoal e Empresa.",
       },
-      { property: "og:title", content: "Investimentos — OrganizAI" },
+      { property: "og:title", content: "Investimentos — Organiz.AI" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),

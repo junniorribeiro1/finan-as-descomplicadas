@@ -142,7 +142,7 @@ export function PwaInstallPrompt() {
           <div className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#2c170d] to-[#1a1311] border border-[#F97316]/40 shadow-md shadow-orange-950/40">
             <img
               src="/logo.png"
-              alt="OrganizAI"
+              alt="Organiz.AI"
               className="h-8 w-8 object-contain drop-shadow-[0_2px_8px_rgba(249,115,22,0.4)]"
             />
           </div>
@@ -155,7 +155,7 @@ export function PwaInstallPrompt() {
               </span>
             </div>
             <h2 id="pwa-dialog-title" className="mt-1 text-sm font-bold text-white tracking-tight">
-              Instale o OrganizAI no seu aparelho
+              Instale o Organiz.AI no seu aparelho
             </h2>
             <p id="pwa-dialog-desc" className="mt-0.5 text-xs text-stone-400 leading-relaxed">
               Acesso rápido com 1 clique na tela inicial, funcionamento fluido e seguro.
@@ -209,7 +209,7 @@ export function PwaInstallPrompt() {
               </li>
               <li>
                 Ou abra o menu de 3 pontos do navegador e selecione{" "}
-                <strong className="text-stone-200">Instalar OrganizAI</strong>.
+                <strong className="text-stone-200">Instalar Organiz.AI</strong>.
               </li>
             </ul>
             <div className="mt-3 flex justify-end">

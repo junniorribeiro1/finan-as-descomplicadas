@@ -44,19 +44,19 @@ import {
 export const Route = createFileRoute("/app")({
   head: () => ({
     meta: [
-      { title: "OrganizAI — A Nova Era do Controle Financeiro Inteligente" },
+      { title: "Organiz.AI — A Nova Era do Controle Financeiro Inteligente" },
       {
         name: "description",
         content:
-          "Pare de ver seu dinheiro sumir no fim do mês. O OrganizAI une metodologia prática de educação financeira a controles modernos para pessoas físicas e empresas. Planos por menos de R$ 1,00 por dia.",
+          "Pare de ver seu dinheiro sumir no fim do mês. O Organiz.AI une metodologia prática de educação financeira a controles modernos para pessoas físicas e empresas. Planos por menos de R$ 1,00 por dia.",
       },
-      { property: "og:title", content: "OrganizAI — Liberdade e Inteligência Financeira PF e PJ" },
+      { property: "og:title", content: "Organiz.AI — Liberdade e Inteligência Financeira PF e PJ" },
       {
         property: "og:description",
         content:
           "Descubra para onde seu dinheiro vai e construa patrimônio com clareza total. Escolha seu plano com parcelas a partir de R$ 29,16.",
       },
-      { property: "og:image", content: "/organizai-app-phone.webp" },
+      { property: "og:image", content: "/organiz-ai-app-phone.webp" },
       { property: "og:url", content: "https://nataliarodolfo.com.br/app" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -72,7 +72,7 @@ export const Route = createFileRoute("/app")({
       {
         rel: "preload",
         as: "image",
-        href: "/natalia-profile.webp",
+        href: "/natalia-mentora.webp",
         type: "image/webp",
       },
     ],
@@ -115,12 +115,12 @@ const modulosCarrossel = [
     badgeCorText: "text-emerald-400",
   },
   {
-    id: "vera-ia",
+    id: "samy-ia",
     tag: "Inteligência Artificial",
-    categoria: "Vera IA 24 Horas",
-    titulo: "Vera · Sua Gerente Financeira Pessoal",
+    categoria: "Samy IA 24 Horas",
+    titulo: "Samy · Sua Assistente Financeira com IA",
     descricao:
-      "Converse com a Vera a qualquer momento para tirar dúvidas sobre seu orçamento, calcular parcelamentos e receber conselhos práticos para cortar desperdícios.",
+      "Converse com a Samy a qualquer momento para tirar dúvidas sobre seu orçamento, calcular parcelamentos e receber conselhos práticos para cortar desperdícios.",
     imagem: "/carrossel/vera-ia.jpg",
     acento: "from-purple-500/35 via-purple-950/20 to-transparent",
     badgeCorText: "text-purple-300",
@@ -162,7 +162,7 @@ const loopCards = Array.from({ length: BUFFER_CYCLES }, (_, cycle) =>
   }))
 ).flat();
 
-export function OrganizAiFintechSalesPage() {
+function OrganizAiFintechSalesPage() {
   const [faqAberto, setFaqAberto] = useState<number | null>(null);
 
   // Estado do Carrossel de Módulos (Estilo Nubank em Loop Infinito com Autoplay)
@@ -364,10 +364,10 @@ export function OrganizAiFintechSalesPage() {
       badgeCor: "text-blue-400 bg-blue-500/10 border-blue-500/30",
     },
     {
-      id: "vera-ia",
+      id: "samy-ia",
       numero: "04",
       tag: "Inteligência Artificial",
-      titulo: "Consultora Financeira Vera IA 24h",
+      titulo: "Assistente Financeira Samy IA 24h",
       descricao:
         "Tire dúvidas no WhatsApp ou no app, calcule simulações de compras e receba conselhos práticos para poupar.",
       icon: Bot,
@@ -408,24 +408,178 @@ export function OrganizAiFintechSalesPage() {
     setFaqAberto((prev) => (prev === index ? null : index));
   };
 
+  const [modalidadePlano, setModalidadePlano] = useState<"pf" | "pj" | "combo">("pf");
+
   const wppNumber = "5577981381477";
 
-  const linkPlanoTrimestral = `https://wa.me/${wppNumber}?text=${encodeURIComponent(
-    "Olá, Natália! Gostaria de assinar o OrganizAI no Plano Trimestral (3x de R$ 39,97 ou R$ 119,90). Como faço para liberar meu acesso agora?"
-  )}`;
+  const planosPorModalidade = {
+    pf: {
+      nome: "App Pessoa Física",
+      tagline: "Para você e sua família organizarem a vida financeira",
+      mensal: {
+        valor: "R$ 49,90",
+        link: `https://wa.me/${wppNumber}?text=${encodeURIComponent(
+          "Olá, Natália! Gostaria de assinar o Organiz.AI Pessoa Física no Plano Mensal (R$ 49,90/mês). Como faço para liberar meu acesso agora?"
+        )}`,
+      },
+      trimestral: {
+        parcelas: "3x de",
+        valorParcela: "R$ 39,97",
+        aVista: "ou R$ 119,90 à vista",
+        link: `https://wa.me/${wppNumber}?text=${encodeURIComponent(
+          "Olá, Natália! Gostaria de assinar o Organiz.AI Pessoa Física no Plano Trimestral (3x de R$ 39,97 ou R$ 119,90 à vista). Como faço para liberar meu acesso agora?"
+        )}`,
+        beneficios: [
+          "Dashboard financeiro completo PF",
+          "Controle de contas, cartões e categorias",
+          "Metas financeiras e Cofrinhos de reserva",
+          "Assistente Inteligente Samy IA inclusa",
+        ],
+      },
+      semestral: {
+        parcelas: "6x de",
+        valorParcela: "R$ 34,98",
+        aVista: "ou R$ 209,90 à vista",
+        link: `https://wa.me/${wppNumber}?text=${encodeURIComponent(
+          "Olá, Natália! Gostaria de assinar o Organiz.AI Pessoa Física no Plano Semestral (6x de R$ 34,98 ou R$ 209,90 à vista). Como faço para liberar meu acesso agora?"
+        )}`,
+        beneficios: [
+          "Todos os benefícios do Trimestral",
+          "Histórico semestral contínuo de fluxo de caixa",
+          "Relatórios analíticos e exportação",
+          "Assistente Inteligente Samy IA inclusa",
+        ],
+      },
+      anual: {
+        parcelas: "12x de",
+        valorParcela: "R$ 29,16",
+        aVista: "ou R$ 349,90 à vista",
+        diario: "Menos de R$ 1,00 por dia (apenas R$ 0,97/dia!)",
+        link: `https://wa.me/${wppNumber}?text=${encodeURIComponent(
+          "Olá, Natália! Gostaria de assinar o Organiz.AI Pessoa Física no Plano Anual com o maior desconto (12x de R$ 29,16 ou R$ 349,90 à vista). Como faço para liberar meu acesso agora?"
+        )}`,
+        beneficios: [
+          "1 ano completo de organização financeira irrestrita",
+          "Dashboard e controle pessoal com inteligência preditiva",
+          "Acesso a Assistente Samy IA com mais créditos diários",
+          "Todas as novas atualizações e recursos liberados",
+        ],
+      },
+    },
+    pj: {
+      nome: "App Empresa",
+      tagline: "Para o seu negócio, MEI ou empresa ter controle total de caixa",
+      mensal: {
+        valor: "R$ 69,90",
+        link: `https://wa.me/${wppNumber}?text=${encodeURIComponent(
+          "Olá, Natália! Gostaria de assinar o Organiz.AI Empresa no Plano Mensal (R$ 69,90/mês). Como faço para liberar meu acesso agora?"
+        )}`,
+      },
+      trimestral: {
+        parcelas: "3x de",
+        valorParcela: "R$ 49,96",
+        aVista: "ou R$ 149,90 à vista",
+        link: `https://wa.me/${wppNumber}?text=${encodeURIComponent(
+          "Olá, Natália! Gostaria de assinar o Organiz.AI Empresa no Plano Trimestral (3x de R$ 49,96 ou R$ 149,90 à vista). Como faço para liberar meu acesso agora?"
+        )}`,
+        beneficios: [
+          "Dashboard de fluxo de caixa empresarial PJ",
+          "Controle de contas a pagar, receber e despesas PJ",
+          "Gestão de recebíveis e cartões corporativos",
+          "Assistente Inteligente Samy IA inclusa",
+        ],
+      },
+      semestral: {
+        parcelas: "6x de",
+        valorParcela: "R$ 38,31",
+        aVista: "ou R$ 229,90 à vista",
+        link: `https://wa.me/${wppNumber}?text=${encodeURIComponent(
+          "Olá, Natália! Gostaria de assinar o Organiz.AI Empresa no Plano Semestral (6x de R$ 38,31 ou R$ 229,90 à vista). Como faço para liberar meu acesso agora?"
+        )}`,
+        beneficios: [
+          "Todos os recursos empresariais do Trimestral",
+          "Histórico semestral e relatórios da empresa",
+          "Importação de extratos bancários PJ",
+          "Assistente Inteligente Samy IA inclusa",
+        ],
+      },
+      anual: {
+        parcelas: "12x de",
+        valorParcela: "R$ 30,82",
+        aVista: "ou R$ 369,90 à vista",
+        diario: "Apenas R$ 1,02 por dia para blindar a sua empresa!",
+        link: `https://wa.me/${wppNumber}?text=${encodeURIComponent(
+          "Olá, Natália! Gostaria de assinar o Organiz.AI Empresa no Plano Anual com o maior desconto (12x de R$ 30,82 ou R$ 369,90 à vista). Como faço para liberar meu acesso agora?"
+        )}`,
+        beneficios: [
+          "1 ano completo de inteligência financeira empresarial",
+          "Previsibilidade de caixa e blindagem contra surpresas",
+          "Acesso a Assistente Samy IA com mais créditos diários",
+          "Módulos futuros e relatórios gerenciais inclusos",
+        ],
+      },
+    },
+    combo: {
+      nome: "App Combo PF + PJ",
+      tagline: "Dois ambientes 100% isolados: sua vida pessoal e sua empresa organizadas",
+      mensal: {
+        valor: "R$ 99,90",
+        link: `https://wa.me/${wppNumber}?text=${encodeURIComponent(
+          "Olá, Natália! Gostaria de assinar o Organiz.AI Combo PF + PJ no Plano Mensal (R$ 99,90/mês). Como faço para liberar meu acesso agora?"
+        )}`,
+      },
+      trimestral: {
+        parcelas: "3x de",
+        valorParcela: "R$ 73,30",
+        aVista: "ou R$ 219,90 à vista",
+        link: `https://wa.me/${wppNumber}?text=${encodeURIComponent(
+          "Olá, Natália! Gostaria de assinar o Organiz.AI Combo PF + PJ no Plano Trimestral (3x de R$ 73,30 ou R$ 219,90 à vista). Como faço para liberar meu acesso agora?"
+        )}`,
+        beneficios: [
+          "Acesso duplo completo: Pessoa Física e Empresa (PJ)",
+          "Separação blindada de patrimônio (sem misturar contas)",
+          "Controle de pró-labore e retiradas organizadas",
+          "Assistente Inteligente Samy IA inclusa",
+        ],
+      },
+      semestral: {
+        parcelas: "6x de",
+        valorParcela: "R$ 66,65",
+        aVista: "ou R$ 399,90 à vista",
+        link: `https://wa.me/${wppNumber}?text=${encodeURIComponent(
+          "Olá, Natália! Gostaria de assinar o Organiz.AI Combo PF + PJ no Plano Semestral (6x de R$ 66,65 ou R$ 399,90 à vista). Como faço para liberar meu acesso agora?"
+        )}`,
+        beneficios: [
+          "Todos os benefícios duplos do plano Trimestral",
+          "Visão consolidada de patrimônio pessoal e da empresa",
+          "Histórico semestral unificado e relatórios inteligentes",
+          "Assistente Inteligente Samy IA inclusa",
+        ],
+      },
+      anual: {
+        parcelas: "12x de",
+        valorParcela: "R$ 49,99",
+        aVista: "ou R$ 599,90 à vista",
+        diario: "Apenas R$ 1,66/dia para gestão integral Pessoal & Negócio!",
+        link: `https://wa.me/${wppNumber}?text=${encodeURIComponent(
+          "Olá, Natália! Gostaria de assinar o Organiz.AI Combo PF + PJ no Plano Anual com o maior desconto (12x de R$ 49,99 ou R$ 599,90 à vista). Como faço para liberar meu acesso agora?"
+        )}`,
+        beneficios: [
+          "1 ano completo com os 2 ambientes (PF + PJ) desbloqueados",
+          "Separação definitiva das contas pessoais e empresariais",
+          "Acesso a Assistente Samy IA com mais créditos diários",
+          "Acesso prioritário a todos os novos recursos e módulos",
+        ],
+      },
+    },
+  };
 
-  const linkPlanoSemestral = `https://wa.me/${wppNumber}?text=${encodeURIComponent(
-    "Olá, Natália! Gostaria de assinar o OrganizAI no Plano Semestral (6x de R$ 34,98 ou R$ 209,90). Como faço para liberar meu acesso agora?"
-  )}`;
-
-  const linkPlanoAnual = `https://wa.me/${wppNumber}?text=${encodeURIComponent(
-    "Olá, Natália! Gostaria de assinar o OrganizAI no Plano Anual com o maior desconto (12x de R$ 29,16 ou R$ 349,90 - menos de R$ 1,00 por dia!). Como faço para liberar meu acesso agora?"
-  )}`;
+  const planoAtual = planosPorModalidade[modalidadePlano];
 
   const schemaOrgAppData = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    name: "OrganizAI",
+    name: "Organiz.AI",
     operatingSystem: "Web, iOS, Android",
     applicationCategory: "FinanceApplication",
     description:
@@ -468,7 +622,7 @@ export function OrganizAiFintechSalesPage() {
                 <source srcSet="/logo.webp" type="image/webp" />
                 <img
                   src="/logo.png"
-                  alt="OrganizAI"
+                  alt="Organiz.AI"
                   width={40}
                   height={40}
                   decoding="async"
@@ -478,7 +632,7 @@ export function OrganizAiFintechSalesPage() {
             </div>
             <div className="flex flex-col leading-tight">
               <span className="font-display text-base sm:text-lg font-bold tracking-tight text-white">
-                Organiz<span className="text-[#F97316] font-black">AI</span>
+                Organiz<span className="text-[#F97316] font-black">.AI</span>
               </span>
               <span className="text-[10px] sm:text-[11px] text-stone-400">
                 Finanças Descomplicadas
@@ -488,18 +642,16 @@ export function OrganizAiFintechSalesPage() {
 
           {/* Links Centrais (Estilo Inter & Nubank) */}
           <nav className="hidden md:flex items-center gap-6 text-xs font-semibold text-stone-300">
-            <a href="#demonstracao" className="hover:text-white transition-colors flex items-center gap-1.5">
-              <Film className="h-3.5 w-3.5 text-[#F97316]" />
+            <a href="#demonstracao" className="hover:text-white transition-colors">
               O App por Dentro
             </a>
             <a href="#comparativo" className="hover:text-white transition-colors">
-              O Jeito OrganizAI
+              O Jeito Organiz.AI
             </a>
             <a href="#modulos" className="hover:text-white transition-colors">
               Módulos
             </a>
-            <a href="#planos" className="text-[#F97316] hover:brightness-125 transition-all flex items-center gap-1 font-bold">
-              <Flame className="h-3.5 w-3.5" />
+            <a href="#planos" className="text-[#F97316] hover:brightness-125 transition-all font-bold">
               Planos &amp; Preços
             </a>
             <a href="#faq" className="hover:text-white transition-colors">
@@ -548,10 +700,10 @@ export function OrganizAiFintechSalesPage() {
             {/* Coluna da Esquerda: Textos, Ações e Prova Social */}
             <div className="lg:col-span-7 flex flex-col items-start text-left">
               
-              {/* Badge Superior: Boas-vindas ao OrganizAI */}
+              {/* Badge Superior: Boas-vindas ao Organiz.AI */}
               <div className="inline-flex items-center gap-2 rounded-full border border-orange-500/30 bg-orange-500/10 px-3.5 py-1 text-xs font-bold text-orange-400 mb-4 sm:mb-5 shadow-sm backdrop-blur-md">
                 <Sparkles className="h-3.5 w-3.5" />
-                <span>Bem-vindo ao OrganizAI</span>
+                <span>Bem-vindo ao Organiz.AI</span>
               </div>
 
               {/* Headline Principal */}
@@ -565,7 +717,7 @@ export function OrganizAiFintechSalesPage() {
               {/* Subheadline persuasiva com foco na dor real */}
               <p className="mt-4 sm:mt-5 text-base sm:text-lg text-stone-300 leading-relaxed max-w-xl font-normal">
                 Chega de planilhas complexas abandonadas na segunda semana ou faturas do cartão que dão sustos. O{" "}
-                <strong className="text-white font-semibold">OrganizAI</strong> traz a metodologia prática da educadora Natália Rodolfo em uma plataforma simples, que você controla em menos de 5 minutos ao dia.
+                <strong className="text-white font-semibold">Organiz.AI</strong> traz a metodologia prática da educadora Natália Rodolfo em uma plataforma simples, que você controla em menos de 5 minutos ao dia.
               </p>
 
               {/* Botões de Ação Hero: Botão Largo em Pílula + Botão Circular de Play */}
@@ -622,22 +774,29 @@ export function OrganizAiFintechSalesPage() {
                     <div className="flex -space-x-2.5 overflow-hidden">
                       <img
                         className="inline-block h-9 w-9 rounded-full ring-2 ring-[#0c0a09] object-cover"
-                        src="/natalia-profile.webp"
-                        alt="Natália Rodolfo"
+                        src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80"
+                        alt="Usuária Organiz.AI"
                         width={36}
                         height={36}
                       />
                       <img
                         className="inline-block h-9 w-9 rounded-full ring-2 ring-[#0c0a09] object-cover"
-                        src="/vera-avatar.webp"
-                        alt="Vera IA"
+                        src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80"
+                        alt="Usuário Organiz.AI"
                         width={36}
                         height={36}
                       />
                       <img
                         className="inline-block h-9 w-9 rounded-full ring-2 ring-[#0c0a09] object-cover"
-                        src="/natalia-mentora.webp"
-                        alt="Aluna Mentoria"
+                        src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80"
+                        alt="Usuária Organiz.AI"
+                        width={36}
+                        height={36}
+                      />
+                      <img
+                        className="inline-block h-9 w-9 rounded-full ring-2 ring-[#0c0a09] object-cover"
+                        src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=120&auto=format&fit=crop&q=80"
+                        alt="Usuária Organiz.AI"
                         width={36}
                         height={36}
                       />
@@ -645,8 +804,8 @@ export function OrganizAiFintechSalesPage() {
                         +
                       </div>
                     </div>
-                    <span className="text-xs font-medium text-stone-400 leading-tight">
-                      +1.800 pessoas<br />organizadas
+                    <span className="text-xs font-medium text-stone-300 leading-tight">
+                      +250 pessoas<br />organizadas
                     </span>
                   </div>
                 </div>
@@ -729,7 +888,7 @@ export function OrganizAiFintechSalesPage() {
                     <div className="flex items-center justify-between pb-1 border-b border-white/[0.06]">
                       <div className="flex items-center gap-1.5">
                         <div className="h-5 w-5 rounded-md bg-[#F97316] flex items-center justify-center text-[10px] font-black text-white">AI</div>
-                        <span className="text-xs font-bold text-white tracking-tight">Organiz<span className="text-[#F97316]">AI</span></span>
+                        <span className="text-xs font-bold text-white tracking-tight">Organiz<span className="text-[#F97316]">.AI</span></span>
                       </div>
                       <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/15 px-1.5 py-0.5 rounded border border-emerald-500/30">
                         Online
@@ -835,7 +994,7 @@ export function OrganizAiFintechSalesPage() {
               <span>Tour Visual Interativo</span>
             </div>
             <h2 className="font-display text-2xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-[1.12]">
-              Veja como o OrganizAI funciona por dentro
+              Veja como o Organiz.AI funciona por dentro
             </h2>
             <p className="mt-3 text-sm sm:text-base text-stone-400 leading-relaxed max-w-2xl mx-auto">
               Selecione um dos módulos à esquerda ou acompanhe o tour automático para ver a experiência prática do app em tempo real.
@@ -1040,7 +1199,7 @@ export function OrganizAiFintechSalesPage() {
               A Diferença é Brutal
             </span>
             <h2 className="mt-2 font-display text-2xl sm:text-4xl font-bold text-white tracking-tight">
-              O jeito antigo te cansa. O jeito OrganizAI te liberta.
+              O jeito antigo te cansa. O jeito Organiz.AI te liberta.
             </h2>
             <p className="mt-3 text-sm sm:text-base text-stone-400 leading-relaxed">
               Veja por que quem tenta controlar as finanças do jeito tradicional acaba desistindo, e como a nossa plataforma muda as regras do jogo:
@@ -1087,7 +1246,7 @@ export function OrganizAiFintechSalesPage() {
                   <CheckCircle2 className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-white text-base">O Jeito OrganizAI</h3>
+                  <h3 className="font-bold text-white text-base">O Jeito Organiz.AI</h3>
                   <span className="text-xs text-orange-400 font-medium">Clareza e tranquilidade com método</span>
                 </div>
               </div>
@@ -1107,7 +1266,7 @@ export function OrganizAiFintechSalesPage() {
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="h-5 w-5 text-emerald-400 shrink-0 stroke-[2.5]" />
-                  <span><strong>Cofrinhos com metas visuais</strong> e consultora Vera IA te ajudando a fazer o dinheiro sobrar.</span>
+                  <span><strong>Cofrinhos com metas visuais</strong> e assistente Samy IA te ajudando a fazer o dinheiro sobrar.</span>
                 </li>
               </ul>
             </div>
@@ -1305,239 +1464,256 @@ export function OrganizAiFintechSalesPage() {
       {/* 6. TABELA DE PLANOS DE ALTA CONVERSÃO (DESTAQUE MÁXIMO NAS PARCELAS E NO ANUAL) */}
       <section id="planos" className="relative z-10 scroll-mt-20 border-t border-white/[0.08] bg-[#060709] py-16 sm:py-24">
         <div className="mx-auto max-w-6xl px-4">
-          <div className="text-center max-w-2xl mx-auto">
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1 text-xs font-bold text-amber-300 mb-3">
-              <Flame className="h-3.5 w-3.5" />
+          <div className="text-center max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1 text-xs font-bold text-amber-300 mb-4">
+              <Sparkles className="h-3.5 w-3.5" />
               <span>Menor que o valor de um cafezinho por dia</span>
             </div>
-            <h2 className="font-display text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
-              Escolha seu plano e comece hoje mesmo
+
+            {/* Título em duas linhas conforme solicitado */}
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
+              <span>Escolha seu plano</span>
+              <br />
+              <span className="text-stone-300">e comece hoje mesmo</span>
             </h2>
-            <p className="mt-2 text-sm sm:text-base text-stone-400">
+
+            <p className="mt-3 text-xs sm:text-sm text-stone-400 max-w-xl mx-auto">
               Acesso imediato e completo em todos os seus dispositivos. Cancele quando quiser.
+            </p>
+
+            {/* Seletor de Modalidades: Pessoa Física / Empresa / Combo PF + PJ */}
+            <div className="flex justify-center mt-8 sm:mt-10">
+              <div className="inline-flex items-center p-1.5 rounded-2xl bg-[#111216] border border-white/10 shadow-2xl gap-1 sm:gap-2">
+                <button
+                  type="button"
+                  onClick={() => setModalidadePlano("pf")}
+                  className={`flex items-center gap-2 px-3.5 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+                    modalidadePlano === "pf"
+                      ? "bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/30 scale-[1.02]"
+                      : "text-stone-400 hover:text-white hover:bg-white/[0.04]"
+                  }`}
+                >
+                  <User className="h-3.5 w-3.5" />
+                  <span>Pessoa Física</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setModalidadePlano("pj")}
+                  className={`flex items-center gap-2 px-3.5 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+                    modalidadePlano === "pj"
+                      ? "bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/30 scale-[1.02]"
+                      : "text-stone-400 hover:text-white hover:bg-white/[0.04]"
+                  }`}
+                >
+                  <Building2 className="h-3.5 w-3.5" />
+                  <span>Empresa (PJ)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setModalidadePlano("combo")}
+                  className={`flex items-center gap-2 px-3.5 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+                    modalidadePlano === "combo"
+                      ? "bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/30 scale-[1.02]"
+                      : "text-stone-400 hover:text-white hover:bg-white/[0.04]"
+                  }`}
+                >
+                  <Zap className="h-3.5 w-3.5" />
+                  <span>Combo PF + PJ</span>
+                </button>
+              </div>
+            </div>
+
+            <p className="mt-3 text-[11px] sm:text-xs text-orange-400/90 font-medium">
+              {planoAtual.tagline}
             </p>
           </div>
 
-          {/* Grid dos 3 Planos */}
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
-            {/* PLANO 1: TRIMESTRAL */}
-            <div className="relative flex flex-col justify-between rounded-3xl border border-white/10 bg-[#121317] p-6 sm:p-7 shadow-xl transition-all hover:border-white/20">
+          {/* Grid dos 3 Planos: Trimestral (mais estreito), Anual (no centro, mais longo e com destaque supremo), Semestral (mais estreito) */}
+          <div className="mt-12 sm:mt-16 grid grid-cols-1 md:grid-cols-[0.85fr_1.3fr_0.85fr] lg:grid-cols-[0.82fr_1.36fr_0.82fr] gap-5 lg:gap-6 items-center max-w-6xl mx-auto">
+            {/* PLANO 1: TRIMESTRAL (ESQUERDA - LARGURA MENOR) */}
+            <div className="relative flex flex-col justify-between rounded-3xl border border-white/10 bg-[#101115] p-5 sm:p-6 shadow-lg transition-all hover:border-white/20 max-w-[340px] md:max-w-none mx-auto w-full">
               <div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-bold uppercase tracking-wider text-stone-300">
+                  <span className="text-xs font-bold uppercase tracking-wider text-stone-300">
                     Trimestral
                   </span>
-                  <span className="rounded-lg bg-white/[0.06] px-2.5 py-1 text-[11px] font-semibold text-stone-400">
+                  <span className="rounded-md bg-white/[0.06] px-2 py-0.5 text-[10px] font-semibold text-stone-400">
                     3 Meses
                   </span>
                 </div>
 
-                <p className="mt-2 text-xs text-stone-400 leading-snug">
-                  Ideal para quem quer experimentar a organização e dar os primeiros passos.
+                <p className="mt-1.5 text-[11px] text-stone-400 leading-snug">
+                  Primeiros passos para organizar suas finanças com clareza.
                 </p>
 
-                {/* Preço em Destaque na Parcela */}
-                <div className="mt-6 border-y border-white/[0.06] py-5">
-                  <span className="text-xs font-semibold text-stone-400 block mb-1">
-                    Em até 3x de:
-                  </span>
-                  <div className="flex items-baseline gap-1.5">
-                    <span className="text-sm font-bold text-orange-400">3x de</span>
-                    <span className="font-display text-3xl sm:text-4xl font-black text-white tracking-tight">
-                      R$ 39,97
+                {/* Preço em Destaque em Linha Única */}
+                <div className="mt-4 border-y border-white/[0.06] py-3.5 text-center">
+                  <div className="flex items-baseline justify-center gap-1.5 whitespace-nowrap">
+                    <span className="text-xs font-bold text-orange-400">{planoAtual.trimestral.parcelas}</span>
+                    <span className="font-display text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                      {planoAtual.trimestral.valorParcela}
                     </span>
                   </div>
-                  <span className="mt-1.5 text-xs text-stone-400 block font-medium">
-                    ou R$ 119,90 à vista
+                  <span className="mt-1 text-[11px] text-stone-400 block whitespace-nowrap text-center">
+                    {planoAtual.trimestral.aVista}
                   </span>
                 </div>
 
-                <ul className="mt-6 space-y-3 text-xs text-stone-300">
-                  <li className="flex items-start gap-2.5">
-                    <Check className="h-4 w-4 shrink-0 text-emerald-400 mt-0.5" />
-                    <span>Acesso completo ao Dashboard Financeiro</span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <Check className="h-4 w-4 shrink-0 text-emerald-400 mt-0.5" />
-                    <span>Módulo Duplo: Pessoal &amp; Empresarial (PF e PJ)</span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <Check className="h-4 w-4 shrink-0 text-emerald-400 mt-0.5" />
-                    <span>Controle de Cartões, Gastos Fixos e Variáveis</span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <Check className="h-4 w-4 shrink-0 text-emerald-400 mt-0.5" />
-                    <span>Cofrinhos de Metas &amp; Reserva de Emergência</span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <Check className="h-4 w-4 shrink-0 text-emerald-400 mt-0.5" />
-                    <span>Assistente Virtual Vera IA</span>
-                  </li>
+                <ul className="mt-4 space-y-2 text-[11px] sm:text-[11.5px] text-stone-300">
+                  {planoAtual.trimestral.beneficios.map((ben, idx) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <Check className="h-3.5 w-3.5 shrink-0 text-emerald-400 mt-0.5" />
+                      <span>{ben}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
 
-              <div className="mt-8">
+              <div className="mt-6">
                 <a
-                  href={linkPlanoTrimestral}
+                  href={planoAtual.trimestral.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-2 rounded-2xl border border-orange-500/40 bg-orange-500/10 hover:bg-orange-500 hover:text-white py-3 px-4 text-xs sm:text-sm font-bold text-orange-300 transition-all shadow-md active:scale-[0.98]"
+                  className="w-full flex items-center justify-center gap-1.5 rounded-xl border border-orange-500/30 bg-orange-500/10 hover:bg-orange-500 hover:text-white py-2.5 px-3 text-xs font-bold text-orange-300 transition-all shadow-sm active:scale-[0.98]"
                 >
-                  <MessageCircle className="h-4 w-4" />
-                  <span>Assinar Trimestral (3x R$ 39,97)</span>
+                  <span>Assinar Trimestral</span>
                 </a>
               </div>
             </div>
 
-            {/* PLANO 2: SEMESTRAL */}
-            <div className="relative flex flex-col justify-between rounded-3xl border border-white/10 bg-[#121317] p-6 sm:p-7 shadow-xl transition-all hover:border-white/20">
-              <div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-bold uppercase tracking-wider text-stone-300">
-                    Semestral
-                  </span>
-                  <span className="rounded-lg bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-1 text-[11px] font-bold text-emerald-400">
-                    Economia Garantida
-                  </span>
-                </div>
-
-                <p className="mt-2 text-xs text-stone-400 leading-snug">
-                  Para quem deseja estabilidade e controle contínuo durante 6 meses completos.
-                </p>
-
-                {/* Preço em Destaque na Parcela */}
-                <div className="mt-6 border-y border-white/[0.06] py-5">
-                  <span className="text-xs font-semibold text-stone-400 block mb-1">
-                    Em até 6x de:
-                  </span>
-                  <div className="flex items-baseline gap-1.5">
-                    <span className="text-sm font-bold text-orange-400">6x de</span>
-                    <span className="font-display text-3xl sm:text-4xl font-black text-white tracking-tight">
-                      R$ 34,98
-                    </span>
-                  </div>
-                  <span className="mt-1.5 text-xs text-stone-400 block font-medium">
-                    ou R$ 209,90 à vista (parcela reduzida)
-                  </span>
-                </div>
-
-                <ul className="mt-6 space-y-3 text-xs text-stone-300">
-                  <li className="flex items-start gap-2.5">
-                    <Check className="h-4 w-4 shrink-0 text-emerald-400 mt-0.5" />
-                    <span>Todos os benefícios do plano Trimestral</span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <Check className="h-4 w-4 shrink-0 text-emerald-400 mt-0.5" />
-                    <span>Menor valor mensal por tempo de uso</span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <Check className="h-4 w-4 shrink-0 text-emerald-400 mt-0.5" />
-                    <span>Histórico semestral completo de fluxo de caixa</span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <Check className="h-4 w-4 shrink-0 text-emerald-400 mt-0.5" />
-                    <span>Importação de extratos bancários</span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <Check className="h-4 w-4 shrink-0 text-emerald-400 mt-0.5" />
-                    <span>Suporte prioritário da equipe</span>
-                  </li>
-                </ul>
-              </div>
-
-              <div className="mt-8">
-                <a
-                  href={linkPlanoSemestral}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-2 rounded-2xl border border-orange-500/40 bg-orange-500/10 hover:bg-orange-500 hover:text-white py-3 px-4 text-xs sm:text-sm font-bold text-orange-300 transition-all shadow-md active:scale-[0.98]"
-                >
-                  <MessageCircle className="h-4 w-4" />
-                  <span>Assinar Semestral (6x R$ 34,98)</span>
-                </a>
-              </div>
-            </div>
-
-            {/* PLANO 3: ANUAL — DESTAQUE SUPREMO (MENOS DE 1 REAL POR DIA) */}
-            <div className="relative flex flex-col justify-between rounded-3xl border-2 border-amber-400/80 bg-gradient-to-b from-[#22160e] via-[#15120f] to-[#0c0d10] p-6 sm:p-7 shadow-[0_10px_60px_rgba(245,158,11,0.3)] ring-1 ring-amber-400/50 md:-translate-y-3">
-              {/* Badge Campeão de Vendas */}
-              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400 px-4 py-1 text-[11px] font-black uppercase tracking-wider text-black shadow-xl shadow-amber-950/80 flex items-center gap-1.5 whitespace-nowrap">
-                <Flame className="h-3.5 w-3.5 fill-black" />
-                <span>CAMPEÃO DE VENDAS · MELHOR CUSTO-BENEFÍCIO</span>
+            {/* PLANO 2: ANUAL — CENTRO COM COMPRIMENTO MAIOR, DESTAQUE MÁXIMO E MELHOR CUSTO X BENEFÍCIO */}
+            <div className="relative flex flex-col justify-between rounded-3xl border-2 border-amber-400/90 bg-gradient-to-b from-[#25170e] via-[#141212] to-[#0c0d10] p-6 sm:p-8 lg:p-9 shadow-[0_20px_70px_rgba(245,158,11,0.3)] ring-1 ring-amber-400/50 md:-translate-y-5 md:scale-[1.03] z-20 w-full">
+              {/* Badge: Melhor Custo X Benefício com ícone Star */}
+              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400 px-4 py-1 text-[10.5px] sm:text-[11px] font-black uppercase tracking-wider text-black shadow-xl shadow-amber-950/80 flex items-center gap-1.5 whitespace-nowrap">
+                <Star className="h-3.5 w-3.5 fill-black stroke-black" />
+                <span>Melhor Custo X Benefício</span>
               </div>
 
               <div>
-                <div className="flex items-center justify-between mt-2">
-                  <span className="text-base font-extrabold uppercase tracking-wider text-amber-300">
+                <div className="flex items-center justify-between mt-1">
+                  <span className="text-sm sm:text-base font-extrabold uppercase tracking-wider text-amber-300">
                     Plano Anual
                   </span>
-                  <span className="rounded-lg bg-amber-400/20 border border-amber-400/50 px-2.5 py-1 text-[11px] font-bold text-amber-300">
+                  <span className="rounded-md bg-amber-400/20 border border-amber-400/40 px-2.5 py-0.5 text-[10px] sm:text-[11px] font-bold text-amber-300">
                     12 Meses de Acesso
                   </span>
                 </div>
 
-                {/* SUPER DESTAQUE EXIGIDO: MENOS DE R$ 1,00 POR DIA */}
-                <div className="mt-3 rounded-2xl bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-amber-500/20 border border-amber-400/40 p-3 text-center">
-                  <span className="text-xs sm:text-[13px] font-black text-amber-300 flex items-center justify-center gap-1.5">
-                    <Sparkles className="h-4 w-4 text-amber-400" />
-                    Menos de R$ 1,00 por dia (apenas R$ 0,97/dia!)
+                {/* Destaque de Economia Diária */}
+                <div className="mt-3 rounded-xl bg-amber-500/15 border border-amber-400/30 py-1.5 px-3 text-center">
+                  <span className="text-[11px] sm:text-xs font-extrabold text-amber-300 flex items-center justify-center gap-1.5">
+                    <Sparkles className="h-3.5 w-3.5 text-amber-400 shrink-0" />
+                    <span>{planoAtual.anual.diario}</span>
                   </span>
                 </div>
 
-                {/* Preço em Destaque na Parcela */}
-                <div className="mt-5 border-y border-amber-400/20 py-5 bg-black/30 rounded-2xl px-3">
-                  <span className="text-xs font-bold text-amber-200/90 block mb-1">
-                    Em 12x no cartão com a MENOR parcela:
-                  </span>
-                  <div className="flex items-baseline gap-1.5">
-                    <span className="text-base font-bold text-amber-400">12x de</span>
-                    <span className="font-display text-4xl sm:text-5xl font-black text-white tracking-tight drop-shadow-md">
-                      R$ 29,16
+                {/* Preço em Linha Única sem Duplicidade Centralizado */}
+                <div className="mt-4 border-y border-amber-400/25 py-4 bg-black/40 rounded-xl px-4 text-center">
+                  <div className="flex items-baseline justify-center gap-1.5 whitespace-nowrap">
+                    <span className="text-sm font-bold text-amber-400">{planoAtual.anual.parcelas}</span>
+                    <span className="font-display text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight drop-shadow-md">
+                      {planoAtual.anual.valorParcela}
                     </span>
                   </div>
-                  <span className="mt-1.5 text-xs text-stone-300 block font-medium">
-                    ou R$ 349,90 à vista (Maior economia do ano)
+                  <span className="mt-1 text-xs text-amber-200/90 block whitespace-nowrap font-medium text-center">
+                    {planoAtual.anual.aVista}
                   </span>
                 </div>
 
-                <ul className="mt-6 space-y-3 text-xs text-stone-200 font-medium">
-                  <li className="flex items-start gap-2.5">
-                    <Check className="h-4 w-4 shrink-0 text-amber-400 mt-0.5 stroke-[2.5]" />
-                    <span><strong className="text-white">1 ano completo</strong> de controle e educação financeira</span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <Check className="h-4 w-4 shrink-0 text-amber-400 mt-0.5 stroke-[2.5]" />
-                    <span>Todas as atualizações e novos módulos liberados</span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <Check className="h-4 w-4 shrink-0 text-amber-400 mt-0.5 stroke-[2.5]" />
-                    <span>Controle duplo ilimitado: Pessoa Física &amp; Empresa</span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <Check className="h-4 w-4 shrink-0 text-amber-400 mt-0.5 stroke-[2.5]" />
-                    <span>Acesso irrestrito à consultora Vera IA 24/7</span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <Check className="h-4 w-4 shrink-0 text-amber-400 mt-0.5 stroke-[2.5]" />
-                    <span>Suporte VIP e acompanhamento de dúvidas</span>
-                  </li>
+                <ul className="mt-5 space-y-2.5 text-xs text-stone-200 font-medium">
+                  {planoAtual.anual.beneficios.map((ben, idx) => (
+                    <li key={idx} className="flex items-start gap-2.5">
+                      <Check className="h-4 w-4 shrink-0 text-amber-400 mt-0.5 stroke-[2.5]" />
+                      <span>{ben}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
 
               <div className="mt-8">
                 <a
-                  href={linkPlanoAnual}
+                  href={planoAtual.anual.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400 py-4 px-4 text-xs sm:text-sm font-black text-black shadow-xl shadow-orange-950/80 hover:brightness-110 active:scale-[0.98] transition-all"
+                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400 py-3.5 px-4 text-xs sm:text-sm font-black text-black shadow-lg shadow-orange-950/70 hover:brightness-110 active:scale-[0.98] transition-all"
                 >
-                  <Flame className="h-4 w-4 fill-black" />
-                  <span>QUERO O PLANO ANUAL (12x R$ 29,16)</span>
+                  <Star className="h-4 w-4 fill-black stroke-black" />
+                  <span>Garantir Plano Anual</span>
                 </a>
                 <p className="mt-2 text-center text-[10.5px] text-stone-400">
-                  Garantia incondicional de 7 dias ou 100% do seu dinheiro de volta.
+                  Garantia incondicional de 7 dias ou 100% de volta.
                 </p>
               </div>
+            </div>
+
+            {/* PLANO 3: SEMESTRAL (DIREITA - LARGURA MENOR) */}
+            <div className="relative flex flex-col justify-between rounded-3xl border border-white/10 bg-[#101115] p-5 sm:p-6 shadow-lg transition-all hover:border-white/20 max-w-[340px] md:max-w-none mx-auto w-full">
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase tracking-wider text-stone-300">
+                    Semestral
+                  </span>
+                  <span className="rounded-md bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 text-[10px] font-bold text-emerald-400">
+                    Economia
+                  </span>
+                </div>
+
+                <p className="mt-1.5 text-[11px] text-stone-400 leading-snug">
+                  Estabilidade e controle contínuo durante 6 meses completos.
+                </p>
+
+                {/* Preço em Destaque em Linha Única */}
+                <div className="mt-4 border-y border-white/[0.06] py-3.5 text-center">
+                  <div className="flex items-baseline justify-center gap-1.5 whitespace-nowrap">
+                    <span className="text-xs font-bold text-orange-400">{planoAtual.semestral.parcelas}</span>
+                    <span className="font-display text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                      {planoAtual.semestral.valorParcela}
+                    </span>
+                  </div>
+                  <span className="mt-1 text-[11px] text-stone-400 block whitespace-nowrap text-center">
+                    {planoAtual.semestral.aVista}
+                  </span>
+                </div>
+
+                <ul className="mt-4 space-y-2 text-[11px] sm:text-[11.5px] text-stone-300">
+                  {planoAtual.semestral.beneficios.map((ben, idx) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <Check className="h-3.5 w-3.5 shrink-0 text-emerald-400 mt-0.5" />
+                      <span>{ben}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="mt-6">
+                <a
+                  href={planoAtual.semestral.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full flex items-center justify-center gap-1.5 rounded-xl border border-orange-500/30 bg-orange-500/10 hover:bg-orange-500 hover:text-white py-2.5 px-3 text-xs font-bold text-orange-300 transition-all shadow-sm active:scale-[0.98]"
+                >
+                  <span>Assinar Semestral</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Opção Adicional: Plano Mensal */}
+          <div className="mt-10 sm:mt-12 text-center">
+            <div className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-3 rounded-2xl bg-white/[0.03] border border-white/10 px-5 py-3 text-xs text-stone-300 backdrop-blur-sm shadow-md">
+              <span className="text-stone-400">Prefere pagar mês a mês sem fidelidade?</span>
+              <span className="font-bold text-white">
+                Plano Mensal ({planoAtual.nome}): <span className="text-orange-400 font-extrabold">{planoAtual.mensal.valor}/mês</span>
+              </span>
+              <a
+                href={planoAtual.mensal.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 font-bold text-orange-400 hover:text-orange-300 underline underline-offset-4 ml-1"
+              >
+                <span>Assinar Mensal</span>
+                <ArrowRight className="h-3.5 w-3.5" />
+              </a>
             </div>
           </div>
         </div>
@@ -1547,17 +1723,17 @@ export function OrganizAiFintechSalesPage() {
       <section className="relative z-10 py-16 sm:py-24 border-t border-white/[0.08] bg-[#08090c]">
         <div className="mx-auto max-w-4xl px-4">
           <div className="rounded-3xl border border-white/10 bg-[#121317] p-6 sm:p-10 shadow-2xl flex flex-col md:flex-row items-center gap-6 sm:gap-8">
-            <div className="relative flex h-32 w-32 sm:h-40 sm:w-40 shrink-0 items-center justify-center rounded-full p-1 bg-gradient-to-tr from-amber-400 via-orange-500 to-emerald-500 shadow-xl">
-              <picture>
-                <source srcSet="/natalia-profile.webp" type="image/webp" />
+            <div className="relative flex h-36 w-36 sm:h-44 sm:w-44 shrink-0 items-center justify-center rounded-full p-1 bg-gradient-to-tr from-amber-400 via-orange-500 to-emerald-500 shadow-xl">
+              <picture className="h-full w-full">
+                <source srcSet="/natalia-mentora.webp" type="image/webp" />
                 <img
-                  src="/natalia-profile.jpg"
+                  src="/natalia-mentora.jpg"
                   alt="Natália Rodolfo"
-                  width={160}
-                  height={160}
+                  width={176}
+                  height={176}
                   loading="lazy"
                   decoding="async"
-                  className="h-full w-full rounded-full object-cover object-top"
+                  className="h-full w-full rounded-full object-cover object-[center_20%]"
                 />
               </picture>
             </div>
@@ -1571,7 +1747,7 @@ export function OrganizAiFintechSalesPage() {
                 Natália Rodolfo
               </h3>
               <p className="mt-3 text-xs sm:text-sm text-stone-300 leading-relaxed">
-                Especialista em organização e inteligência financeira para pessoas físicas e pequenas empresas. Ao longo de centenas de mentorias, identificou que o que impede as pessoas de prosperar não é o esforço, mas a falta de ferramentas práticas que caibam no dia a dia. O OrganizAI é a materialização do seu método de liberdade financeira.
+                Especialista em organização e inteligência financeira para pessoas físicas e pequenas empresas. Ao longo de centenas de mentorias, identificou que o que impede as pessoas de prosperar não é o esforço, mas a falta de ferramentas práticas que caibam no dia a dia. O Organiz.AI é a materialização do seu método de liberdade financeira.
               </p>
             </div>
           </div>
@@ -1588,7 +1764,7 @@ export function OrganizAiFintechSalesPage() {
             Garantia Incondicional de 7 Dias
           </h2>
           <p className="mt-2 text-xs sm:text-sm text-stone-300 leading-relaxed max-w-xl mx-auto">
-            Você tem 7 dias para acessar o OrganizAI, cadastrar suas contas, testar a separação PF e PJ e sentir a transformação. Se por qualquer motivo não se adaptar, devolvemos 100% do valor pago.
+            Você tem 7 dias para acessar o Organiz.AI, cadastrar suas contas, testar a separação PF e PJ e sentir a transformação. Se por qualquer motivo não se adaptar, devolvemos 100% do valor pago.
           </p>
         </div>
       </section>
@@ -1609,15 +1785,15 @@ export function OrganizAiFintechSalesPage() {
             {[
               {
                 p: "Como eu recebo meu acesso após assinar?",
-                r: "O acesso é imediato! Assim que seu plano for confirmado, você receberá a confirmação e poderá fazer login na tela inicial com seu e-mail e senha cadastrados no OrganizAI.",
+                r: "O acesso é imediato! Assim que seu plano for confirmado, você receberá a confirmação e poderá fazer login na tela inicial com seu e-mail e senha cadastrados no Organiz.AI.",
               },
               {
                 p: "Funciona no celular (iPhone e Android) ou precisa de computador?",
-                r: "Funciona perfeitamente nos dois! O OrganizAI é uma plataforma moderna e PWA. Você pode instalá-lo diretamente na tela de início do seu smartphone com 1 toque, exatamente como um aplicativo nativo.",
+                r: "Funciona perfeitamente nos dois! O Organiz.AI é uma plataforma moderna e PWA. Você pode instalá-lo diretamente na tela de início do seu smartphone com 1 toque, exatamente como um aplicativo nativo.",
               },
               {
                 p: "Consigo usar para minhas contas de casa e da minha empresa no mesmo plano?",
-                r: "Sim! Essa é uma das maiores vantagens do OrganizAI. Você tem um alternador inteligente no topo do painel que separa instantaneamente o Controle Pessoal do Controle Empresarial (PJ), sem custos adicionais.",
+                r: "Sim! Essa é uma das maiores vantagens do Organiz.AI. Você tem um alternador inteligente no topo do painel que separa instantaneamente o Controle Pessoal do Controle Empresarial (PJ), sem custos adicionais.",
               },
               {
                 p: "Por que o Plano Anual é o mais vantajoso?",
@@ -1692,8 +1868,8 @@ export function OrganizAiFintechSalesPage() {
       <footer className="relative z-10 border-t border-white/[0.06] bg-[#040507] py-8 text-center text-xs text-stone-500">
         <div className="mx-auto max-w-6xl px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <img src="/logo.png" alt="OrganizAI" className="h-6 w-6 object-contain" />
-            <span className="font-bold text-stone-300">OrganizAI</span>
+            <img src="/logo.png" alt="Organiz.AI" className="h-6 w-6 object-contain" />
+            <span className="font-bold text-stone-300">Organiz.AI</span>
             <span>· Natália Rodolfo</span>
           </div>
 

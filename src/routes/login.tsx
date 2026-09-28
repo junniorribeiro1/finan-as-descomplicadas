@@ -32,10 +32,10 @@ export const Route = createFileRoute("/login")({
   },
   head: () => ({
     meta: [
-      { title: "Entrar — OrganizAI" },
+      { title: "Entrar — Organiz.AI" },
       {
         name: "description",
-        content: "Acesse sua plataforma financeira inteligente OrganizAI.",
+        content: "Acesse sua plataforma financeira inteligente Organiz.AI.",
       },
       { name: "robots", content: "noindex, nofollow" },
     ],
@@ -120,7 +120,7 @@ function LoginPage() {
       }
 
       if (data.session) {
-        toast.success("Bem-vindo de volta ao OrganizAI!");
+        toast.success("Bem-vindo de volta ao Organiz.AI!");
         navigate({ to: redirect && redirect !== "/app" ? redirect : "/dashboard" });
       }
     } catch (err: any) {
@@ -298,7 +298,7 @@ function LoginPage() {
               <source srcSet="/logo.webp" type="image/webp" />
               <img
                 src="/logo.png"
-                alt="OrganizAI"
+                alt="Organiz.AI"
                 width={40}
                 height={40}
                 decoding="async"
@@ -308,7 +308,7 @@ function LoginPage() {
           </div>
           <div className="flex flex-col leading-tight">
             <span className="font-display text-lg font-bold tracking-tight text-white">
-              Organiz<span className="text-[#F97316] font-black">AI</span>
+              Organiz<span className="text-[#F97316] font-black">.AI</span>
             </span>
             <span className="text-[0.68rem] text-stone-400">
               Finanças Descomplicadas
@@ -344,7 +344,7 @@ function LoginPage() {
               </h1>
               <p className="mt-1.5 text-xs text-stone-400">
                 {modo === "login" &&
-                  "Entre com seu e-mail e senha para acessar o OrganizAI."}
+                  "Entre com seu e-mail e senha para acessar o Organiz.AI."}
                 {modo === "cadastro" &&
                   "Cadastre-se para gerenciar suas finanças com inteligência."}
                 {modo === "recuperar" &&
@@ -457,7 +457,7 @@ function LoginPage() {
                   disabled={carregando}
                   className="w-full mt-2 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#F97316] to-[#ea580c] py-3 text-xs font-bold text-white shadow-lg shadow-orange-950/40 hover:brightness-110 active:scale-[0.99] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  {carregando ? "Entrando..." : "Entrar no OrganizAI"}
+                  {carregando ? "Entrando..." : "Entrar no Organiz.AI"}
                   {!carregando && <ArrowRight className="h-4 w-4" />}
                 </button>
               </form>
@@ -722,7 +722,7 @@ function LoginPage() {
 
       {/* Footer minimalista */}
       <footer className="relative z-10 w-full max-w-7xl mx-auto px-6 py-6 text-center text-xs text-stone-600">
-        © {new Date().getFullYear()} OrganizAI · Natália Rodolfo · Todos os direitos reservados.
+        © {new Date().getFullYear()} Organiz.AI · Natália Rodolfo · Todos os direitos reservados.
       </footer>
 
       {/* Popup de Instalação PWA (exclusivo na tela de login) */}

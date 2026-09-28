@@ -35,7 +35,7 @@ import { useState, useEffect } from "react";
 export const Route = createFileRoute("/perfil")({
   head: () => ({
     meta: [
-      { title: "Perfil do Usuário — OrganizAI" },
+      { title: "Perfil do Usuário — Organiz.AI" },
       {
         name: "description",
         content:
@@ -889,7 +889,7 @@ function Perfil() {
                   </span>
                 </div>
                 <p className="text-xs text-muted-foreground mt-1 max-w-md leading-relaxed">
-                  Importe extratos bancários nos formatos OFX, CSV ou backups de planilhas para preencher suas movimentações financeiras no OrganizAI com facilidade.
+                  Importe extratos bancários nos formatos OFX, CSV ou backups de planilhas para preencher suas movimentações financeiras no Organiz.AI com facilidade.
                 </p>
               </div>
             </div>

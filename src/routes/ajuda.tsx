@@ -18,15 +18,15 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/ajuda")({
   head: () => ({
     meta: [
-      { title: "Central de Ajuda — OrganizAI" },
+      { title: "Central de Ajuda — Organiz.AI" },
       {
         name: "description",
-        content: "Encontre respostas rápidas e tutoriais para organizar sua vida financeira no OrganizAI.",
+        content: "Encontre respostas rápidas e tutoriais para organizar sua vida financeira no Organiz.AI.",
       },
-      { property: "og:title", content: "Central de Ajuda — OrganizAI" },
+      { property: "og:title", content: "Central de Ajuda — Organiz.AI" },
       {
         property: "og:description",
-        content: "Perguntas frequentes, guias práticos e suporte oficial da plataforma OrganizAI.",
+        content: "Perguntas frequentes, guias práticos e suporte oficial da plataforma Organiz.AI.",
       },
       { property: "og:url", content: "https://nataliarodolfo.com.br/ajuda" },
       { property: "og:type", content: "website" },
@@ -65,9 +65,9 @@ const faqList: FaqItem[] = [
   },
   {
     id: "faq-4",
-    pergunta: "Como a Vera funciona?",
+    pergunta: "Como a Samy funciona?",
     resposta:
-      "A Vera é sua gerente financeira com inteligência artificial. Ela analisa seus hábitos de consumo, identifica oportunidades de corte e economia, projeta seus cofrinhos e responde a qualquer dúvida sobre finanças pessoais e empresariais.\n\nRegras de Uso e Créditos Diários:\n• Plano Free: Cada usuário tem direito a 10 mensagens (créditos) enviadas por dia ao assistente.\n• Renovação Diária: Os créditos são renovados todos os dias pontualmente às 06h da manhã, sem acúmulo de créditos não utilizados.",
+      "A Samy é sua assistente financeira com inteligência artificial. Ela analisa seus lançamentos no app, apoia no acompanhamento de gastos fixos, variáveis, cartões e cofrinhos, e tira dúvidas sobre o funcionamento da plataforma.\n\nRegras de Uso e Créditos Diários:\n• Plano Free: Cada usuário tem direito a 10 mensagens (créditos) enviadas por dia ao assistente.\n• Renovação Diária: Os créditos são renovados todos os dias pontualmente às 06h da manhã, sem acúmulo de créditos não utilizados.",
   },
   {
     id: "faq-5",
@@ -85,7 +85,7 @@ const faqList: FaqItem[] = [
     id: "faq-7",
     pergunta: "Como entrar em contato com o suporte?",
     resposta:
-      "Você pode tirar dúvidas instantâneas com a Vera (nossa gerente com inteligência artificial) no menu 'Vera Gerente' ou falar com nossa equipe pelo e-mail suporte@nataliarodolfo.com.br (tempo médio de resposta de até 24h úteis).",
+      "Você pode tirar dúvidas instantâneas com a Samy (nossa assistente com inteligência artificial) no menu 'Samy | Assistente IA' ou falar diretamente com nossa equipe pelo WhatsApp (77) 98138-1477 ou pelo e-mail suporte@nataliarodolfo.com.br.",
   },
 ];
 
@@ -357,12 +357,25 @@ function CentralAjuda() {
                 <div className="flex items-center gap-3">
                   <Bot className="h-5 w-5 text-purple-400" />
                   <div>
-                    <h4 className="text-xs font-bold text-white">Falar com a Vera</h4>
+                    <h4 className="text-xs font-bold text-white">Falar com a Samy</h4>
                     <p className="text-[11px] text-purple-300/80">Resposta imediata com IA</p>
                   </div>
                 </div>
                 <span className="text-xs font-semibold text-purple-400">Iniciar →</span>
               </Link>
+
+              <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-3.5">
+                <h4 className="text-xs font-semibold text-white">WhatsApp de Suporte</h4>
+                <a
+                  href="https://wa.me/5577981381477"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-xs text-emerald-400 hover:text-emerald-300 underline underline-offset-2 mt-1 inline-block transition-colors font-medium"
+                >
+                  (77) 98138-1477 (Acesso Direto)
+                </a>
+                <p className="text-[11px] text-neutral-400 mt-0.5">Atendimento rápido com a equipe</p>
+              </div>
 
               <div className="rounded-xl border border-white/10 bg-white/[0.02] p-3.5">
                 <h4 className="text-xs font-semibold text-white">E-mail de Suporte</h4>
@@ -373,6 +386,18 @@ function CentralAjuda() {
                   suporte@nataliarodolfo.com.br
                 </a>
                 <p className="text-[11px] text-neutral-500 mt-0.5">Tempo médio de resposta: até 24h</p>
+              </div>
+
+              <div className="rounded-xl border border-white/10 bg-white/[0.02] p-3.5">
+                <h4 className="text-xs font-semibold text-white">Instagram Oficial</h4>
+                <a
+                  href="https://www.instagram.com/nataliafinancas"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-xs text-pink-400 hover:text-pink-300 underline underline-offset-2 mt-1 inline-block transition-colors font-medium"
+                >
+                  @nataliafinancas
+                </a>
               </div>
             </div>
 

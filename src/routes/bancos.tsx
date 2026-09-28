@@ -25,12 +25,12 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/bancos")({
   head: () => ({
     meta: [
-      { title: "Bancos — OrganizAI" },
+      { title: "Bancos — Organiz.AI" },
       {
         name: "description",
         content: "Todos os seus saldos em um lugar só · Pessoal e Empresa.",
       },
-      { property: "og:title", content: "Bancos — OrganizAI" },
+      { property: "og:title", content: "Bancos — Organiz.AI" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
@@ -72,8 +72,21 @@ const TIPOS_CONTA_EMPRESA = [
 
 function Bancos() {
   const { user } = useAuth();
-  const [contas, setContas] = useState<ContaBancariaItem[]>([]);
-  const [carregando, setCarregando] = useState(true);
+  const [contas, setContas] = useState<ContaBancariaItem[]>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const cached = localStorage.getItem("organizai_cached_bancos");
+        if (cached) return JSON.parse(cached);
+      } catch {}
+    }
+    return [];
+  });
+  const [carregando, setCarregando] = useState(() => {
+    if (typeof window !== "undefined") {
+      return !localStorage.getItem("organizai_cached_bancos");
+    }
+    return true;
+  });
 
   // Modo da Conta: "pessoal" ou "empresa"
   const [tipoConta, setTipoConta] = useState<"pessoal" | "empresa">(() => {
@@ -147,33 +160,45 @@ function Bancos() {
 
   // Carregar contas do usuário do Supabase
   useEffect(() => {
-    if (!user?.id) return;
+    if (!user?.id) {
+      setCarregando(false);
+      return;
+    }
 
     let cancelado = false;
 
     const carregar = async () => {
       try {
-        setCarregando(true);
-        const { data: bData, error } = await supabase
+        const queryPromise = supabase
           .from("bancos_contas")
           .select("*")
           .eq("user_id", user.id)
           .order("created_at", { ascending: false });
 
+        const timeoutPromise = new Promise<{ data: null; error: Error }>((resolve) =>
+          setTimeout(() => resolve({ data: null, error: new Error("Timeout") }), 5000)
+        );
+
+        const { data: bData, error } = await Promise.race([queryPromise, timeoutPromise]);
+
         if (!cancelado && !error && bData) {
-          setContas(
-            bData.map((b: any) => ({
-              id: b.id,
-              user_id: b.user_id,
-              banco: b.banco,
-              tipo: b.tipo,
-              saldo: Number(b.saldo) || 0,
-              agencia: b.agencia,
-              conta: b.conta,
-              tipoConta: (b.tipo_conta as "pessoal" | "empresa") || "pessoal",
-              created_at: b.created_at,
-            }))
-          );
+          const mapeados = bData.map((b: any) => ({
+            id: b.id,
+            user_id: b.user_id,
+            banco: b.banco,
+            tipo: b.tipo,
+            saldo: Number(b.saldo) || 0,
+            agencia: b.agencia,
+            conta: b.conta,
+            tipoConta: (b.tipo_conta as "pessoal" | "empresa") || "pessoal",
+            created_at: b.created_at,
+          }));
+          setContas(mapeados);
+          if (typeof window !== "undefined") {
+            try {
+              localStorage.setItem("organizai_cached_bancos", JSON.stringify(mapeados));
+            } catch {}
+          }
         }
       } catch (err) {
         console.error("Erro ao carregar bancos:", err);

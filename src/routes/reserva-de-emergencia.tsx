@@ -6,7 +6,7 @@ import { ShieldCheck, Plus, AlertCircle } from "lucide-react";
 export const Route = createFileRoute("/reserva-de-emergencia")({
   head: () => ({
     meta: [
-      { title: "Reserva de Emergência — OrganizAI" },
+      { title: "Reserva de Emergência — Organiz.AI" },
       { name: "description", content: "Construa sua segurança e colchão financeiro." },
       { name: "robots", content: "noindex, nofollow" },
     ],

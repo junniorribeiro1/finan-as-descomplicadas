@@ -1,7 +1,7 @@
 {
-  "name": "OrganizAI — Finanças Descomplicadas",
-  "short_name": "OrganizAI",
-  "description": "Plataforma de gestão financeira inteligente OrganizAI",
+  "name": "Organiz.AI — Finanças Descomplicadas",
+  "short_name": "Organiz.AI",
+  "description": "Plataforma de gestão financeira inteligente Organiz.AI",
   "start_url": "/login",
   "scope": "/",
   "display": "standalone",

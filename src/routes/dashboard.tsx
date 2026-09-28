@@ -31,15 +31,15 @@ import {
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
-      { title: "Dashboard — OrganizAI" },
+      { title: "Dashboard — Organiz.AI" },
       {
         name: "description",
-        content: "OrganizAI — Sua vida financeira simplificada.",
+        content: "Organiz.AI — Sua vida financeira simplificada.",
       },
-      { property: "og:title", content: "Dashboard — OrganizAI" },
+      { property: "og:title", content: "Dashboard — Organiz.AI" },
       {
         property: "og:description",
-        content: "OrganizAI — Sua vida financeira simplificada.",
+        content: "Organiz.AI — Sua vida financeira simplificada.",
       },
       { name: "robots", content: "noindex, nofollow" },
     ],
@@ -49,8 +49,7 @@ export const Route = createFileRoute("/dashboard")({
         as: "image",
         href: "/hero-banner.webp",
         type: "image/webp",
-        // @ts-expect-error fetchpriority
-        fetchpriority: "high",
+        fetchPriority: "high",
       },
     ],
   }),
@@ -97,7 +96,28 @@ function Dashboard() {
     }
     return "pessoal";
   });
-  const [dadosBrutos, setDadosBrutos] = useState<any>(null);
+  const [dadosBrutos, setDadosBrutos] = useState<any>(() => {
+    if (typeof window !== "undefined" && user?.id) {
+      try {
+        const cached = localStorage.getItem(`organizai_finance_data_${user.id}`);
+        if (cached) return JSON.parse(cached);
+      } catch {}
+    }
+    return null;
+  });
+
+  // Tenta carregar do cache assim que user.id estiver disponível
+  useEffect(() => {
+    if (!dadosBrutos && user?.id && typeof window !== "undefined") {
+      const cached = localStorage.getItem(`organizai_finance_data_${user.id}`);
+      if (cached) {
+        try {
+          setDadosBrutos(JSON.parse(cached));
+          setCarregando(false);
+        } catch {}
+      }
+    }
+  }, [user?.id, dadosBrutos]);
 
   // Ouve alterações no tipo de conta (Pessoal / Empresa)
   useEffect(() => {
@@ -319,28 +339,31 @@ function Dashboard() {
       )}
 
       {/* 1. Hero Banner de Boas-Vindas com Fluidez 3D (LCP Otimizado) */}
-      <div className="relative min-h-[175px] sm:min-h-[190px] overflow-hidden rounded-3xl border border-white/[0.06] bg-[#0d0d0d] shadow-xl">
+      <div className="group relative min-h-[175px] sm:min-h-[190px] overflow-hidden rounded-3xl border border-white/[0.08] bg-[#0d0d0d] shadow-xl cursor-default flex flex-col justify-center">
         <picture>
           <source srcSet="/hero-banner.webp" type="image/webp" />
           <img
             src="/hero-banner.png"
-            alt="Fluidez OrganizAI"
+            alt="Fluidez Organiz.AI"
             width={1200}
             height={380}
             fetchPriority="high"
             decoding="async"
-            className="absolute right-0 top-0 h-full w-full object-cover object-right pointer-events-none select-none"
+            className="absolute right-0 top-0 h-full w-full object-cover object-right pointer-events-none select-none transition-transform duration-700 ease-out group-hover:scale-105"
           />
         </picture>
 
+        {/* Camada de transparência/gradiente escuro para contraste e legibilidade das informações */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-black/25 pointer-events-none z-[1]" />
+
         <div className="relative z-10 flex h-full flex-col justify-center p-6 sm:p-8">
           <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#F97316]">
-            ORGANIZAI
+            ORGANIZ.AI
           </span>
-          <h2 className="mt-1 font-display text-2xl font-bold tracking-tight text-white sm:text-3xl">
+          <h2 className="mt-1 font-display text-2xl font-bold tracking-tight text-white sm:text-3xl drop-shadow-md">
             Bem-vindo(a), {nomeExibicao} 👋
           </h2>
-          <p className="mt-1 text-xs text-stone-400 sm:text-sm">
+          <p className="mt-1 text-xs text-stone-300 sm:text-sm drop-shadow-sm">
             Aqui está o resumo em tempo real das suas finanças.
           </p>
         </div>

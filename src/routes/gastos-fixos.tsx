@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { AppShell } from "@/components/app/AppShell";
 import { cn } from "@/lib/utils";
 import { brl } from "@/lib/mock-data";
@@ -33,7 +33,7 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/gastos-fixos")({
   head: () => ({
     meta: [
-      { title: "Gastos fixos — OrganizAI" },
+      { title: "Gastos fixos — Organiz.AI" },
       { name: "description", content: "Contas recorrentes - Pessoal e Empresa." },
       { name: "robots", content: "noindex, nofollow" },
     ],
@@ -65,10 +65,23 @@ const CATEGORIAS_PADRAO_EMPRESA = [
 ];
 
 function GastosFixos() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const periodo = usePeriodoAtivo();
-  const [gastos, setGastos] = useState<GastoFixoItem[]>([]);
-  const [carregando, setCarregando] = useState(true);
+  const [gastos, setGastos] = useState<GastoFixoItem[]>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const cached = localStorage.getItem("organizai_cached_gastos_fixos");
+        if (cached) return JSON.parse(cached);
+      } catch {}
+    }
+    return [];
+  });
+  const [carregando, setCarregando] = useState(() => {
+    if (typeof window !== "undefined") {
+      return !localStorage.getItem("organizai_cached_gastos_fixos");
+    }
+    return true;
+  });
 
   // Modo da Conta: "pessoal" ou "empresa"
   const [tipoConta, setTipoConta] = useState<"pessoal" | "empresa">(() => {
@@ -253,47 +266,63 @@ function GastosFixos() {
     }
   }, [tipoConta, categoriasPessoal, categoriasEmpresa]);
 
-  // Carregar gastos fixos do usuário no Supabase
-  useEffect(() => {
-    if (!user?.id) return;
-    const carregar = async () => {
-      try {
-        setCarregando(true);
-        const { data: fixData, error } = await supabase
-          .from("gastos_fixos")
-          .select("*")
-          .eq("user_id", user.id)
-          .order("dia_venc", { ascending: true });
+  // Carregar gastos fixos do usuário no Supabase com proteção de timeout e sincronização
+  const carregarGastosFixos = useCallback(async () => {
+    if (!user?.id) {
+      if (!authLoading) setCarregando(false);
+      return;
+    }
+    try {
+      setCarregando(true);
+      const queryPromise = supabase
+        .from("gastos_fixos")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("dia_venc", { ascending: true });
 
-        if (!error && fixData) {
-          setGastos(
-            fixData.map((f: any) => ({
-              id: f.id,
-              user_id: f.user_id,
-              nome: f.nome,
-              valor: Number(f.valor) || 0,
-              diaVenc: Number(f.dia_venc) || 5,
-              status: f.status || "Pendente",
-              categoria: f.categoria || (f.tipo_conta === "empresa" ? "Serviços" : "Moradia"),
-              formaPagamento: f.forma_pagamento || "Boleto",
-              ativo: f.ativo ?? true,
-              tipoConta: (f.tipo_conta as "pessoal" | "empresa") || "pessoal",
-              observacao: f.observacao,
-              cartaoId: f.cartao_id || undefined,
-              compraCartaoId: f.compra_cartao_id || undefined,
-              created_at: f.created_at,
-            }))
-          );
+      const timeoutPromise = new Promise<{ data: null; error: Error }>((resolve) =>
+        setTimeout(() => resolve({ data: null, error: new Error("Timeout ao carregar") }), 6000)
+      );
+
+      const { data: fixData, error } = await Promise.race([queryPromise, timeoutPromise]);
+
+      if (!error && fixData) {
+        const mapeados = fixData.map((f: any) => ({
+          id: f.id,
+          user_id: f.user_id,
+          nome: f.nome || "Sem nome",
+          valor: Number(f.valor) || 0,
+          diaVenc: Number(f.dia_venc) || 5,
+          status: f.status || "Pendente",
+          categoria: f.categoria || (f.tipo_conta === "empresa" ? "Serviços" : "Moradia"),
+          formaPagamento: f.forma_pagamento || "Boleto",
+          ativo: f.ativo ?? true,
+          tipoConta: (f.tipo_conta as "pessoal" | "empresa") || "pessoal",
+          observacao: f.observacao,
+          cartaoId: f.cartao_id || undefined,
+          compraCartaoId: f.compra_cartao_id || undefined,
+          created_at: f.created_at,
+        }));
+        setGastos(mapeados);
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.setItem("organizai_cached_gastos_fixos", JSON.stringify(mapeados));
+          } catch {}
         }
-      } catch (err) {
-        console.error("Erro ao carregar gastos fixos:", err);
-      } finally {
-        setCarregando(false);
       }
-    };
+    } catch (err) {
+      console.error("Erro ao carregar gastos fixos:", err);
+    } finally {
+      setCarregando(false);
+    }
+  }, [user?.id, authLoading]);
 
-    carregar();
-  }, [user?.id]);
+  useEffect(() => {
+    carregarGastosFixos();
+    const handler = () => carregarGastosFixos();
+    window.addEventListener("organizai_finance_sync", handler);
+    return () => window.removeEventListener("organizai_finance_sync", handler);
+  }, [carregarGastosFixos]);
 
   // Gastos específicos do tipo de conta selecionado (Pessoal ou Empresa)
   const gastosFiltradosPorConta = useMemo(() => {
@@ -310,7 +339,7 @@ function GastosFixos() {
   const pctPago = totalMes > 0 ? Math.round((totalPagos / totalMes) * 100) : 0;
   const pctPendente = totalMes > 0 ? 100 - pctPago : 0;
 
-  // Lista final visível aplicando busca e filtro de status
+  // Lista final visível aplicando busca segura e filtro de status
   const listaVisivel = useMemo(() => {
     return gastosFiltradosPorConta.filter((g) => {
       if (filtroStatus === "pagos" && g.status !== "Pago") return false;
@@ -318,9 +347,9 @@ function GastosFixos() {
       if (busca.trim()) {
         const termo = busca.toLowerCase();
         return (
-          g.nome.toLowerCase().includes(termo) ||
-          g.categoria.toLowerCase().includes(termo) ||
-          g.formaPagamento.toLowerCase().includes(termo)
+          (g.nome || "").toLowerCase().includes(termo) ||
+          (g.categoria || "").toLowerCase().includes(termo) ||
+          (g.formaPagamento || "").toLowerCase().includes(termo)
         );
       }
       return true;

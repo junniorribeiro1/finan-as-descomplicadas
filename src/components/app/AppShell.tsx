@@ -55,7 +55,7 @@ function Marca() {
           <source srcSet="/logo.webp" type="image/webp" />
           <img
             src="/logo.png"
-            alt="OrganizAI"
+            alt="Organiz.AI"
             width={40}
             height={40}
             decoding="async"
@@ -65,7 +65,7 @@ function Marca() {
       </div>
       <div className="flex flex-col leading-tight">
         <span className="font-display text-[1.12rem] font-bold tracking-tight text-white">
-          Organiz<span className="text-[#F97316] font-black">AI</span>
+          Organiz<span className="text-[#F97316] font-black">.AI</span>
         </span>
         <span className="text-[0.7rem] text-stone-400 font-normal tracking-normal">
           Sua vida financeira
@@ -102,7 +102,7 @@ function NavItem({
   );
 }
 
-function VeraAjudaCard({ onNavigate }: { onNavigate?: () => void }) {
+function SamyAjudaCard({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <div className="mt-4 pt-3 border-t border-white/[0.06]">
       <div className="relative overflow-hidden rounded-2xl border border-purple-500/20 bg-gradient-to-b from-[#1f122c]/90 via-[#160c20]/95 to-[#0f0717] p-3.5 shadow-lg shadow-purple-950/20">
@@ -110,7 +110,7 @@ function VeraAjudaCard({ onNavigate }: { onNavigate?: () => void }) {
           <div className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full ring-2 ring-purple-500/40">
             <img
               src="/vera-avatar.jpg"
-              alt="Vera"
+              alt="Samy"
               className="h-full w-full object-cover"
               onError={(e) => {
                 // Fallback caso a imagem não carregue
@@ -120,11 +120,11 @@ function VeraAjudaCard({ onNavigate }: { onNavigate?: () => void }) {
           </div>
           <div className="min-w-0">
             <h4 className="text-xs font-bold text-white leading-tight">Precisa de ajuda?</h4>
-            <p className="text-[0.68rem] text-purple-300/80">Fale com a Vera</p>
+            <p className="text-[0.68rem] text-purple-300/80">Fale com a Samy</p>
           </div>
         </div>
         <p className="mt-2 text-[0.7rem] text-stone-300 leading-snug">
-          Sua gerente financeira com IA.
+          Sua assistente financeira com IA.
         </p>
         <Link
           to="/vera-gerente"
@@ -132,17 +132,8 @@ function VeraAjudaCard({ onNavigate }: { onNavigate?: () => void }) {
           className="mt-2.5 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 py-1.5 px-3 text-[0.75rem] font-semibold text-white shadow-md shadow-purple-900/30 transition-all hover:brightness-110"
         >
           <Sparkles className="h-3.5 w-3.5" />
-          Falar com a Vera
+          Falar com a Samy
         </Link>
-        <div className="mt-2.5 pt-2 border-t border-white/[0.08] flex flex-col items-center text-center gap-0.5">
-          <span className="text-[10px] text-stone-400">Suporte por e-mail:</span>
-          <a
-            href="mailto:suporte@nataliarodolfo.com.br"
-            className="text-[10.5px] font-medium text-purple-300 hover:text-white transition-colors underline underline-offset-2"
-          >
-            suporte@nataliarodolfo.com.br
-          </a>
-        </div>
       </div>
     </div>
   );
@@ -157,7 +148,7 @@ export function AppShell({
   descricao?: string;
   children: ReactNode;
 }) {
-  const { user, session, profile, loading, isAdmin, isPending, isBlocked, signOut } = useAuth();
+  const { user, session, profile, loading, isAdmin, isPending, isBlocked, isAccessExpired, signOut } = useAuth();
   const navigate = useNavigate();
 
   const [aberto, setAberto] = useState(false);
@@ -257,12 +248,12 @@ export function AppShell({
         <div className="relative flex h-14 w-14 items-center justify-center animate-pulse">
           <img
             src="/logo.png"
-            alt="OrganizAI"
+            alt="Organiz.AI"
             className="h-14 w-14 object-contain drop-shadow-[0_0_25px_rgba(249,115,22,0.4)]"
           />
         </div>
         <p className="mt-4 text-xs text-stone-400 font-medium">
-          Carregando Organiz<span className="text-[#F97316] font-bold">AI</span>...
+          Carregando Organiz<span className="text-[#F97316] font-bold">.AI</span>...
         </p>
       </div>
     );
@@ -284,7 +275,7 @@ export function AppShell({
             Cadastro em Análise
           </h2>
           <p className="mt-3 text-xs text-stone-300 leading-relaxed">
-            Olá, <strong className="text-white">{user?.email}</strong>! Sua conta no OrganizAI foi criada com sucesso e está aguardando a liberação da mentoria.
+            Olá, <strong className="text-white">{user?.email}</strong>! Sua conta no Organiz.AI foi criada com sucesso e está aguardando a liberação da mentoria.
           </p>
           <div className="mt-4 rounded-xl bg-white/[0.04] border border-white/[0.06] p-3 text-left">
             <span className="text-[11px] text-[#F97316] font-bold block mb-1">
@@ -296,7 +287,7 @@ export function AppShell({
           </div>
           <div className="mt-6 flex flex-col gap-3">
             <a
-              href="https://wa.me/5577981381477?text=Ol%C3%A1!%20Acabei%20de%20me%20cadastrar%20no%20OrganizAI%20e%20gostaria%20de%20solicitar%20a%20aprova%C3%A7%C3%A3o%20do%20meu%20acesso."
+              href="https://wa.me/5577981381477?text=Ol%C3%A1!%20Acabei%20de%20me%20cadastrar%20no%20Organiz.AI%20e%20gostaria%20de%20solicitar%20a%20aprova%C3%A7%C3%A3o%20do%20meu%20acesso."
               target="_blank"
               rel="noreferrer"
               className="w-full flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 py-3 text-xs font-bold text-white shadow-lg shadow-emerald-950/40 transition-colors"
@@ -330,8 +321,19 @@ export function AppShell({
     );
   }
 
-  // Se o aluno estiver com status bloqueado pela coordenação
+  // Se o aluno estiver com status bloqueado pela coordenação ou com prazo de bônus expirado
   if (isBlocked) {
+    const isExpired = Boolean(
+      isAccessExpired ||
+      (profile?.access_expires_at &&
+        new Date(profile.access_expires_at).getTime() < Date.now() &&
+        !profile?.plan_renovado)
+    );
+
+    const dataExpiracao = profile?.access_expires_at
+      ? new Date(profile.access_expires_at).toLocaleDateString("pt-BR")
+      : null;
+
     return (
       <div className="min-h-screen bg-[#09090b] flex flex-col items-center justify-center p-6 text-center text-white selection:bg-rose-500/30">
         <div className="max-w-md w-full rounded-3xl border border-rose-500/25 bg-[#141214] p-8 sm:p-10 shadow-2xl shadow-rose-950/30">
@@ -339,19 +341,31 @@ export function AppShell({
             <ShieldAlert className="h-8 w-8" />
           </div>
           <h2 className="text-2xl font-bold text-white tracking-tight">
-            Acesso em Análise ou Suspenso
+            {isExpired ? "Período de Acesso Expirado" : "Acesso em Análise ou Suspenso"}
           </h2>
           <p className="mt-3 text-xs text-stone-400 leading-relaxed">
-            Olá, <strong className="text-white">{user?.email}</strong>. Seu acesso aos módulos do OrganizAI está temporariamente bloqueado ou aguardando aprovação da mentoria.
+            {isExpired ? (
+              <>
+                Olá, <strong className="text-white">{user?.email}</strong>. O seu período de bônus ou dias gratuitos no Organiz.AI encerrou{dataExpiracao ? ` em ${dataExpiracao}` : ""} e seu plano ainda não foi renovado. Para continuar aproveitando todas as ferramentas e métricas, entre em contato com nosso suporte para renovar seu plano.
+              </>
+            ) : (
+              <>
+                Olá, <strong className="text-white">{user?.email}</strong>. Seu acesso aos módulos do Organiz.AI está temporariamente bloqueado ou aguardando aprovação da mentoria.
+              </>
+            )}
           </p>
           <div className="mt-8 flex flex-col gap-3">
             <a
-              href="https://wa.me/5577981381477?text=Ol%C3%A1!%20Sou%20aluno(a)%20do%20OrganizAI%20e%20gostaria%20de%20verificar%20a%20libera%C3%A7%C3%A3o%20do%20meu%20acesso."
+              href={`https://wa.me/5577981381477?text=${encodeURIComponent(
+                isExpired
+                  ? "Olá! Meu período de dias gratuitos/bônus no Organiz.AI encerrou e gostaria de falar com o suporte para renovar meu plano e continuar utilizando o app."
+                  : "Olá! Sou aluno(a) do Organiz.AI e gostaria de verificar a liberação do meu acesso."
+              )}`}
               target="_blank"
               rel="noreferrer"
               className="w-full flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 py-3 text-xs font-bold text-white shadow-lg shadow-emerald-950/40 transition-colors"
             >
-              Falar no WhatsApp da Mentoria
+              {isExpired ? "Falar no WhatsApp para Renovar Plano" : "Falar no WhatsApp da Mentoria"}
             </a>
             <div className="text-center py-0.5">
               <span className="text-[11px] text-stone-400">
@@ -427,7 +441,7 @@ export function AppShell({
             ))}
           </nav>
         </div>
-        <VeraAjudaCard />
+        <SamyAjudaCard />
 
         {/* Seção do Usuário no Rodapé da Sidebar */}
         <div className="user-menu-container relative mt-3 pt-3 border-t border-white/[0.06]">
@@ -574,7 +588,7 @@ export function AppShell({
                 ))}
               </nav>
             </div>
-            <VeraAjudaCard onNavigate={() => setAberto(false)} />
+            <SamyAjudaCard onNavigate={() => setAberto(false)} />
 
             {/* Seção do Usuário Mobile */}
             <div className="user-menu-container relative mt-3 pt-3 border-t border-white/[0.06]">

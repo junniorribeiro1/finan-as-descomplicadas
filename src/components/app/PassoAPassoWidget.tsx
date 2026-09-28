@@ -69,7 +69,7 @@ export const passosIniciais: PassoItem[] = [
   {
     id: "passo-7",
     numero: 7,
-    titulo: "Vera | Gerente",
+    titulo: "Samy | Assistente IA",
     descricao: "Converse com sua assistente financeira com IA",
     link: "/vera-gerente",
   },
@@ -416,7 +416,7 @@ export function PassoAPassoWidget() {
                 </div>
                 <h4 className="text-base font-bold text-white">Tudo Pronto! 🎉</h4>
                 <p className="mt-1 text-xs text-stone-300 leading-relaxed px-2">
-                  Parabéns! Você completou todas as etapas iniciais do OrganizAI.
+                  Parabéns! Você completou todas as etapas iniciais do Organiz.AI.
                 </p>
                 <div className="mt-5 flex flex-col gap-2">
                   <button
@@ -538,7 +538,7 @@ export function PassoAPassoWidget() {
               ? "bg-stone-900 border border-white/20 text-white"
               : "bg-gradient-to-r from-orange-500 via-amber-500 to-[#F97316] text-white shadow-orange-950/50 hover:brightness-110"
           )}
-          title="Passo a passo OrganizAI"
+          title="Passo a passo Organiz.AI"
           aria-label="Abrir Passo a Passo"
         >
           {/* Indicador de pulso de atenção */}

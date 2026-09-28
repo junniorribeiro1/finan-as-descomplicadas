@@ -8,10 +8,10 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/passo-a-passo")({
   head: () => ({
     meta: [
-      { title: "Passo a passo — OrganizAI" },
+      { title: "Passo a passo — Organiz.AI" },
       {
         name: "description",
-        content: "Complete estas etapas para tirar o máximo do OrganizAI.",
+        content: "Complete estas etapas para tirar o máximo do Organiz.AI.",
       },
       { name: "robots", content: "noindex, nofollow" },
     ],
@@ -73,8 +73,8 @@ const passosIniciais: PassoItem[] = [
   {
     id: "passo-7",
     numero: "07",
-    titulo: "Ative a Vera",
-    descricao: "Sua gerente financeira com IA para tirar dúvidas.",
+    titulo: "Ative a Samy",
+    descricao: "Sua assistente financeira com IA para tirar dúvidas.",
     link: "/vera-gerente",
   },
 ];
@@ -156,7 +156,7 @@ function PassoAPasso() {
                 Passo a passo
               </h1>
               <p className="mt-1 text-xs text-neutral-400 sm:text-sm">
-                Complete estas etapas para tirar o máximo do OrganizAI.
+                Complete estas etapas para tirar o máximo do Organiz.AI.
               </p>
             </div>
           </div>

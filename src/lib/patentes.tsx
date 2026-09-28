@@ -28,7 +28,7 @@ export const PATENTES: PatenteInfo[] = [
     titulo: "Organizador Aprendiz",
     subtitulo: "Primeiros Passos",
     descricao:
-      "Concluiu todo o passo a passo inicial do OrganizAI, mapeou as primeiras contas e ativou a assistente Vera.",
+      "Concluiu todo o passo a passo inicial do Organiz.AI, mapeou as primeiras contas e ativou a assistente Vera.",
     criterio: "Concluir os 7 passos do onboarding do sistema.",
     corHex: "#d97706",
     corBadge: "bg-amber-500/20 text-amber-400 border-amber-500/40",

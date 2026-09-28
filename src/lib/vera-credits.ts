@@ -203,3 +203,10 @@ export async function registrarEnvioMensagemVera(
     isBloqueado: novoEnviadas >= LIMITE_DIARIO_VERA,
   };
 }
+
+// Aliases para transição da IA de Vera para Samy
+export const LIMITE_DIARIO_SAMY = LIMITE_DIARIO_VERA;
+export const obterStatusCreditosSamy = obterStatusCreditosVera;
+export const registrarEnvioMensagemSamy = registrarEnvioMensagemVera;
+export const getCicloAtualSamy = getCicloAtualVera;
+export type StatusCreditosSamy = StatusCreditosVera;

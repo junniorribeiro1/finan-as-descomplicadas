@@ -27,6 +27,9 @@ export interface UserProfile {
   patente_nivel?: number | null;
   patente_atualizada_em?: string | null;
   conquistas_desbloqueadas?: string[] | null;
+  access_expires_at?: string | null;
+  bonus_days_added?: number | null;
+  plan_renovado?: boolean | null;
   created_at: string;
   updated_at: string;
 }
@@ -39,6 +42,9 @@ interface AuthContextType {
   isAdmin: boolean;
   isPending: boolean;
   isBlocked: boolean;
+  isAccessExpired: boolean;
+  accessExpiresAt: string | null;
+  planRenovado: boolean;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
@@ -56,6 +62,9 @@ const AuthContext = createContext<AuthContextType>({
   isAdmin: false,
   isPending: false,
   isBlocked: false,
+  isAccessExpired: false,
+  accessExpiresAt: null,
+  planRenovado: false,
   signOut: async () => {},
   refreshProfile: async () => {},
 });
@@ -63,22 +72,42 @@ const AuthContext = createContext<AuthContextType>({
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const cached = localStorage.getItem("organizai_cached_profile");
+        if (cached) return JSON.parse(cached);
+      } catch {}
+    }
+    return null;
+  });
   const [loading, setLoading] = useState(true);
 
   const fetchProfile = useCallback(async (userId: string, userEmail?: string | null) => {
     try {
-      const { data, error } = await supabase
+      const queryPromise = supabase
         .from("profiles")
         .select("*")
         .eq("id", userId)
         .maybeSingle();
 
+      const timeoutPromise = new Promise<{ data: null; error: Error }>((resolve) =>
+        setTimeout(() => resolve({ data: null, error: new Error("Profile timeout") }), 2000)
+      );
+
+      const { data, error } = await Promise.race([queryPromise, timeoutPromise]);
+
       if (!error && data) {
-        setProfile(data as UserProfile);
+        const prof = data as UserProfile;
+        setProfile(prof);
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.setItem("organizai_cached_profile", JSON.stringify(prof));
+          } catch {}
+        }
       } else if (userEmail && ADMIN_FALLBACK_EMAILS.includes(userEmail.toLowerCase())) {
         // Fallback para admin imediato caso a tabela ainda esteja populando
-        setProfile({
+        const adminProf: UserProfile = {
           id: userId,
           full_name: "Administrador",
           email: userEmail,
@@ -86,7 +115,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           status: "ativo",
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
-        });
+        };
+        setProfile(adminProf);
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.setItem("organizai_cached_profile", JSON.stringify(adminProf));
+          } catch {}
+        }
       }
     } catch {
       // Ignora erro silenciosamente
@@ -100,6 +135,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [user, fetchProfile]);
 
   useEffect(() => {
+    let finalizado = false;
+
+    // Timeout de salvaguarda: nunca trava o app em "Carregando" por mais de 2s
+    const timerSeguranca = setTimeout(() => {
+      if (!finalizado) {
+        finalizado = true;
+        setLoading(false);
+      }
+    }, 2000);
+
     // 1. Obter sessão inicial
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
@@ -108,7 +153,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (currentUser) {
         await fetchProfile(currentUser.id, currentUser.email);
       }
-      setLoading(false);
+      if (!finalizado) {
+        finalizado = true;
+        clearTimeout(timerSeguranca);
+        setLoading(false);
+      }
+    }).catch(() => {
+      if (!finalizado) {
+        finalizado = true;
+        clearTimeout(timerSeguranca);
+        setLoading(false);
+      }
     });
 
     // 2. Escutar mudanças de estado de autenticação
@@ -122,11 +177,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await fetchProfile(currentUser.id, currentUser.email);
       } else {
         setProfile(null);
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("organizai_cached_profile");
+        }
       }
       setLoading(false);
     });
 
     return () => {
+      clearTimeout(timerSeguranca);
       subscription.unsubscribe();
     };
   }, [fetchProfile]);
@@ -136,12 +195,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     setSession(null);
     setProfile(null);
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("organizai_cached_profile");
+    }
   };
 
   const isEmailAdmin = !!user?.email && ADMIN_FALLBACK_EMAILS.includes(user.email.toLowerCase());
   const isAdmin = isEmailAdmin || profile?.role === "admin";
   const isPending = !isAdmin && profile?.status === "pendente";
-  const isBlocked = !isAdmin && profile?.status === "bloqueado";
+
+  // Se o aluno tiver uma data de expiração de bônus/acesso que já passou e não tiver renovado o plano
+  const isAccessExpired = Boolean(
+    !isAdmin &&
+      profile?.access_expires_at &&
+      new Date(profile.access_expires_at).getTime() < Date.now() &&
+      !profile?.plan_renovado
+  );
+
+  const isBlocked = (!isAdmin && profile?.status === "bloqueado") || isAccessExpired;
+
+  // Se expirou e ainda não foi marcado como bloqueado no banco, atualiza em segundo plano
+  useEffect(() => {
+    if (isAccessExpired && profile?.id && profile.status !== "bloqueado") {
+      supabase
+        .from("profiles")
+        .update({ status: "bloqueado", updated_at: new Date().toISOString() })
+        .eq("id", profile.id)
+        .then(() => {});
+    }
+  }, [isAccessExpired, profile?.id, profile?.status]);
 
   return (
     <AuthContext.Provider
@@ -153,6 +235,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isAdmin,
         isPending,
         isBlocked,
+        isAccessExpired,
+        accessExpiresAt: profile?.access_expires_at ?? null,
+        planRenovado: Boolean(profile?.plan_renovado),
         signOut,
         refreshProfile,
       }}

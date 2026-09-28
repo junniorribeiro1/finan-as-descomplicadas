@@ -28,13 +28,13 @@ import {
 export const Route = createFileRoute("/cofrinhos")({
   head: () => ({
     meta: [
-      { title: "Cofrinhos — OrganizAI" },
+      { title: "Cofrinhos — Organiz.AI" },
       {
         name: "description",
         content:
           "Poupe para objetivos específicos. Reserva de emergência, viagens, presentes e metas PJ.",
       },
-      { property: "og:title", content: "Cofrinhos — OrganizAI" },
+      { property: "og:title", content: "Cofrinhos — Organiz.AI" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),

@@ -1,62 +1,109 @@
 /**
- * Serviço de Integração com a IA da Vera utilizando Groq (LPU Ultra-Rápida)
+ * Serviço de Integração com a IA Samy utilizando Groq (LPU Ultra-Rápida)
+ * Escopo estritamente limitado ao funcionamento do aplicativo Organiz.AI e aos dados do próprio usuário.
  */
 
 export interface MensagemChat {
   id: string;
-  remetente: "vera" | "usuario";
+  remetente: "samy" | "usuario" | "vera";
   texto: string;
   hora: string;
 }
 
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
-function getSystemPrompt(nomeUsuario?: string): string {
+export const CANAIS_SUPORTE = {
+  whatsapp: "https://wa.me/5577981381477",
+  whatsappTexto: "WhatsApp: (77) 98138-1477",
+  email: "suporte@nataliarodolfo.com.br",
+  instagram: "https://www.instagram.com/nataliafinancas",
+  instagramTexto: "@nataliafinancas",
+};
+
+export const MENSAGEM_SUPORTE_PADRAO = `\n\nCaso precise de suporte adicional, liberação de acesso ou consultoria personalizada com a equipe da Natália Rodolfo, entre em contato com nossa equipe de suporte.`;
+
+function getSystemPrompt(nomeUsuario?: string, contextoFinanceiro?: string): string {
   const instrucaoNome = nomeUsuario
-    ? `\n- O usuário configurou que deseja ser chamado(a) de "${nomeUsuario}". Sempre se dirija a ele(a) chamando por "${nomeUsuario}" com naturalidade, simpatia, carinho e profissionalismo nas suas respostas.`
+    ? `\n- O usuário configurou que deseja ser chamado(a) de "${nomeUsuario}". Sempre se dirija a ele(a) chamando por "${nomeUsuario}" com simpatia, elegância e profissionalismo.`
     : "";
 
-  return `Você é a Vera, gerente financeira inteligente com inteligência artificial do OrganizAI.
-Sua personalidade e diretrizes:
-- Calorosa, empática, prática, elegante e encorajadora.${instrucaoNome}
-- Especialista em finanças pessoais, fluxo de caixa, cartões de crédito, cortes inteligentes de gastos, cofrinhos, reserva de emergência e investimentos no Brasil.
-- Responda sempre em português brasileiro claro, correto e bem estruturado.
-- Dê conselhos acionáveis e realistas, utilizando valores e termos como R$, CDI, Selic, aportes, cofrinhos e despesas fixas/variáveis.
-- Mantenha respostas com 2 a 3 parágrafos objetivos, evitando enrolação ou listas infinitas a menos que solicitado.`;
+  return `Você é a Samy, assistente oficial de inteligência artificial do aplicativo Organiz.AI.
+Sua missão é responder com base ESTRITAMENTE no funcionamento do aplicativo e nos dados reais do usuário logado.
+
+DIRETRIZES FUNDAMENTAIS E INEGOCIÁVEIS:
+
+1. ISOLAMENTO TOTAL E PRIVACIDADE DE CADA USUÁRIO:
+- Você está conversando única e exclusivamente com este usuário.
+- NUNCA mencione, acesse, invente ou misture informações de outros usuários ou contas de terceiros. Cada usuário tem dados 100% isolados.
+
+2. ESCOPO E LIMITAÇÃO ESTRITA:
+- Você SÓ PODE falar sobre:
+  a) O funcionamento e recursos do aplicativo Organiz.AI (por exemplo: como lançar Gastos Fixos, Gastos Variáveis, Cartões de Crédito, Entradas/Recebimentos, Cofrinhos, Bancos, Investimentos, Categorias, alternância entre contas Pessoal e Empresa, e filtros).
+  b) O histórico e dados financeiros reais do próprio usuário presentes no resumo contextual abaixo.
+- NÃO ESPECULE E NÃO VÁ ALÉM: NÃO dê consultoria financeira complexa, não faça recomendações de compra ou venda de ações na bolsa ou criptomoedas, não invente regras tributárias/fiscais/contábeis avançadas, e não forneça dicas de organização financeira que fujam ou vão muito além dos dados reais cadastrados dentro do aplicativo.
+- Se uma informação não estiver cadastrada ou você não possuir o dado no contexto, informe com sinceridade que ela ainda não consta no app.
+
+3. DIRECIONAMENTO OBRIGATÓRIO PARA O SUPORTE:
+- Sempre que a solicitação do usuário:
+  • Fugir do que é visto dentro do app ou exigir consultoria financeira personalizada avançada da mentora;
+  • Tratar de problemas de acesso, erros na conta, faturamento, alteração de plano ou suporte técnico;
+  • Envolver dúvidas sobre a mentoria individual de 30 minutos ou alinhamento com a equipe;
+  VOCÊ DEVE INFORMAR CORDIALMENTE QUE É NECESSÁRIO ENTRAR EM CONTATO COM A EQUIPE DE SUPORTE.
+  IMPORTANTE: NÃO liste contatos ou links brutos de WhatsApp, E-mail ou Instagram no corpo do texto, pois a interface do aplicativo exibe automaticamente os botões interativos de Acesso Rápido ao Suporte logo abaixo da sua mensagem.
+
+4. IDENTIDADE E ESTILO:
+- Seu nome é Samy.
+- Responda sempre em português brasileiro claro, acolhedor, polido e objetivo.${instrucaoNome}
+- Mantenha respostas sucintas (2 a 3 parágrafos curtos ou listas com marcadores), sem enrolação.
+
+${contextoFinanceiro ? `\n--- DADOS REAIS DO USUÁRIO NO APLICATIVO ---\n${contextoFinanceiro}\n------------------------------------------\n` : ""}`;
 }
 
-function getRespostasFallback(pergunta: string, nomeUsuario?: string): string {
+function getRespostasFallback(pergunta: string, nomeUsuario?: string, contextoFinanceiro?: string): string {
   const nomeTratamento = nomeUsuario ? `${nomeUsuario}, ` : "";
-  const mapa: Record<string, string> = {
-    "Como estão meus gastos deste mês?":
-      `${nomeTratamento}seus gastos deste mês somam R$ 3.840,00 até agora. As categorias com maior peso são Moradia (42%) e Alimentação (25%). Você ainda está dentro do orçamento planejado para o período.`,
-    "Onde posso economizar?":
-      `${nomeTratamento}identifiquei duas oportunidades de economia: você teve R$ 320,00 em pedidos de delivery no último fim de semana e duas assinaturas de streaming pouco utilizadas. Cortar 30% nisso pouparia cerca de R$ 180,00/mês.`,
-    "Quanto falta para minha reserva?":
-      `${nomeTratamento}sua reserva de emergência atual cobre 4,2 meses do seu custo de vida essencial. Para atingir a meta recomendada de 6 meses (R$ 18.000,00), faltam apenas R$ 5.400,00. Mantendo o ritmo de aportes de R$ 900/mês, você atinge a meta em 6 meses!`,
-    "Devo aumentar meus investimentos?":
-      `${nomeTratamento}com seus gastos fixos estabilizados e fluxo de caixa positivo neste mês, recomendo sim direcionar R$ 450,00 adicionais para Tesouro Selic ou CDB de liquidez diária antes de buscar renda variável.`,
-  };
+  const pLower = pergunta.toLowerCase();
 
-  return (
-    mapa[pergunta] ||
-    `${nomeTratamento}analisei seus dados no OrganizAI e vejo que você tem mantido seus gastos essenciais sob controle. Minha sugestão prática é focar no controle dos gastos variáveis desta semana para garantir sobra no fluxo de caixa e fortalecer seus cofrinhos!`
-  );
+  if (pLower.includes("gasto") || pLower.includes("despesa") || pLower.includes("conta")) {
+    return `${nomeTratamento}analisei seus registros no Organiz.AI. Suas despesas fixas e variáveis podem ser gerenciadas diretamente nas abas "Gastos Fixos" e "Gastos Variáveis". Manter o status de cada item atualizado (como "Pago" ou "Pendente") garante que o painel principal mostre com precisão o que ainda falta pagar no mês.${MENSAGEM_SUPORTE_PADRAO}`;
+  }
+
+  if (pLower.includes("economizar") || pLower.includes("corte") || pLower.includes("sobrar")) {
+    return `${nomeTratamento}com base nas ferramentas do Organiz.AI, o caminho mais direto para economizar é revisar os lançamentos em "Gastos Variáveis", focando nas categorias com maior volume de saídas na semana. Pequenos ajustes em conveniência liberam fluxo de caixa para abastecer seus cofrinhos.${MENSAGEM_SUPORTE_PADRAO}`;
+  }
+
+  if (pLower.includes("cofrinho") || pLower.includes("reserva") || pLower.includes("meta")) {
+    return `${nomeTratamento}no Organiz.AI você acompanha metas na tela de "Cofrinhos". Ao definir o valor alvo e o prazo, a cada aporte a barra de evolução calcula a porcentagem atingida para você acompanhar visualmente.${MENSAGEM_SUPORTE_PADRAO}`;
+  }
+
+  if (pLower.includes("investimento") || pLower.includes("investir") || pLower.includes("rendimento")) {
+    return `${nomeTratamento}no módulo "Investimentos" do app você pode cadastrar e acompanhar seus ativos e aplicações. Por diretriz do Organiz.AI, eu não recomendo ativos específicos de renda variável ou investimentos de risco. Para orientações aprofundadas com a mentora, entre em contato com nosso suporte:${MENSAGEM_SUPORTE_PADRAO}`;
+  }
+
+  if (pLower.includes("cartão") || pLower.includes("fatura") || pLower.includes("limite")) {
+    return `${nomeTratamento}no menu "Cartões de Crédito" você gerencia limites, datas de fechamento e vencimento de cada cartão. As compras parceladas lançadas são somadas automaticamente na fatura do período.${MENSAGEM_SUPORTE_PADRAO}`;
+  }
+
+  if (pLower.includes("empresa") || pLower.includes("pessoal") || pLower.includes("pf") || pLower.includes("pj")) {
+    return `${nomeTratamento}o Organiz.AI conta com a separação blindada de contas. No topo da página você pode alternar entre os modos "Pessoal" e "Empresa", mantendo suas finanças físicas e jurídicas completamente organizadas e independentes.${MENSAGEM_SUPORTE_PADRAO}`;
+  }
+
+  return `${nomeTratamento}sou a Samy, sua assistente com IA do Organiz.AI. Estou pronta para tirar dúvidas sobre as telas do aplicativo (gastos fixos, variáveis, cartões, cofrinhos, bancos e entradas) e analisar os dados cadastrados na sua conta.${MENSAGEM_SUPORTE_PADRAO}`;
 }
 
 // Execução segura e isolada exclusivamente no servidor backend via TanStack Start
 import { createServerFn } from "@tanstack/react-start";
 
-export const perguntarParaVeraServerFn = createServerFn({ method: "POST" })
+export const perguntarParaSamyServerFn = createServerFn({ method: "POST" })
   .validator(
     (d: {
       pergunta: string;
       historico: MensagemChat[];
       nomeUsuario?: string;
+      contextoFinanceiro?: string;
     }) => d
   )
   .handler(async ({ data }) => {
-    const { pergunta, historico, nomeUsuario } = data;
+    const { pergunta, historico, nomeUsuario, contextoFinanceiro } = data;
 
     // Chave isolada no ambiente de servidor (nunca vazada no bundle client-side)
     const apiKey =
@@ -65,13 +112,13 @@ export const perguntarParaVeraServerFn = createServerFn({ method: "POST" })
       "";
 
     if (!apiKey) {
-      return { texto: getRespostasFallback(pergunta, nomeUsuario) };
+      return { texto: getRespostasFallback(pergunta, nomeUsuario, contextoFinanceiro) };
     }
 
     const messages = [
-      { role: "system", content: getSystemPrompt(nomeUsuario) },
+      { role: "system", content: getSystemPrompt(nomeUsuario, contextoFinanceiro) },
       ...historico.slice(-6).map((m) => ({
-        role: m.remetente === "vera" ? ("assistant" as const) : ("user" as const),
+        role: m.remetente === "samy" || m.remetente === "vera" ? ("assistant" as const) : ("user" as const),
         content: m.texto,
       })),
       { role: "user", content: pergunta },
@@ -87,8 +134,8 @@ export const perguntarParaVeraServerFn = createServerFn({ method: "POST" })
         body: JSON.stringify({
           model: "openai/gpt-oss-120b",
           messages,
-          temperature: 0.7,
-          max_tokens: 450,
+          temperature: 0.5,
+          max_tokens: 500,
         }),
       });
 
@@ -112,8 +159,8 @@ export const perguntarParaVeraServerFn = createServerFn({ method: "POST" })
         body: JSON.stringify({
           model: "qwen/qwen3.8-27b",
           messages,
-          temperature: 0.7,
-          max_tokens: 450,
+          temperature: 0.5,
+          max_tokens: 500,
         }),
       });
 
@@ -127,24 +174,29 @@ export const perguntarParaVeraServerFn = createServerFn({ method: "POST" })
         }
       }
     } catch (err) {
-      console.error("[Vera AI Server] Erro ao comunicar com Groq API:", err);
+      console.error("[Samy AI Server] Erro ao comunicar com Groq API:", err);
     }
 
-    return { texto: getRespostasFallback(pergunta, nomeUsuario) };
+    return { texto: getRespostasFallback(pergunta, nomeUsuario, contextoFinanceiro) };
   });
 
-export async function perguntarParaVera(
+export async function perguntarParaSamy(
   pergunta: string,
   historico: MensagemChat[],
-  nomeUsuario?: string
+  nomeUsuario?: string,
+  contextoFinanceiro?: string
 ): Promise<{ texto: string }> {
   try {
-    const res = await perguntarParaVeraServerFn({
-      data: { pergunta, historico, nomeUsuario },
+    const res = await perguntarParaSamyServerFn({
+      data: { pergunta, historico, nomeUsuario, contextoFinanceiro },
     });
     return res;
   } catch (error) {
-    console.warn("[Vera AI Client] Fallback ativado devido a erro na chamada de servidor:", error);
-    return { texto: getRespostasFallback(pergunta, nomeUsuario) };
+    console.warn("[Samy AI Client] Fallback ativado devido a erro na chamada de servidor:", error);
+    return { texto: getRespostasFallback(pergunta, nomeUsuario, contextoFinanceiro) };
   }
 }
+
+// Aliases para compatibilidade reversa
+export const perguntarParaVera = perguntarParaSamy;
+export const perguntarParaVeraServerFn = perguntarParaSamyServerFn;

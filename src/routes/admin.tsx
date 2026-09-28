@@ -36,6 +36,10 @@ import {
   Building2,
   Layers,
   User,
+  Gift,
+  Calendar,
+  CalendarPlus,
+  ShieldAlert,
 } from "lucide-react";
 import { toast } from "sonner";
 import { brl } from "@/lib/mock-data";
@@ -45,7 +49,7 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [
-      { title: "Painel Administrativo — OrganizAI" },
+      { title: "Painel Administrativo — Organiz.AI" },
       {
         name: "description",
         content: "Gestão de alunos, autorizações, bloqueios e relatórios da mentoria.",
@@ -71,6 +75,9 @@ interface AlunoFinanceiro {
   patente_nivel?: number | null;
   patente_atualizada_em?: string | null;
   conquistas_desbloqueadas?: string[] | null;
+  access_expires_at?: string | null;
+  bonus_days_added?: number | null;
+  plan_renovado?: boolean | null;
   // Métricas do Raio-X
   saldo_total: number;
   total_receitas: number;
@@ -91,12 +98,21 @@ function AdminPage() {
   const [alunos, setAlunos] = useState<AlunoFinanceiro[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [busca, setBusca] = useState("");
-  const [filtroStatus, setFiltroStatus] = useState<"todos" | "ativo" | "pendente" | "bloqueado">("todos");
+  const [filtroStatus, setFiltroStatus] = useState<
+    "todos" | "ativo" | "com_bonus" | "expirado" | "pendente" | "bloqueado"
+  >("todos");
 
   // Estado do Modal de Raio-X Financeiro
   const [alunoSelecionado, setAlunoSelecionado] = useState<AlunoFinanceiro | null>(null);
   // Estado do Modal Dedicado de Gestão e Liberação de Patentes
   const [alunoGerenciandoPatente, setAlunoGerenciandoPatente] = useState<AlunoFinanceiro | null>(null);
+  // Estado do Modal Dedicado de Gestão de Dias Gratuitos / Bônus
+  const [alunoGerenciandoBonus, setAlunoGerenciandoBonus] = useState<AlunoFinanceiro | null>(null);
+  const [diasBonusInput, setDiasBonusInput] = useState<number>(7);
+  const [modoCalculoBonus, setModoCalculoBonus] = useState<"estender" | "hoje">("estender");
+  const [marcarRenovado, setMarcarRenovado] = useState<boolean>(false);
+  const [salvandoBonus, setSalvandoBonus] = useState<boolean>(false);
+
   const [notasEdicao, setNotasEdicao] = useState("");
   const [salvandoNotas, setSalvandoNotas] = useState(false);
 
@@ -232,6 +248,9 @@ function AdminPage() {
           patente_nivel: p.patente_nivel ?? 0,
           patente_atualizada_em: p.patente_atualizada_em || null,
           conquistas_desbloqueadas: p.conquistas_desbloqueadas || [],
+          access_expires_at: p.access_expires_at || null,
+          bonus_days_added: p.bonus_days_added ?? 0,
+          plan_renovado: Boolean(p.plan_renovado),
           saldo_total: saldoTotal,
           total_receitas: totalReceitas,
           total_gastos_fixos: totalGastosFixos,
@@ -475,15 +494,237 @@ function AdminPage() {
     setNotasEdicao(aluno.mentor_notes || "");
   };
 
+  // Helper de cálculo de validade e expiração do aluno
+  const getInfoAcesso = (aluno: AlunoFinanceiro) => {
+    const agora = Date.now();
+    const expiresMs = aluno.access_expires_at ? new Date(aluno.access_expires_at).getTime() : null;
+    const isExpirado = Boolean(
+      (expiresMs && expiresMs <= agora && !aluno.plan_renovado) || aluno.status === "bloqueado"
+    );
+    const isRenovado = Boolean(aluno.plan_renovado);
+
+    let diasRestantes: number | null = null;
+    if (expiresMs) {
+      const diffMs = expiresMs - agora;
+      diasRestantes = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+    }
+
+    const dataExpiracaoFormatada = aluno.access_expires_at
+      ? new Date(aluno.access_expires_at).toLocaleDateString("pt-BR")
+      : null;
+
+    const temBonusAtivo = Boolean(expiresMs && expiresMs > agora && !isRenovado);
+
+    return {
+      isExpirado,
+      isRenovado,
+      temBonusAtivo,
+      diasRestantes,
+      dataExpiracaoFormatada,
+    };
+  };
+
+  // Abrir Modal de Gestão de Dias Gratuitos / Bônus
+  const abrirModalBonus = (aluno: AlunoFinanceiro) => {
+    setAlunoGerenciandoBonus(aluno);
+    setDiasBonusInput(7);
+    setModoCalculoBonus("estender");
+    setMarcarRenovado(Boolean(aluno.plan_renovado));
+  };
+
+  // Salvar Bônus de Dias Gratuitos
+  const salvarBonusDias = async () => {
+    if (!alunoGerenciandoBonus) return;
+    const dias = Number(diasBonusInput);
+    if (isNaN(dias) || dias <= 0) {
+      toast.error("Informe um número válido de dias (mínimo 1 dia).");
+      return;
+    }
+
+    setSalvandoBonus(true);
+    try {
+      const agora = new Date();
+      const temPrazoValido =
+        alunoGerenciandoBonus.access_expires_at &&
+        new Date(alunoGerenciandoBonus.access_expires_at) > agora;
+
+      const dataBase =
+        modoCalculoBonus === "estender" && temPrazoValido
+          ? new Date(alunoGerenciandoBonus.access_expires_at!)
+          : agora;
+
+      const novaData = new Date(dataBase.getTime() + dias * 24 * 60 * 60 * 1000);
+      const totalBonus = (alunoGerenciandoBonus.bonus_days_added || 0) + dias;
+
+      const updatePayload = {
+        access_expires_at: novaData.toISOString(),
+        bonus_days_added: totalBonus,
+        plan_renovado: marcarRenovado,
+        status: "ativo" as const,
+        updated_at: new Date().toISOString(),
+      };
+
+      if (!alunoGerenciandoBonus.id.startsWith("exemplo-")) {
+        const { error } = await supabase
+          .from("profiles")
+          .update(updatePayload)
+          .eq("id", alunoGerenciandoBonus.id);
+
+        if (error) {
+          toast.error("Erro ao salvar bônus no Supabase: " + error.message);
+          return;
+        }
+      }
+
+      setAlunos((prev) =>
+        prev.map((a) =>
+          a.id === alunoGerenciandoBonus.id ? { ...a, ...updatePayload } : a
+        )
+      );
+
+      if (alunoSelecionado?.id === alunoGerenciandoBonus.id) {
+        setAlunoSelecionado((prev) =>
+          prev ? { ...prev, ...updatePayload } : null
+        );
+      }
+
+      setAlunoGerenciandoBonus((prev) =>
+        prev ? { ...prev, ...updatePayload } : null
+      );
+
+      toast.success(
+        `Bônus de ${dias} dias concedido para ${alunoGerenciandoBonus.full_name}! Acesso liberado até ${novaData.toLocaleDateString("pt-BR")}.`
+      );
+
+      window.dispatchEvent(new CustomEvent("organizai_finance_sync"));
+    } catch (err: any) {
+      toast.error("Erro ao conceder bônus: " + (err?.message || ""));
+    } finally {
+      setSalvandoBonus(false);
+    }
+  };
+
+  // Revogar Acesso ou Bloquear Imediatamente
+  const revogarAcessoOuBloquear = async (aluno: AlunoFinanceiro) => {
+    try {
+      const updatePayload = {
+        status: "bloqueado" as const,
+        plan_renovado: false,
+        updated_at: new Date().toISOString(),
+      };
+
+      if (!aluno.id.startsWith("exemplo-")) {
+        const { error } = await supabase
+          .from("profiles")
+          .update(updatePayload)
+          .eq("id", aluno.id);
+
+        if (error) {
+          toast.error("Erro ao atualizar status: " + error.message);
+          return;
+        }
+      }
+
+      setAlunos((prev) =>
+        prev.map((a) => (a.id === aluno.id ? { ...a, ...updatePayload } : a))
+      );
+
+      if (alunoSelecionado?.id === aluno.id) {
+        setAlunoSelecionado((prev) =>
+          prev ? { ...prev, ...updatePayload } : null
+        );
+      }
+
+      if (alunoGerenciandoBonus?.id === aluno.id) {
+        setAlunoGerenciandoBonus((prev) =>
+          prev ? { ...prev, ...updatePayload } : null
+        );
+      }
+
+      toast.success(`Acesso de ${aluno.full_name} bloqueado/suspenso.`);
+      window.dispatchEvent(new CustomEvent("organizai_finance_sync"));
+    } catch {
+      toast.error("Erro ao bloquear acesso.");
+    }
+  };
+
+  // Alternar Renovação Formal do Plano
+  const alternarRenovacaoPlano = async (
+    aluno: AlunoFinanceiro,
+    novoValor: boolean
+  ) => {
+    try {
+      const updatePayload = {
+        plan_renovado: novoValor,
+        status: novoValor ? ("ativo" as const) : aluno.status,
+        updated_at: new Date().toISOString(),
+      };
+
+      if (!aluno.id.startsWith("exemplo-")) {
+        const { error } = await supabase
+          .from("profiles")
+          .update(updatePayload)
+          .eq("id", aluno.id);
+
+        if (error) {
+          toast.error("Erro ao atualizar renovação: " + error.message);
+          return;
+        }
+      }
+
+      setAlunos((prev) =>
+        prev.map((a) => (a.id === aluno.id ? { ...a, ...updatePayload } : a))
+      );
+
+      if (alunoSelecionado?.id === aluno.id) {
+        setAlunoSelecionado((prev) =>
+          prev ? { ...prev, ...updatePayload } : null
+        );
+      }
+
+      if (alunoGerenciandoBonus?.id === aluno.id) {
+        setAlunoGerenciandoBonus((prev) =>
+          prev ? { ...prev, ...updatePayload } : null
+        );
+      }
+
+      toast.success(
+        novoValor
+          ? "Plano marcado como Renovado (acesso livre sem bloqueio por prazo)!"
+          : "Plano desmarcado de renovado. Ficará sujeito à validade de bônus."
+      );
+      window.dispatchEvent(new CustomEvent("organizai_finance_sync"));
+    } catch {
+      toast.error("Erro ao atualizar renovação.");
+    }
+  };
+
   // Métricas calculadas
   const metricas = useMemo(() => {
     const total = alunos.length;
     const ativos = alunos.filter((a) => a.status === "ativo").length;
     const pendentes = alunos.filter((a) => a.status === "pendente").length;
-    const bloqueados = alunos.filter((a) => a.status === "bloqueado").length;
-    const volumeTotal = alunos.reduce((acc, a) => acc + (a.saldo_total + a.total_investido), 0);
+    const comBonus = alunos.filter((a) => {
+      const info = getInfoAcesso(a);
+      return info.temBonusAtivo;
+    }).length;
+    const expiradosOuBloqueados = alunos.filter((a) => {
+      const info = getInfoAcesso(a);
+      return info.isExpirado || a.status === "bloqueado";
+    }).length;
+    const volumeTotal = alunos.reduce(
+      (acc, a) => acc + (a.saldo_total + a.total_investido),
+      0
+    );
 
-    return { total, ativos, pendentes, bloqueados, volumeTotal };
+    return {
+      total,
+      ativos,
+      pendentes,
+      comBonus,
+      expiradosOuBloqueados,
+      volumeTotal,
+    };
   }, [alunos]);
 
   // Alunos filtrados por busca e status
@@ -493,10 +734,22 @@ function AdminPage() {
         aluno.full_name.toLowerCase().includes(busca.toLowerCase()) ||
         aluno.email.toLowerCase().includes(busca.toLowerCase());
 
-      const matchStatus =
-        filtroStatus === "todos" ? true : aluno.status === filtroStatus;
+      if (!matchBusca) return false;
 
-      return matchBusca && matchStatus;
+      if (filtroStatus === "todos") return true;
+      if (filtroStatus === "ativo") return aluno.status === "ativo";
+      if (filtroStatus === "pendente") return aluno.status === "pendente";
+      if (filtroStatus === "bloqueado") return aluno.status === "bloqueado";
+      if (filtroStatus === "com_bonus") {
+        const info = getInfoAcesso(aluno);
+        return info.temBonusAtivo;
+      }
+      if (filtroStatus === "expirado") {
+        const info = getInfoAcesso(aluno);
+        return info.isExpirado;
+      }
+
+      return true;
     });
   }, [alunos, busca, filtroStatus]);
 
@@ -521,14 +774,14 @@ function AdminPage() {
             Acesso Não Autorizado
           </h2>
           <p className="mt-2 text-xs text-stone-400 leading-relaxed">
-            Esta área é de uso exclusivo da coordenação e administradores do OrganizAI.
+            Esta área é de uso exclusivo da coordenação e administradores do Organiz.AI.
           </p>
           <div className="mt-6 flex flex-col gap-3">
             <Link
               to="/dashboard"
               className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#F97316] hover:bg-[#ea580c] py-2.5 text-xs font-bold text-white transition-colors"
             >
-              Voltar ao Meu OrganizAI (Dashboard)
+              Voltar ao Meu Organiz.AI (Dashboard)
             </Link>
             <button
               onClick={() => signOut()}
@@ -553,13 +806,13 @@ function AdminPage() {
               <div className="relative flex h-9 w-9 shrink-0 items-center justify-center transition-transform group-hover:scale-105">
                 <img
                   src="/logo.png"
-                  alt="OrganizAI"
+                  alt="Organiz.AI"
                   className="h-9 w-9 object-contain drop-shadow-[0_2px_8px_rgba(249,115,22,0.3)]"
                 />
               </div>
               <div className="flex flex-col leading-tight">
                 <span className="font-display text-base font-bold tracking-tight text-white">
-                  Organiz<span className="text-[#F97316] font-black">AI</span>
+                  Organiz<span className="text-[#F97316] font-black">.AI</span>
                 </span>
                 <span className="text-[10px] text-stone-400">
                   Gestão & Mentoria
@@ -653,7 +906,7 @@ function AdminPage() {
         </div>
 
         {/* Grade de KPIs Globais */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
           {/* Total Alunos */}
           <div className="rounded-2xl border border-white/[0.08] bg-[#141417] p-5">
             <div className="flex items-center justify-between text-stone-400">
@@ -661,7 +914,7 @@ function AdminPage() {
               <Users className="h-4 w-4 text-stone-500" />
             </div>
             <p className="text-2xl font-bold text-white mt-2">{metricas.total}</p>
-            <span className="text-[11px] text-stone-500 mt-1 block">cadastrados na plataforma</span>
+            <span className="text-[11px] text-stone-500 mt-1 block">cadastrados no app</span>
           </div>
 
           {/* Alunos Ativos */}
@@ -674,24 +927,34 @@ function AdminPage() {
             <span className="text-[11px] text-emerald-400/80 mt-1 block">com acesso 100% liberado</span>
           </div>
 
+          {/* Alunos com Bônus Ativo */}
+          <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-5">
+            <div className="flex items-center justify-between text-amber-300">
+              <span className="text-xs font-semibold">Com Bônus Ativo</span>
+              <Gift className="h-4 w-4 text-amber-400" />
+            </div>
+            <p className="text-2xl font-bold text-amber-300 mt-2">{metricas.comBonus}</p>
+            <span className="text-[11px] text-amber-300/80 mt-1 block">dias gratuitos em vigência</span>
+          </div>
+
           {/* Alunos Pendentes */}
-          <div className="rounded-2xl border border-amber-500/20 bg-amber-950/10 p-5">
-            <div className="flex items-center justify-between text-amber-400">
+          <div className="rounded-2xl border border-yellow-500/20 bg-yellow-950/10 p-5">
+            <div className="flex items-center justify-between text-yellow-400">
               <span className="text-xs font-semibold">Pendentes</span>
               <Clock className="h-4 w-4" />
             </div>
-            <p className="text-2xl font-bold text-amber-300 mt-2">{metricas.pendentes}</p>
-            <span className="text-[11px] text-amber-400/80 mt-1 block">aguardando aprovação</span>
+            <p className="text-2xl font-bold text-yellow-300 mt-2">{metricas.pendentes}</p>
+            <span className="text-[11px] text-yellow-400/80 mt-1 block">aguardando aprovação</span>
           </div>
 
-          {/* Alunos Bloqueados */}
+          {/* Alunos Expirados / Bloqueados */}
           <div className="rounded-2xl border border-rose-500/20 bg-rose-950/10 p-5">
             <div className="flex items-center justify-between text-rose-400">
-              <span className="text-xs font-semibold">Bloqueados</span>
+              <span className="text-xs font-semibold">Expirados / Bloq.</span>
               <UserX className="h-4 w-4" />
             </div>
-            <p className="text-2xl font-bold text-rose-300 mt-2">{metricas.bloqueados}</p>
-            <span className="text-[11px] text-rose-400/80 mt-1 block">acesso suspenso</span>
+            <p className="text-2xl font-bold text-rose-300 mt-2">{metricas.expiradosOuBloqueados}</p>
+            <span className="text-[11px] text-rose-400/80 mt-1 block">bônus findo ou suspenso</span>
           </div>
 
           {/* Volume Total Gerido */}
@@ -719,7 +982,7 @@ function AdminPage() {
                   {metricas.pendentes} {metricas.pendentes === 1 ? "aluno aguardando aprovação" : "alunos aguardando aprovação"}
                 </h4>
                 <p className="text-xs text-stone-300">
-                  Novos cadastros entram como pendentes. Clique em "Aprovar Acesso" na tabela abaixo para liberar o OrganizAI.
+                  Novos cadastros entram como pendentes. Clique em "Aprovar Acesso" na tabela abaixo para liberar o Organiz.AI.
                 </p>
               </div>
             </div>
@@ -727,7 +990,7 @@ function AdminPage() {
             <button
               type="button"
               onClick={() => setFiltroStatus("pendente")}
-              className="hidden sm:inline-flex items-center gap-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 px-4 py-2 text-xs font-bold text-black transition-colors"
+              className="hidden sm:inline-flex items-center gap-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 px-4 py-2 text-xs font-bold text-black transition-colors cursor-pointer"
             >
               Ver Pendentes
             </button>
@@ -755,7 +1018,7 @@ function AdminPage() {
               <button
                 type="button"
                 onClick={() => setFiltroStatus("todos")}
-                className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
                   filtroStatus === "todos"
                     ? "bg-[#F97316] text-white shadow-md shadow-orange-950/40"
                     : "text-stone-400 hover:text-white"
@@ -766,7 +1029,7 @@ function AdminPage() {
               <button
                 type="button"
                 onClick={() => setFiltroStatus("ativo")}
-                className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
                   filtroStatus === "ativo"
                     ? "bg-emerald-600 text-white shadow-md"
                     : "text-stone-400 hover:text-white"
@@ -776,8 +1039,19 @@ function AdminPage() {
               </button>
               <button
                 type="button"
+                onClick={() => setFiltroStatus("com_bonus")}
+                className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
+                  filtroStatus === "com_bonus"
+                    ? "bg-amber-500 text-black font-bold shadow-md shadow-amber-950/40"
+                    : "text-stone-400 hover:text-white"
+                }`}
+              >
+                Com Bônus ({metricas.comBonus})
+              </button>
+              <button
+                type="button"
                 onClick={() => setFiltroStatus("pendente")}
-                className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
                   filtroStatus === "pendente"
                     ? "bg-amber-600 text-white shadow-md"
                     : "text-stone-400 hover:text-white"
@@ -787,14 +1061,14 @@ function AdminPage() {
               </button>
               <button
                 type="button"
-                onClick={() => setFiltroStatus("bloqueado")}
-                className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all ${
-                  filtroStatus === "bloqueado"
+                onClick={() => setFiltroStatus("expirado")}
+                className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
+                  filtroStatus === "expirado"
                     ? "bg-rose-600 text-white shadow-md"
                     : "text-stone-400 hover:text-white"
                 }`}
               >
-                Bloqueados ({metricas.bloqueados})
+                Expirados / Bloq. ({metricas.expiradosOuBloqueados})
               </button>
             </div>
           </div>
@@ -806,17 +1080,18 @@ function AdminPage() {
                 <tr className="border-b border-white/[0.06] text-stone-400 font-medium">
                   <th className="py-3.5 px-3">Aluno</th>
                   <th className="py-3.5 px-3">Modalidade / Plano</th>
+                  <th className="py-3.5 px-3">Validade &amp; Bônus</th>
                   <th className="py-3.5 px-3">Patente Atual</th>
                   <th className="py-3.5 px-3">Cadastro</th>
                   <th className="py-3.5 px-3">Status</th>
                   <th className="py-3.5 px-3">Patrimônio Declarado</th>
-                  <th className="py-3.5 px-3 text-right">Ações & Raio-X</th>
+                  <th className="py-3.5 px-3 text-right">Ações &amp; Raio-X</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/[0.04]">
                 {alunosFiltrados.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="text-center py-12 text-stone-500">
+                    <td colSpan={8} className="text-center py-12 text-stone-500">
                       Nenhum aluno encontrado para este filtro.
                     </td>
                   </tr>
@@ -876,6 +1151,42 @@ function AdminPage() {
                               <option value="ambos" className="bg-[#141417] text-orange-400">Ambos (Pessoal + Empresarial)</option>
                             </select>
                           </div>
+                        </td>
+
+                        {/* Validade & Bônus */}
+                        <td className="py-3.5 px-3 min-w-[170px]">
+                          {(() => {
+                            const info = getInfoAcesso(aluno);
+                            if (info.isRenovado) {
+                              return (
+                                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 text-[10px] font-bold text-emerald-400">
+                                  <Sparkles className="h-3 w-3" />
+                                  Plano Renovado
+                                </span>
+                              );
+                            }
+                            if (info.isExpirado) {
+                              return (
+                                <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-500/15 border border-rose-500/30 px-2.5 py-0.5 text-[10px] font-bold text-rose-400">
+                                  <Clock className="h-3 w-3" />
+                                  Expirado ({info.dataExpiracaoFormatada || "Bloqueado"})
+                                </span>
+                              );
+                            }
+                            if (info.temBonusAtivo) {
+                              return (
+                                <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/15 border border-amber-500/30 px-2.5 py-0.5 text-[10px] font-bold text-amber-300">
+                                  <Gift className="h-3 w-3 text-amber-400" />
+                                  Bônus: {info.diasRestantes}d (até {info.dataExpiracaoFormatada})
+                                </span>
+                              );
+                            }
+                            return (
+                              <span className="text-[11px] text-stone-400">
+                                Sem validade definida
+                              </span>
+                            );
+                          })()}
                         </td>
 
                         {/* Patente Atual & Controle Direto */}
@@ -975,6 +1286,17 @@ function AdminPage() {
                         {/* Ações */}
                         <td className="py-3.5 px-3 text-right">
                           <div className="flex items-center justify-end gap-2">
+                            {/* Botão Dedicado de Dias Gratuitos / Bônus */}
+                            <button
+                              type="button"
+                              onClick={() => abrirModalBonus(aluno)}
+                              title="Adicionar dias gratuitos ou gerenciar validade de acesso"
+                              className="inline-flex items-center gap-1.5 rounded-xl border border-amber-500/40 bg-amber-500/15 hover:bg-amber-500/25 px-2.5 py-1.5 text-xs font-bold text-amber-300 transition-all shadow-sm cursor-pointer hover:scale-105"
+                            >
+                              <Gift className="h-3.5 w-3.5 text-amber-400" />
+                              <span>+Bônus</span>
+                            </button>
+
                             {/* Botão Dedicado de Liberar Patente */}
                             <button
                               type="button"
@@ -1339,6 +1661,98 @@ function AdminPage() {
                 </div>
               </div>
 
+              {/* Gestão de Dias Gratuitos & Validade do Plano */}
+              <div className="rounded-2xl border border-amber-500/25 bg-amber-500/[0.04] p-4 sm:p-5">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <Gift className="h-4 w-4 text-amber-400" />
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-amber-400">
+                      Gestão de Dias Gratuitos &amp; Validade de Acesso
+                    </h3>
+                  </div>
+                  <span className="text-[10px] text-stone-400">Bônus &amp; Renovação</span>
+                </div>
+
+                <p className="text-xs text-stone-300 leading-relaxed mb-4">
+                  Conceda bônus de dias extras ou gratuitos para este cliente. Caso o prazo expire sem renovação do plano, ele entrará automaticamente no bloqueio padrão com aviso para contato com suporte.
+                </p>
+
+                {/* Status Atual do Acesso */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                  <div className="p-3 rounded-xl bg-black/40 border border-white/10">
+                    <span className="text-[10px] text-stone-400 block">Situação Atual da Validade</span>
+                    <p className="text-xs font-bold text-white mt-1 flex items-center gap-1.5">
+                      {(() => {
+                        const info = getInfoAcesso(alunoSelecionado);
+                        if (info.isRenovado) {
+                          return (
+                            <span className="text-emerald-400 flex items-center gap-1">
+                              <CheckCircle2 className="h-3.5 w-3.5" /> Plano Renovado (Acesso Livre)
+                            </span>
+                          );
+                        }
+                        if (info.isExpirado) {
+                          return (
+                            <span className="text-rose-400 flex items-center gap-1">
+                              <AlertCircle className="h-3.5 w-3.5" /> Bônus Expirado ({info.dataExpiracaoFormatada || "Bloqueado"})
+                            </span>
+                          );
+                        }
+                        if (info.temBonusAtivo) {
+                          return (
+                            <span className="text-amber-300 flex items-center gap-1">
+                              <Clock className="h-3.5 w-3.5" /> Bônus ativo: restam {info.diasRestantes} dias (até {info.dataExpiracaoFormatada})
+                            </span>
+                          );
+                        }
+                        return <span className="text-stone-300">Sem prazo de expiração definido</span>;
+                      })()}
+                    </p>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-black/40 border border-white/10 flex items-center justify-between">
+                    <div>
+                      <span className="text-[10px] text-stone-400 block">Total de Dias de Bônus Dados</span>
+                      <p className="text-xs font-bold text-amber-300 mt-1">
+                        {alunoSelecionado.bonus_days_added || 0} dias concedidos
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => abrirModalBonus(alunoSelecionado)}
+                      className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-3 py-1.5 text-xs font-bold text-white hover:brightness-110 shadow-md cursor-pointer transition-all hover:scale-105"
+                    >
+                      <Gift className="h-3.5 w-3.5" />
+                      <span>Adicionar Dias</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Toggle Rápido de Plano Renovado */}
+                <div className="flex items-center justify-between p-3 rounded-xl bg-black/25 border border-white/[0.06]">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="h-4 w-4 text-emerald-400" />
+                    <div>
+                      <p className="text-xs font-semibold text-white">Plano Oficialmente Renovado</p>
+                      <p className="text-[10px] text-stone-400">
+                        Quando ativado, isenta o aluno de bloqueio automático por prazo expirado.
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => alternarRenovacaoPlano(alunoSelecionado, !alunoSelecionado.plan_renovado)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                      alunoSelecionado.plan_renovado
+                        ? "bg-emerald-600 text-white shadow-md shadow-emerald-950/40"
+                        : "border border-white/15 bg-white/5 text-stone-400 hover:text-white"
+                    }`}
+                  >
+                    {alunoSelecionado.plan_renovado ? "Sim (Renovado)" : "Não (Sujeito a Bônus)"}
+                  </button>
+                </div>
+              </div>
+
               {/* Anotações Confidenciais da Mentoria */}
               <div className="rounded-2xl border border-white/[0.08] bg-[#1a1a1f] p-4 sm:p-5">
                 <div className="flex items-center justify-between mb-2">
@@ -1664,8 +2078,266 @@ function AdminPage() {
                 onClick={() => setAlunoGerenciandoPatente(null)}
                 className="rounded-xl border border-white/10 hover:bg-white/5 px-5 py-2.5 text-xs font-semibold text-stone-300 hover:text-white transition-colors cursor-pointer"
               >
-                Concluir & Fechar
+                Concluir &amp; Fechar
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Dedicado de Adicionar Dias Gratuitos / Bônus */}
+      {alunoGerenciandoBonus && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/85 backdrop-blur-md transition-opacity"
+            onClick={() => setAlunoGerenciandoBonus(null)}
+          />
+
+          {/* Conteúdo do Modal */}
+          <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-3xl border border-amber-500/30 bg-[#141318] p-5 sm:p-7 shadow-2xl shadow-black z-10">
+            {/* Header */}
+            <div className="flex items-start justify-between gap-4 pb-4 border-b border-white/[0.08]">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-amber-500/40 bg-amber-500/10 text-amber-400 shadow-lg">
+                  <Gift className="h-6 w-6" />
+                </div>
+                <div className="min-w-0">
+                  <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+                    Adicionar Dias Gratuitos
+                  </h2>
+                  <p className="text-xs text-stone-300 truncate">
+                    Aluno(a): <strong className="text-white">{alunoGerenciandoBonus.full_name}</strong>
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setAlunoGerenciandoBonus(null)}
+                className="grid h-8 w-8 place-items-center rounded-xl border border-white/10 text-stone-400 hover:text-white cursor-pointer"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="mt-5 space-y-5">
+              {/* Status Atual do Aluno */}
+              <div className="rounded-2xl bg-black/40 border border-white/[0.08] p-3.5 space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-stone-400">E-mail:</span>
+                  <span className="text-white font-medium truncate max-w-[240px]">
+                    {alunoGerenciandoBonus.email}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-stone-400">Plano Atual:</span>
+                  <span className="text-orange-400 font-bold">
+                    Plano {alunoGerenciandoBonus.plan || "Free"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-stone-400">Validade Atual:</span>
+                  <span className="font-semibold text-white">
+                    {(() => {
+                      const info = getInfoAcesso(alunoGerenciandoBonus);
+                      if (info.isRenovado)
+                        return <span className="text-emerald-400">Plano Renovado (Livre)</span>;
+                      if (info.isExpirado)
+                        return (
+                          <span className="text-rose-400">
+                            Expirado em {info.dataExpiracaoFormatada || "Data Indisponível"}
+                          </span>
+                        );
+                      if (info.temBonusAtivo)
+                        return (
+                          <span className="text-amber-300">
+                            Até {info.dataExpiracaoFormatada} ({info.diasRestantes}d restantes)
+                          </span>
+                        );
+                      return <span className="text-stone-400">Sem prazo definido</span>;
+                    })()}
+                  </span>
+                </div>
+              </div>
+
+              {/* Escolha Rápida de Dias (Presets) */}
+              <div>
+                <label className="text-xs font-bold text-white block mb-2">
+                  Escolha Rápida de Bônus:
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { label: "+3 dias", dias: 3 },
+                    { label: "+7 dias (1 sem)", dias: 7 },
+                    { label: "+15 dias", dias: 15 },
+                    { label: "+30 dias (1 mês)", dias: 30 },
+                    { label: "+60 dias (2 meses)", dias: 60 },
+                    { label: "+90 dias (3 meses)", dias: 90 },
+                  ].map((preset) => (
+                    <button
+                      key={preset.dias}
+                      type="button"
+                      onClick={() => setDiasBonusInput(preset.dias)}
+                      className={`py-2 px-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
+                        diasBonusInput === preset.dias
+                          ? "bg-amber-500 text-black border-amber-400 shadow-md shadow-amber-950/40 scale-[1.02]"
+                          : "border-white/10 bg-white/[0.04] text-stone-300 hover:bg-white/[0.08] hover:text-white"
+                      }`}
+                    >
+                      {preset.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Input Customizado de Dias */}
+              <div>
+                <label className="text-xs font-bold text-white block mb-1.5">
+                  Ou digite a quantidade exata de dias:
+                </label>
+                <div className="relative">
+                  <input
+                    type="number"
+                    min="1"
+                    max="3650"
+                    value={diasBonusInput}
+                    onChange={(e) =>
+                      setDiasBonusInput(Math.max(1, parseInt(e.target.value) || 1))
+                    }
+                    className="w-full rounded-xl bg-black/50 border border-white/15 px-4 py-2.5 text-sm text-white font-bold outline-none focus:border-amber-400 transition-colors"
+                  />
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-stone-400 font-semibold pointer-events-none">
+                    dias bônus
+                  </span>
+                </div>
+              </div>
+
+              {/* Modo de Cálculo: Estender ou A partir de hoje */}
+              {alunoGerenciandoBonus.access_expires_at &&
+                new Date(alunoGerenciandoBonus.access_expires_at) > new Date() && (
+                  <div>
+                    <label className="text-xs font-bold text-white block mb-1.5">
+                      Como aplicar estes dias:
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setModoCalculoBonus("estender")}
+                        className={`p-2.5 rounded-xl border text-xs font-semibold transition-all cursor-pointer text-left ${
+                          modoCalculoBonus === "estender"
+                            ? "border-amber-400 bg-amber-500/20 text-white"
+                            : "border-white/10 bg-white/[0.02] text-stone-400 hover:text-white"
+                        }`}
+                      >
+                        <span className="block font-bold">Estender Vencimento</span>
+                        <span className="text-[10px] text-stone-400">
+                          Soma aos dias que ele já possui
+                        </span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setModoCalculoBonus("hoje")}
+                        className={`p-2.5 rounded-xl border text-xs font-semibold transition-all cursor-pointer text-left ${
+                          modoCalculoBonus === "hoje"
+                            ? "border-amber-400 bg-amber-500/20 text-white"
+                            : "border-white/10 bg-white/[0.02] text-stone-400 hover:text-white"
+                        }`}
+                      >
+                        <span className="block font-bold">A partir de Hoje</span>
+                        <span className="text-[10px] text-stone-400">
+                          Hoje + {diasBonusInput} dias
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+              {/* Pré-visualização do Novo Término */}
+              <div className="rounded-2xl bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-amber-500/15 border border-amber-500/30 p-4">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 block mb-1">
+                  Pré-visualização do Acesso Liberado
+                </span>
+                <p className="text-xs sm:text-sm font-semibold text-white flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-amber-400 shrink-0" />
+                  <span>
+                    Acesso garantido até{" "}
+                    <strong className="text-amber-300">
+                      {(() => {
+                        const agora = new Date();
+                        const temPrazo =
+                          alunoGerenciandoBonus.access_expires_at &&
+                          new Date(alunoGerenciandoBonus.access_expires_at) > agora;
+                        const base =
+                          modoCalculoBonus === "estender" && temPrazo
+                            ? new Date(alunoGerenciandoBonus.access_expires_at!)
+                            : agora;
+                        const nova = new Date(
+                          base.getTime() + diasBonusInput * 24 * 60 * 60 * 1000
+                        );
+                        return nova.toLocaleDateString("pt-BR", {
+                          day: "2-digit",
+                          month: "long",
+                          year: "numeric",
+                        });
+                      })()}
+                    </strong>
+                  </span>
+                </p>
+                <p className="text-[11px] text-stone-300 mt-1.5 leading-snug">
+                  O status do aluno será ativado imediatamente. Caso não renove o plano até essa data, ele será bloqueado automaticamente com a mensagem padrão de suporte para renovação.
+                </p>
+              </div>
+
+              {/* Checkbox: Marcar como Plano Renovado */}
+              <label className="flex items-start gap-3 p-3.5 rounded-2xl bg-black/40 border border-white/[0.08] cursor-pointer hover:border-white/20 transition-colors">
+                <input
+                  type="checkbox"
+                  checked={marcarRenovado}
+                  onChange={(e) => setMarcarRenovado(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 rounded border-stone-600 text-emerald-500 focus:ring-0 focus:ring-offset-0 cursor-pointer"
+                />
+                <div>
+                  <span className="text-xs font-bold text-white block">
+                    Marcar como Plano Renovado
+                  </span>
+                  <span className="text-[11px] text-stone-400 block leading-tight mt-0.5">
+                    Marque se o cliente realizou pagamento ou renovação formal, isentando-o de bloqueio automático por prazo de bônus.
+                  </span>
+                </div>
+              </label>
+
+              {/* Botões de Ação */}
+              <div className="pt-3 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-3">
+                <button
+                  type="button"
+                  onClick={() => revogarAcessoOuBloquear(alunoGerenciandoBonus)}
+                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-rose-500/30 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 font-bold text-xs transition-colors cursor-pointer"
+                >
+                  Bloquear Acesso Agora
+                </button>
+
+                <div className="w-full sm:w-auto flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setAlunoGerenciandoBonus(null)}
+                    className="w-1/2 sm:w-auto px-4 py-2.5 rounded-xl border border-white/10 hover:bg-white/5 text-stone-300 font-semibold text-xs transition-colors cursor-pointer"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="button"
+                    disabled={salvandoBonus}
+                    onClick={salvarBonusDias}
+                    className="w-1/2 sm:w-auto px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400 text-black font-black text-xs hover:brightness-110 shadow-lg shadow-orange-950/50 disabled:opacity-60 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    <Gift className="h-4 w-4" />
+                    <span>
+                      {salvandoBonus ? "Salvando..." : `Conceder +${diasBonusInput} Dias`}
+                    </span>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

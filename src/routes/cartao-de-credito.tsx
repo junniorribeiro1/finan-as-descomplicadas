@@ -32,7 +32,7 @@ import {
 export const Route = createFileRoute("/cartao-de-credito")({
   head: () => ({
     meta: [
-      { title: "Cartões de crédito — OrganizAI" },
+      { title: "Cartões de crédito — Organiz.AI" },
       {
         name: "description",
         content: "Acompanhe o uso do limite, fatura do mês e compras parceladas · Pessoal e Empresa.",

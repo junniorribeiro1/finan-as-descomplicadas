@@ -20,7 +20,7 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/segundo-usuario")({
   head: () => ({
     meta: [
-      { title: "Compartilhamento — OrganizAI" },
+      { title: "Compartilhamento — Organiz.AI" },
       {
         name: "description",
         content: "Compartilhe suas finanças com quem organiza junto. Gestão financeira compartilhada.",

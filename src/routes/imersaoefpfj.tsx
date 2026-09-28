@@ -31,7 +31,7 @@ export const Route = createFileRoute("/imersaoefpfj")({
       {
         name: "description",
         content:
-          "Participe da IMER$ÃO EDUCAÇÃO FINANCEIRA para Pessoas Física e Jurídica com Natália Rodolfo. Aprenda a organizar suas finanças, sair do vermelho e ter fluxo de caixa previsível. 25 de Outubro, 100% ao vivo no Zoom.",
+          "Participe da IMER$ÃO EDUCAÇÃO FINANCEIRA para Pessoas Física e Jurídica com Natália Rodolfo. Aprenda a organizar suas finanças, sair do vermelho e ter fluxo de caixa previsível. 01 de Novembro, 100% ao vivo no Meet.",
       },
       {
         property: "og:title",
@@ -40,7 +40,7 @@ export const Route = createFileRoute("/imersaoefpfj")({
       {
         property: "og:description",
         content:
-          "Método definitivo para organizar as contas pessoais e da sua empresa. 25 de Outubro ao vivo no Zoom com certificado oficial. Ingressos do Lote 1 por R$ 27,00.",
+          "Método definitivo para organizar as contas pessoais e da sua empresa. 01 de Novembro ao vivo no Meet com certificado oficial. Ingressos do Lote 1 por R$ 27,00.",
       },
       { property: "og:image", content: "/imersao-banner.png" },
       { property: "og:url", content: "https://nataliarodolfo.com.br/imersaoefpfj" },
@@ -54,8 +54,7 @@ export const Route = createFileRoute("/imersaoefpfj")({
         as: "image",
         href: "/hero-coins-3d.webp",
         type: "image/webp",
-        // @ts-expect-error fetchpriority para acelerar LCP da dobra 1 no mobile
-        fetchpriority: "high",
+        fetchPriority: "high",
       },
     ],
   }),
@@ -136,17 +135,18 @@ function ImersaoPage() {
       clearTimeout(safetyTimeout);
     };
   }, []);
-  // 4. Progressão dinâmica de vagas preenchidas (inicia em 18% e cresce até 94% em poucos dias)
+  // 4. Progressão dinâmica de vagas preenchidas (inicia em 4% e cresce gradualmente até 95%)
   const [filledSpotsPercent] = useState(() => {
     const now = new Date();
     const year = now.getFullYear();
-    const startDate = new Date(year, 8, 14, 0, 0, 0).getTime();
-    const diffDays = Math.floor((now.getTime() - startDate) / (1000 * 60 * 60 * 24));
-    const progression = [18, 29, 42, 56, 70, 81, 89, 94];
+    // Reinicia contagem de vagas preenchidas rumo a 01 de Novembro
+    const startDate = new Date(year, 8, 28, 0, 0, 0).getTime();
+    const diffDays = Math.max(0, Math.floor((now.getTime() - startDate) / (1000 * 60 * 60 * 24)));
+    const progression = [4, 14, 25, 38, 51, 64, 75, 83, 90, 95];
 
-    if (diffDays <= 0) return 18;
-    if (diffDays >= progression.length - 1) return 94;
-    return progression[diffDays] ?? 94;
+    if (diffDays <= 0) return 4;
+    if (diffDays >= progression.length - 1) return 95;
+    return progression[diffDays] ?? 4;
   });
 
   // 5. FAQ Accordion State
@@ -180,8 +180,8 @@ function ImersaoPage() {
       {
         "@type": "Event",
         name: "IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ ao Vivo",
-        startDate: "2026-10-25T09:00:00-03:00",
-        endDate: "2026-10-25T18:00:00-03:00",
+        startDate: "2026-11-01T09:00:00-03:00",
+        endDate: "2026-11-01T18:00:00-03:00",
         eventAttendanceMode: "https://schema.org/OnlineEventAttendanceMode",
         eventStatus: "https://schema.org/EventScheduled",
         location: {
@@ -244,6 +244,24 @@ function ImersaoPage() {
         .ticker-track:hover {
           animation-play-state: paused;
         }
+
+        /* ── CELULAR 3D ISOMÉTRICO (BÔNUS EXCLUSIVO) ── */
+        .phone-3d-perspective {
+          perspective: 1200px;
+        }
+        .phone-3d-chassis {
+          transform-style: preserve-3d;
+          transform: rotateY(-15deg) rotateX(7deg) rotateZ(1deg);
+          transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s ease;
+        }
+        .phone-3d-container:hover .phone-3d-chassis {
+          transform: rotateY(-6deg) rotateX(3deg) rotateZ(0deg) scale(1.02);
+        }
+        @media (max-width: 1023px) {
+          .phone-3d-chassis {
+            transform: rotateY(-8deg) rotateX(4deg) rotateZ(0.5deg);
+          }
+        }
       `}</style>
 
       {/* ── BARRA DE PROGRESSO DE SCROLL NO TOPO ── */}
@@ -269,7 +287,7 @@ function ImersaoPage() {
             </span>
             <span>•</span>
             <span className="font-extrabold text-stone-900">
-              25 DE OUTUBRO • 100% AO VIVO NO ZOOM
+              01 DE NOVEMBRO • 100% AO VIVO NO MEET
             </span>
             <span>•</span>
             <span className="rounded bg-stone-950 px-2 py-0.5 text-[0.65rem] font-bold text-amber-300">
@@ -286,7 +304,7 @@ function ImersaoPage() {
             </span>
             <span>•</span>
             <span className="font-extrabold text-stone-900">
-              25 DE OUTUBRO • 100% AO VIVO NO ZOOM
+              01 DE NOVEMBRO • 100% AO VIVO NO MEET
             </span>
             <span>•</span>
             <span className="rounded bg-stone-950 px-2 py-0.5 text-[0.65rem] font-bold text-amber-300">
@@ -310,7 +328,7 @@ function ImersaoPage() {
             </span>
             <span>•</span>
             <span className="font-extrabold text-stone-900">
-              25 DE OUTUBRO • 100% AO VIVO NO ZOOM
+              01 DE NOVEMBRO • 100% AO VIVO NO MEET
             </span>
             <span>•</span>
             <span className="rounded bg-stone-950 px-2 py-0.5 text-[0.65rem] font-bold text-amber-300">
@@ -327,7 +345,7 @@ function ImersaoPage() {
             </span>
             <span>•</span>
             <span className="font-extrabold text-stone-900">
-              25 DE OUTUBRO • 100% AO VIVO NO ZOOM
+              01 DE NOVEMBRO • 100% AO VIVO NO MEET
             </span>
             <span>•</span>
             <span className="rounded bg-stone-950 px-2 py-0.5 text-[0.65rem] font-bold text-amber-300">
@@ -388,10 +406,10 @@ function ImersaoPage() {
                     <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" />
                   </span>
                   <Calendar className="h-3 w-3 text-emerald-400 ml-0.5" />
-                  <span>25 de Outubro</span>
+                  <span>01 de Novembro</span>
                   <span className="text-emerald-500/60">•</span>
                   <Video className="h-3 w-3 text-emerald-400" />
-                  <span>Ao vivo no Zoom</span>
+                  <span>Ao vivo no Meet</span>
                 </div>
 
                 <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/40 bg-emerald-500/15 px-3 py-1 text-[0.68rem] sm:text-xs font-semibold text-emerald-300 backdrop-blur-md shadow-[0_0_12px_rgba(16,185,129,0.15)]">
@@ -724,7 +742,7 @@ function ImersaoPage() {
               Orçamento Inteligente & Ferramentas
             </h3>
             <p className="mt-2 text-xs sm:text-sm text-stone-400 leading-relaxed">
-              Apresentação de ferramentas práticas e do Aplicativo OrganizAI
+              Apresentação de ferramentas práticas e do Aplicativo Organiz.AI
               para organizar seus registros financeiros com agilidade sem tomar
               horas do seu dia.
             </p>
@@ -857,83 +875,146 @@ function ImersaoPage() {
       </section>
 
       {/* ═══════════════════════════════════════════════
-          DOBRA 5 — BÔNUS EXCLUSIVOS (AURORA CARD COM BLUR IN EFFECT)
+          DOBRA 5 — BÔNUS EXCLUSIVOS (COM CELULAR 3D E VÍDEO DO APP)
       ═══════════════════════════════════════════════ */}
-      <section className="reveal-on-scroll section-defer-render relative z-20 mx-auto w-full max-w-5xl px-5 py-12 md:px-8">
-        <div className="relative overflow-hidden rounded-3xl border border-amber-500/30 bg-gradient-to-br from-[#1a120b] via-[#0d0a06] to-[#070503] p-8 md:p-14 shadow-[0_20px_60px_rgba(245,158,11,0.15)]">
+      <section className="reveal-on-scroll section-defer-render relative z-20 mx-auto w-full max-w-6xl px-4 sm:px-6 py-12 md:px-8">
+        <div className="relative overflow-hidden rounded-3xl border border-amber-500/30 bg-gradient-to-br from-[#1a120b] via-[#0d0a06] to-[#070503] p-6 sm:p-8 md:p-12 shadow-[0_20px_60px_rgba(245,158,11,0.15)]">
           {/* Luzes de Aurora de Fundo */}
           <div className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full bg-amber-500/20 blur-[90px]" />
           <div className="pointer-events-none absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-emerald-500/20 blur-[90px]" />
 
-          <div className="relative z-10 flex flex-col items-center text-center lg:items-start lg:text-left">
-            <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/40 bg-amber-500/15 px-3.5 py-1 text-xs font-bold text-amber-300 uppercase tracking-wider mb-4 mx-auto lg:mx-0">
-              <Sparkles className="h-3.5 w-3.5" />
-              <span>Bônus Exclusivo da 1ª Edição</span>
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+            {/* Coluna da Esquerda: Informações do Bônus & Destaque dos 10 Primeiros */}
+            <div className="lg:col-span-7 flex flex-col items-center text-center lg:items-start lg:text-left">
+              <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/40 bg-amber-500/15 px-3.5 py-1 text-xs font-bold text-amber-300 uppercase tracking-wider mb-4 mx-auto lg:mx-0">
+                <Sparkles className="h-3.5 w-3.5" />
+                <span>Bônus Exclusivo da 1ª Edição</span>
+              </div>
+
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white max-w-xl mx-auto lg:mx-0 text-center lg:text-left">
+                Acesso Exclusivo ao App Organiz.AI
+              </h2>
+              <p className="mt-3 text-sm sm:text-base text-stone-300 max-w-2xl leading-relaxed mx-auto lg:mx-0 text-center lg:text-left">
+                Você não vai sair da imersão apenas com anotações e teoria. Você
+                receberá o acesso ao nosso App Organiz.AI, a plataforma
+                completa de inteligência e gestão para organizar suas finanças
+                pessoais e jurídicas com máxima praticidade.
+              </p>
+
+              <div className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-2.5 w-full">
+                <div className="flex items-center gap-2.5 rounded-xl border border-white/10 bg-black/40 p-3 text-left">
+                  <CheckCircle2 className="h-4 w-4 text-amber-400 shrink-0" />
+                  <span className="text-xs text-stone-200">
+                    Separação Prática PF vs PJ
+                  </span>
+                </div>
+                <div className="flex items-center gap-2.5 rounded-xl border border-white/10 bg-black/40 p-3 text-left">
+                  <CheckCircle2 className="h-4 w-4 text-amber-400 shrink-0" />
+                  <span className="text-xs text-stone-200">
+                    Fluxo de Caixa e Gastos
+                  </span>
+                </div>
+                <div className="flex items-center gap-2.5 rounded-xl border border-white/10 bg-black/40 p-3 text-left">
+                  <CheckCircle2 className="h-4 w-4 text-amber-400 shrink-0" />
+                  <span className="text-xs text-stone-200">
+                    Metas, Diagnóstico & Pró-labore
+                  </span>
+                </div>
+              </div>
+
+              {/* CARD DESTAQUE VIP: 10 PRIMEIRAS PESSOAS */}
+              <div className="mt-6 w-full rounded-2xl border border-amber-400/50 bg-gradient-to-r from-amber-500/20 via-orange-500/15 to-amber-950/30 p-4 sm:p-5 backdrop-blur-md shadow-[0_4px_30px_rgba(245,158,11,0.2)] relative overflow-hidden text-left">
+                <div className="pointer-events-none absolute -top-8 -right-8 h-28 w-28 rounded-full bg-amber-400/20 blur-xl" />
+                <div className="flex items-start gap-3.5 relative z-10">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/25 border border-amber-400/50 text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.35)] mt-0.5">
+                    <Star className="h-5 w-5 fill-amber-400 text-amber-300" />
+                  </div>
+                  <div className="flex flex-col">
+                    <div className="flex items-center gap-2 flex-wrap mb-1">
+                      <span className="font-mono text-[0.65rem] sm:text-[0.7rem] font-black uppercase tracking-wider text-amber-200 bg-amber-500/30 px-2.5 py-0.5 rounded-full border border-amber-400/40 flex items-center gap-1.5">
+                        <Flame className="h-3 w-3 text-amber-300 fill-amber-400" />
+                        Apenas para os 10 Primeiros
+                      </span>
+                    </div>
+                    <h3 className="text-sm sm:text-base font-extrabold text-white leading-snug">
+                      Consultoria Individual de 30 Minutos Gratuita!
+                    </h3>
+                    <p className="mt-1 text-xs sm:text-sm text-stone-300 leading-relaxed">
+                      As <strong className="text-amber-300 font-bold">10 primeiras pessoas</strong> que adquirirem o App <strong className="text-white">Organiz.AI</strong> durante a 1ª Imersão Educação Financeira, terão uma <strong className="text-white font-semibold">consultoria agendada/individual de 30 minutos gratuita</strong> com nossa equipe de suporte para alinhamento e dúvidas gerais.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-5 border-t border-white/10 w-full text-center">
+                <span className="font-mono text-xs text-stone-500 line-through uppercase">
+                  Vendido separadamente por R$ 197,00
+                </span>
+                <span className="rounded-full bg-emerald-500/20 border border-emerald-500/40 px-3.5 py-1 text-xs font-bold text-emerald-300">
+                  100% Gratuito para Inscritos no Lote 1
+                </span>
+              </div>
             </div>
 
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white max-w-xl mx-auto lg:mx-0 text-center lg:text-left">
-              Acesso Exclusivo ao App OrganizAI
-            </h2>
-            <p className="mt-3 text-sm sm:text-base text-stone-300 max-w-2xl leading-relaxed mx-auto lg:mx-0 text-center lg:text-left">
-              Você não vai sair da imersão apenas com anotações e teoria. Você
-              receberá o acesso ao nosso App OrganizAI, a plataforma
-              completa de inteligência e gestão para organizar suas finanças
-              pessoais e jurídicas com máxima praticidade.
-            </p>
+            {/* Coluna da Direita: Smartphone 3D Meio de Lado com o Vídeo da Tela do App (/NR1.mp4) */}
+            <div className="lg:col-span-5 flex flex-col items-center justify-center pt-4 lg:pt-0">
+              <div className="phone-3d-container phone-3d-perspective relative flex items-center justify-center py-4">
+                {/* Glow de base sob o smartphone */}
+                <div className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 h-20 w-56 rounded-full bg-amber-500/25 blur-3xl" />
 
-            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl w-full">
-              <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/40 p-3 text-left">
-                <CheckCircle2 className="h-5 w-5 text-amber-400 shrink-0" />
-                <span className="text-xs sm:text-sm text-stone-200">
-                  Aplicativo com Separação Prática PF vs PJ
-                </span>
-              </div>
-              <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/40 p-3 text-left">
-                <CheckCircle2 className="h-5 w-5 text-amber-400 shrink-0" />
-                <span className="text-xs sm:text-sm text-stone-200">
-                  Painel de Fluxo de Caixa e Controle de Gastos
-                </span>
-              </div>
-              <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/40 p-3 text-left">
-                <CheckCircle2 className="h-5 w-5 text-amber-400 shrink-0" />
-                <span className="text-xs sm:text-sm text-stone-200">
-                  Módulo de Metas, Diagnóstico & Pró-labore
-                </span>
-              </div>
-              <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/40 p-3 text-left">
-                <CheckCircle2 className="h-5 w-5 text-amber-400 shrink-0" />
-                <span className="text-xs sm:text-sm text-stone-200">
-                  Comunidade Exclusiva de Alunos e Suporte
-                </span>
-              </div>
-            </div>
+                {/* Chassis do Smartphone com rotação 3D isométrica/meio de lado */}
+                <div className="phone-3d-chassis relative rounded-[44px] sm:rounded-[48px] p-2.5 sm:p-3 bg-gradient-to-b from-[#2b2c33] via-[#1a1b20] to-[#0f1013] border border-white/20 shadow-[-22px_24px_45px_rgba(0,0,0,0.85),0_0_35px_rgba(245,158,11,0.22)]">
+                  {/* Tela interna com proporção de smartphone moderna */}
+                  <div className="relative rounded-[36px] sm:rounded-[40px] overflow-hidden bg-black aspect-[9/19] w-[230px] sm:w-[260px] md:w-[280px] border border-white/10 shadow-inner">
+                    {/* Dynamic Island / Câmera Frontal */}
+                    <div className="pointer-events-none absolute top-2.5 left-1/2 -translate-x-1/2 z-30 h-4 sm:h-4.5 w-20 sm:w-24 rounded-full bg-black border border-white/15 flex items-center justify-end pr-2 gap-1 shadow-md">
+                      <div className="h-1.5 w-1.5 rounded-full bg-[#111122] border border-white/20" />
+                    </div>
 
-            <div className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-6 border-t border-white/10 w-full text-center">
-              <span className="font-mono text-xs text-stone-500 line-through uppercase">
-                Vendido separadamente por R$ 197,00
-              </span>
-              <span className="rounded-full bg-emerald-500/20 border border-emerald-500/40 px-3.5 py-1 text-xs font-bold text-emerald-300">
-                100% Gratuito para Inscritos no Lote 1
-              </span>
+                    {/* Vídeo da Tela do App NR1.mp4 */}
+                    <video
+                      src="/NR1.mp4"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      preload="metadata"
+                      className="w-full h-full object-cover object-top select-none"
+                    />
+
+                    {/* Reflexo de Vidro Diagonal */}
+                    <div className="pointer-events-none absolute inset-0 z-20 bg-gradient-to-tr from-white/[0.08] via-transparent to-transparent" />
+                  </div>
+
+                  {/* Badge Flutuante Inferior */}
+                  <div className="absolute -bottom-3.5 left-1/2 -translate-x-1/2 z-30 whitespace-nowrap rounded-full border border-amber-500/40 bg-black/95 px-3.5 py-1 text-[0.68rem] sm:text-xs font-bold text-amber-300 shadow-[0_4px_16px_rgba(0,0,0,0.7)] backdrop-blur-md flex items-center gap-1.5">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
+                    <span>App Organiz.AI em Uso</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* ═══════════════════════════════════════════════
-          DOBRA 6 — CRONOGRAMA DA IMERSÃO (25 DE OUTUBRO)
+          DOBRA 6 — CRONOGRAMA DA IMERSÃO (01 DE NOVEMBRO)
       ═══════════════════════════════════════════════ */}
       <section id="cronograma" className="reveal-on-scroll section-defer-render relative z-20 mx-auto w-full max-w-5xl px-5 py-16 md:px-8">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-950/40 px-3.5 py-1 text-xs font-bold text-emerald-300 uppercase tracking-wider mb-2">
             <Clock className="h-3.5 w-3.5" />
-            <span>25 de Outubro • Cronograma Oficial</span>
+            <span>01 de Novembro • Cronograma Oficial</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
             Uma tarde inteira focada no seu futuro financeiro
           </h2>
           <p className="mt-2 text-sm text-stone-400">
-            Encontro ao vivo via Zoom com tempo para perguntas, exercícios e
+            Encontro ao vivo via Meet com tempo para perguntas, exercícios e
             acompanhamento prático.
           </p>
         </div>
@@ -1152,7 +1233,7 @@ function ImersaoPage() {
                 <li className="flex items-center gap-2.5">
                   <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
                   <span>
-                    Acesso ao vivo e exclusivo à Imersão no Zoom (25 de outubro)
+                    Acesso ao vivo e exclusivo à Imersão no Meet (01 de novembro)
                   </span>
                 </li>
                 <li className="flex items-center gap-2.5">
@@ -1164,7 +1245,7 @@ function ImersaoPage() {
                 <li className="flex items-center gap-2.5">
                   <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
                   <span>
-                    Acesso Exclusivo ao App OrganizAI (Módulos PF & PJ)
+                    Acesso Exclusivo ao App Organiz.AI (Módulos PF & PJ)
                   </span>
                 </li>
                 <li className="flex items-center gap-2.5">
@@ -1228,9 +1309,9 @@ function ImersaoPage() {
                 href={checkoutUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-orange-400 px-6 py-4 text-sm font-black uppercase tracking-wider text-stone-950 shadow-[0_4px_24px_rgba(245,158,11,0.35)] transition-all hover:scale-105 active:scale-95"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-orange-400 px-6 py-4 text-sm sm:text-base font-black uppercase tracking-wider text-stone-950 shadow-[0_4px_24px_rgba(245,158,11,0.35)] transition-all hover:scale-[1.02] active:scale-95"
               >
-                <span>Garantir Vaga no Lote 1 (R$ 27)</span>
+                <span>GARANTIR MINHA VAGA!</span>
                 <ArrowRight className="h-4 w-4 stroke-[3]" />
               </a>
 
@@ -1297,20 +1378,23 @@ function ImersaoPage() {
       ═══════════════════════════════════════════════ */}
       <section className="reveal-on-scroll section-defer-render relative z-20 mx-auto w-full max-w-5xl px-5 py-16 md:px-8">
         <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-8 md:p-12 flex flex-col lg:flex-row items-center gap-10">
-          <div className="lg:w-5/12">
-            <div className="group relative mx-auto aspect-[4/5] w-full max-w-sm overflow-hidden rounded-2xl border border-amber-500/30 bg-[#0b140e] shadow-2xl shadow-black/60">
-              <picture>
-                <source srcSet="/natalia-mentora.webp" type="image/webp" />
-                <img
-                  src="/natalia-mentora.jpg"
-                  alt="Natália Rodolfo - Educadora Financeira e Mentora"
-                  loading="lazy"
-                  decoding="async"
-                  width={700}
-                  height={875}
-                  className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.02] ios-hardware-accel"
-                />
-              </picture>
+          <div className="lg:w-5/12 w-full flex justify-center">
+            <div className="relative mx-auto w-full max-w-[320px] sm:max-w-sm lg:max-w-md">
+              <div className="absolute -inset-2 rounded-3xl bg-gradient-to-tr from-emerald-500/20 via-amber-500/15 to-transparent blur-xl -z-10 opacity-70" />
+              <div className="group relative aspect-[3/4] w-full overflow-hidden rounded-2xl border border-amber-500/30 bg-[#0b140e] shadow-2xl shadow-black/80">
+                <picture>
+                  <source srcSet="/natalia-mentora.webp" type="image/webp" />
+                  <img
+                    src="/natalia-mentora.jpg"
+                    alt="Natália Rodolfo - Educadora Financeira e Mentora"
+                    loading="lazy"
+                    decoding="async"
+                    width={768}
+                    height={1024}
+                    className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.02] ios-hardware-accel"
+                  />
+                </picture>
+              </div>
             </div>
           </div>
 
@@ -1370,11 +1454,11 @@ function ImersaoPage() {
           {[
             {
               q: "O que eu preciso para participar da Imersão?",
-              a: "Apenas de um celular ou computador conectado à internet para acessar a sala ao vivo no Zoom. Você não precisa ter conhecimento prévio de finanças, pois o método ensina tudo a partir do zero de forma simples e descomplicada.",
+              a: "Apenas de um celular ou computador conectado à internet para acessar a sala ao vivo no Meet. Você não precisa ter conhecimento prévio de finanças, pois o método ensina tudo a partir do zero de forma simples e descomplicada.",
             },
             {
               q: "Quando e como acontece a Imersão?",
-              a: "A imersão será no dia 25 de Outubro, 100% online e ao vivo pelo Zoom. Ao confirmar sua inscrição, você receberá o link exclusivo de acesso e as instruções no seu e-mail e WhatsApp.",
+              a: "A imersão será no dia 01 de Novembro, 100% online e ao vivo pelo Meet. Ao confirmar sua inscrição, você receberá o link exclusivo de acesso e as instruções no seu e-mail e WhatsApp.",
             },
             {
               q: "E se eu não puder assistir ao vivo em algum horário?",
@@ -1478,7 +1562,7 @@ function ImersaoPage() {
       >
         <div className="flex flex-col">
           <span className="text-xs font-bold text-white leading-tight">
-            Imersão 25 de Outubro
+            Imersão 01 de Novembro
           </span>
           <span className="text-[0.65rem] text-emerald-400 font-semibold">
             Lote 1: Apenas R$ 27,00

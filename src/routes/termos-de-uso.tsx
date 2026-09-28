@@ -4,16 +4,16 @@ import { Scale, ArrowLeft, FileCheck, AlertTriangle, ShieldCheck, Mail } from "l
 export const Route = createFileRoute("/termos-de-uso")({
   head: () => ({
     meta: [
-      { title: "Termos de Uso — OrganizAI & Mentoria Natália Rodolfo" },
+      { title: "Termos de Uso — Organiz.AI & Mentoria Natália Rodolfo" },
       {
         name: "description",
         content:
-          "Leia os Termos e Condições Gerais de Uso da plataforma OrganizAI e dos serviços de mentoria financeira de Natália Rodolfo.",
+          "Leia os Termos e Condições Gerais de Uso da plataforma Organiz.AI e dos serviços de mentoria financeira de Natália Rodolfo.",
       },
-      { property: "og:title", content: "Termos de Uso — OrganizAI & Mentoria Natália Rodolfo" },
+      { property: "og:title", content: "Termos de Uso — Organiz.AI & Mentoria Natália Rodolfo" },
       {
         property: "og:description",
-        content: "Condições e responsabilidades de uso da plataforma OrganizAI e canais de mentoria.",
+        content: "Condições e responsabilidades de uso da plataforma Organiz.AI e canais de mentoria.",
       },
       { property: "og:url", content: "https://nataliarodolfo.com.br/termos-de-uso" },
       { property: "og:type", content: "website" },
@@ -69,14 +69,14 @@ function TermosDeUsoPage() {
               1. Aceitação dos Termos
             </h2>
             <p className="mt-3">
-              Ao criar uma conta, adquirir uma assinatura, participar de eventos ou utilizar a plataforma <strong>OrganizAI</strong> e os conteúdos educativos de <strong>Natália Rodolfo</strong>, você declara ter lido, compreendido e concordado integralmente com estes Termos de Uso e com a nossa Política de Privacidade.
+              Ao criar uma conta, adquirir uma assinatura, participar de eventos ou utilizar a plataforma <strong>Organiz.AI</strong> e os conteúdos educativos de <strong>Natália Rodolfo</strong>, você declara ter lido, compreendido e concordado integralmente com estes Termos de Uso e com a nossa Política de Privacidade.
             </p>
           </section>
 
           <section className="space-y-4">
             <h2 className="text-xl font-semibold text-white">2. Objeto e Natureza dos Serviços</h2>
             <p>
-              O <strong>OrganizAI</strong> é um software como serviço (SaaS) voltado ao controle e planejamento financeiro pessoal (PF) e empresarial (PJ), com funcionalidades de gestão de despesas fixas, despesas variáveis, cartões de crédito, saldos bancários, metas de poupança (cofrinhos), categorização e assistente com inteligência artificial para apoio financeiro.
+              O <strong>Organiz.AI</strong> é um software como serviço (SaaS) voltado ao controle e planejamento financeiro pessoal (PF) e empresarial (PJ), com funcionalidades de gestão de despesas fixas, despesas variáveis, cartões de crédito, saldos bancários, metas de poupança (cofrinhos), categorização e assistente com inteligência artificial para apoio financeiro.
             </p>
             <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-xs text-amber-200">
               <div className="flex items-center gap-2 font-semibold text-amber-400">
@@ -84,7 +84,7 @@ function TermosDeUsoPage() {
                 Aviso Legal Importante:
               </div>
               <p className="mt-1 leading-relaxed">
-                A plataforma OrganizAI e os cursos de Natália Rodolfo possuem caráter estritamente educativo, de mentoria e de gestão organizacional. Não constituem serviços de assessoria ou recomendação individualizada de investimentos, intermediação financeira ou consultoria de valores mobiliários regulada pela CVM (Comissão de Valores Mobiliários).
+                A plataforma Organiz.AI e os cursos de Natália Rodolfo possuem caráter estritamente educativo, de mentoria e de gestão organizacional. Não constituem serviços de assessoria ou recomendação individualizada de investimentos, intermediação financeira ou consultoria de valores mobiliários regulada pela CVM (Comissão de Valores Mobiliários).
               </p>
             </div>
           </section>
@@ -103,7 +103,7 @@ function TermosDeUsoPage() {
           <section className="space-y-4">
             <h2 className="text-xl font-semibold text-white">4. Propriedade Intelectual</h2>
             <p>
-              Todos os elementos da plataforma OrganizAI — incluindo código-fonte, marcas, logotipos, identidades visuais, apostilas, planilhas e metodologias pedagógicas — são de titularidade exclusiva de Natália Rodolfo e protegidos pelas leis brasileiras de direitos autorais e propriedade industrial. É vedada a reprodução ou comercialização sem autorização expressa por escrito.
+              Todos os elementos da plataforma Organiz.AI — incluindo código-fonte, marcas, logotipos, identidades visuais, apostilas, planilhas e metodologias pedagógicas — são de titularidade exclusiva de Natália Rodolfo e protegidos pelas leis brasileiras de direitos autorais e propriedade industrial. É vedada a reprodução ou comercialização sem autorização expressa por escrito.
             </p>
           </section>
 
@@ -113,7 +113,7 @@ function TermosDeUsoPage() {
               Em compras de cursos e assinaturas da plataforma realizadas em ambiente eletrônico, o usuário poderá solicitar o cancelamento e reembolso integral no prazo de até 7 (sete) dias corridos a contar da confirmação do pagamento, nos moldes do Artigo 49 do Código de Defesa do Consumidor (CDC).
             </p>
             <p>
-              A OrganizAI reserva-se o direito de suspender ou rescindir o acesso de qualquer usuário que descumpra as diretrizes de segurança, realize tentativas de invasão ou viole direitos de outros membros.
+              A Organiz.AI reserva-se o direito de suspender ou rescindir o acesso de qualquer usuário que descumpra as diretrizes de segurança, realize tentativas de invasão ou viole direitos de outros membros.
             </p>
           </section>
 

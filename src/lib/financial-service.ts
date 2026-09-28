@@ -424,21 +424,25 @@ export function notificarAtualizacaoFinanceira() {
   }
 }
 
+// Obtém dados do cache local imediatamente para renderização instantânea (0ms)
+export function obterDadosFinanceirosCache(userId: string) {
+  if (typeof window === "undefined" || !userId) return null;
+  const cacheKey = `organizai_finance_data_${userId}`;
+  const cached = localStorage.getItem(cacheKey);
+  if (!cached) return null;
+  try {
+    return JSON.parse(cached);
+  } catch {
+    return null;
+  }
+}
+
 // Carregador centralizado para todas as seções do usuário
 export async function carregarDadosFinanceirosUsuario(userId: string) {
   const cacheKey = `organizai_finance_data_${userId}`;
 
   try {
-    const [
-      { data: recData },
-      { data: fixData },
-      { data: varData },
-      { data: banData },
-      { data: invData },
-      { data: cofData },
-      { data: cartData },
-      { data: compData },
-    ] = await Promise.all([
+    const queriesPromise = Promise.all([
       supabase.from("recebimentos").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
       supabase.from("gastos_fixos").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
       supabase.from("gastos_variaveis").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
@@ -448,6 +452,21 @@ export async function carregarDadosFinanceirosUsuario(userId: string) {
       supabase.from("cartoes_credito").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
       supabase.from("compras_cartao").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
     ]);
+
+    const timeoutPromise = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error("Timeout carregamento financeiro")), 5000)
+    );
+
+    const [
+      { data: recData },
+      { data: fixData },
+      { data: varData },
+      { data: banData },
+      { data: invData },
+      { data: cofData },
+      { data: cartData },
+      { data: compData },
+    ] = await Promise.race([queriesPromise, timeoutPromise]);
 
     const recebimentos: RecebimentoItem[] = (recData || []).map((r: any) => ({
       id: r.id,

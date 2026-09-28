@@ -4,13 +4,13 @@ import { ShieldCheck, ArrowLeft, Lock, FileText, CheckCircle2, Mail } from "luci
 export const Route = createFileRoute("/politica-de-privacidade")({
   head: () => ({
     meta: [
-      { title: "Política de Privacidade — OrganizAI & Natália Rodolfo" },
+      { title: "Política de Privacidade — Organiz.AI & Natália Rodolfo" },
       {
         name: "description",
         content:
           "Conheça nossa Política de Privacidade em conformidade com a LGPD (Lei 13.709/2018). Saiba como protegemos seus dados cadastrais e financeiros.",
       },
-      { property: "og:title", content: "Política de Privacidade — OrganizAI & Natália Rodolfo" },
+      { property: "og:title", content: "Política de Privacidade — Organiz.AI & Natália Rodolfo" },
       {
         property: "og:description",
         content:
@@ -70,7 +70,7 @@ function PoliticaPrivacidadePage() {
               1. Compromisso com a sua Privacidade
             </h2>
             <p className="mt-3">
-              A presente Política de Privacidade regula o tratamento dos dados pessoais e financeiros coletados pela plataforma <strong>OrganizAI</strong> e pelos canais educacionais de <strong>Natália Rodolfo</strong>, em estrita conformidade com a Lei Geral de Proteção de Dados Pessoais do Brasil (Lei nº 13.709/2018 — LGPD).
+              A presente Política de Privacidade regula o tratamento dos dados pessoais e financeiros coletados pela plataforma <strong>Organiz.AI</strong> e pelos canais educacionais de <strong>Natália Rodolfo</strong>, em estrita conformidade com a Lei Geral de Proteção de Dados Pessoais do Brasil (Lei nº 13.709/2018 — LGPD).
             </p>
             <p className="mt-3">
               Nosso compromisso é tratar seus dados com total transparência, confidencialidade, integridade e segurança, adotando as melhores práticas internacionais de segurança da informação e governança corporativa.
@@ -80,7 +80,7 @@ function PoliticaPrivacidadePage() {
           <section className="space-y-4">
             <h2 className="text-xl font-semibold text-white">2. Dados que Coletamos</h2>
             <p>
-              Para prestar serviços de qualidade, viabilizar o acesso aos recursos do OrganizAI e ministrar os treinamentos de educação financeira, coletamos as seguintes categorias de dados:
+              Para prestar serviços de qualidade, viabilizar o acesso aos recursos do Organiz.AI e ministrar os treinamentos de educação financeira, coletamos as seguintes categorias de dados:
             </p>
             <ul className="list-inside list-disc space-y-2 text-zinc-300 pl-2">
               <li>
@@ -105,7 +105,7 @@ function PoliticaPrivacidadePage() {
                   Execução de Contrato
                 </h3>
                 <p className="mt-1 text-xs text-zinc-400">
-                  Permitir o funcionamento regular da plataforma OrganizAI, cálculo de resumos financeiros, projeções e emissão de certificados das imersões.
+                  Permitir o funcionamento regular da plataforma Organiz.AI, cálculo de resumos financeiros, projeções e emissão de certificados das imersões.
                 </p>
               </div>
               <div className="rounded-xl border border-zinc-800 bg-zinc-900/30 p-4">

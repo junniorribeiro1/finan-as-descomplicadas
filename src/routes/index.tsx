@@ -18,17 +18,17 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Natália Rodolfo — Links Oficiais & Plataforma OrganizAI" },
+      { title: "Natália Rodolfo — Links Oficiais & Plataforma Organiz.AI" },
       {
         name: "description",
         content:
-          "Educadora Financeira e Estrategista de Gestão. Conheça a IMER$ÃO EDUCAÇÃO FINANCEIRA, a plataforma OrganizAI e soluções financeiras.",
+          "Educadora Financeira e Estrategista de Gestão. Conheça a IMER$ÃO EDUCAÇÃO FINANCEIRA, a plataforma Organiz.AI e soluções financeiras.",
       },
-      { property: "og:title", content: "Natália Rodolfo — Links Oficiais & OrganizAI" },
+      { property: "og:title", content: "Natália Rodolfo — Links Oficiais & Organiz.AI" },
       {
         property: "og:description",
         content:
-          "Educadora Financeira e Estrategista. Acesse a IMER$ÃO EDUCAÇÃO FINANCEIRA, plataforma OrganizAI e canais de contato.",
+          "Educadora Financeira e Estrategista. Acesse a IMER$ÃO EDUCAÇÃO FINANCEIRA, plataforma Organiz.AI e canais de contato.",
       },
       { property: "og:image", content: "/natalia-profile.jpg" },
       { property: "og:url", content: "https://nataliarodolfo.com.br/" },
@@ -42,8 +42,7 @@ export const Route = createFileRoute("/")({
         as: "image",
         href: "/natalia-profile.webp",
         type: "image/webp",
-        // @ts-expect-error fetchpriority para acelerar o LCP no PageSpeed Mobile
-        fetchpriority: "high",
+        fetchPriority: "high",
       },
     ],
   }),
@@ -62,13 +61,13 @@ function NataliaLinksPage() {
         url: "https://nataliarodolfo.com.br",
         image: "https://nataliarodolfo.com.br/natalia-profile.webp",
         description:
-          "Educadora Financeira e Estrategista de Gestão. Mentoria financeira para pessoas físicas e jurídicas e criadora do OrganizAI.",
-        sameAs: ["https://www.instagram.com/nataliarodolfo.financas"],
+          "Educadora Financeira e Estrategista de Gestão. Mentoria financeira para pessoas físicas e jurídicas e criadora do Organiz.AI.",
+        sameAs: ["https://www.instagram.com/nataliafinancas"],
       },
       {
         "@type": "FinancialService",
         "@id": "https://nataliarodolfo.com.br/#organization",
-        name: "Natália Rodolfo Finanças & OrganizAI",
+        name: "Natália Rodolfo Finanças & Organiz.AI",
         url: "https://nataliarodolfo.com.br",
         logo: "https://nataliarodolfo.com.br/logo.webp",
         founder: { "@id": "https://nataliarodolfo.com.br/#person" },
@@ -201,7 +200,7 @@ function NataliaLinksPage() {
             </p>
           </Link>
 
-          {/* ORGANIZAI — CARD COMPACTO E ELEGANTE (SEM DISPUTAR COM A IMERSÃO) */}
+          {/* ORGANIZ.AI — CARD COMPACTO E ELEGANTE (SEM DISPUTAR COM A IMERSÃO) */}
           <Link
             to="/app"
             className="group relative flex items-center justify-between gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.035] p-4 backdrop-blur-sm sm:backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-500/45 hover:bg-emerald-950/20 active:translate-y-0"
@@ -212,7 +211,7 @@ function NataliaLinksPage() {
                   <source srcSet="/logo.webp" type="image/webp" />
                   <img
                     src="/logo.png"
-                    alt="OrganizAI"
+                    alt="Organiz.AI"
                     width={44}
                     height={44}
                     loading="lazy"
@@ -225,7 +224,7 @@ function NataliaLinksPage() {
               <div className="flex flex-col text-left min-w-0 flex-1">
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <span className="text-[0.925rem] font-semibold text-white group-hover:text-emerald-300 transition-colors">
-                    OrganizAI
+                    Organiz.AI
                   </span>
                   <span className="rounded bg-emerald-500/10 px-1.5 py-0.5 text-[0.625rem] font-medium text-emerald-300 border border-emerald-500/20">
                     Plataforma Oficial

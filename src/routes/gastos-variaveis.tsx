@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { AppShell } from "@/components/app/AppShell";
 import { cn } from "@/lib/utils";
 import { brl } from "@/lib/mock-data";
@@ -32,7 +32,7 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/gastos-variaveis")({
   head: () => ({
     meta: [
-      { title: "Gastos variáveis — OrganizAI" },
+      { title: "Gastos variáveis — Organiz.AI" },
       { name: "description", content: "Compras e despesas avulsas · Pessoal e Empresa." },
       { name: "robots", content: "noindex, nofollow" },
     ],
@@ -102,10 +102,23 @@ function formatarDataExibicao(dataStr: string): string {
 }
 
 function GastosVariaveis() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const periodo = usePeriodoAtivo();
-  const [gastos, setGastos] = useState<GastoVariavelItem[]>([]);
-  const [carregando, setCarregando] = useState(true);
+  const [gastos, setGastos] = useState<GastoVariavelItem[]>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const cached = localStorage.getItem("organizai_cached_gastos_variaveis");
+        if (cached) return JSON.parse(cached);
+      } catch {}
+    }
+    return [];
+  });
+  const [carregando, setCarregando] = useState(() => {
+    if (typeof window !== "undefined") {
+      return !localStorage.getItem("organizai_cached_gastos_variaveis");
+    }
+    return true;
+  });
   const [filtroPeriodo, setFiltroPeriodo] = useState<"mes" | "ano" | "todos">("mes");
 
   // Modo da Conta: "pessoal" ou "empresa"
@@ -200,7 +213,7 @@ function GastosVariaveis() {
   const categoriasAtuais = tipoConta === "pessoal" ? categoriasPessoal : categoriasEmpresa;
 
   // Carregar e sincronizar categorias em tempo real com /categorias
-  const recarregarCategorias = async () => {
+  const recarregarCategorias = useCallback(async () => {
     try {
       const [catsP, catsE] = await Promise.all([
         carregarCategoriasUsuario(user?.id, "pessoal", "despesa"),
@@ -211,17 +224,17 @@ function GastosVariaveis() {
     } catch (err) {
       console.error("Erro ao sincronizar categorias em gastos-variaveis:", err);
     }
-  };
+  }, [user?.id]);
 
   useEffect(() => {
     recarregarCategorias();
     const handler = () => recarregarCategorias();
     window.addEventListener("organizai_categorias_sync", handler);
     return () => window.removeEventListener("organizai_categorias_sync", handler);
-  }, [user?.id]);
+  }, [recarregarCategorias]);
 
   // Carregar cartões de crédito do usuário no Supabase
-  const recarregarCartoes = async () => {
+  const recarregarCartoes = useCallback(async () => {
     if (!user?.id) return;
     try {
       const { data: cartData, error } = await supabase
@@ -248,14 +261,14 @@ function GastosVariaveis() {
     } catch (err) {
       console.error("Erro ao carregar cartões em gastos-variaveis:", err);
     }
-  };
+  }, [user?.id]);
 
   useEffect(() => {
     recarregarCartoes();
     const handler = () => recarregarCartoes();
     window.addEventListener("organizai_finance_sync", handler);
     return () => window.removeEventListener("organizai_finance_sync", handler);
-  }, [user?.id]);
+  }, [recarregarCartoes]);
 
   // Cartões disponíveis para o tipo de conta ativo (Pessoal / Empresa)
   const cartoesDisponiveis = useMemo(() => {
@@ -290,46 +303,62 @@ function GastosVariaveis() {
     }
   }, [tipoConta, categoriasPessoal, categoriasEmpresa]);
 
-  // Carregar gastos variáveis do usuário no Supabase
-  useEffect(() => {
-    if (!user?.id) return;
-    const carregar = async () => {
-      try {
-        setCarregando(true);
-        const { data: varData, error } = await supabase
-          .from("gastos_variaveis")
-          .select("*")
-          .eq("user_id", user.id)
-          .order("created_at", { ascending: false });
+  // Carregar gastos variáveis do usuário no Supabase com proteção de timeout
+  const carregarGastosVariaveis = useCallback(async () => {
+    if (!user?.id) {
+      if (!authLoading) setCarregando(false);
+      return;
+    }
+    try {
+      setCarregando(true);
+      const queryPromise = supabase
+        .from("gastos_variaveis")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
 
-        if (!error && varData) {
-          setGastos(
-            varData.map((v: any) => ({
-              id: v.id,
-              user_id: v.user_id,
-              descricao: v.descricao,
-              valor: Number(v.valor) || 0,
-              data: v.data || hoje,
-              status: v.status || "Pago",
-              categoria: v.categoria || (v.tipo_conta === "empresa" ? "Serviços" : "Outros"),
-              formaPagamento: v.forma_pagamento || "PIX",
-              tipoConta: (v.tipo_conta as "pessoal" | "empresa") || "pessoal",
-              cartaoId: v.cartao_id || undefined,
-              parcelasTotal: v.parcelas_total || 1,
-              compraCartaoId: v.compra_cartao_id || undefined,
-              created_at: v.created_at,
-            }))
-          );
+      const timeoutPromise = new Promise<{ data: null; error: Error }>((resolve) =>
+        setTimeout(() => resolve({ data: null, error: new Error("Timeout ao carregar") }), 6000)
+      );
+
+      const { data: varData, error } = await Promise.race([queryPromise, timeoutPromise]);
+
+      if (!error && varData) {
+        const mapeados = varData.map((v: any) => ({
+          id: v.id,
+          user_id: v.user_id,
+          descricao: v.descricao || "Sem descrição",
+          valor: Number(v.valor) || 0,
+          data: v.data || hoje,
+          status: v.status || "Pago",
+          categoria: v.categoria || (v.tipo_conta === "empresa" ? "Serviços" : "Outros"),
+          formaPagamento: v.forma_pagamento || "PIX",
+          tipoConta: (v.tipo_conta as "pessoal" | "empresa") || "pessoal",
+          cartaoId: v.cartao_id || undefined,
+          parcelasTotal: v.parcelas_total || 1,
+          compraCartaoId: v.compra_cartao_id || undefined,
+          created_at: v.created_at,
+        }));
+        setGastos(mapeados);
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.setItem("organizai_cached_gastos_variaveis", JSON.stringify(mapeados));
+          } catch {}
         }
-      } catch (err) {
-        console.error("Erro ao carregar gastos variáveis:", err);
-      } finally {
-        setCarregando(false);
       }
-    };
+    } catch (err) {
+      console.error("Erro ao carregar gastos variáveis:", err);
+    } finally {
+      setCarregando(false);
+    }
+  }, [user?.id, authLoading, hoje]);
 
-    carregar();
-  }, [user?.id, hoje]);
+  useEffect(() => {
+    carregarGastosVariaveis();
+    const handler = () => carregarGastosVariaveis();
+    window.addEventListener("organizai_finance_sync", handler);
+    return () => window.removeEventListener("organizai_finance_sync", handler);
+  }, [carregarGastosVariaveis]);
 
   // Gastos específicos do tipo de conta selecionado (Pessoal ou Empresa)
   const gastosFiltradosPorConta = useMemo(() => {
@@ -374,9 +403,9 @@ function GastosVariaveis() {
       if (busca.trim()) {
         const termo = busca.toLowerCase();
         return (
-          g.descricao.toLowerCase().includes(termo) ||
-          g.categoria.toLowerCase().includes(termo) ||
-          g.formaPagamento.toLowerCase().includes(termo)
+          (g.descricao || "").toLowerCase().includes(termo) ||
+          (g.categoria || "").toLowerCase().includes(termo) ||
+          (g.formaPagamento || "").toLowerCase().includes(termo)
         );
       }
       return true;

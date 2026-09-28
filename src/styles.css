@@ -79,7 +79,7 @@
   --popover: oklch(0.17 0 0);
   --popover-foreground: oklch(0.976 0 0);
 
-  /* #F97316 — OrganizAI */
+  /* #F97316 — Organiz.AI */
   --primary: oklch(0.68 0.21 45);
   --primary-foreground: oklch(0.98 0 0);
   /* #7C2D12 */
@@ -168,7 +168,7 @@
 }
 
 /* =========================================================
- * ORGANIZAI — MODO CLARO EXCLUSIVO DO PAINEL INTERNO
+ * ORGANIZ.AI — MODO CLARO EXCLUSIVO DO PAINEL INTERNO
  * Não afeta landing pages ou sites externos criados à parte
  * ========================================================= */
 .organizai-theme-light {
@@ -456,7 +456,7 @@
   color: #ea580c !important;
 }
 
-/* Card da Vera no Sidebar */
+/* Card da Samy no Sidebar */
 .organizai-theme-light [class*="from-[#1f122c]"] {
   background: linear-gradient(180deg, #faf5ff 0%, #f3e8ff 100%) !important;
   border-color: rgba(168, 85, 247, 0.25) !important;
@@ -613,6 +613,25 @@ nav {
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Barra de rolagem interna elegante para o chat da IA Samy */
+.chat-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+.chat-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.chat-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.chat-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 9999px;
+}
+.chat-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.38);
 }
 
 
