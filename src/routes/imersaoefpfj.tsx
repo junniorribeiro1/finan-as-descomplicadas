@@ -437,7 +437,8 @@ function ImersaoPage() {
                 Aprenda a organizar seu dinheiro,{" "}
                 <strong className="font-semibold text-white underline decoration-amber-400 decoration-2 underline-offset-4">
                   sair do vermelho
-                </strong>{" "}
+                </strong>
+                <br />
                 e construir uma vida financeira leve e consciente.
               </p>
 
@@ -568,11 +569,13 @@ function ImersaoPage() {
               A Virada de Chave
             </span>
             <h2 className="mt-3 text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white leading-tight max-w-3xl mx-auto">
-              Você está prestes a transformar de vez a sua relação com o{" "}
+              Você está prestes a transformar
+              <br />
+              de vez a sua relação com o
+              <br />
               <span className="bg-gradient-to-r from-[#ffe494] via-[#f59e0b] to-[#d97706] bg-clip-text text-transparent">
                 dinheiro pessoal e empresarial
               </span>
-              .
             </h2>
           </div>
 
@@ -667,11 +670,14 @@ function ImersaoPage() {
             Grade Curricular Completa
           </span>
           <h2 className="mt-2 text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
-            O que você vai dominar durante a Imersão
+            O que você vai dominar
+            <br />
+            durante a Imersão
           </h2>
           <p className="mt-3 text-sm sm:text-base text-stone-400">
-            Conteúdo direto ao ponto, 100% prático e aplicável logo no primeiro
-            dia, sem teorias complexas.
+            Conteúdo direto ao ponto, 100% prático e aplicável
+            <br />
+            a tarde toda, sem teorias complexas.
           </p>
         </div>
 
@@ -892,7 +898,9 @@ function ImersaoPage() {
               </div>
 
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white max-w-xl mx-auto lg:mx-0 text-center lg:text-left">
-                Acesso Exclusivo ao App Organiz.AI
+                Acesso Exclusivo ao Organiz.AI
+                <br />
+                por 7 dias gratuitamente
               </h2>
               <p className="mt-3 text-sm sm:text-base text-stone-300 max-w-2xl leading-relaxed mx-auto lg:mx-0 text-center lg:text-left">
                 Você não vai sair da imersão apenas com anotações e teoria. Você
@@ -905,19 +913,25 @@ function ImersaoPage() {
                 <div className="flex items-center gap-2.5 rounded-xl border border-white/10 bg-black/40 p-3 text-left">
                   <CheckCircle2 className="h-4 w-4 text-amber-400 shrink-0" />
                   <span className="text-xs text-stone-200">
-                    Separação Prática PF vs PJ
+                    Separação Prática
+                    <br />
+                    PF vs PJ
                   </span>
                 </div>
                 <div className="flex items-center gap-2.5 rounded-xl border border-white/10 bg-black/40 p-3 text-left">
                   <CheckCircle2 className="h-4 w-4 text-amber-400 shrink-0" />
                   <span className="text-xs text-stone-200">
-                    Fluxo de Caixa e Gastos
+                    Fluxo de
+                    <br />
+                    Caixa e Gastos
                   </span>
                 </div>
                 <div className="flex items-center gap-2.5 rounded-xl border border-white/10 bg-black/40 p-3 text-left">
                   <CheckCircle2 className="h-4 w-4 text-amber-400 shrink-0" />
                   <span className="text-xs text-stone-200">
-                    Metas, Diagnóstico & Pró-labore
+                    Metas, Diagnóstico
+                    <br />
+                    & Pró-labore
                   </span>
                 </div>
               </div>
@@ -1011,7 +1025,9 @@ function ImersaoPage() {
             <span>01 de Novembro • Cronograma Oficial</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
-            Uma tarde inteira focada no seu futuro financeiro
+            Uma tarde inteira focada
+            <br />
+            no seu futuro financeiro
           </h2>
           <p className="mt-2 text-sm text-stone-400">
             Encontro ao vivo via Meet com tempo para perguntas, exercícios e
@@ -1121,7 +1137,9 @@ function ImersaoPage() {
             Público Ideal
           </span>
           <h2 className="mt-2 text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
-            Para quem é a IMER$ÃO EDUCAÇÃO FINANCEIRA?
+            Para quem é a IMER$ÃO
+            <br />
+            EDUCAÇÃO FINANCEIRA?
           </h2>
         </div>
 
@@ -1226,7 +1244,9 @@ function ImersaoPage() {
                 Ingresso Oficial
               </span>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-tight text-center lg:text-left">
-                Tudo o que está incluso no seu acesso:
+                Tudo o que está incluso
+                <br />
+                no seu acesso:
               </h2>
 
               <ul className="flex flex-col gap-2.5 mt-2 text-xs sm:text-sm text-stone-200 text-left w-full max-w-lg mx-auto lg:mx-0">
@@ -1245,19 +1265,19 @@ function ImersaoPage() {
                 <li className="flex items-center gap-2.5">
                   <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
                   <span>
-                    Acesso Exclusivo ao App Organiz.AI (Módulos PF & PJ)
+                    Acesso de 7 dias Exclusivo ao App Organiz.AI
                   </span>
                 </li>
                 <li className="flex items-center gap-2.5">
                   <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
                   <span>
-                    Sessão ao vivo de tira-dúvidas e mentoria com Natália Rodolfo
+                    Sessão ao vivo de tira-dúvidas com Natália Rodolfo
                   </span>
                 </li>
                 <li className="flex items-center gap-2.5">
                   <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
                   <span>
-                    Material de apoio em PDF com checklists de rotina financeira
+                    Material de apoio em PDF
                   </span>
                 </li>
               </ul>
@@ -1343,7 +1363,7 @@ function ImersaoPage() {
               <strong className="text-amber-300">
                 Certificado Oficial de Imersão Educação Financeira
               </strong>
-              , emitido com chancela e assinatura de Natália Rodolfo, com carga horária de 6 horas, comprovando sua
+              , emitido com chancela e assinatura de Natália Rodolfo, comprovando sua
               capacitação na organização e gestão orçamentária.
             </p>
           </div>
@@ -1525,7 +1545,6 @@ function ImersaoPage() {
           </a>
 
           <p className="mt-4 text-xs text-stone-400">
-            Prefere e-mail? Fale conosco:{" "}
             <a
               href="mailto:suporte@nataliarodolfo.com.br"
               className="text-emerald-400 hover:underline font-semibold"
