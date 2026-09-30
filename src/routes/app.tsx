@@ -708,7 +708,9 @@ function OrganizAiFintechSalesPage() {
 
               {/* Headline Principal */}
               <h1 className="font-display text-2xl sm:text-4xl lg:text-[2.6rem] xl:text-[2.85rem] font-extrabold tracking-tight text-white leading-[1.14] sm:leading-[1.16] max-w-xl">
-                A clareza financeira que o seu dinheiro sempre pediu.{" "}
+                A clareza financeira que
+                <br />
+                o seu dinheiro sempre pediu.
                 <span className="bg-gradient-to-r from-[#F97316] via-amber-400 to-[#F97316] bg-clip-text text-transparent block mt-1 sm:mt-1.5">
                   Para você e para sua empresa.
                 </span>
@@ -994,7 +996,9 @@ function OrganizAiFintechSalesPage() {
               <span>Tour Visual Interativo</span>
             </div>
             <h2 className="font-display text-2xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-[1.12]">
-              Veja como o Organiz.AI funciona por dentro
+              Veja como o Organiz.AI
+              <br />
+              funciona por dentro
             </h2>
             <p className="mt-3 text-sm sm:text-base text-stone-400 leading-relaxed max-w-2xl mx-auto">
               Selecione um dos módulos à esquerda ou acompanhe o tour automático para ver a experiência prática do app em tempo real.
@@ -1199,7 +1203,9 @@ function OrganizAiFintechSalesPage() {
               A Diferença é Brutal
             </span>
             <h2 className="mt-2 font-display text-2xl sm:text-4xl font-bold text-white tracking-tight">
-              O jeito antigo te cansa. O jeito Organiz.AI te liberta.
+              O jeito antigo te cansa.
+              <br />
+              O jeito Organiz.AI te liberta.
             </h2>
             <p className="mt-3 text-sm sm:text-base text-stone-400 leading-relaxed">
               Veja por que quem tenta controlar as finanças do jeito tradicional acaba desistindo, e como a nossa plataforma muda as regras do jogo:
@@ -1839,7 +1845,9 @@ function OrganizAiFintechSalesPage() {
       <section className="relative z-10 py-16 border-t border-white/[0.08] bg-gradient-to-b from-[#111216] to-[#060709] text-center">
         <div className="mx-auto max-w-3xl px-4">
           <h2 className="font-display text-2xl sm:text-4xl font-extrabold text-white">
-            Pronto para nunca mais se preocupar com o dinheiro no fim do mês?
+            Pronto para nunca mais se preocupar
+            <br />
+            com o dinheiro no fim do mês?
           </h2>
           <p className="mt-3 text-xs sm:text-base text-stone-300 max-w-xl mx-auto leading-relaxed">
             Dê o primeiro passo para a sua tranquilidade financeira. Escolha o seu plano e comece agora mesmo.
