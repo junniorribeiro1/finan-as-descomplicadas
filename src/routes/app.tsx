@@ -707,23 +707,22 @@ function OrganizAiFintechSalesPage() {
               </div>
 
               {/* Headline Principal */}
-              <h1 className="font-display text-2xl sm:text-4xl lg:text-[2.6rem] xl:text-[2.85rem] font-extrabold tracking-tight text-white leading-[1.14] sm:leading-[1.16] max-w-xl">
-                A clareza financeira que
-                <br />
-                o seu dinheiro sempre pediu.
+              <h1 className="font-display text-[1.4rem] sm:text-2xl md:text-3xl lg:text-[2.15rem] xl:text-[2.35rem] font-extrabold tracking-tight text-white leading-[1.22] sm:leading-[1.2] max-w-2xl">
+                <span className="block">A clareza financeira que</span>
+                <span className="block">o seu dinheiro sempre pediu.</span>
                 <span className="bg-gradient-to-r from-[#F97316] via-amber-400 to-[#F97316] bg-clip-text text-transparent block mt-1 sm:mt-1.5">
                   Para você e para sua empresa.
                 </span>
               </h1>
 
               {/* Subheadline persuasiva com foco na dor real */}
-              <p className="mt-4 sm:mt-5 text-base sm:text-lg text-stone-300 leading-relaxed max-w-xl font-normal">
+              <p className="mt-3.5 sm:mt-4 text-sm sm:text-base text-stone-300 leading-relaxed max-w-xl font-normal">
                 Chega de planilhas complexas abandonadas na segunda semana ou faturas do cartão que dão sustos. O{" "}
                 <strong className="text-white font-semibold">Organiz.AI</strong> traz a metodologia prática da educadora Natália Rodolfo em uma plataforma simples, que você controla em menos de 5 minutos ao dia.
               </p>
 
               {/* Botões de Ação Hero: Botão Largo em Pílula + Botão Circular de Play */}
-              <div className="mt-6 sm:mt-8 flex items-center gap-4 sm:gap-5 flex-wrap">
+              <div className="mt-6 sm:mt-7 flex items-center gap-3.5 sm:gap-4 flex-wrap">
                 <a
                   href="#planos"
                   className="group inline-flex items-center gap-3.5 rounded-full bg-gradient-to-r from-[#F97316] via-orange-500 to-amber-500 pl-6 sm:pl-7 pr-2.5 py-2.5 sm:py-3 text-sm sm:text-base font-extrabold text-white shadow-[0_8px_32px_rgba(249,115,22,0.45)] hover:shadow-[0_10px_40px_rgba(249,115,22,0.65)] hover:brightness-110 active:scale-95 transition-all cursor-pointer"
@@ -739,8 +738,8 @@ function OrganizAiFintechSalesPage() {
                   className="group flex items-center gap-3 text-stone-300 hover:text-white transition-colors cursor-pointer"
                   title="Ver Tour do App em Vídeo"
                 >
-                  <div className="flex h-12 w-12 sm:h-13 sm:w-13 shrink-0 items-center justify-center rounded-full bg-white text-stone-900 shadow-xl shadow-black/50 group-hover:scale-105 group-hover:bg-amber-400 group-hover:text-black transition-all">
-                    <Play className="h-5 w-5 sm:h-5 sm:w-5 fill-current ml-0.5" />
+                  <div className="flex h-11 w-11 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-full bg-white text-stone-900 shadow-xl shadow-black/50 group-hover:scale-105 group-hover:bg-amber-400 group-hover:text-black transition-all">
+                    <Play className="h-4.5 w-4.5 sm:h-5 sm:w-5 fill-current ml-0.5" />
                   </div>
                   <span className="text-xs sm:text-sm font-bold">
                     Ver Tour em Vídeo
@@ -749,7 +748,7 @@ function OrganizAiFintechSalesPage() {
               </div>
 
               {/* Barra de Prova Social: Avaliações + Comunidade Ativa */}
-              <div className="mt-8 sm:mt-10 pt-5 border-t border-white/[0.08] flex flex-wrap items-center gap-6 sm:gap-10 w-full">
+              <div className="mt-7 sm:mt-8 pt-5 border-t border-white/[0.08] flex flex-wrap items-center gap-6 sm:gap-8 w-full">
                 
                 {/* Item 1: Estrelas & Avaliação 4.9 Alinhada com os Textos */}
                 <div className="flex flex-col gap-1">
@@ -952,32 +951,22 @@ function OrganizAiFintechSalesPage() {
 
               </div>
 
-              {/* Badge Flutuante Inferior ("25+ Years Of Experience" style) */}
-              <div className="absolute -bottom-3 sm:bottom-2 right-1 sm:-right-4 z-30 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-amber-400 via-orange-500 to-[#F97316] p-3.5 sm:p-5 shadow-[0_20px_45px_rgba(249,115,22,0.45)] border border-white/25 hover:scale-105 transition-transform">
-                <div className="text-stone-950 font-black text-2xl sm:text-3xl tracking-tight leading-none">
-                  10+
-                </div>
-                <p className="text-[10px] sm:text-xs font-black text-stone-950 leading-tight mt-1 max-w-[100px] sm:max-w-[110px]">
-                  Anos de Prática &amp; Metodologia
-                </p>
-              </div>
-
             </div>
 
           </div>
 
           {/* Micro-pills de Confiança no Rodapé da Hero */}
-          <div className="mt-12 sm:mt-16 pt-8 border-t border-white/[0.08] flex flex-wrap items-center justify-center lg:justify-between gap-x-8 gap-y-3 text-xs sm:text-sm text-stone-300">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+          <div className="mt-6 sm:mt-8 pt-5 border-t border-white/[0.08] flex flex-wrap items-center justify-center gap-x-6 sm:gap-x-10 gap-y-2.5 text-xs sm:text-sm text-stone-300 text-center">
+            <div className="flex items-center gap-2 shrink-0">
+              <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
               <span>No celular e no computador</span>
             </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+            <div className="flex items-center gap-2 shrink-0">
+              <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
               <span>Menos de R$ 1,00/dia no Anual</span>
             </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+            <div className="flex items-center gap-2 shrink-0">
+              <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
               <span>Garantia incondicional de 7 dias</span>
             </div>
           </div>
@@ -1001,7 +990,9 @@ function OrganizAiFintechSalesPage() {
               funciona por dentro
             </h2>
             <p className="mt-3 text-sm sm:text-base text-stone-400 leading-relaxed max-w-2xl mx-auto">
-              Selecione um dos módulos à esquerda ou acompanhe o tour automático para ver a experiência prática do app em tempo real.
+              Selecione um dos módulos à esquerda ou acompanhe o tour automático
+              <br />
+              para ver a experiência prática do app em tempo real.
             </p>
           </div>
 
@@ -1208,7 +1199,9 @@ function OrganizAiFintechSalesPage() {
               O jeito Organiz.AI te liberta.
             </h2>
             <p className="mt-3 text-sm sm:text-base text-stone-400 leading-relaxed">
-              Veja por que quem tenta controlar as finanças do jeito tradicional acaba desistindo, e como a nossa plataforma muda as regras do jogo:
+              Veja por que quem tenta controlar as finanças do jeito tradicional acaba desistindo,
+              <br />
+              e como a nossa plataforma muda as regras do jogo:
             </p>
           </div>
 
@@ -1484,7 +1477,7 @@ function OrganizAiFintechSalesPage() {
             </h2>
 
             <p className="mt-3 text-xs sm:text-sm text-stone-400 max-w-xl mx-auto">
-              Acesso imediato e completo em todos os seus dispositivos. Cancele quando quiser.
+              Acesso imediato e completo em todos os seus dispositivos.
             </p>
 
             {/* Seletor de Modalidades: Pessoa Física / Empresa / Combo PF + PJ */}
@@ -1850,7 +1843,9 @@ function OrganizAiFintechSalesPage() {
             com o dinheiro no fim do mês?
           </h2>
           <p className="mt-3 text-xs sm:text-base text-stone-300 max-w-xl mx-auto leading-relaxed">
-            Dê o primeiro passo para a sua tranquilidade financeira. Escolha o seu plano e comece agora mesmo.
+            Dê o primeiro passo para a sua tranquilidade financeira.
+            <br />
+            Escolha o seu plano e comece agora mesmo.
           </p>
 
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
