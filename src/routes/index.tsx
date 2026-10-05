@@ -14,6 +14,7 @@ import {
   Scale,
   Headphones,
 } from "lucide-react";
+import { trackEvent } from "@/lib/meta-pixel";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -101,6 +102,13 @@ function NataliaLinksPage() {
   const recuperacaoFinanceiraUrl = `https://wa.me/${wppNumber}?text=${encodeURIComponent(
     "Olá, Natália! Gostaria de entender mais sobre a Recuperação Financeira Empresarial para reduzir a inadimplência e recuperar valores em aberto com soluções administrativas e suporte jurídico especializado."
   )}`;
+
+  const trackWppContact = (serviceName: string) => {
+    trackEvent("Contact", {
+      method: "WhatsApp",
+      content_name: serviceName,
+    });
+  };
 
   return (
     <div className="relative min-h-[100dvh] w-full bg-[#080d0a] text-white selection:bg-emerald-500/25 selection:text-emerald-200 overflow-x-hidden font-sans">
@@ -255,6 +263,7 @@ function NataliaLinksPage() {
             href={mentoriaIndividualUrl}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackWppContact("Mentoria Individual")}
             className="group relative flex flex-col gap-2.5 rounded-2xl border border-white/[0.08] bg-white/[0.035] p-4 backdrop-blur-sm sm:backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-500/40 hover:bg-emerald-950/20 hover:shadow-[0_4px_24px_rgba(16,185,129,0.12)] active:translate-y-0"
           >
             <div className="flex items-start justify-between gap-3">
@@ -297,6 +306,7 @@ function NataliaLinksPage() {
             href={assistenteVirtualUrl}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackWppContact("Assistente Virtual")}
             className="group relative flex flex-col gap-2.5 rounded-2xl border border-white/[0.08] bg-white/[0.035] p-4 backdrop-blur-sm sm:backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-500/40 hover:bg-emerald-950/20 hover:shadow-[0_4px_24px_rgba(16,185,129,0.12)] active:translate-y-0"
           >
             <div className="flex items-start justify-between gap-3">
@@ -339,6 +349,7 @@ function NataliaLinksPage() {
             href={terceirizacaoFinanceiraUrl}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackWppContact("Terceirização Financeira")}
             className="group relative flex flex-col gap-2.5 rounded-2xl border border-white/[0.08] bg-white/[0.035] p-4 backdrop-blur-sm sm:backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-500/40 hover:bg-emerald-950/20 hover:shadow-[0_4px_24px_rgba(16,185,129,0.12)] active:translate-y-0"
           >
             <div className="flex items-start justify-between gap-3">
@@ -381,6 +392,7 @@ function NataliaLinksPage() {
             href={consultoriaPequenasEmpresasUrl}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackWppContact("Consultoria Pequenas Empresas")}
             className="group relative flex flex-col gap-2.5 rounded-2xl border border-white/[0.08] bg-white/[0.035] p-4 backdrop-blur-sm sm:backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-500/40 hover:bg-emerald-950/20 hover:shadow-[0_4px_24px_rgba(16,185,129,0.12)] active:translate-y-0"
           >
             <div className="flex items-start justify-between gap-3">
@@ -423,6 +435,7 @@ function NataliaLinksPage() {
             href={recuperacaoFinanceiraUrl}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackWppContact("Recuperação Financeira")}
             className="group relative flex flex-col gap-2.5 rounded-2xl border border-white/[0.08] bg-white/[0.035] p-4 backdrop-blur-sm sm:backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-500/40 hover:bg-emerald-950/20 hover:shadow-[0_4px_24px_rgba(16,185,129,0.12)] active:translate-y-0"
           >
             <div className="flex items-start justify-between gap-3">
@@ -501,6 +514,7 @@ function NataliaLinksPage() {
             href="https://wa.me/5577981381477?text=Ol%C3%A1%2C%20Nat%C3%A1lia!%20Gostaria%20de%20informa%C3%A7%C3%B5es%20sobre%20a%20Imers%C3%A3o%20e%20mentorias."
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackWppContact("WhatsApp Oficial Geral")}
             className="group relative flex items-center justify-between gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.04] p-4 backdrop-blur-sm sm:backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-500/40 hover:bg-emerald-950/20 hover:shadow-[0_4px_24px_rgba(16,185,129,0.12)] active:translate-y-0"
           >
             <div className="flex items-center gap-3.5 min-w-0 flex-1">

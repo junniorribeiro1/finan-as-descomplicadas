@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import { ShieldCheck, X, Check, Cookie } from "lucide-react";
+import { setPixelConsent } from "@/lib/meta-pixel";
 
 const LGPD_STORAGE_KEY = "organizai_lgpd_consent_v2";
 
@@ -15,11 +16,14 @@ export function LgpdConsentBanner() {
         const timer = setTimeout(() => setVisivel(true), 1200);
         return () => clearTimeout(timer);
       } else {
-        // Aplica consentimento prévio ao Google Analytics se estiver carregado
+        // Aplica consentimento prévio ao Google Analytics e Meta Pixel
         const parsed = JSON.parse(consent) as { analytics?: boolean };
+        const granted = !!parsed.analytics;
+        setPixelConsent(granted);
+
         if (typeof window !== "undefined" && typeof (window as unknown as { gtag?: Function }).gtag === "function") {
           (window as unknown as { gtag: Function }).gtag("consent", "update", {
-            analytics_storage: parsed.analytics ? "granted" : "denied",
+            analytics_storage: granted ? "granted" : "denied",
             ad_storage: "denied",
           });
         }
@@ -37,6 +41,9 @@ export function LgpdConsentBanner() {
         timestamp: new Date().toISOString(),
       };
       localStorage.setItem(LGPD_STORAGE_KEY, JSON.stringify(consentData));
+
+      // Atualiza consentimento no Meta Pixel
+      setPixelConsent(analytics);
 
       if (typeof window !== "undefined" && typeof (window as unknown as { gtag?: Function }).gtag === "function") {
         (window as unknown as { gtag: Function }).gtag("consent", "update", {

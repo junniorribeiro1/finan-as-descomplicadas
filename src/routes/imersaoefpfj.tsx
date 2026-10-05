@@ -23,6 +23,7 @@ import {
   Building2,
   Layers,
 } from "lucide-react";
+import { trackEvent } from "@/lib/meta-pixel";
 
 export const Route = createFileRoute("/imersaoefpfj")({
   head: () => ({
@@ -74,6 +75,22 @@ function ImersaoPage() {
 
   // 2. Estado do lote selecionado
   const [selectedLot, setSelectedLot] = useState<number>(1);
+
+  const handleCheckoutClick = () => {
+    trackEvent("InitiateCheckout", {
+      content_name: "IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ",
+      value: selectedLot === 1 ? 27 : selectedLot === 2 ? 57 : 97,
+      currency: "BRL",
+      lot: selectedLot,
+    });
+  };
+
+  const handleSupportWppClick = () => {
+    trackEvent("Contact", {
+      method: "WhatsApp",
+      content_name: "Suporte Imersão",
+    });
+  };
 
   // 3. Scroll progress indicator com throttling suave
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -516,6 +533,7 @@ function ImersaoPage() {
                   href={checkoutUrl}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={handleCheckoutClick}
                   className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-orange-400 px-6 py-3 text-xs sm:text-sm font-extrabold text-stone-950 shadow-[0_4px_24px_rgba(245,158,11,0.3)] transition-all duration-300 hover:scale-105 active:scale-95"
                 >
                   <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
@@ -1329,6 +1347,7 @@ function ImersaoPage() {
                 href={checkoutUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={handleCheckoutClick}
                 className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-orange-400 px-6 py-4 text-sm sm:text-base font-black uppercase tracking-wider text-stone-950 shadow-[0_4px_24px_rgba(245,158,11,0.35)] transition-all hover:scale-[1.02] active:scale-95"
               >
                 <span>GARANTIR MINHA VAGA!</span>
@@ -1538,6 +1557,7 @@ function ImersaoPage() {
             href={supportWppUrl}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={handleSupportWppClick}
             className="mt-5 inline-flex items-center gap-2 rounded-full bg-emerald-500 hover:bg-emerald-400 text-stone-950 px-6 py-3 text-xs font-black uppercase tracking-wider shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-transform hover:scale-105"
           >
             <MessageCircle className="h-4 w-4" />
@@ -1591,6 +1611,7 @@ function ImersaoPage() {
           href={checkoutUrl}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={handleCheckoutClick}
           className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 px-4 py-2.5 text-xs font-black uppercase tracking-wider text-stone-950 shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-transform hover:scale-105 active:scale-95"
         >
           <span>Garantir Vaga</span>
@@ -1603,6 +1624,7 @@ function ImersaoPage() {
         href={supportWppUrl}
         target="_blank"
         rel="noopener noreferrer"
+        onClick={handleSupportWppClick}
         aria-label="Fale conosco no WhatsApp"
         className="fixed bottom-[calc(4.75rem+env(safe-area-inset-bottom,0px))] right-4 sm:bottom-6 sm:right-6 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500 text-stone-950 shadow-[0_0_24px_rgba(16,185,129,0.5)] transition-all duration-300 hover:scale-110 hover:bg-emerald-400"
       >

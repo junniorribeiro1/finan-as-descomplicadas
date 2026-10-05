@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { PwaInstallPrompt } from "@/components/pwa/PwaInstallPrompt";
+import { trackEvent } from "@/lib/meta-pixel";
 
 interface LoginSearch {
   redirect?: string;
@@ -204,6 +205,12 @@ function LoginPage() {
         }
         return;
       }
+
+      // Dispara evento de conversão do Meta Pixel
+      trackEvent("CompleteRegistration", {
+        content_name: accountType,
+        status: "success",
+      });
 
       // Realiza login automático imediato com a senha fornecida
       const { data: loginData, error: loginError } =
