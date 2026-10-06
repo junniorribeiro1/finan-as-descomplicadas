@@ -44,22 +44,81 @@ export const Route = createFileRoute("/login")({
   component: LoginPage,
 });
 
+// Helper para verificar parâmetros de recuperação e erros do Supabase na URL
+function parseSupabaseRecoveryParams() {
+  if (typeof window === "undefined") {
+    return { isRecovery: false, isError: false, errorMessage: null as string | null };
+  }
+
+  const hash = window.location.hash || "";
+  const search = window.location.search || "";
+
+  const hashClean = hash.startsWith("#") ? hash.slice(1) : hash;
+  const hashParams = new URLSearchParams(hashClean);
+  const searchParams = new URLSearchParams(search);
+
+  const type = hashParams.get("type") || searchParams.get("type");
+  const error = hashParams.get("error") || searchParams.get("error");
+  const errorCode = hashParams.get("error_code") || searchParams.get("error_code");
+  const errorDescription =
+    hashParams.get("error_description") || searchParams.get("error_description");
+
+  // Se houver erro de link expirado ou acesso negado vindo do Supabase
+  if (error || errorCode || errorDescription) {
+    const isExpired =
+      errorCode === "otp_expired" ||
+      Boolean(errorDescription && errorDescription.toLowerCase().includes("expired")) ||
+      Boolean(errorDescription && errorDescription.toLowerCase().includes("invalid"));
+
+    const msg = isExpired
+      ? "Este link de recuperação expirou. Solicite um novo link para criar sua senha."
+      : errorDescription
+      ? decodeURIComponent(errorDescription.replace(/\+/g, " "))
+      : "Ocorreu um erro com o link de recuperação.";
+
+    return {
+      isRecovery: false,
+      isError: true,
+      errorMessage: msg,
+    };
+  }
+
+  const isRecovery =
+    type === "recovery" ||
+    hash.includes("type=recovery") ||
+    search.includes("type=recovery") ||
+    sessionStorage.getItem("organizai_recovery_active") === "true";
+
+  return { isRecovery, isError: false, errorMessage: null as string | null };
+}
+
 function LoginPage() {
   const { redirect } = useSearch({ from: "/login" });
   const navigate = useNavigate();
   const { session, loading: authLoading } = useAuth();
 
-  const [modo, setModo] = useState<"login" | "cadastro" | "recuperar">("login");
+  const initialRecovery = parseSupabaseRecoveryParams();
+
+  const [modo, setModo] = useState<"login" | "cadastro" | "recuperar" | "definir_senha">(() => {
+    if (initialRecovery.isError) return "recuperar";
+    if (initialRecovery.isRecovery) return "definir_senha";
+    return "login";
+  });
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [telefone, setTelefone] = useState("");
   const [senha, setSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
   const [mostrarSenha, setMostrarSenha] = useState(false);
+  const [novaSenha, setNovaSenha] = useState("");
+  const [confirmarNovaSenha, setConfirmarNovaSenha] = useState("");
+  const [mostrarNovaSenha, setMostrarNovaSenha] = useState(false);
+  const [mostrarConfirmarNovaSenha, setMostrarConfirmarNovaSenha] = useState(false);
+  const [isRecoveryMode, setIsRecoveryMode] = useState<boolean>(initialRecovery.isRecovery);
   const [accountType, setAccountType] = useState<"pessoal" | "empresarial" | "ambos">("ambos");
   const [carregando, setCarregando] = useState(false);
   const [recuperacaoEnviada, setRecuperacaoEnviada] = useState(false);
-  const [mensagemErro, setMensagemErro] = useState<string | null>(null);
+  const [mensagemErro, setMensagemErro] = useState<string | null>(initialRecovery.errorMessage);
   const [mensagemSucesso, setMensagemSucesso] = useState<string | null>(null);
 
   const formatarTelefone = (valor: string) => {
@@ -76,14 +135,61 @@ function LoginPage() {
     return `(${apenasNumeros.slice(0, 2)}) ${apenasNumeros.slice(2, 7)}-${apenasNumeros.slice(7, 11)}`;
   };
 
-  // Se já estiver logado, redirecionar automaticamente para a página solicitada ou /app
+  // Escuta evento de PASSWORD_RECOVERY do Supabase e parâmetros da URL
   useEffect(() => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, currentSession) => {
+      if (event === "PASSWORD_RECOVERY") {
+        if (typeof window !== "undefined") {
+          sessionStorage.setItem("organizai_recovery_active", "true");
+        }
+        setIsRecoveryMode(true);
+        setModo("definir_senha");
+        setMensagemErro(null);
+      }
+    });
+
+    const recoveryParams = parseSupabaseRecoveryParams();
+    if (recoveryParams.isError && recoveryParams.errorMessage) {
+      setMensagemErro(recoveryParams.errorMessage);
+      toast.error(recoveryParams.errorMessage);
+      setIsRecoveryMode(false);
+      setModo("recuperar");
+      if (typeof window !== "undefined") {
+        sessionStorage.removeItem("organizai_recovery_active");
+      }
+    } else if (recoveryParams.isRecovery) {
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem("organizai_recovery_active", "true");
+      }
+      setIsRecoveryMode(true);
+      setModo("definir_senha");
+    }
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  // Se já estiver logado, redirecionar automaticamente para a página solicitada ou /dashboard
+  // IMPORTANTE: NÃO redirecionar se o usuário estiver no fluxo de recuperação / definição de senha!
+  useEffect(() => {
+    if (isRecoveryMode || modo === "definir_senha") {
+      return;
+    }
     if (!authLoading && session) {
       navigate({ to: redirect && redirect !== "/app" ? redirect : "/dashboard" });
     }
-  }, [session, authLoading, navigate, redirect]);
+  }, [session, authLoading, navigate, redirect, isRecoveryMode, modo]);
 
-  const alternarModo = (novoModo: "login" | "cadastro" | "recuperar") => {
+  const alternarModo = (novoModo: "login" | "cadastro" | "recuperar" | "definir_senha") => {
+    if (novoModo !== "definir_senha") {
+      setIsRecoveryMode(false);
+      if (typeof window !== "undefined") {
+        sessionStorage.removeItem("organizai_recovery_active");
+      }
+    }
     setModo(novoModo);
     setMensagemErro(null);
     setMensagemSucesso(null);
@@ -289,6 +395,103 @@ function LoginPage() {
     }
   };
 
+  const handleDefinirNovaSenha = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setMensagemErro(null);
+    setMensagemSucesso(null);
+
+    if (!novaSenha) {
+      const msg = "Por favor, digite sua nova senha.";
+      setMensagemErro(msg);
+      toast.error(msg);
+      return;
+    }
+
+    if (novaSenha.length < 8) {
+      const msg = "A senha deve ter no mínimo 8 caracteres.";
+      setMensagemErro(msg);
+      toast.error(msg);
+      return;
+    }
+
+    if (novaSenha !== confirmarNovaSenha) {
+      const msg = "As senhas não coincidem. Verifique e tente novamente.";
+      setMensagemErro(msg);
+      toast.error(msg);
+      return;
+    }
+
+    setCarregando(true);
+    try {
+      // Confirma se existe uma sessão válida (inclusive sessão de recuperação)
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData.session) {
+        const msg =
+          "Este link de recuperação expirou. Solicite um novo link para criar sua senha.";
+        setMensagemErro(msg);
+        toast.error(msg);
+        setIsRecoveryMode(false);
+        if (typeof window !== "undefined") {
+          sessionStorage.removeItem("organizai_recovery_active");
+        }
+        setModo("recuperar");
+        return;
+      }
+
+      // Atualiza a senha no Supabase Auth sem exigir a senha antiga
+      const { error } = await supabase.auth.updateUser({
+        password: novaSenha,
+      });
+
+      if (error) {
+        let msg = "Não foi possível definir a senha. Tente novamente.";
+        const errLower = error.message.toLowerCase();
+        if (
+          errLower.includes("session") ||
+          errLower.includes("auth session missing") ||
+          errLower.includes("token has expired") ||
+          errLower.includes("jwt expired")
+        ) {
+          msg =
+            "Este link de recuperação expirou. Solicite um novo link para criar sua senha.";
+          setIsRecoveryMode(false);
+          if (typeof window !== "undefined") {
+            sessionStorage.removeItem("organizai_recovery_active");
+          }
+          setModo("recuperar");
+        } else if (errLower.includes("password should be at least")) {
+          msg = "A senha deve ter no mínimo 8 caracteres.";
+        } else if (errLower.includes("same_password") || errLower.includes("different")) {
+          msg = "A nova senha deve ser diferente da anterior.";
+        } else {
+          msg = error.message;
+        }
+        setMensagemErro(msg);
+        toast.error(msg);
+        return;
+      }
+
+      // Sucesso na definição de senha
+      if (typeof window !== "undefined") {
+        sessionStorage.removeItem("organizai_recovery_active");
+      }
+      setIsRecoveryMode(false);
+      toast.success("Senha criada com sucesso!");
+
+      // Redireciona mantendo a sessão autenticada
+      navigate({
+        to: redirect && redirect !== "/app" ? redirect : "/dashboard",
+        replace: true,
+      });
+    } catch (err: any) {
+      const msg = "Erro ao conectar ao servidor. Tente novamente.";
+      setMensagemErro(msg);
+      toast.error(msg);
+    } finally {
+      setCarregando(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#09090b] text-white flex flex-col justify-between selection:bg-[#F97316]/30">
       {/* Background glow ambient */}
@@ -348,6 +551,7 @@ function LoginPage() {
                 {modo === "login" && "Acesse sua conta"}
                 {modo === "cadastro" && "Crie sua conta"}
                 {modo === "recuperar" && "Recuperar senha"}
+                {modo === "definir_senha" && "Crie sua senha de acesso"}
               </h1>
               <p className="mt-1.5 text-xs text-stone-400">
                 {modo === "login" &&
@@ -356,11 +560,13 @@ function LoginPage() {
                   "Cadastre-se para gerenciar suas finanças com inteligência."}
                 {modo === "recuperar" &&
                   "Digite seu e-mail para receber as instruções de recuperação."}
+                {modo === "definir_senha" &&
+                  "Defina uma senha para acessar sua conta no Organiz.AI."}
               </p>
             </div>
 
-            {/* Alternador Entrar / Cadastrar (se não estiver em recuperação) */}
-            {modo !== "recuperar" && (
+            {/* Alternador Entrar / Cadastrar (se não estiver em recuperação ou definindo senha) */}
+            {modo !== "recuperar" && modo !== "definir_senha" && (
               <div className="grid grid-cols-2 rounded-2xl bg-[#1a1a1c] p-1 mb-6 border border-white/[0.06]">
                 <button
                   type="button"
@@ -703,6 +909,91 @@ function LoginPage() {
                   </form>
                 )}
               </div>
+            )}
+
+            {/* Formulário de Criação / Redefinição de Senha (Primeiro Acesso / Recuperação) */}
+            {modo === "definir_senha" && (
+              <form onSubmit={handleDefinirNovaSenha} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-medium text-stone-300 mb-1.5">
+                    Nova senha
+                  </label>
+                  <div className="relative">
+                    <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-stone-500" />
+                    <input
+                      type={mostrarNovaSenha ? "text" : "password"}
+                      value={novaSenha}
+                      onChange={(e) => setNovaSenha(e.target.value)}
+                      placeholder="Mínimo de 8 caracteres"
+                      required
+                      minLength={8}
+                      className="w-full rounded-xl bg-[#19191d] border border-white/10 pl-10 pr-10 py-2.5 text-xs text-white placeholder-stone-500 outline-none focus:border-[#F97316] transition-colors"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setMostrarNovaSenha(!mostrarNovaSenha)}
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-stone-500 hover:text-stone-300 transition-colors"
+                    >
+                      {mostrarNovaSenha ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+                  <p className="mt-1 text-[11px] text-stone-500">
+                    A senha deve ter no mínimo 8 caracteres.
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-stone-300 mb-1.5">
+                    Confirmar nova senha
+                  </label>
+                  <div className="relative">
+                    <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-stone-500" />
+                    <input
+                      type={mostrarConfirmarNovaSenha ? "text" : "password"}
+                      value={confirmarNovaSenha}
+                      onChange={(e) => setConfirmarNovaSenha(e.target.value)}
+                      placeholder="Repita sua nova senha"
+                      required
+                      minLength={8}
+                      className="w-full rounded-xl bg-[#19191d] border border-white/10 pl-10 pr-10 py-2.5 text-xs text-white placeholder-stone-500 outline-none focus:border-[#F97316] transition-colors"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setMostrarConfirmarNovaSenha(!mostrarConfirmarNovaSenha)}
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-stone-500 hover:text-stone-300 transition-colors"
+                    >
+                      {mostrarConfirmarNovaSenha ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={carregando}
+                  className="w-full mt-2 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#F97316] to-[#ea580c] py-3 text-xs font-bold text-white shadow-lg shadow-orange-950/40 hover:brightness-110 active:scale-[0.99] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {carregando ? "Definindo senha..." : "Definir senha"}
+                  {!carregando && <ArrowRight className="h-4 w-4" />}
+                </button>
+
+                <div className="text-center pt-2">
+                  <button
+                    type="button"
+                    onClick={() => alternarModo("login")}
+                    className="text-xs text-stone-400 hover:text-white transition-colors"
+                  >
+                    ← Voltar para o Login
+                  </button>
+                </div>
+              </form>
             )}
 
             {/* Suporte de Acesso */}
