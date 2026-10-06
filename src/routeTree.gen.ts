@@ -26,6 +26,7 @@ import { Route as ImportarDadosRouteImport } from './routes/importar-dados'
 import { Route as InvestimentosRouteImport } from './routes/investimentos'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as NataliaRouteImport } from './routes/natalia'
+import { Route as ObrigadoImersaoRouteImport } from './routes/obrigado-imersao'
 import { Route as PassoAPassoRouteImport } from './routes/passo-a-passo'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as PoliticaDePrivacidadeRouteImport } from './routes/politica-de-privacidade'
@@ -120,6 +121,11 @@ const NataliaRoute = NataliaRouteImport.update({
   path: '/natalia',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ObrigadoImersaoRoute = ObrigadoImersaoRouteImport.update({
+  id: '/obrigado-imersao',
+  path: '/obrigado-imersao',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PassoAPassoRoute = PassoAPassoRouteImport.update({
   id: '/passo-a-passo',
   path: '/passo-a-passo',
@@ -179,6 +185,7 @@ export interface FileRoutesByFullPath {
   '/investimentos': typeof InvestimentosRoute
   '/login': typeof LoginRoute
   '/natalia': typeof NataliaRoute
+  '/obrigado-imersao': typeof ObrigadoImersaoRoute
   '/passo-a-passo': typeof PassoAPassoRoute
   '/perfil': typeof PerfilRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
@@ -206,6 +213,7 @@ export interface FileRoutesByTo {
   '/investimentos': typeof InvestimentosRoute
   '/login': typeof LoginRoute
   '/natalia': typeof NataliaRoute
+  '/obrigado-imersao': typeof ObrigadoImersaoRoute
   '/passo-a-passo': typeof PassoAPassoRoute
   '/perfil': typeof PerfilRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
@@ -234,6 +242,7 @@ export interface FileRoutesById {
   '/investimentos': typeof InvestimentosRoute
   '/login': typeof LoginRoute
   '/natalia': typeof NataliaRoute
+  '/obrigado-imersao': typeof ObrigadoImersaoRoute
   '/passo-a-passo': typeof PassoAPassoRoute
   '/perfil': typeof PerfilRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
@@ -263,6 +272,7 @@ export interface FileRouteTypes {
     | '/investimentos'
     | '/login'
     | '/natalia'
+    | '/obrigado-imersao'
     | '/passo-a-passo'
     | '/perfil'
     | '/politica-de-privacidade'
@@ -290,6 +300,7 @@ export interface FileRouteTypes {
     | '/investimentos'
     | '/login'
     | '/natalia'
+    | '/obrigado-imersao'
     | '/passo-a-passo'
     | '/perfil'
     | '/politica-de-privacidade'
@@ -317,6 +328,7 @@ export interface FileRouteTypes {
     | '/investimentos'
     | '/login'
     | '/natalia'
+    | '/obrigado-imersao'
     | '/passo-a-passo'
     | '/perfil'
     | '/politica-de-privacidade'
@@ -345,6 +357,7 @@ export interface RootRouteChildren {
   InvestimentosRoute: typeof InvestimentosRoute
   LoginRoute: typeof LoginRoute
   NataliaRoute: typeof NataliaRoute
+  ObrigadoImersaoRoute: typeof ObrigadoImersaoRoute
   PassoAPassoRoute: typeof PassoAPassoRoute
   PerfilRoute: typeof PerfilRoute
   PoliticaDePrivacidadeRoute: typeof PoliticaDePrivacidadeRoute
@@ -476,6 +489,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NataliaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/obrigado-imersao': {
+      id: '/obrigado-imersao'
+      path: '/obrigado-imersao'
+      fullPath: '/obrigado-imersao'
+      preLoaderRoute: typeof ObrigadoImersaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/passo-a-passo': {
       id: '/passo-a-passo'
       path: '/passo-a-passo'
@@ -553,6 +573,7 @@ const rootRouteChildren: RootRouteChildren = {
   InvestimentosRoute: InvestimentosRoute,
   LoginRoute: LoginRoute,
   NataliaRoute: NataliaRoute,
+  ObrigadoImersaoRoute: ObrigadoImersaoRoute,
   PassoAPassoRoute: PassoAPassoRoute,
   PerfilRoute: PerfilRoute,
   PoliticaDePrivacidadeRoute: PoliticaDePrivacidadeRoute,
