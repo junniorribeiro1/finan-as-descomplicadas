@@ -32,6 +32,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
 import { PassoAPassoWidget } from "@/components/app/PassoAPassoWidget";
 import { usePeriodoAtivo, setPeriodoAtivo } from "@/lib/periodo";
+import { normalizeAccountType } from "@/lib/plans";
 
 export const menuItens = [
   { rotulo: "Dashboard", to: "/dashboard", icone: LayoutGrid },
@@ -186,14 +187,13 @@ export function AppShell({
     };
   }, []);
 
-  const modalidadeUsuario =
-    (profile?.account_type === "empresa" ? "empresarial" : profile?.account_type) || "ambos";
+  const modalidadeUsuario = normalizeAccountType(profile?.account_type);
 
-  // Se o usuário possui apenas controle pessoal ou apenas empresarial, sincroniza tipoConta
+  // Se o usuário possui apenas controle pessoal (pf) ou apenas empresarial (pj), sincroniza tipoConta
   useEffect(() => {
-    if (modalidadeUsuario === "pessoal" && tipoConta !== "pessoal") {
+    if (modalidadeUsuario === "pf" && tipoConta !== "pessoal") {
       mudarTipoConta("pessoal");
-    } else if (modalidadeUsuario === "empresarial" && tipoConta !== "empresa") {
+    } else if (modalidadeUsuario === "pj" && tipoConta !== "empresa") {
       mudarTipoConta("empresa");
     }
   }, [modalidadeUsuario, tipoConta]);
@@ -324,10 +324,7 @@ export function AppShell({
   // Se o aluno estiver com status bloqueado pela coordenação ou com prazo de bônus expirado
   if (isBlocked) {
     const isExpired = Boolean(
-      isAccessExpired ||
-      (profile?.access_expires_at &&
-        new Date(profile.access_expires_at).getTime() < Date.now() &&
-        !profile?.plan_renovado)
+      isAccessExpired && profile?.plan !== "vitalicio"
     );
 
     const dataExpiracao = profile?.access_expires_at
@@ -719,12 +716,12 @@ export function AppShell({
               </button>
 
               {/* Seletor ou Indicador Pessoal / Empresarial */}
-              {modalidadeUsuario === "pessoal" ? (
+              {modalidadeUsuario === "pf" ? (
                 <div className="flex items-center gap-1.5 rounded-full bg-[#181818] px-3 sm:px-4 py-1 sm:py-1.5 border border-white/[0.08] text-[11px] sm:text-xs font-semibold text-white shadow-sm shrink-0">
                   <User className="h-3.5 w-3.5 text-[#F97316]" />
                   <span>Pessoal</span>
                 </div>
-              ) : modalidadeUsuario === "empresarial" ? (
+              ) : modalidadeUsuario === "pj" ? (
                 <div className="flex items-center gap-1.5 rounded-full bg-[#181818] px-3 sm:px-4 py-1 sm:py-1.5 border border-white/[0.08] text-[11px] sm:text-xs font-semibold text-white shadow-sm shrink-0">
                   <Building2 className="h-3.5 w-3.5 text-[#F97316]" />
                   <span>Empresarial</span>

@@ -45,6 +45,13 @@ import { toast } from "sonner";
 import { brl } from "@/lib/mock-data";
 import { PATENTES, EscudoPatente, getPatentePorNivel } from "@/lib/patentes";
 import { cn } from "@/lib/utils";
+import {
+  getPlanByCode,
+  normalizeAccountType,
+  getAccountTypeLabel,
+  calculatePlanExpiration,
+  type CanonicalPlanCode,
+} from "@/lib/plans";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -356,10 +363,10 @@ function AdminPage() {
     }
   };
 
-  // Alterar modalidade de controle do aluno (Pessoal / Empresarial / Ambos)
+  // Alterar modalidade de controle do aluno (compatível com pf, pj, pfj, pessoal, empresarial, ambos)
   const alterarTipoConta = async (
     alunoId: string,
-    novoTipo: "pessoal" | "empresarial" | "ambos"
+    novoTipo: "pessoal" | "empresarial" | "ambos" | "pf" | "pj" | "pfj"
   ) => {
     try {
       if (!alunoId.startsWith("exemplo-")) {
@@ -387,16 +394,111 @@ function AdminPage() {
         );
       }
 
-      const rotulo =
-        novoTipo === "ambos"
-          ? "Pessoal e Empresarial (Ambos)"
-          : novoTipo === "empresarial"
-          ? "Empresarial"
-          : "Pessoal";
-
-      toast.success(`Modalidade de controle alterada para: ${rotulo}!`);
+      const rotulo = getAccountTypeLabel(novoTipo);
+      toast.success(`Modalidade alterada para: ${rotulo}!`);
     } catch {
       toast.error("Erro ao alterar modalidade de controle.");
+    }
+  };
+
+  // Alterar Plano do Aluno (com suporte a planos canônicos e plano Vitalício)
+  const alterarPlanoAluno = async (
+    aluno: AlunoFinanceiro,
+    novoPlanoCodigo: CanonicalPlanCode
+  ) => {
+    if (!isAdmin) {
+      toast.error("Apenas administradores podem gerenciar planos.");
+      return;
+    }
+
+    try {
+      const planMeta = getPlanByCode(novoPlanoCodigo);
+      const isMudandoParaVitalicio = novoPlanoCodigo === "vitalicio";
+      const isMudandoParaFree = novoPlanoCodigo === "free";
+
+      let novoAccessExpiresAt: string | null = null;
+      let novoStatus: "ativo" | "pendente" | "bloqueado" = "ativo";
+      let novoAccountType = aluno.account_type;
+
+      if (isMudandoParaVitalicio) {
+        // Vitalício: acesso permanente, status ativo, SEM expiração (NULL)
+        novoAccessExpiresAt = null;
+        novoStatus = "ativo";
+        novoAccountType = aluno.account_type || "ambos";
+      } else if (isMudandoParaFree) {
+        // Free: restaura comportamento normal do free (NULL)
+        novoAccessExpiresAt = null;
+        novoStatus = "ativo";
+      } else {
+        // Plano comercial pago: calcula nova data de expiração com base na duração do plano
+        novoAccessExpiresAt = calculatePlanExpiration(novoPlanoCodigo);
+        novoStatus = "ativo";
+        if (planMeta.accountType) {
+          novoAccountType = planMeta.accountType;
+        }
+      }
+
+      const updatePayload: Record<string, any> = {
+        plan: novoPlanoCodigo,
+        status: novoStatus,
+        access_expires_at: novoAccessExpiresAt,
+        account_type: novoAccountType,
+        updated_at: new Date().toISOString(),
+      };
+
+      if (!aluno.id.startsWith("exemplo-")) {
+        const { error } = await supabase
+          .from("profiles")
+          .update(updatePayload)
+          .eq("id", aluno.id);
+
+        if (error) {
+          toast.error("Erro ao atualizar plano no Supabase: " + error.message);
+          return;
+        }
+      }
+
+      setAlunos((prev) =>
+        prev.map((a) =>
+          a.id === aluno.id
+            ? {
+                ...a,
+                plan: novoPlanoCodigo,
+                status: novoStatus,
+                access_expires_at: novoAccessExpiresAt,
+                account_type: novoAccountType,
+              }
+            : a
+        )
+      );
+
+      if (alunoSelecionado?.id === aluno.id) {
+        setAlunoSelecionado((prev) =>
+          prev
+            ? {
+                ...prev,
+                plan: novoPlanoCodigo,
+                status: novoStatus,
+                access_expires_at: novoAccessExpiresAt,
+                account_type: novoAccountType,
+              }
+            : null
+        );
+      }
+
+      if (isMudandoParaVitalicio) {
+        toast.success(
+          `Plano Vitalício concedido para ${aluno.full_name}! Acesso permanente ativado.`
+        );
+      } else {
+        toast.success(
+          `Plano de ${aluno.full_name} alterado para: ${planMeta.name}!`
+        );
+      }
+
+      window.dispatchEvent(new CustomEvent("organizai_finance_sync"));
+    } catch {
+      toast.error("Erro ao alterar plano do aluno.");
     }
   };
 
@@ -496,6 +598,18 @@ function AdminPage() {
 
   // Helper de cálculo de validade e expiração do aluno
   const getInfoAcesso = (aluno: AlunoFinanceiro) => {
+    const isVitalicio = aluno.plan?.toLowerCase() === "vitalicio";
+    if (isVitalicio) {
+      return {
+        isExpirado: false,
+        isRenovado: true,
+        temBonusAtivo: false,
+        isVitalicio: true,
+        diasRestantes: null,
+        dataExpiracaoFormatada: null,
+      };
+    }
+
     const agora = Date.now();
     const expiresMs = aluno.access_expires_at ? new Date(aluno.access_expires_at).getTime() : null;
     const isExpirado = Boolean(
@@ -519,6 +633,7 @@ function AdminPage() {
       isExpirado,
       isRenovado,
       temBonusAtivo,
+      isVitalicio: false,
       diasRestantes,
       dataExpiracaoFormatada,
     };
@@ -1136,19 +1251,26 @@ function AdminPage() {
                         <td className="py-3.5 px-3 min-w-[170px]">
                           <div className="flex flex-col gap-1.5">
                             <div className="flex items-center gap-1.5">
-                              <span className="inline-flex items-center gap-1 rounded-full bg-white/[0.06] px-2 py-0.5 text-[10px] font-semibold text-stone-300">
-                                Plano {aluno.plan || "Free"}
-                              </span>
+                              {aluno.plan === "vitalicio" ? (
+                                <span className="inline-flex items-center gap-1 rounded-full bg-purple-500/20 border border-purple-500/40 px-2 py-0.5 text-[10px] font-bold text-purple-300 shadow-sm">
+                                  <Sparkles className="h-2.5 w-2.5 text-amber-400" />
+                                  Vitalício
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1 rounded-full bg-white/[0.06] px-2 py-0.5 text-[10px] font-semibold text-stone-300">
+                                  {getPlanByCode(aluno.plan).name}
+                                </span>
+                              )}
                             </div>
                             <select
-                              value={aluno.account_type === "empresa" ? "empresarial" : (aluno.account_type || "ambos")}
+                              value={normalizeAccountType(aluno.account_type)}
                               onChange={(e) => alterarTipoConta(aluno.id, e.target.value as any)}
                               className="rounded-lg border border-white/10 bg-[#16151a] px-2 py-1 text-[11px] font-medium text-stone-200 outline-none hover:border-[#F97316] focus:border-[#F97316] transition-colors cursor-pointer w-full max-w-[160px]"
                               title="Alterar modalidade de controle do aluno"
                             >
-                              <option value="pessoal" className="bg-[#141417] text-cyan-400">Pessoal</option>
-                              <option value="empresarial" className="bg-[#141417] text-purple-400">Empresarial</option>
-                              <option value="ambos" className="bg-[#141417] text-orange-400">Ambos (Pessoal + Empresarial)</option>
+                              <option value="pf" className="bg-[#141417] text-cyan-400">Pessoa Física (PF)</option>
+                              <option value="pj" className="bg-[#141417] text-purple-400">Pessoa Jurídica (PJ)</option>
+                              <option value="pfj" className="bg-[#141417] text-orange-400">Combo PF + PJ</option>
                             </select>
                           </div>
                         </td>
@@ -1157,6 +1279,14 @@ function AdminPage() {
                         <td className="py-3.5 px-3 min-w-[170px]">
                           {(() => {
                             const info = getInfoAcesso(aluno);
+                            if (info.isVitalicio) {
+                              return (
+                                <span className="inline-flex items-center gap-1.5 rounded-full bg-purple-500/20 border border-purple-500/40 px-2.5 py-0.5 text-[10px] font-bold text-purple-300 shadow-sm">
+                                  <Sparkles className="h-3 w-3 text-amber-400" />
+                                  Acesso Permanente
+                                </span>
+                              );
+                            }
                             if (info.isRenovado) {
                               return (
                                 <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 text-[10px] font-bold text-emerald-400">
@@ -1416,7 +1546,16 @@ function AdminPage() {
                       <span>Sem telefone</span>
                     )}
                     <span>•</span>
-                    <span className="text-stone-300">Plano {alunoSelecionado.plan || "Free"}</span>
+                    {alunoSelecionado.plan === "vitalicio" ? (
+                      <span className="inline-flex items-center gap-1 text-purple-300 font-bold">
+                        <Sparkles className="h-3 w-3 text-amber-400" />
+                        Plano Vitalício (Acesso Permanente)
+                      </span>
+                    ) : (
+                      <span className="text-stone-300">
+                        Plano {getPlanByCode(alunoSelecionado.plan).name}
+                      </span>
+                    )}
                   </p>
                 </div>
               </div>
@@ -1507,7 +1646,183 @@ function AdminPage() {
                 </div>
               </div>
 
-              {/* Gestão da Modalidade de Controle (Pessoal / Empresarial / Ambos) */}
+              {/* GESTÃO DE PLANO & ASSINATURA (EXCLUSIVO ADMINISTRADOR) */}
+              <div className="rounded-2xl border border-purple-500/30 bg-purple-950/[0.08] p-4 sm:p-5">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="h-4 w-4 text-amber-400" />
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-purple-300">
+                      Gestão de Plano & Assinatura do Aluno
+                    </h3>
+                  </div>
+                  <span className="text-[10px] text-stone-400">Exclusivo Coordenação</span>
+                </div>
+
+                <p className="text-xs text-stone-300 leading-relaxed mb-3.5">
+                  Altere ou conceda assinaturas para o aluno. Planos pagos calculam a expiração automaticamente. O plano Vitalício concede liberação permanente irrestrita.
+                </p>
+
+                {/* Plano Atual em Destaque */}
+                <div className="mb-4 flex items-center justify-between p-3 rounded-xl bg-black/40 border border-white/[0.08]">
+                  <span className="text-xs text-stone-300">Plano Atual:</span>
+                  <div className="flex items-center gap-2">
+                    {alunoSelecionado.plan === "vitalicio" ? (
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-purple-500/20 border border-purple-500/50 px-3 py-1 text-xs font-bold text-purple-200 shadow-sm">
+                        <Sparkles className="h-3.5 w-3.5 text-amber-400" />
+                        Vitalício — Acesso Permanente
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 px-3 py-1 text-xs font-bold text-emerald-300">
+                        {getPlanByCode(alunoSelecionado.plan).name}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* OPÇÃO DE DESTAQUE: PLANO VITALÍCIO */}
+                <div className="mb-4">
+                  <button
+                    type="button"
+                    onClick={() => alterarPlanoAluno(alunoSelecionado, "vitalicio")}
+                    className={cn(
+                      "w-full flex items-center justify-between p-3.5 rounded-xl border text-left transition-all cursor-pointer relative overflow-hidden",
+                      alunoSelecionado.plan === "vitalicio"
+                        ? "border-amber-400/80 bg-gradient-to-r from-purple-900/60 via-purple-950/70 to-amber-950/40 shadow-lg shadow-purple-950/50 ring-2 ring-amber-400/30 text-white"
+                        : "border-purple-500/30 bg-purple-950/20 hover:border-amber-400/50 hover:bg-purple-950/40 text-stone-200"
+                    )}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-xl bg-amber-400/20 border border-amber-400/40 flex items-center justify-center text-amber-300 shrink-0">
+                        <Sparkles className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs sm:text-sm font-black text-amber-300 tracking-wide">
+                            Vitalício — acesso permanente
+                          </span>
+                          <span className="rounded-full bg-amber-400/20 px-2 py-0.5 text-[9px] font-bold text-amber-200 border border-amber-400/30 uppercase">
+                            Admin Only
+                          </span>
+                        </div>
+                        <span className="text-[11px] text-stone-300 block mt-0.5">
+                          Sem data de expiração (access_expires_at = NULL). Nunca expira ou bloqueia por prazo.
+                        </span>
+                      </div>
+                    </div>
+                    {alunoSelecionado.plan === "vitalicio" && (
+                      <CheckCircle2 className="h-5 w-5 text-amber-400 shrink-0" />
+                    )}
+                  </button>
+                </div>
+
+                {/* CATEGORIAS COMERCIAIS */}
+                <div className="space-y-3">
+                  {/* PF */}
+                  <div>
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-cyan-400 block mb-1.5">
+                      Pessoa Física (PF)
+                    </span>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      {(["mensal_pf", "trimestral_pf", "semestral_pf", "anual_pf"] as CanonicalPlanCode[]).map((code) => {
+                        const meta = getPlanByCode(code);
+                        const isAtivo = alunoSelecionado.plan === code;
+                        return (
+                          <button
+                            key={code}
+                            type="button"
+                            onClick={() => alterarPlanoAluno(alunoSelecionado, code)}
+                            className={cn(
+                              "p-2.5 rounded-xl border text-left transition-all cursor-pointer",
+                              isAtivo
+                                ? "border-cyan-400 bg-cyan-950/40 ring-1 ring-cyan-400/40 text-white shadow-sm"
+                                : "border-white/[0.06] bg-black/30 hover:border-white/20 text-stone-300"
+                            )}
+                          >
+                            <span className="text-xs font-bold block">{meta.shortName}</span>
+                            <span className="text-[10px] text-stone-400 block mt-0.5">{meta.formattedPrice}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* PJ */}
+                  <div>
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-purple-400 block mb-1.5">
+                      Pessoa Jurídica (PJ)
+                    </span>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      {(["mensal_pj", "trimestral_pj", "semestral_pj", "anual_pj"] as CanonicalPlanCode[]).map((code) => {
+                        const meta = getPlanByCode(code);
+                        const isAtivo = alunoSelecionado.plan === code;
+                        return (
+                          <button
+                            key={code}
+                            type="button"
+                            onClick={() => alterarPlanoAluno(alunoSelecionado, code)}
+                            className={cn(
+                              "p-2.5 rounded-xl border text-left transition-all cursor-pointer",
+                              isAtivo
+                                ? "border-purple-400 bg-purple-950/40 ring-1 ring-purple-400/40 text-white shadow-sm"
+                                : "border-white/[0.06] bg-black/30 hover:border-white/20 text-stone-300"
+                            )}
+                          >
+                            <span className="text-xs font-bold block">{meta.shortName}</span>
+                            <span className="text-[10px] text-stone-400 block mt-0.5">{meta.formattedPrice}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* COMBO PF + PJ */}
+                  <div>
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-[#F97316] block mb-1.5">
+                      Combo PF + PJ
+                    </span>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      {(["mensal_pfj", "trimestral_pfj", "semestral_pfj", "anual_pfj"] as CanonicalPlanCode[]).map((code) => {
+                        const meta = getPlanByCode(code);
+                        const isAtivo = alunoSelecionado.plan === code;
+                        return (
+                          <button
+                            key={code}
+                            type="button"
+                            onClick={() => alterarPlanoAluno(alunoSelecionado, code)}
+                            className={cn(
+                              "p-2.5 rounded-xl border text-left transition-all cursor-pointer",
+                              isAtivo
+                                ? "border-[#F97316] bg-orange-950/40 ring-1 ring-[#F97316]/40 text-white shadow-sm"
+                                : "border-white/[0.06] bg-black/30 hover:border-white/20 text-stone-300"
+                            )}
+                          >
+                            <span className="text-xs font-bold block">{meta.shortName}</span>
+                            <span className="text-[10px] text-stone-400 block mt-0.5">{meta.formattedPrice}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* FREE */}
+                  <div className="pt-1 flex items-center justify-between">
+                    <button
+                      type="button"
+                      onClick={() => alterarPlanoAluno(alunoSelecionado, "free")}
+                      className={cn(
+                        "px-3 py-1.5 rounded-xl border text-xs font-medium transition-all cursor-pointer",
+                        alunoSelecionado.plan === "free"
+                          ? "border-stone-500 bg-stone-800 text-white shadow-sm"
+                          : "border-white/10 bg-white/5 text-stone-400 hover:text-white"
+                      )}
+                    >
+                      Restaurar para Plano Gratuito (Free)
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Modalidade de Controle do Usuário */}
               <div className="rounded-2xl border border-white/[0.08] bg-[#1a1a1f] p-4 sm:p-5">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
@@ -1527,10 +1842,10 @@ function AdminPage() {
                   {/* Pessoal */}
                   <button
                     type="button"
-                    onClick={() => alterarTipoConta(alunoSelecionado.id, "pessoal")}
+                    onClick={() => alterarTipoConta(alunoSelecionado.id, "pf")}
                     className={cn(
                       "flex items-center gap-3 p-3 rounded-xl border text-left transition-all cursor-pointer",
-                      (alunoSelecionado.account_type || "ambos") === "pessoal"
+                      normalizeAccountType(alunoSelecionado.account_type) === "pf"
                         ? "border-[#F97316] bg-[#F97316]/15 ring-2 ring-[#F97316]/40 shadow-md text-white"
                         : "border-white/[0.06] bg-black/30 hover:border-white/20 text-stone-400 hover:text-stone-200"
                     )}
@@ -1540,17 +1855,17 @@ function AdminPage() {
                     </div>
                     <div className="min-w-0">
                       <span className="text-xs font-bold block truncate">Controle Pessoal</span>
-                      <span className="text-[10px] opacity-80 block truncate">Individual / Familiar</span>
+                      <span className="text-[10px] opacity-80 block truncate">Individual / Familiar (PF)</span>
                     </div>
                   </button>
 
                   {/* Empresarial */}
                   <button
                     type="button"
-                    onClick={() => alterarTipoConta(alunoSelecionado.id, "empresarial")}
+                    onClick={() => alterarTipoConta(alunoSelecionado.id, "pj")}
                     className={cn(
                       "flex items-center gap-3 p-3 rounded-xl border text-left transition-all cursor-pointer",
-                      alunoSelecionado.account_type === "empresarial" || alunoSelecionado.account_type === "empresa"
+                      normalizeAccountType(alunoSelecionado.account_type) === "pj"
                         ? "border-[#F97316] bg-[#F97316]/15 ring-2 ring-[#F97316]/40 shadow-md text-white"
                         : "border-white/[0.06] bg-black/30 hover:border-white/20 text-stone-400 hover:text-stone-200"
                     )}
@@ -1567,10 +1882,10 @@ function AdminPage() {
                   {/* Ambos */}
                   <button
                     type="button"
-                    onClick={() => alterarTipoConta(alunoSelecionado.id, "ambos")}
+                    onClick={() => alterarTipoConta(alunoSelecionado.id, "pfj")}
                     className={cn(
                       "flex items-center gap-3 p-3 rounded-xl border text-left transition-all cursor-pointer",
-                      (alunoSelecionado.account_type || "ambos") === "ambos"
+                      normalizeAccountType(alunoSelecionado.account_type) === "pfj"
                         ? "border-[#F97316] bg-[#F97316]/15 ring-2 ring-[#F97316]/40 shadow-md text-white"
                         : "border-white/[0.06] bg-black/30 hover:border-white/20 text-stone-400 hover:text-stone-200"
                     )}
@@ -1579,8 +1894,8 @@ function AdminPage() {
                       <Layers className="h-4 w-4" />
                     </div>
                     <div className="min-w-0">
-                      <span className="text-xs font-bold block truncate">Os Dois (Ambos)</span>
-                      <span className="text-[10px] opacity-80 block truncate">Pessoal + Empresarial</span>
+                      <span className="text-xs font-bold block truncate">Os Dois (Combo)</span>
+                      <span className="text-[10px] opacity-80 block truncate">Pessoal + Empresarial (PFJ)</span>
                     </div>
                   </button>
                 </div>
@@ -2132,8 +2447,17 @@ function AdminPage() {
                 </div>
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-stone-400">Plano Atual:</span>
-                  <span className="text-orange-400 font-bold">
-                    Plano {alunoGerenciandoBonus.plan || "Free"}
+                  <span className="font-bold">
+                    {alunoGerenciandoBonus.plan === "vitalicio" ? (
+                      <span className="inline-flex items-center gap-1 text-purple-300 font-bold">
+                        <Sparkles className="h-3 w-3 text-amber-400" />
+                        Vitalício — Acesso Permanente
+                      </span>
+                    ) : (
+                      <span className="text-orange-400">
+                        {getPlanByCode(alunoGerenciandoBonus.plan).name}
+                      </span>
+                    )}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-xs">
@@ -2141,6 +2465,13 @@ function AdminPage() {
                   <span className="font-semibold text-white">
                     {(() => {
                       const info = getInfoAcesso(alunoGerenciandoBonus);
+                      if (info.isVitalicio)
+                        return (
+                          <span className="text-purple-300 font-bold flex items-center gap-1">
+                            <Sparkles className="h-3 w-3 text-amber-400" />
+                            Acesso Vitalício (Permanente)
+                          </span>
+                        );
                       if (info.isRenovado)
                         return <span className="text-emerald-400">Plano Renovado (Livre)</span>;
                       if (info.isExpirado)

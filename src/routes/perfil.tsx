@@ -28,6 +28,7 @@ import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/lib/supabase";
 import { PATENTES, EscudoPatente, getPatentePorNivel } from "@/lib/patentes";
 import { cn } from "@/lib/utils";
+import { getPlanByCode, getAccountTypeLabel } from "@/lib/plans";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
 
@@ -270,15 +271,18 @@ function Perfil() {
                   <h3 className="text-xl sm:text-2xl font-bold text-foreground">
                     {nomeCompleto}
                   </h3>
-                  <span className="rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 text-[11px] font-bold text-emerald-400">
-                    Free
-                  </span>
+                  {profile?.plan === "vitalicio" ? (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-purple-500/15 border border-purple-500/30 px-2.5 py-0.5 text-[11px] font-bold text-purple-300">
+                      <Sparkles className="h-3 w-3 text-amber-400" />
+                      Vitalício
+                    </span>
+                  ) : (
+                    <span className="rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 text-[11px] font-bold text-emerald-400">
+                      {getPlanByCode(profile?.plan).name}
+                    </span>
+                  )}
                   <span className="rounded-full bg-orange-500/15 border border-orange-500/30 px-2.5 py-0.5 text-[11px] font-bold text-orange-400">
-                    {profile?.account_type === "empresarial" || profile?.account_type === "empresa"
-                      ? "Controle Empresarial"
-                      : profile?.account_type === "pessoal"
-                      ? "Controle Pessoal"
-                      : "Pessoal & Empresarial"}
+                    {getAccountTypeLabel(profile?.account_type)}
                   </span>
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">

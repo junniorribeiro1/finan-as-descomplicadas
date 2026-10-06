@@ -8,6 +8,7 @@ import {
 } from "react";
 import type { User, Session } from "@supabase/supabase-js";
 import { supabase } from "./supabase";
+import { checkUserAccess } from "./plans";
 
 export interface UserProfile {
   id: string;
@@ -43,6 +44,7 @@ interface AuthContextType {
   isPending: boolean;
   isBlocked: boolean;
   isAccessExpired: boolean;
+  isPermanentAccess: boolean;
   accessExpiresAt: string | null;
   planRenovado: boolean;
   signOut: () => Promise<void>;
@@ -63,6 +65,7 @@ const AuthContext = createContext<AuthContextType>({
   isPending: false,
   isBlocked: false,
   isAccessExpired: false,
+  isPermanentAccess: false,
   accessExpiresAt: null,
   planRenovado: false,
   signOut: async () => {},
@@ -202,28 +205,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const isEmailAdmin = !!user?.email && ADMIN_FALLBACK_EMAILS.includes(user.email.toLowerCase());
   const isAdmin = isEmailAdmin || profile?.role === "admin";
-  const isPending = !isAdmin && profile?.status === "pendente";
 
-  // Se o aluno tiver uma data de expiração de bônus/acesso que já passou e não tiver renovado o plano
-  const isAccessExpired = Boolean(
-    !isAdmin &&
-      profile?.access_expires_at &&
-      new Date(profile.access_expires_at).getTime() < Date.now() &&
-      !profile?.plan_renovado
-  );
+  // Avaliação centralizada e prioritária de regras de acesso
+  const accessInfo = checkUserAccess(profile, isAdmin);
+  const isPending = accessInfo.isPending;
+  const isAccessExpired = accessInfo.isAccessExpired;
+  const isBlocked = accessInfo.isBlocked;
+  const isPermanentAccess = accessInfo.isPermanentAccess;
 
-  const isBlocked = (!isAdmin && profile?.status === "bloqueado") || isAccessExpired;
-
-  // Se expirou e ainda não foi marcado como bloqueado no banco, atualiza em segundo plano
+  // Se expirou e ainda não foi marcado como bloqueado no banco, atualiza em segundo plano (salvaguarda: nunca bloqueia vitalício)
   useEffect(() => {
-    if (isAccessExpired && profile?.id && profile.status !== "bloqueado") {
+    if (
+      isAccessExpired &&
+      profile?.id &&
+      profile.status !== "bloqueado" &&
+      profile?.plan !== "vitalicio"
+    ) {
       supabase
         .from("profiles")
         .update({ status: "bloqueado", updated_at: new Date().toISOString() })
         .eq("id", profile.id)
         .then(() => {});
     }
-  }, [isAccessExpired, profile?.id, profile?.status]);
+  }, [isAccessExpired, profile?.id, profile?.status, profile?.plan]);
 
   return (
     <AuthContext.Provider
@@ -236,6 +240,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isPending,
         isBlocked,
         isAccessExpired,
+        isPermanentAccess,
         accessExpiresAt: profile?.access_expires_at ?? null,
         planRenovado: Boolean(profile?.plan_renovado),
         signOut,
