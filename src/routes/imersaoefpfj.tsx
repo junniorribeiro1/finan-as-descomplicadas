@@ -64,7 +64,7 @@ export const Route = createFileRoute("/imersaoefpfj")({
 
 function ImersaoPage() {
   // 1. Links de Checkout e Suporte
-  const checkoutUrl = "https://pay.hotmart.com/X107567504O?bid=1789504719427";
+  const checkoutUrl = "https://pay.hotmart.com/X107567504O?checkoutMode=10&bid=1791256041440";
   const wppNumber = "5577981381477";
   const defaultWppUrl = `https://wa.me/${wppNumber}?text=${encodeURIComponent(
     "Olá, Natália! Gostaria de garantir minha vaga no 1º Lote (R$ 27,00) da IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ."
@@ -191,7 +191,7 @@ function ImersaoPage() {
           price: "27.00",
           priceCurrency: "BRL",
           availability: "https://schema.org/InStock",
-          url: "https://pay.hotmart.com/X107567504O?bid=1789504719427",
+          url: "https://pay.hotmart.com/X107567504O?checkoutMode=10&bid=1791256041440",
         },
       },
       {

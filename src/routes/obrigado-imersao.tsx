@@ -7,7 +7,6 @@ import {
   Clock,
   Video,
   Award,
-  Sparkles,
   ArrowRight,
   ShieldCheck,
   AlertTriangle,
@@ -117,18 +116,11 @@ export function ObrigadoImersaoPage() {
           <span>INSCRIÇÃO CONFIRMADA PELA HOTMART</span>
         </div>
 
-        {/* ÍCONE DE SUCESSO & TÍTULO */}
+        {/* TÍTULO */}
         <div className="mt-5 flex flex-col items-center">
-          <div className="relative mb-3 flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500/20 via-emerald-950/50 to-amber-500/20 border border-emerald-500/30 shadow-[0_8px_32px_rgba(16,185,129,0.2)]">
-            <Sparkles className="h-10 w-10 text-amber-400" />
-            <div className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500 text-stone-950 shadow-md">
-              <CheckCircle2 className="h-4 w-4 stroke-[3]" />
-            </div>
-          </div>
-
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-white leading-tight">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight text-white leading-snug">
             Parabéns! Sua vaga na{" "}
-            <span className="block mt-1 bg-gradient-to-r from-amber-300 via-amber-400 to-orange-400 bg-clip-text text-transparent drop-shadow-sm">
+            <span className="block mt-1 whitespace-nowrap text-[clamp(1.05rem,4.4vw,1.9rem)] font-black tracking-tight bg-gradient-to-r from-amber-300 via-amber-400 to-orange-400 bg-clip-text text-transparent drop-shadow-sm">
               IMER$ÃO EDUCAÇÃO FINANCEIRA
             </span>
             está 100% garantida!
