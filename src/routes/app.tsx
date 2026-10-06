@@ -418,17 +418,13 @@ function OrganizAiFintechSalesPage() {
       tagline: "Para você e sua família organizarem a vida financeira",
       mensal: {
         valor: "R$ 49,90",
-        link: `https://wa.me/${wppNumber}?text=${encodeURIComponent(
-          "Olá, Natália! Gostaria de assinar o Organiz.AI Pessoa Física no Plano Mensal (R$ 49,90/mês). Como faço para liberar meu acesso agora?"
-        )}`,
+        link: "https://pay.hotmart.com/I107907116E?off=idhxulv7&checkoutMode=6",
       },
       trimestral: {
         parcelas: "3x de",
         valorParcela: "R$ 39,97",
         aVista: "ou R$ 119,90 à vista",
-        link: `https://wa.me/${wppNumber}?text=${encodeURIComponent(
-          "Olá, Natália! Gostaria de assinar o Organiz.AI Pessoa Física no Plano Trimestral (3x de R$ 39,97 ou R$ 119,90 à vista). Como faço para liberar meu acesso agora?"
-        )}`,
+        link: "https://pay.hotmart.com/I107907116E?off=7cd2yal7&checkoutMode=6&bid=1791324379232",
         beneficios: [
           "Dashboard financeiro completo PF",
           "Controle de contas, cartões e categorias",
@@ -440,9 +436,7 @@ function OrganizAiFintechSalesPage() {
         parcelas: "6x de",
         valorParcela: "R$ 34,98",
         aVista: "ou R$ 209,90 à vista",
-        link: `https://wa.me/${wppNumber}?text=${encodeURIComponent(
-          "Olá, Natália! Gostaria de assinar o Organiz.AI Pessoa Física no Plano Semestral (6x de R$ 34,98 ou R$ 209,90 à vista). Como faço para liberar meu acesso agora?"
-        )}`,
+        link: "https://pay.hotmart.com/I107907116E?off=fg900m0d&checkoutMode=6&bid=1791324396598",
         beneficios: [
           "Todos os benefícios do Trimestral",
           "Histórico semestral contínuo de fluxo de caixa",
@@ -455,9 +449,7 @@ function OrganizAiFintechSalesPage() {
         valorParcela: "R$ 29,16",
         aVista: "ou R$ 349,90 à vista",
         diario: "Menos de R$ 1,00 por dia (apenas R$ 0,97/dia!)",
-        link: `https://wa.me/${wppNumber}?text=${encodeURIComponent(
-          "Olá, Natália! Gostaria de assinar o Organiz.AI Pessoa Física no Plano Anual com o maior desconto (12x de R$ 29,16 ou R$ 349,90 à vista). Como faço para liberar meu acesso agora?"
-        )}`,
+        link: "https://pay.hotmart.com/I107907116E?off=6takcxq1&checkoutMode=6&bid=1791324435263",
         beneficios: [
           "1 ano completo de organização financeira irrestrita",
           "Dashboard e controle pessoal com inteligência preditiva",
@@ -471,17 +463,13 @@ function OrganizAiFintechSalesPage() {
       tagline: "Para o seu negócio, MEI ou empresa ter controle total de caixa",
       mensal: {
         valor: "R$ 69,90",
-        link: `https://wa.me/${wppNumber}?text=${encodeURIComponent(
-          "Olá, Natália! Gostaria de assinar o Organiz.AI Empresa no Plano Mensal (R$ 69,90/mês). Como faço para liberar meu acesso agora?"
-        )}`,
+        link: "https://pay.hotmart.com/I107907116E?off=kq33injc&checkoutMode=6&bid=1791324449801",
       },
       trimestral: {
         parcelas: "3x de",
         valorParcela: "R$ 49,96",
         aVista: "ou R$ 149,90 à vista",
-        link: `https://wa.me/${wppNumber}?text=${encodeURIComponent(
-          "Olá, Natália! Gostaria de assinar o Organiz.AI Empresa no Plano Trimestral (3x de R$ 49,96 ou R$ 149,90 à vista). Como faço para liberar meu acesso agora?"
-        )}`,
+        link: "https://pay.hotmart.com/I107907116E?off=c2uwbnuq&checkoutMode=6&bid=1791324460121",
         beneficios: [
           "Dashboard de fluxo de caixa empresarial PJ",
           "Controle de contas a pagar, receber e despesas PJ",
@@ -493,9 +481,7 @@ function OrganizAiFintechSalesPage() {
         parcelas: "6x de",
         valorParcela: "R$ 38,31",
         aVista: "ou R$ 229,90 à vista",
-        link: `https://wa.me/${wppNumber}?text=${encodeURIComponent(
-          "Olá, Natália! Gostaria de assinar o Organiz.AI Empresa no Plano Semestral (6x de R$ 38,31 ou R$ 229,90 à vista). Como faço para liberar meu acesso agora?"
-        )}`,
+        link: "https://pay.hotmart.com/I107907116E?off=byf9ao05&checkoutMode=6&bid=1791324487732",
         beneficios: [
           "Todos os recursos empresariais do Trimestral",
           "Histórico semestral e relatórios da empresa",
@@ -508,9 +494,7 @@ function OrganizAiFintechSalesPage() {
         valorParcela: "R$ 30,82",
         aVista: "ou R$ 369,90 à vista",
         diario: "Apenas R$ 1,02 por dia para blindar a sua empresa!",
-        link: `https://wa.me/${wppNumber}?text=${encodeURIComponent(
-          "Olá, Natália! Gostaria de assinar o Organiz.AI Empresa no Plano Anual com o maior desconto (12x de R$ 30,82 ou R$ 369,90 à vista). Como faço para liberar meu acesso agora?"
-        )}`,
+        link: "https://pay.hotmart.com/I107907116E?off=l6v3lamw&checkoutMode=6&bid=1791324511735",
         beneficios: [
           "1 ano completo de inteligência financeira empresarial",
           "Previsibilidade de caixa e blindagem contra surpresas",
@@ -524,17 +508,13 @@ function OrganizAiFintechSalesPage() {
       tagline: "Dois ambientes 100% isolados: sua vida pessoal e sua empresa organizadas",
       mensal: {
         valor: "R$ 99,90",
-        link: `https://wa.me/${wppNumber}?text=${encodeURIComponent(
-          "Olá, Natália! Gostaria de assinar o Organiz.AI Combo PF + PJ no Plano Mensal (R$ 99,90/mês). Como faço para liberar meu acesso agora?"
-        )}`,
+        link: "https://pay.hotmart.com/I107907116E?off=fy7e51sj&checkoutMode=6&bid=1791324523500",
       },
       trimestral: {
         parcelas: "3x de",
         valorParcela: "R$ 73,30",
         aVista: "ou R$ 219,90 à vista",
-        link: `https://wa.me/${wppNumber}?text=${encodeURIComponent(
-          "Olá, Natália! Gostaria de assinar o Organiz.AI Combo PF + PJ no Plano Trimestral (3x de R$ 73,30 ou R$ 219,90 à vista). Como faço para liberar meu acesso agora?"
-        )}`,
+        link: "https://pay.hotmart.com/I107907116E?off=sge5gsav&checkoutMode=6&bid=1791324537562",
         beneficios: [
           "Acesso duplo completo: Pessoa Física e Empresa (PJ)",
           "Separação blindada de patrimônio (sem misturar contas)",
@@ -546,9 +526,7 @@ function OrganizAiFintechSalesPage() {
         parcelas: "6x de",
         valorParcela: "R$ 66,65",
         aVista: "ou R$ 399,90 à vista",
-        link: `https://wa.me/${wppNumber}?text=${encodeURIComponent(
-          "Olá, Natália! Gostaria de assinar o Organiz.AI Combo PF + PJ no Plano Semestral (6x de R$ 66,65 ou R$ 399,90 à vista). Como faço para liberar meu acesso agora?"
-        )}`,
+        link: "https://pay.hotmart.com/I107907116E?off=oq2ztv93&checkoutMode=6&bid=1791324561026",
         beneficios: [
           "Todos os benefícios duplos do plano Trimestral",
           "Visão consolidada de patrimônio pessoal e da empresa",
@@ -561,9 +539,7 @@ function OrganizAiFintechSalesPage() {
         valorParcela: "R$ 49,99",
         aVista: "ou R$ 599,90 à vista",
         diario: "Apenas R$ 1,66/dia para gestão integral Pessoal & Negócio!",
-        link: `https://wa.me/${wppNumber}?text=${encodeURIComponent(
-          "Olá, Natália! Gostaria de assinar o Organiz.AI Combo PF + PJ no Plano Anual com o maior desconto (12x de R$ 49,99 ou R$ 599,90 à vista). Como faço para liberar meu acesso agora?"
-        )}`,
+        link: "https://pay.hotmart.com/I107907116E?off=wdat8f96&checkoutMode=6&bid=1791324575491",
         beneficios: [
           "1 ano completo com os 2 ambientes (PF + PJ) desbloqueados",
           "Separação definitiva das contas pessoais e empresariais",

@@ -42,6 +42,7 @@ export interface PlanMetadata {
   commercial: boolean;
   lifetime?: boolean;
   description?: string;
+  checkoutUrl?: string;
   installments?: {
     count: number;
     value: string;
@@ -82,6 +83,7 @@ export const PLANS_REGISTRY: Record<CanonicalPlanCode, PlanMetadata> = {
     recurring: true,
     commercial: true,
     description: "Controle financeiro pessoal e familiar com renovação mensal.",
+    checkoutUrl: "https://pay.hotmart.com/I107907116E?off=idhxulv7&checkoutMode=6",
   },
   trimestral_pf: {
     code: "trimestral_pf",
@@ -96,6 +98,7 @@ export const PLANS_REGISTRY: Record<CanonicalPlanCode, PlanMetadata> = {
     recurring: true,
     commercial: true,
     description: "Acesso por 3 meses para planejamento pessoal contínuo.",
+    checkoutUrl: "https://pay.hotmart.com/I107907116E?off=7cd2yal7&checkoutMode=6&bid=1791324379232",
     installments: { count: 3, value: "R$ 39,97" },
   },
   semestral_pf: {
@@ -111,6 +114,7 @@ export const PLANS_REGISTRY: Record<CanonicalPlanCode, PlanMetadata> = {
     recurring: true,
     commercial: true,
     description: "Histórico semestral e acompanhamento financeiro individual.",
+    checkoutUrl: "https://pay.hotmart.com/I107907116E?off=fg900m0d&checkoutMode=6&bid=1791324396598",
     installments: { count: 6, value: "R$ 34,98" },
   },
   anual_pf: {
@@ -126,6 +130,7 @@ export const PLANS_REGISTRY: Record<CanonicalPlanCode, PlanMetadata> = {
     recurring: true,
     commercial: true,
     description: "1 ano completo com maior economia (menos de R$ 1,00/dia).",
+    checkoutUrl: "https://pay.hotmart.com/I107907116E?off=6takcxq1&checkoutMode=6&bid=1791324435263",
     installments: { count: 12, value: "R$ 29,16" },
   },
 
@@ -143,6 +148,7 @@ export const PLANS_REGISTRY: Record<CanonicalPlanCode, PlanMetadata> = {
     recurring: true,
     commercial: true,
     description: "Fluxo de caixa empresarial, MEI e empresas com renovação mensal.",
+    checkoutUrl: "https://pay.hotmart.com/I107907116E?off=kq33injc&checkoutMode=6&bid=1791324449801",
   },
   trimestral_pj: {
     code: "trimestral_pj",
@@ -157,6 +163,7 @@ export const PLANS_REGISTRY: Record<CanonicalPlanCode, PlanMetadata> = {
     recurring: true,
     commercial: true,
     description: "Gestão empresarial com contas a pagar, receber e conciliação.",
+    checkoutUrl: "https://pay.hotmart.com/I107907116E?off=c2uwbnuq&checkoutMode=6&bid=1791324460121",
     installments: { count: 3, value: "R$ 49,96" },
   },
   semestral_pj: {
@@ -172,6 +179,7 @@ export const PLANS_REGISTRY: Record<CanonicalPlanCode, PlanMetadata> = {
     recurring: true,
     commercial: true,
     description: "Histórico semestral contínuo e relatórios gerenciais da empresa.",
+    checkoutUrl: "https://pay.hotmart.com/I107907116E?off=byf9ao05&checkoutMode=6&bid=1791324487732",
     installments: { count: 6, value: "R$ 38,31" },
   },
   anual_pj: {
@@ -187,6 +195,7 @@ export const PLANS_REGISTRY: Record<CanonicalPlanCode, PlanMetadata> = {
     recurring: true,
     commercial: true,
     description: "1 ano completo de blindagem e inteligência financeira PJ.",
+    checkoutUrl: "https://pay.hotmart.com/I107907116E?off=l6v3lamw&checkoutMode=6&bid=1791324511735",
     installments: { count: 12, value: "R$ 30,82" },
   },
 
@@ -204,6 +213,7 @@ export const PLANS_REGISTRY: Record<CanonicalPlanCode, PlanMetadata> = {
     recurring: true,
     commercial: true,
     description: "Dois ambientes isolados: vida pessoal e empresa integradas.",
+    checkoutUrl: "https://pay.hotmart.com/I107907116E?off=fy7e51sj&checkoutMode=6&bid=1791324523500",
   },
   trimestral_pfj: {
     code: "trimestral_pfj",
@@ -218,6 +228,7 @@ export const PLANS_REGISTRY: Record<CanonicalPlanCode, PlanMetadata> = {
     recurring: true,
     commercial: true,
     description: "Separação de patrimônio e pró-labore com histórico de 3 meses.",
+    checkoutUrl: "https://pay.hotmart.com/I107907116E?off=sge5gsav&checkoutMode=6&bid=1791324537562",
     installments: { count: 3, value: "R$ 73,30" },
   },
   semestral_pfj: {
@@ -233,6 +244,7 @@ export const PLANS_REGISTRY: Record<CanonicalPlanCode, PlanMetadata> = {
     recurring: true,
     commercial: true,
     description: "Visão consolidada PF + PJ com relatórios semestrais completos.",
+    checkoutUrl: "https://pay.hotmart.com/I107907116E?off=oq2ztv93&checkoutMode=6&bid=1791324561026",
     installments: { count: 6, value: "R$ 66,65" },
   },
   anual_pfj: {
@@ -248,6 +260,7 @@ export const PLANS_REGISTRY: Record<CanonicalPlanCode, PlanMetadata> = {
     recurring: true,
     commercial: true,
     description: "Máxima economia para gerenciar a vida pessoal e empresarial por 1 ano.",
+    checkoutUrl: "https://pay.hotmart.com/I107907116E?off=wdat8f96&checkoutMode=6&bid=1791324575491",
     installments: { count: 12, value: "R$ 49,99" },
   },
 
