@@ -122,19 +122,17 @@ function safeEqual(a: string, b: string): boolean {
 }
 
 function addMonths(date: Date, months: number): Date {
-  const result = new Date(date);
-  const originalDay = result.getDate();
+  const result = new Date(date.getTime());
+  const originalDay = result.getUTCDate();
 
-  result.setDate(1);
-  result.setMonth(result.getMonth() + months);
+  result.setUTCDate(1);
+  result.setUTCMonth(result.getUTCMonth() + months);
 
   const lastDay = new Date(
-    result.getFullYear(),
-    result.getMonth() + 1,
-    0,
-  ).getDate();
+    Date.UTC(result.getUTCFullYear(), result.getUTCMonth() + 1, 0),
+  ).getUTCDate();
 
-  result.setDate(Math.min(originalDay, lastDay));
+  result.setUTCDate(Math.min(originalDay, lastDay));
 
   return result;
 }
@@ -202,13 +200,17 @@ async function getOrCreateUser(
   supabaseAdmin: any,
   email: string,
   fullName: string,
-): Promise<{ userId: string; created: boolean }> {
+): Promise<{
+  userId: string;
+  created: boolean;
+  currentAccessExpiresAt?: string | null;
+}> {
   const normalizedEmail = email.toLowerCase().trim();
 
   const { data: existingProfile, error: profileError } =
     await supabaseAdmin
       .from("profiles")
-      .select("id")
+      .select("id, access_expires_at")
       .eq("email", normalizedEmail)
       .maybeSingle();
 
@@ -222,6 +224,7 @@ async function getOrCreateUser(
     return {
       userId: existingProfile.id,
       created: false,
+      currentAccessExpiresAt: existingProfile.access_expires_at ?? null,
     };
   }
 
@@ -231,9 +234,16 @@ async function getOrCreateUser(
   );
 
   if (existingAuthUser?.id) {
+    const { data: profileById } = await supabaseAdmin
+      .from("profiles")
+      .select("access_expires_at")
+      .eq("id", existingAuthUser.id)
+      .maybeSingle();
+
     return {
       userId: existingAuthUser.id,
       created: false,
+      currentAccessExpiresAt: profileById?.access_expires_at ?? null,
     };
   }
 
@@ -258,6 +268,7 @@ async function getOrCreateUser(
   return {
     userId: data.user.id,
     created: true,
+    currentAccessExpiresAt: null,
   };
 }
 
@@ -437,7 +448,11 @@ export default {
             );
           }
 
-          const { userId, created } = await getOrCreateUser(
+          const {
+            userId,
+            created,
+            currentAccessExpiresAt: rawExpiresAt,
+          } = await getOrCreateUser(
             admin,
             buyerEmail,
             buyerName || buyerEmail,
@@ -445,8 +460,39 @@ export default {
 
           const purchaseDate = getPurchaseDate(data);
 
+          let currentAccessExpiresAt: Date | null = null;
+
+          if (rawExpiresAt) {
+            const parsed = new Date(rawExpiresAt);
+            if (!Number.isNaN(parsed.getTime())) {
+              currentAccessExpiresAt = parsed;
+            }
+          } else if (!created) {
+            const { data: profileRow } = await admin
+              .from("profiles")
+              .select("access_expires_at")
+              .eq("id", userId)
+              .maybeSingle();
+
+            if (profileRow?.access_expires_at) {
+              const parsed = new Date(profileRow.access_expires_at);
+              if (!Number.isNaN(parsed.getTime())) {
+                currentAccessExpiresAt = parsed;
+              }
+            }
+          }
+
+          // Regra de vigência cumulativa:
+          // 1. Se o usuário já possui access_expires_at futuro, o novo período é somado ao vencimento atual.
+          // 2. Se for igual ou anterior à nova compra (ou se não possuir acesso prévio), conta a partir da compra.
+          const baseDate =
+            currentAccessExpiresAt &&
+            currentAccessExpiresAt.getTime() > purchaseDate.getTime()
+              ? currentAccessExpiresAt
+              : purchaseDate;
+
           const expiresAt = addMonths(
-            purchaseDate,
+            baseDate,
             planConfig.months,
           );
 
