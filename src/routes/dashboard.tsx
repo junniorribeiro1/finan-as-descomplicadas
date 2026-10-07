@@ -19,7 +19,9 @@ import {
   Wallet,
   Clock,
   Check,
+  Crown,
 } from "lucide-react";
+import { getPlanByCode, checkUserAccess } from "@/lib/plans";
 import { brl } from "@/lib/mock-data";
 import {
   carregarDadosFinanceirosUsuario,
@@ -67,7 +69,9 @@ const mesesRecebimentos = [
 const diasMes = Array.from({ length: 30 }, (_, i) => i + 1);
 
 function Dashboard() {
-  const { user, profile, refreshProfile } = useAuth();
+  const { user, profile, refreshProfile, isAdmin } = useAuth();
+  const accessInfo = checkUserAccess(profile, isAdmin);
+  const planInfo = getPlanByCode(profile?.plan);
   const periodo = usePeriodoAtivo();
   const [hoverDia, setHoverDia] = useState<number | null>(null);
   const [hoverMesComp, setHoverMesComp] = useState<number | null>(null);
@@ -356,16 +360,60 @@ function Dashboard() {
         {/* Camada de transparência/gradiente escuro para contraste e legibilidade das informações */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-black/25 pointer-events-none z-[1]" />
 
-        <div className="relative z-10 flex h-full flex-col justify-center p-6 sm:p-8">
-          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#F97316]">
-            ORGANIZ.AI
-          </span>
-          <h2 className="mt-1 font-display text-2xl font-bold tracking-tight text-white sm:text-3xl drop-shadow-md">
-            Bem-vindo(a), {nomeExibicao} 👋
-          </h2>
-          <p className="mt-1 text-xs text-stone-300 sm:text-sm drop-shadow-sm">
-            Aqui está o resumo em tempo real das suas finanças.
-          </p>
+        <div className="relative z-10 flex h-full flex-col md:flex-row md:items-center justify-between gap-4 p-6 sm:p-8">
+          <div>
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#F97316]">
+              ORGANIZ.AI
+            </span>
+            <h2 className="mt-1 font-display text-2xl font-bold tracking-tight text-white sm:text-3xl drop-shadow-md">
+              Bem-vindo(a), {nomeExibicao} 👋
+            </h2>
+            <p className="mt-1 text-xs text-stone-300 sm:text-sm drop-shadow-sm">
+              Aqui está o resumo em tempo real das suas finanças.
+            </p>
+          </div>
+
+          {/* Badge de Plano Ativo, Validade e Ação de Renovação */}
+          <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-black/60 backdrop-blur-md px-4 py-3 shadow-lg self-start md:self-auto">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/20 border border-amber-500/30 text-amber-400">
+              <Crown className="h-5 w-5" />
+            </div>
+            <div className="pr-1">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-xs font-bold text-white tracking-wide">
+                  {accessInfo.isPermanentAccess ? "Vitalício" : planInfo.name}
+                </span>
+                <span className={cn(
+                  "rounded-full px-2 py-0.5 text-[9px] font-extrabold uppercase border",
+                  accessInfo.isPermanentAccess
+                    ? "bg-purple-500/20 text-purple-300 border-purple-500/30"
+                    : accessInfo.isAccessExpired
+                    ? "bg-rose-500/20 text-rose-300 border-rose-500/30"
+                    : "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
+                )}>
+                  {accessInfo.isPermanentAccess ? "Vitalício" : accessInfo.isAccessExpired ? "Expirado" : "Ativo"}
+                </span>
+              </div>
+              <p className="text-[11px] text-stone-300 mt-0.5 flex items-center gap-1">
+                <Clock className="h-3 w-3 text-amber-400" />
+                <span>
+                  {accessInfo.isPermanentAccess
+                    ? "Acesso Vitalício"
+                    : accessInfo.dataExpiracaoFormatada
+                    ? `Válido até ${accessInfo.dataExpiracaoFormatada.split(" às ")[0]}${accessInfo.diasRestantes !== null ? ` (${accessInfo.diasRestantes}d restantes)` : ""}`
+                    : "Assinatura Vigente"}
+                </span>
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new CustomEvent("organizai_abrir_planos"))}
+              className="ml-auto inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-3.5 py-2 text-xs font-bold text-white shadow-md shadow-orange-950/40 hover:brightness-110 active:scale-95 transition-all cursor-pointer whitespace-nowrap"
+            >
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>Renovar</span>
+            </button>
+          </div>
         </div>
       </div>
 

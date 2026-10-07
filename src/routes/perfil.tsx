@@ -17,6 +17,9 @@ import {
   CheckCircle2,
   Lock,
   Sparkles,
+  Crown,
+  Clock,
+  ArrowUpRight,
   ShieldAlert,
   Trophy,
   ChevronDown,
@@ -28,7 +31,7 @@ import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/lib/supabase";
 import { PATENTES, EscudoPatente, getPatentePorNivel } from "@/lib/patentes";
 import { cn } from "@/lib/utils";
-import { getPlanByCode, getAccountTypeLabel } from "@/lib/plans";
+import { getPlanByCode, getAccountTypeLabel, checkUserAccess } from "@/lib/plans";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
 
@@ -49,8 +52,15 @@ export const Route = createFileRoute("/perfil")({
 });
 
 function Perfil() {
-  const { user, profile, signOut, refreshProfile } = useAuth();
+  const { user, profile, signOut, refreshProfile, isAdmin } = useAuth();
   const navigate = useNavigate();
+
+  const accessInfo = checkUserAccess(profile, isAdmin);
+  const planInfo = getPlanByCode(profile?.plan);
+
+  const abrirModalPlanos = () => {
+    window.dispatchEvent(new CustomEvent("organizai_abrir_planos"));
+  };
 
   // Estados de alteração de senha
   const [modalSenhaAberto, setModalSenhaAberto] = useState(false);
@@ -482,17 +492,181 @@ function Perfil() {
                 <span className="text-xs font-semibold text-foreground">{dataMembro}</span>
               </div>
 
-              <div className="flex items-center justify-between p-4 sm:p-5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-5 gap-3">
                 <div className="flex items-center gap-3">
                   <Shield className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-xs text-muted-foreground">Status do Plano</span>
+                  <span className="text-xs text-muted-foreground">Plano & Validade</span>
                 </div>
-                <span className="rounded-full bg-emerald-500/20 border border-emerald-500/30 px-3 py-1 text-xs font-bold text-emerald-400">
-                  Plano Free Ativo
-                </span>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className={cn(
+                    "rounded-full border px-3 py-1 text-xs font-bold",
+                    accessInfo.isPermanentAccess
+                      ? "bg-purple-500/20 border-purple-500/30 text-purple-300"
+                      : accessInfo.isAccessExpired
+                      ? "bg-rose-500/20 border-rose-500/30 text-rose-300"
+                      : "bg-emerald-500/20 border-emerald-500/30 text-emerald-400"
+                  )}>
+                    {accessInfo.isPermanentAccess
+                      ? "Vitalício"
+                      : `${planInfo.name} • ${accessInfo.diasRestantes !== null ? `${accessInfo.diasRestantes}d restantes` : "Ativo"}`}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={abrirModalPlanos}
+                    className="inline-flex items-center gap-1 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 px-2.5 py-1 text-xs font-bold text-amber-400 transition-colors cursor-pointer"
+                    title="Ver planos e renovação"
+                  >
+                    <Sparkles className="h-3 w-3" />
+                    <span>Renovar</span>
+                  </button>
+                </div>
               </div>
             </div>
           )}
+        </Panel>
+
+        {/* 2. SEÇÃO ASSINATURA, VALIDADE & RENOVAÇÃO */}
+        <Panel className="p-6 sm:p-8 relative overflow-hidden border border-amber-500/20 bg-gradient-to-br from-[#16141a] via-[#121115] to-[#0d0d0f] shadow-2xl">
+          {/* Brilho decorativo de fundo */}
+          <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
+          <div className="absolute -left-16 -bottom-16 h-56 w-56 rounded-full bg-orange-500/10 blur-3xl pointer-events-none" />
+
+          <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-5 pb-6 border-b border-white/[0.08]">
+            <div className="flex items-start gap-4">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-tr from-amber-500/20 to-orange-500/15 border border-amber-500/30 text-amber-400 shadow-md">
+                <Crown className="h-6 w-6" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2.5 flex-wrap">
+                  <h3 className="text-lg sm:text-xl font-bold text-white">
+                    Assinatura & Validade do Acesso
+                  </h3>
+                  <span className={cn(
+                    "rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider border",
+                    accessInfo.isPermanentAccess
+                      ? "bg-purple-500/20 text-purple-300 border-purple-500/40"
+                      : accessInfo.isAccessExpired
+                      ? "bg-rose-500/20 text-rose-300 border-rose-500/40"
+                      : "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
+                  )}>
+                    {accessInfo.isPermanentAccess
+                      ? "Acesso Vitalício"
+                      : accessInfo.isAccessExpired
+                      ? "Acesso Expirado"
+                      : "Assinatura Vigente"}
+                  </span>
+                </div>
+                <p className="text-xs text-stone-400 mt-1 max-w-xl leading-relaxed">
+                  Controle total do seu período contratado. Renove a qualquer momento para estender seu acesso sem perder nenhum dia da vigência atual.
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={abrirModalPlanos}
+              className="inline-flex items-center justify-center gap-2 self-start sm:self-auto rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-5 py-3 text-xs font-bold text-white shadow-lg shadow-orange-950/40 hover:brightness-110 active:scale-95 transition-all cursor-pointer shrink-0"
+            >
+              <Sparkles className="h-4 w-4" />
+              <span>Ver Planos & Renovar</span>
+              <ArrowUpRight className="h-4 w-4" />
+            </button>
+          </div>
+
+          {/* Grid com detalhes do plano atual */}
+          <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-4 pt-6">
+            {/* Card 1: Plano Atual */}
+            <div className="rounded-2xl border border-white/[0.08] bg-black/40 p-4 sm:p-5 flex flex-col justify-between">
+              <div>
+                <span className="text-[10px] font-semibold text-stone-400 uppercase tracking-wider block">
+                  Plano Ativo
+                </span>
+                <h4 className="text-base font-bold text-white mt-1">
+                  {planInfo.name}
+                </h4>
+                <p className="text-xs text-amber-400/90 mt-1 font-medium">
+                  {planInfo.priceFormatted} • {getAccountTypeLabel(profile?.account_type)}
+                </p>
+              </div>
+              <div className="mt-4 pt-3 border-t border-white/[0.06] flex items-center justify-between text-[11px] text-stone-400">
+                <span>Duração do ciclo</span>
+                <span className="font-semibold text-stone-200">
+                  {planInfo.durationMonths > 0 ? `${planInfo.durationMonths} ${planInfo.durationMonths === 1 ? "mês" : "meses"}` : "Contínuo"}
+                </span>
+              </div>
+            </div>
+
+            {/* Card 2: Prazo de Validade */}
+            <div className="rounded-2xl border border-white/[0.08] bg-black/40 p-4 sm:p-5 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-semibold text-stone-400 uppercase tracking-wider">
+                    Prazo de Validade
+                  </span>
+                  <Clock className="h-3.5 w-3.5 text-amber-400" />
+                </div>
+                <h4 className="text-base font-bold text-white mt-1">
+                  {accessInfo.isPermanentAccess
+                    ? "Vitalício / Ilimitado"
+                    : accessInfo.dataExpiracaoFormatada || "Não informada"}
+                </h4>
+                <p className="text-xs text-stone-400 mt-1">
+                  {accessInfo.isPermanentAccess
+                    ? "Acesso com permissões administrativas"
+                    : accessInfo.diasRestantes !== null
+                    ? accessInfo.diasRestantes > 0
+                      ? `Restam ${accessInfo.diasRestantes} dias de acesso`
+                      : "Seu plano expirou hoje"
+                    : "Data calculada pelo Hotmart"}
+                </p>
+              </div>
+              <div className="mt-4 pt-3 border-t border-white/[0.06] flex items-center justify-between text-[11px]">
+                <span className="text-stone-400">Contagem regressiva</span>
+                <span className={cn(
+                  "font-bold",
+                  accessInfo.isPermanentAccess
+                    ? "text-purple-400"
+                    : accessInfo.diasRestantes && accessInfo.diasRestantes > 7
+                    ? "text-emerald-400"
+                    : "text-amber-400"
+                )}>
+                  {accessInfo.isPermanentAccess
+                    ? "Ativo Permanente"
+                    : accessInfo.diasRestantes !== null
+                    ? `${accessInfo.diasRestantes} dias restantes`
+                    : "Vigente"}
+                </span>
+              </div>
+            </div>
+
+            {/* Card 3: Vigência Cumulativa */}
+            <div className="rounded-2xl border border-amber-500/20 bg-gradient-to-br from-amber-500/[0.08] to-orange-500/[0.03] p-4 sm:p-5 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-1.5 text-amber-400">
+                  <Sparkles className="h-3.5 w-3.5" />
+                  <span className="text-[10px] font-bold uppercase tracking-wider">
+                    Regra de Renovação
+                  </span>
+                </div>
+                <h4 className="text-sm font-bold text-white mt-1">
+                  Vigência Cumulativa 100%
+                </h4>
+                <p className="text-xs text-stone-300 mt-1 leading-relaxed">
+                  Ao renovar com antecedência, os novos meses são somados ao seu vencimento atual. Você nunca perde dias já contratados.
+                </p>
+              </div>
+              <div className="mt-4 pt-3 border-t border-amber-500/20 flex items-center justify-end">
+                <button
+                  type="button"
+                  onClick={abrirModalPlanos}
+                  className="text-xs font-bold text-amber-400 hover:text-amber-300 inline-flex items-center gap-1 group cursor-pointer"
+                >
+                  <span>Conhecer todos os planos</span>
+                  <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+                </button>
+              </div>
+            </div>
+          </div>
         </Panel>
 
         {/* 2. SEÇÃO METAS & ESCUDOS DA MENTORIA */}

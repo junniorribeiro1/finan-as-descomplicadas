@@ -26,13 +26,16 @@ import {
   User,
   KeyRound,
   Building2,
+  Crown,
+  ArrowUpRight,
 } from "lucide-react";
 import { useState, useEffect, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
 import { PassoAPassoWidget } from "@/components/app/PassoAPassoWidget";
+import { PlanosRenovacaoModal } from "@/components/app/PlanosRenovacaoModal";
 import { usePeriodoAtivo, setPeriodoAtivo } from "@/lib/periodo";
-import { normalizeAccountType } from "@/lib/plans";
+import { normalizeAccountType, getPlanByCode, checkUserAccess } from "@/lib/plans";
 
 export const menuItens = [
   { rotulo: "Dashboard", to: "/dashboard", icone: LayoutGrid },
@@ -149,12 +152,35 @@ export function AppShell({
   descricao?: string;
   children: ReactNode;
 }) {
-  const { user, session, profile, loading, isAdmin, isPending, isBlocked, isAccessExpired, signOut } = useAuth();
+  const {
+    user,
+    session,
+    profile,
+    loading,
+    isAdmin,
+    isPending,
+    isBlocked,
+    isAccessExpired,
+    isPermanentAccess,
+    signOut,
+  } = useAuth();
   const navigate = useNavigate();
 
   const [aberto, setAberto] = useState(false);
   const [menuUsuarioAberto, setMenuUsuarioAberto] = useState(false);
   const [menuUsuarioMobileAberto, setMenuUsuarioMobileAberto] = useState(false);
+  const [modalPlanosAberto, setModalPlanosAberto] = useState(false);
+
+  const planoAtual = getPlanByCode(profile?.plan);
+  const infoAcesso = checkUserAccess(profile, isAdmin);
+
+  // Escuta requisição global para abrir o modal de planos de qualquer parte do app
+  useEffect(() => {
+    const handleAbrirPlanos = () => setModalPlanosAberto(true);
+    window.addEventListener("organizai_abrir_planos", handleAbrirPlanos);
+    return () => window.removeEventListener("organizai_abrir_planos", handleAbrirPlanos);
+  }, []);
+
   const [tipoConta, setTipoConta] = useState<"pessoal" | "empresa">(() => {
     if (typeof window !== "undefined") {
       return (localStorage.getItem("organizai_tipo_conta") as "pessoal" | "empresa") || "pessoal";
@@ -352,6 +378,16 @@ export function AppShell({
             )}
           </p>
           <div className="mt-8 flex flex-col gap-3">
+            {isExpired && (
+              <button
+                type="button"
+                onClick={() => setModalPlanosAberto(true)}
+                className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:brightness-110 py-3 text-xs font-bold text-white shadow-lg shadow-orange-950/40 transition-all cursor-pointer"
+              >
+                <Sparkles className="h-4 w-4" />
+                <span>Ver Planos Disponíveis para Renovar</span>
+              </button>
+            )}
             <a
               href={`https://wa.me/5577981381477?text=${encodeURIComponent(
                 isExpired
@@ -453,6 +489,17 @@ export function AppShell({
                 <User className="h-4 w-4 text-orange-400" />
                 <span>Meu Perfil</span>
               </Link>
+              <button
+                type="button"
+                onClick={() => {
+                  setMenuUsuarioAberto(false);
+                  setModalPlanosAberto(true);
+                }}
+                className="w-full flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-amber-300 hover:bg-amber-500/10 transition-colors cursor-pointer text-left"
+              >
+                <Sparkles className="h-4 w-4 text-amber-400" />
+                <span>Planos & Renovação</span>
+              </button>
               <Link
                 to="/segundo-usuario"
                 onClick={() => setMenuUsuarioAberto(false)}
@@ -513,6 +560,9 @@ export function AppShell({
                 </p>
                 <p className="text-[10px] text-stone-500 truncate max-w-[105px]">
                   {user?.email}
+                </p>
+                <p className="text-[10px] text-amber-400 font-semibold truncate max-w-[105px] leading-tight mt-0.5">
+                  {planoAtual.shortName} • {infoAcesso.dataExpiracaoFormatada || (isPermanentAccess ? "Vitalício" : "Ativo")}
                 </p>
               </div>
               <ChevronUp
@@ -602,6 +652,18 @@ export function AppShell({
                     <User className="h-4 w-4 text-orange-400" />
                     <span>Meu Perfil</span>
                   </Link>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMenuUsuarioMobileAberto(false);
+                      setAberto(false);
+                      setModalPlanosAberto(true);
+                    }}
+                    className="w-full flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-amber-300 hover:bg-amber-500/10 transition-colors cursor-pointer text-left"
+                  >
+                    <Sparkles className="h-4 w-4 text-amber-400" />
+                    <span>Planos & Renovação</span>
+                  </button>
                   <Link
                     to="/segundo-usuario"
                     onClick={() => {
@@ -672,6 +734,9 @@ export function AppShell({
                     </p>
                     <p className="text-[10px] text-stone-500 truncate max-w-[105px]">
                       {user?.email}
+                    </p>
+                    <p className="text-[10px] text-amber-400 font-semibold truncate max-w-[105px] leading-tight mt-0.5">
+                      {planoAtual.shortName} • {infoAcesso.dataExpiracaoFormatada || (isPermanentAccess ? "Vitalício" : "Ativo")}
                     </p>
                   </div>
                   <ChevronUp
@@ -830,6 +895,20 @@ export function AppShell({
                 )}
               </button>
 
+              {/* Botão Atalho Planos & Renovação no Header */}
+              <button
+                type="button"
+                onClick={() => setModalPlanosAberto(true)}
+                className="hidden lg:inline-flex items-center gap-1.5 rounded-full border border-orange-500/30 bg-gradient-to-r from-orange-500/15 via-amber-500/10 to-transparent hover:from-orange-500/25 hover:to-amber-500/20 px-3 py-1.5 text-xs font-bold text-orange-400 hover:text-orange-300 transition-all cursor-pointer shadow-sm shadow-orange-950/20"
+                title="Ver planos e validade da assinatura"
+              >
+                <Crown className="h-3.5 w-3.5" />
+                <span>{planoAtual.shortName}</span>
+                <span className="text-[10px] bg-orange-500/25 px-1.5 py-0.5 rounded font-semibold text-orange-300">
+                  Renovar
+                </span>
+              </button>
+
               {/* Avatar do Usuário */}
               <Link
                 to="/perfil"
@@ -856,6 +935,16 @@ export function AppShell({
 
       {/* Widget Flutuante Passo a Passo com Pop-up e Celebração */}
       <PassoAPassoWidget />
+
+      {/* Modal Interativo de Planos & Renovação */}
+      <PlanosRenovacaoModal
+        aberto={modalPlanosAberto}
+        onFechar={() => setModalPlanosAberto(false)}
+        planoAtualCodigo={profile?.plan}
+        accessExpiresAt={profile?.access_expires_at}
+        accountType={profile?.account_type}
+        isPermanentAccess={isPermanentAccess}
+      />
     </div>
   );
 }
