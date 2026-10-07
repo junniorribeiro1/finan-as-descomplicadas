@@ -48,7 +48,7 @@ export const Route = createFileRoute("/app")({
       {
         name: "description",
         content:
-          "Pare de ver seu dinheiro sumir no fim do mês. O Organiz.AI une metodologia prática de educação financeira a controles modernos para pessoas físicas e empresas. Planos por menos de R$ 1,00 por dia.",
+          "Pare de ver seu dinheiro sumir no fim do mês. O Organiz.AI une metodologia prática de educação financeira a controles modernos para pessoas físicas e empresas.",
       },
       { property: "og:title", content: "Organiz.AI — Liberdade e Inteligência Financeira PF e PJ" },
       {
@@ -448,7 +448,6 @@ function OrganizAiFintechSalesPage() {
         parcelas: "12x de",
         valorParcela: "R$ 29,16",
         aVista: "ou R$ 349,90 à vista",
-        diario: "Menos de R$ 1,00 por dia (apenas R$ 0,97/dia!)",
         link: "https://pay.hotmart.com/I107907116E?off=6takcxq1&checkoutMode=6&bid=1791324435263",
         beneficios: [
           "1 ano completo de organização financeira irrestrita",
@@ -493,7 +492,6 @@ function OrganizAiFintechSalesPage() {
         parcelas: "12x de",
         valorParcela: "R$ 30,82",
         aVista: "ou R$ 369,90 à vista",
-        diario: "Apenas R$ 1,02 por dia para blindar a sua empresa!",
         link: "https://pay.hotmart.com/I107907116E?off=l6v3lamw&checkoutMode=6&bid=1791324511735",
         beneficios: [
           "1 ano completo de inteligência financeira empresarial",
@@ -538,7 +536,6 @@ function OrganizAiFintechSalesPage() {
         parcelas: "12x de",
         valorParcela: "R$ 49,99",
         aVista: "ou R$ 599,90 à vista",
-        diario: "Apenas R$ 1,66/dia para gestão integral Pessoal & Negócio!",
         link: "https://pay.hotmart.com/I107907116E?off=wdat8f96&checkoutMode=6&bid=1791324575491",
         beneficios: [
           "1 ano completo com os 2 ambientes (PF + PJ) desbloqueados",
@@ -671,19 +668,157 @@ function OrganizAiFintechSalesPage() {
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 pb-12 sm:pt-14 sm:pb-16 lg:pt-16 lg:pb-20">
           
           {/* Grid Principal Inspirado no Layout de Alta Conversão (Optibiz) */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 xl:gap-14 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 xl:gap-14 items-center">
             
-            {/* Coluna da Esquerda: Textos, Ações e Prova Social */}
-            <div className="lg:col-span-7 flex flex-col items-start text-left">
+            {/* Coluna da Direita (No Celular: VEM PRIMEIRO!): Smartphones Isométricos com Badge de Metodologia Validada */}
+            <div className="order-1 lg:order-2 lg:col-span-5 relative flex flex-col items-center justify-center py-3 sm:py-6 lg:py-10 w-full overflow-visible">
+              
+              {/* Brilho Atmosférico Neon Atrás dos Telefones */}
+              <div className="pointer-events-none absolute -inset-4 sm:-inset-10 rounded-full bg-gradient-to-tr from-[#F97316]/25 via-amber-500/15 to-transparent blur-3xl opacity-75" />
+
+              {/* Badge Superior: Metodologia Validada (Centralizada no celular, flutuante em telas maiores) */}
+              <div className="relative sm:absolute mb-3 sm:mb-0 sm:top-2 sm:-left-6 z-30 flex items-center gap-2.5 sm:gap-3 rounded-2xl border border-white/15 bg-[#0e1015]/95 backdrop-blur-xl px-3.5 py-2 sm:px-4 sm:py-2.5 shadow-[0_20px_50px_rgba(0,0,0,0.85)] ring-1 ring-white/10 transition-transform duration-500 hover:-translate-y-1">
+                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400 shrink-0">
+                  <CheckCircle2 className="h-4 w-4 stroke-[2.5]" />
+                </div>
+                <div className="text-left">
+                  <p className="text-xs font-bold text-white leading-tight">Metodologia Validada</p>
+                  <p className="text-[10px] text-stone-400">Separação Blindada PF e PJ</p>
+                </div>
+              </div>
+
+              {/* Container dos Smartphones em Perspectiva 3D Isométrica Voltada para Cima com Interação Dinâmica */}
+              <div className="group/phones relative w-[290px] xs:w-[320px] sm:w-[380px] lg:w-[410px] h-[430px] xs:h-[460px] sm:h-[530px] flex items-center justify-center select-none [perspective:1200px] cursor-pointer">
+                
+                {/* Sombra de Chão 3D Projetada */}
+                <div className="absolute bottom-4 inset-x-8 h-12 rounded-full bg-black/80 blur-2xl transform rotate-[22deg] scale-90 group-hover/phones:scale-105 group-hover/phones:opacity-95 transition-all duration-700 pointer-events-none" />
+
+                {/* Smartphone de Fundo (PJ / Contas Empresariais - deslocado em profundidade 3D) */}
+                <div className="absolute top-10 sm:top-10 left-12 xs:left-14 sm:left-20 z-10 w-[185px] xs:w-[205px] sm:w-[240px] aspect-[9/19] rounded-[34px] sm:rounded-[38px] p-2 bg-gradient-to-b from-[#252830] via-[#121418] to-[#07080a] border-2 border-white/15 shadow-[0_30px_70px_rgba(0,0,0,0.95)] ring-1 ring-white/10 [transform-style:preserve-3d] [transform:rotateX(32deg)_rotateY(-18deg)_rotateZ(26deg)] opacity-85 group-hover/phones:opacity-100 group-hover/phones:translate-x-3 group-hover/phones:translate-y-1 transition-all duration-700 ease-out">
+                  <div className="relative h-full w-full rounded-[28px] sm:rounded-[30px] overflow-hidden bg-[#090b0e] p-2.5 sm:p-3 flex flex-col justify-between border border-white/5">
+                    {/* Top notch */}
+                    <div className="mx-auto h-3 sm:h-3.5 w-16 sm:w-20 rounded-full bg-black/90 border border-white/10 mb-2" />
+                    {/* Header PJ */}
+                    <div className="space-y-1 sm:space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[9px] sm:text-[10px] font-bold text-blue-400 bg-blue-500/10 px-1.5 sm:px-2 py-0.5 rounded border border-blue-500/20">Módulo PJ</span>
+                        <span className="text-[8px] sm:text-[9px] text-stone-500 font-mono">Empresa Ativa</span>
+                      </div>
+                      <p className="text-[10px] sm:text-[11px] text-stone-400">Faturamento Mensal</p>
+                      <p className="text-sm sm:text-base font-black text-white">R$ 58.920,00</p>
+                    </div>
+                    {/* Mini gráfico */}
+                    <div className="my-1.5 sm:my-2 p-1.5 sm:p-2 rounded-xl bg-white/[0.03] border border-white/5 space-y-1 sm:space-y-1.5">
+                      <div className="flex justify-between text-[8px] sm:text-[9px] text-stone-400">
+                        <span>Lucro Líquido</span>
+                        <span className="text-emerald-400 font-bold">+32.4%</span>
+                      </div>
+                      <div className="h-1.5 w-full bg-stone-800 rounded-full overflow-hidden">
+                        <div className="h-full w-3/4 bg-gradient-to-r from-blue-500 to-emerald-400 rounded-full" />
+                      </div>
+                    </div>
+                    {/* Contas a Pagar */}
+                    <div className="space-y-1 text-[8px] sm:text-[9px] text-stone-400">
+                      <div className="flex justify-between p-1 sm:p-1.5 rounded-lg bg-white/[0.02]">
+                        <span>Fornecedores</span>
+                        <span className="text-white font-semibold">R$ 12.450</span>
+                      </div>
+                      <div className="flex justify-between p-1 sm:p-1.5 rounded-lg bg-white/[0.02]">
+                        <span>Impostos DAS</span>
+                        <span className="text-white font-semibold">R$ 3.820</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Smartphone da Frente (Principal: Dashboard OrganizAI PF - 3D voltado para cima com levitação dinâmica) */}
+                <div className="absolute top-0 left-0 sm:-left-2 z-20 w-[205px] xs:w-[225px] sm:w-[260px] aspect-[9/19] rounded-[38px] sm:rounded-[42px] p-2 sm:p-2.5 bg-gradient-to-b from-[#313540] via-[#16181f] to-[#07080a] border-2 border-white/25 shadow-[0_35px_90px_rgba(0,0,0,0.98),0_0_35px_rgba(249,115,22,0.25)] ring-1 ring-white/15 [transform-style:preserve-3d] [transform:rotateX(32deg)_rotateY(-18deg)_rotateZ(24deg)] group-hover/phones:[transform:rotateX(24deg)_rotateY(-12deg)_rotateZ(23deg)] group-hover/phones:-translate-y-4 group-hover/phones:scale-[1.03] transition-all duration-700 ease-out">
+                  <div className="relative h-full w-full rounded-[30px] sm:rounded-[34px] overflow-hidden bg-[#0a0c10] p-2.5 sm:p-3.5 flex flex-col justify-between border border-white/10">
+                    
+                    {/* Dynamic Island */}
+                    <div className="mx-auto h-3.5 sm:h-4 w-20 sm:w-22 rounded-full bg-black/90 border border-white/15 flex items-center justify-center mb-1.5 sm:mb-2">
+                      <div className="h-1 sm:h-1.5 w-1 sm:w-1.5 rounded-full bg-stone-700 ml-auto mr-2" />
+                    </div>
+
+                    {/* Header do App */}
+                    <div className="flex items-center justify-between pb-1 border-b border-white/[0.06]">
+                      <div className="flex items-center gap-1.5">
+                        <div className="h-4.5 w-4.5 sm:h-5 sm:w-5 rounded-md bg-[#F97316] flex items-center justify-center text-[9px] sm:text-[10px] font-black text-white">AI</div>
+                        <span className="text-[11px] sm:text-xs font-bold text-white tracking-tight">Organiz<span className="text-[#F97316]">.AI</span></span>
+                      </div>
+                      <span className="text-[9px] sm:text-[10px] font-bold text-emerald-400 bg-emerald-500/15 px-1.5 py-0.5 rounded border border-emerald-500/30">
+                        Online
+                      </span>
+                    </div>
+
+                    {/* Saldo Principal */}
+                    <div className="pt-1.5 sm:pt-2 space-y-0.5">
+                      <p className="text-[9px] sm:text-[10px] text-stone-400 font-medium">Saldo Geral Disponível</p>
+                      <p className="text-base sm:text-xl font-black text-white tracking-tight">
+                        R$ 34.567<span className="text-stone-400 text-xs sm:text-sm">,89</span>
+                      </p>
+                      <div className="flex items-center gap-1 text-[9px] sm:text-[10px] text-emerald-400 font-semibold">
+                        <TrendingUp className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                        <span>+18,4% economia este mês</span>
+                      </div>
+                    </div>
+
+                    {/* Curva Gráfica Simulada */}
+                    <div className="py-1.5 sm:py-2">
+                      <div className="h-12 sm:h-16 w-full rounded-xl bg-gradient-to-b from-orange-500/15 to-transparent border border-orange-500/20 p-1.5 sm:p-2 flex flex-col justify-between">
+                        <div className="flex justify-between text-[8px] sm:text-[9px] text-stone-400 font-mono">
+                          <span>Fluxo Semanal</span>
+                          <span className="text-orange-400 font-bold">R$ 8.120</span>
+                        </div>
+                        <svg className="w-full h-7 sm:h-8 overflow-visible" viewBox="0 0 100 30" fill="none">
+                          <path d="M0 25 C20 22, 35 8, 50 14 C65 20, 80 5, 100 2" stroke="#F97316" strokeWidth="2.5" strokeLinecap="round" />
+                          <circle cx="50" cy="14" r="2.5" fill="#F97316" />
+                          <circle cx="100" cy="2" r="3" fill="#FBBF24" />
+                        </svg>
+                      </div>
+                    </div>
+
+                    {/* Cards de Recursos Rápidos */}
+                    <div className="space-y-1 sm:space-y-1.5">
+                      <div className="flex items-center justify-between p-1.5 sm:p-2 rounded-xl bg-white/[0.04] border border-white/5">
+                        <div className="flex items-center gap-1.5">
+                          <CreditCard className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-amber-400" />
+                          <span className="text-[9px] sm:text-[10px] text-stone-300 font-semibold">Cartões Nubank/Inter</span>
+                        </div>
+                        <span className="text-[9px] sm:text-[10px] font-mono text-white font-bold">R$ 2.053</span>
+                      </div>
+                      <div className="flex items-center justify-between p-1.5 sm:p-2 rounded-xl bg-white/[0.04] border border-white/5">
+                        <div className="flex items-center gap-1.5">
+                          <PiggyBank className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-emerald-400" />
+                          <span className="text-[9px] sm:text-[10px] text-stone-300 font-semibold">Cofrinho Reserva</span>
+                        </div>
+                        <span className="text-[9px] sm:text-[10px] font-mono text-emerald-400 font-bold">R$ 15.420</span>
+                      </div>
+                    </div>
+
+                    {/* Barra Inferior */}
+                    <div className="pt-1 sm:pt-1.5 flex justify-around text-stone-500 border-t border-white/[0.06]">
+                      <div className="h-1 w-10 sm:w-12 rounded-full bg-stone-600 mx-auto" />
+                    </div>
+
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+            {/* Coluna da Esquerda (No Celular: VEM APÓS O CELULAR): Textos, Ações e Prova Social 100% Centralizados no Celular */}
+            <div className="order-2 lg:order-1 lg:col-span-7 flex flex-col items-center text-center lg:items-start lg:text-left">
               
               {/* Badge Superior: Boas-vindas ao Organiz.AI */}
-              <div className="inline-flex items-center gap-2 rounded-full border border-orange-500/30 bg-orange-500/10 px-3.5 py-1 text-xs font-bold text-orange-400 mb-4 sm:mb-5 shadow-sm backdrop-blur-md">
+              <div className="inline-flex items-center gap-2 rounded-full border border-orange-500/30 bg-orange-500/10 px-3.5 py-1 text-xs font-bold text-orange-400 mb-4 sm:mb-5 shadow-sm backdrop-blur-md mx-auto lg:mx-0">
                 <Sparkles className="h-3.5 w-3.5" />
                 <span>Bem-vindo ao Organiz.AI</span>
               </div>
 
-              {/* Headline Principal */}
-              <h1 className="font-display text-[1.4rem] sm:text-2xl md:text-3xl lg:text-[2.15rem] xl:text-[2.35rem] font-extrabold tracking-tight text-white leading-[1.22] sm:leading-[1.2] max-w-2xl">
+              {/* Headline Principal Centralizada no Celular */}
+              <h1 className="font-display text-[1.4rem] xs:text-[1.65rem] sm:text-2xl md:text-3xl lg:text-[2.15rem] xl:text-[2.35rem] font-extrabold tracking-tight text-white leading-[1.22] sm:leading-[1.2] max-w-2xl mx-auto lg:mx-0 text-center lg:text-left">
                 <span className="block">A clareza financeira que</span>
                 <span className="block">o seu dinheiro sempre pediu.</span>
                 <span className="bg-gradient-to-r from-[#F97316] via-amber-400 to-[#F97316] bg-clip-text text-transparent block mt-1 sm:mt-1.5">
@@ -691,17 +826,17 @@ function OrganizAiFintechSalesPage() {
                 </span>
               </h1>
 
-              {/* Subheadline persuasiva com foco na dor real */}
-              <p className="mt-3.5 sm:mt-4 text-sm sm:text-base text-stone-300 leading-relaxed max-w-xl font-normal">
+              {/* Subheadline persuasiva com foco na dor real Centralizada no Celular */}
+              <p className="mt-3.5 sm:mt-4 text-xs xs:text-sm sm:text-base text-stone-300 leading-relaxed max-w-xl font-normal mx-auto lg:mx-0 text-center lg:text-left">
                 Chega de planilhas complexas abandonadas na segunda semana ou faturas do cartão que dão sustos. O{" "}
                 <strong className="text-white font-semibold">Organiz.AI</strong> traz a metodologia prática da educadora Natália Rodolfo em uma plataforma simples, que você controla em menos de 5 minutos ao dia.
               </p>
 
-              {/* Botões de Ação Hero: Botão Largo em Pílula + Botão Circular de Play */}
-              <div className="mt-6 sm:mt-7 flex items-center gap-3.5 sm:gap-4 flex-wrap">
+              {/* Botões de Ação Hero: Botão 'Quero Começar Agora' Centralizado / Largura Completa no Celular e 'Ver Tour em Vídeo' Removido no Celular */}
+              <div className="mt-6 sm:mt-7 flex items-center justify-center lg:justify-start gap-3.5 sm:gap-4 flex-wrap w-full">
                 <a
                   href="#planos"
-                  className="group inline-flex items-center gap-3.5 rounded-full bg-gradient-to-r from-[#F97316] via-orange-500 to-amber-500 pl-6 sm:pl-7 pr-2.5 py-2.5 sm:py-3 text-sm sm:text-base font-extrabold text-white shadow-[0_8px_32px_rgba(249,115,22,0.45)] hover:shadow-[0_10px_40px_rgba(249,115,22,0.65)] hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+                  className="w-full sm:w-auto justify-center group inline-flex items-center gap-3.5 rounded-full bg-gradient-to-r from-[#F97316] via-orange-500 to-amber-500 pl-6 sm:pl-7 pr-2.5 py-2.5 sm:py-3 text-sm sm:text-base font-extrabold text-white shadow-[0_8px_32px_rgba(249,115,22,0.45)] hover:shadow-[0_10px_40px_rgba(249,115,22,0.65)] hover:brightness-110 active:scale-95 transition-all cursor-pointer"
                 >
                   <span>Quero Começar Agora</span>
                   <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-transform group-hover:translate-x-0.5 group-hover:bg-white group-hover:text-[#F97316]">
@@ -709,9 +844,10 @@ function OrganizAiFintechSalesPage() {
                   </div>
                 </a>
 
+                {/* Botão 'Ver Tour em Vídeo' visível apenas em telas maiores (removido no celular) */}
                 <a
                   href="#demonstracao"
-                  className="group flex items-center gap-3 text-stone-300 hover:text-white transition-colors cursor-pointer"
+                  className="hidden sm:inline-flex group items-center gap-3 text-stone-300 hover:text-white transition-colors cursor-pointer"
                   title="Ver Tour do App em Vídeo"
                 >
                   <div className="flex h-11 w-11 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-full bg-white text-stone-900 shadow-xl shadow-black/50 group-hover:scale-105 group-hover:bg-amber-400 group-hover:text-black transition-all">
@@ -723,11 +859,11 @@ function OrganizAiFintechSalesPage() {
                 </a>
               </div>
 
-              {/* Barra de Prova Social: Avaliações + Comunidade Ativa */}
-              <div className="mt-7 sm:mt-8 pt-5 border-t border-white/[0.08] flex flex-wrap items-center gap-6 sm:gap-8 w-full">
+              {/* Barra de Prova Social: Avaliações + Comunidade Ativa Centralizadas no Celular */}
+              <div className="mt-7 sm:mt-8 pt-5 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-5 sm:gap-8 w-full">
                 
-                {/* Item 1: Estrelas & Avaliação 4.9 Alinhada com os Textos */}
-                <div className="flex flex-col gap-1">
+                {/* Item 1: Estrelas & Avaliação 4.9 */}
+                <div className="flex flex-col items-center lg:items-start gap-1">
                   <div className="flex items-center gap-1 text-amber-400">
                     {[...Array(5)].map((_, i) => (
                       <Star key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
@@ -736,15 +872,15 @@ function OrganizAiFintechSalesPage() {
                   </div>
                   <div className="flex items-center gap-2.5">
                     <span className="text-2xl sm:text-3xl font-black text-white tracking-tight leading-none">4.9</span>
-                    <span className="text-xs text-stone-400 font-medium leading-snug">
+                    <span className="text-xs text-stone-400 font-medium leading-snug text-center lg:text-left">
                       Avaliações Positivas<br />de Assinantes
                     </span>
                   </div>
                 </div>
 
                 {/* Item 2: Cluster de Avatares (Comunidade Ativa) */}
-                <div className="flex flex-col">
-                  <span className="text-[11px] font-semibold text-stone-400 mb-1.5 uppercase tracking-wider">
+                <div className="flex flex-col items-center lg:items-start">
+                  <span className="text-[11px] font-semibold text-stone-400 mb-1.5 uppercase tracking-wider text-center lg:text-left">
                     Junte-se a nós agora:
                   </span>
                   <div className="flex items-center gap-2.5">
@@ -781,147 +917,9 @@ function OrganizAiFintechSalesPage() {
                         +
                       </div>
                     </div>
-                    <span className="text-xs font-medium text-stone-300 leading-tight">
+                    <span className="text-xs font-medium text-stone-300 leading-tight text-center lg:text-left">
                       +250 pessoas<br />organizadas
                     </span>
-                  </div>
-                </div>
-
-              </div>
-
-            </div>
-
-            {/* Coluna da Direita: Smartphones Isométricos Flutuantes em 3D Voltados para Cima com Hover Dinâmico */}
-            <div className="lg:col-span-5 relative flex items-center justify-center py-6 sm:py-10">
-              
-              {/* Brilho Atmosférico Neon Atrás dos Telefones */}
-              <div className="pointer-events-none absolute -inset-4 sm:-inset-10 rounded-full bg-gradient-to-tr from-[#F97316]/25 via-amber-500/15 to-transparent blur-3xl opacity-75" />
-
-              {/* Badge Flutuante Superior */}
-              <div className="absolute -top-3 sm:top-2 -left-2 sm:-left-6 z-30 flex items-center gap-3 rounded-2xl border border-white/15 bg-[#0e1015]/90 backdrop-blur-xl px-4 py-2.5 shadow-[0_20px_50px_rgba(0,0,0,0.85)] ring-1 ring-white/10 transition-transform duration-500 hover:-translate-y-1">
-                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400 shrink-0">
-                  <CheckCircle2 className="h-4 w-4 stroke-[2.5]" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-white leading-tight">Metodologia Validada</p>
-                  <p className="text-[10px] text-stone-400">Separação Blindada PF e PJ</p>
-                </div>
-              </div>
-
-              {/* Container dos Smartphones em Perspectiva 3D Isométrica Voltada para Cima com Interação Dinâmica */}
-              <div className="group/phones relative w-[310px] sm:w-[380px] lg:w-[410px] h-[480px] sm:h-[530px] flex items-center justify-center select-none [perspective:1200px] cursor-pointer">
-                
-                {/* Sombra de Chão 3D Projetada */}
-                <div className="absolute bottom-4 inset-x-8 h-12 rounded-full bg-black/80 blur-2xl transform rotate-[22deg] scale-90 group-hover/phones:scale-105 group-hover/phones:opacity-95 transition-all duration-700 pointer-events-none" />
-
-                {/* Smartphone de Fundo (PJ / Contas Empresariais - deslocado em profundidade 3D) */}
-                <div className="absolute top-12 sm:top-10 left-16 sm:left-20 z-10 w-[205px] sm:w-[240px] aspect-[9/19] rounded-[38px] p-2 bg-gradient-to-b from-[#252830] via-[#121418] to-[#07080a] border-2 border-white/15 shadow-[0_30px_70px_rgba(0,0,0,0.95)] ring-1 ring-white/10 [transform-style:preserve-3d] [transform:rotateX(32deg)_rotateY(-18deg)_rotateZ(26deg)] opacity-85 group-hover/phones:opacity-100 group-hover/phones:translate-x-3 group-hover/phones:translate-y-1 transition-all duration-700 ease-out">
-                  <div className="relative h-full w-full rounded-[30px] overflow-hidden bg-[#090b0e] p-3 flex flex-col justify-between border border-white/5">
-                    {/* Top notch */}
-                    <div className="mx-auto h-3.5 w-20 rounded-full bg-black/90 border border-white/10 mb-2" />
-                    {/* Header PJ */}
-                    <div className="space-y-1.5">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-bold text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">Módulo PJ</span>
-                        <span className="text-[9px] text-stone-500 font-mono">Empresa Ativa</span>
-                      </div>
-                      <p className="text-[11px] text-stone-400">Faturamento Mensal</p>
-                      <p className="text-base font-black text-white">R$ 58.920,00</p>
-                    </div>
-                    {/* Mini gráfico */}
-                    <div className="my-2 p-2 rounded-xl bg-white/[0.03] border border-white/5 space-y-1.5">
-                      <div className="flex justify-between text-[9px] text-stone-400">
-                        <span>Lucro Líquido</span>
-                        <span className="text-emerald-400 font-bold">+32.4%</span>
-                      </div>
-                      <div className="h-1.5 w-full bg-stone-800 rounded-full overflow-hidden">
-                        <div className="h-full w-3/4 bg-gradient-to-r from-blue-500 to-emerald-400 rounded-full" />
-                      </div>
-                    </div>
-                    {/* Contas a Pagar */}
-                    <div className="space-y-1 text-[9px] text-stone-400">
-                      <div className="flex justify-between p-1.5 rounded-lg bg-white/[0.02]">
-                        <span>Fornecedores</span>
-                        <span className="text-white font-semibold">R$ 12.450</span>
-                      </div>
-                      <div className="flex justify-between p-1.5 rounded-lg bg-white/[0.02]">
-                        <span>Impostos DAS</span>
-                        <span className="text-white font-semibold">R$ 3.820</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Smartphone da Frente (Principal: Dashboard OrganizAI PF - 3D voltado para cima com levitação dinâmica) */}
-                <div className="absolute top-0 left-0 sm:-left-2 z-20 w-[225px] sm:w-[260px] aspect-[9/19] rounded-[42px] p-2 sm:p-2.5 bg-gradient-to-b from-[#313540] via-[#16181f] to-[#07080a] border-2 border-white/25 shadow-[0_35px_90px_rgba(0,0,0,0.98),0_0_35px_rgba(249,115,22,0.25)] ring-1 ring-white/15 [transform-style:preserve-3d] [transform:rotateX(32deg)_rotateY(-18deg)_rotateZ(24deg)] group-hover/phones:[transform:rotateX(24deg)_rotateY(-12deg)_rotateZ(23deg)] group-hover/phones:-translate-y-4 group-hover/phones:scale-[1.03] transition-all duration-700 ease-out">
-                  <div className="relative h-full w-full rounded-[34px] overflow-hidden bg-[#0a0c10] p-3 sm:p-3.5 flex flex-col justify-between border border-white/10">
-                    
-                    {/* Dynamic Island */}
-                    <div className="mx-auto h-4 w-22 rounded-full bg-black/90 border border-white/15 flex items-center justify-center mb-2">
-                      <div className="h-1.5 w-1.5 rounded-full bg-stone-700 ml-auto mr-2" />
-                    </div>
-
-                    {/* Header do App */}
-                    <div className="flex items-center justify-between pb-1 border-b border-white/[0.06]">
-                      <div className="flex items-center gap-1.5">
-                        <div className="h-5 w-5 rounded-md bg-[#F97316] flex items-center justify-center text-[10px] font-black text-white">AI</div>
-                        <span className="text-xs font-bold text-white tracking-tight">Organiz<span className="text-[#F97316]">.AI</span></span>
-                      </div>
-                      <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/15 px-1.5 py-0.5 rounded border border-emerald-500/30">
-                        Online
-                      </span>
-                    </div>
-
-                    {/* Saldo Principal */}
-                    <div className="pt-2 space-y-0.5">
-                      <p className="text-[10px] text-stone-400 font-medium">Saldo Geral Disponível</p>
-                      <p className="text-lg sm:text-xl font-black text-white tracking-tight">
-                        R$ 34.567<span className="text-stone-400 text-sm">,89</span>
-                      </p>
-                      <div className="flex items-center gap-1 text-[10px] text-emerald-400 font-semibold">
-                        <TrendingUp className="h-3 w-3" />
-                        <span>+18,4% economia este mês</span>
-                      </div>
-                    </div>
-
-                    {/* Curva Gráfica Simulada */}
-                    <div className="py-2">
-                      <div className="h-14 sm:h-16 w-full rounded-xl bg-gradient-to-b from-orange-500/15 to-transparent border border-orange-500/20 p-2 flex flex-col justify-between">
-                        <div className="flex justify-between text-[9px] text-stone-400 font-mono">
-                          <span>Fluxo Semanal</span>
-                          <span className="text-orange-400 font-bold">R$ 8.120</span>
-                        </div>
-                        <svg className="w-full h-8 overflow-visible" viewBox="0 0 100 30" fill="none">
-                          <path d="M0 25 C20 22, 35 8, 50 14 C65 20, 80 5, 100 2" stroke="#F97316" strokeWidth="2.5" strokeLinecap="round" />
-                          <circle cx="50" cy="14" r="2.5" fill="#F97316" />
-                          <circle cx="100" cy="2" r="3" fill="#FBBF24" />
-                        </svg>
-                      </div>
-                    </div>
-
-                    {/* Cards de Recursos Rápidos */}
-                    <div className="space-y-1.5">
-                      <div className="flex items-center justify-between p-2 rounded-xl bg-white/[0.04] border border-white/5">
-                        <div className="flex items-center gap-1.5">
-                          <CreditCard className="h-3 w-3 text-amber-400" />
-                          <span className="text-[10px] text-stone-300 font-semibold">Cartões Nubank/Inter</span>
-                        </div>
-                        <span className="text-[10px] font-mono text-white font-bold">R$ 2.053</span>
-                      </div>
-                      <div className="flex items-center justify-between p-2 rounded-xl bg-white/[0.04] border border-white/5">
-                        <div className="flex items-center gap-1.5">
-                          <PiggyBank className="h-3 w-3 text-emerald-400" />
-                          <span className="text-[10px] text-stone-300 font-semibold">Cofrinho Reserva</span>
-                        </div>
-                        <span className="text-[10px] font-mono text-emerald-400 font-bold">R$ 15.420</span>
-                      </div>
-                    </div>
-
-                    {/* Barra Inferior */}
-                    <div className="pt-1.5 flex justify-around text-stone-500 border-t border-white/[0.06]">
-                      <div className="h-1 w-12 rounded-full bg-stone-600 mx-auto" />
-                    </div>
-
                   </div>
                 </div>
 
@@ -936,10 +934,6 @@ function OrganizAiFintechSalesPage() {
             <div className="flex items-center gap-2 shrink-0">
               <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
               <span>No celular e no computador</span>
-            </div>
-            <div className="flex items-center gap-2 shrink-0">
-              <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
-              <span>Menos de R$ 1,00/dia no Anual</span>
             </div>
             <div className="flex items-center gap-2 shrink-0">
               <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
@@ -1257,7 +1251,7 @@ function OrganizAiFintechSalesPage() {
             
             {/* Bloco da Esquerda: Título da Seção Centralizado na Vertical com os Cards */}
             <div className="w-full lg:w-[330px] xl:w-[370px] shrink-0 pr-4 sm:pr-6 lg:pr-2 z-30 relative bg-transparent pointer-events-none select-none lg:self-start lg:pt-[110px] xl:pt-[125px]">
-              <h2 className="font-display text-3xl sm:text-5xl lg:text-[44px] xl:text-[50px] font-black text-white tracking-tight leading-[1.08] drop-shadow-[0_4px_28px_rgba(0,0,0,0.95)]">
+              <h2 className="font-display text-2xl sm:text-5xl lg:text-[44px] xl:text-[50px] font-black text-white tracking-tight leading-[1.08] drop-shadow-[0_4px_28px_rgba(0,0,0,0.95)] text-center lg:text-left">
                 Tudo o que você precisa em um ecossistema integrado
               </h2>
             </div>
@@ -1440,13 +1434,8 @@ function OrganizAiFintechSalesPage() {
       <section id="planos" className="relative z-10 scroll-mt-20 border-t border-white/[0.08] bg-[#060709] py-16 sm:py-24">
         <div className="mx-auto max-w-6xl px-4">
           <div className="text-center max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1 text-xs font-bold text-amber-300 mb-4">
-              <Sparkles className="h-3.5 w-3.5" />
-              <span>Menor que o valor de um cafezinho por dia</span>
-            </div>
-
-            {/* Título em duas linhas conforme solicitado */}
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
+            {/* Título em duas linhas */}
+            <h2 className="font-display text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
               <span>Escolha seu plano</span>
               <br />
               <span className="text-stone-300">e comece hoje mesmo</span>
@@ -1457,12 +1446,12 @@ function OrganizAiFintechSalesPage() {
             </p>
 
             {/* Seletor de Modalidades: Pessoa Física / Empresa / Combo PF + PJ */}
-            <div className="flex justify-center mt-8 sm:mt-10">
-              <div className="inline-flex items-center p-1.5 rounded-2xl bg-[#111216] border border-white/10 shadow-2xl gap-1 sm:gap-2">
+            <div className="flex justify-center mt-6 sm:mt-10">
+              <div className="inline-flex items-center p-1 sm:p-1.5 rounded-2xl bg-[#111216] border border-white/10 shadow-2xl gap-1 sm:gap-2 max-w-full overflow-x-auto">
                 <button
                   type="button"
                   onClick={() => setModalidadePlano("pf")}
-                  className={`flex items-center gap-2 px-3.5 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+                  className={`flex items-center gap-1.5 sm:gap-2 px-2.5 xs:px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${
                     modalidadePlano === "pf"
                       ? "bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/30 scale-[1.02]"
                       : "text-stone-400 hover:text-white hover:bg-white/[0.04]"
@@ -1474,7 +1463,7 @@ function OrganizAiFintechSalesPage() {
                 <button
                   type="button"
                   onClick={() => setModalidadePlano("pj")}
-                  className={`flex items-center gap-2 px-3.5 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+                  className={`flex items-center gap-1.5 sm:gap-2 px-2.5 xs:px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${
                     modalidadePlano === "pj"
                       ? "bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/30 scale-[1.02]"
                       : "text-stone-400 hover:text-white hover:bg-white/[0.04]"
@@ -1486,7 +1475,7 @@ function OrganizAiFintechSalesPage() {
                 <button
                   type="button"
                   onClick={() => setModalidadePlano("combo")}
-                  className={`flex items-center gap-2 px-3.5 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+                  className={`flex items-center gap-1.5 sm:gap-2 px-2.5 xs:px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${
                     modalidadePlano === "combo"
                       ? "bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/30 scale-[1.02]"
                       : "text-stone-400 hover:text-white hover:bg-white/[0.04]"
@@ -1557,10 +1546,10 @@ function OrganizAiFintechSalesPage() {
             </div>
 
             {/* PLANO 2: ANUAL — CENTRO COM COMPRIMENTO MAIOR, DESTAQUE MÁXIMO E MELHOR CUSTO X BENEFÍCIO */}
-            <div className="relative flex flex-col justify-between rounded-3xl border-2 border-amber-400/90 bg-gradient-to-b from-[#25170e] via-[#141212] to-[#0c0d10] p-6 sm:p-8 lg:p-9 shadow-[0_20px_70px_rgba(245,158,11,0.3)] ring-1 ring-amber-400/50 md:-translate-y-5 md:scale-[1.03] z-20 w-full">
-              {/* Badge: Melhor Custo X Benefício com ícone Star */}
-              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400 px-4 py-1 text-[10.5px] sm:text-[11px] font-black uppercase tracking-wider text-black shadow-xl shadow-amber-950/80 flex items-center gap-1.5 whitespace-nowrap">
-                <Star className="h-3.5 w-3.5 fill-black stroke-black" />
+            <div className="relative flex flex-col justify-between rounded-3xl border-2 border-amber-400/90 bg-gradient-to-b from-[#25170e] via-[#141212] to-[#0c0d10] p-6 sm:p-8 lg:p-9 shadow-[0_20px_70px_rgba(245,158,11,0.3)] ring-1 ring-amber-400/50 md:-translate-y-5 md:scale-[1.03] z-20 w-full max-w-[360px] md:max-w-none mx-auto">
+              {/* Badge: Melhor Custo X Benefício com ícone Star (Texto e Ícone Brancos) */}
+              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400 px-4 py-1 text-[10.5px] sm:text-[11px] font-black uppercase tracking-wider text-white shadow-xl shadow-amber-950/80 flex items-center gap-1.5 whitespace-nowrap">
+                <Star className="h-3.5 w-3.5 fill-white stroke-white" />
                 <span>Melhor Custo X Benefício</span>
               </div>
 
@@ -1571,14 +1560,6 @@ function OrganizAiFintechSalesPage() {
                   </span>
                   <span className="rounded-md bg-amber-400/20 border border-amber-400/40 px-2.5 py-0.5 text-[10px] sm:text-[11px] font-bold text-amber-300">
                     12 Meses de Acesso
-                  </span>
-                </div>
-
-                {/* Destaque de Economia Diária */}
-                <div className="mt-3 rounded-xl bg-amber-500/15 border border-amber-400/30 py-1.5 px-3 text-center">
-                  <span className="text-[11px] sm:text-xs font-extrabold text-amber-300 flex items-center justify-center gap-1.5">
-                    <Sparkles className="h-3.5 w-3.5 text-amber-400 shrink-0" />
-                    <span>{planoAtual.anual.diario}</span>
                   </span>
                 </div>
 
@@ -1610,9 +1591,9 @@ function OrganizAiFintechSalesPage() {
                   href={planoAtual.anual.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400 py-3.5 px-4 text-xs sm:text-sm font-black text-black shadow-lg shadow-orange-950/70 hover:brightness-110 active:scale-[0.98] transition-all"
+                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400 py-3.5 px-4 text-xs sm:text-sm font-black text-white shadow-lg shadow-orange-950/70 hover:brightness-110 active:scale-[0.98] transition-all"
                 >
-                  <Star className="h-4 w-4 fill-black stroke-black" />
+                  <Star className="h-4 w-4 fill-white stroke-white" />
                   <span>Garantir Plano Anual</span>
                 </a>
                 <p className="mt-2 text-center text-[10.5px] text-stone-400">
@@ -1772,7 +1753,7 @@ function OrganizAiFintechSalesPage() {
               },
               {
                 p: "Por que o Plano Anual é o mais vantajoso?",
-                r: "No Plano Anual você garante a menor parcela (12x de R$ 29,16, que custa menos de R$ 1,00 por dia) e tem tempo suficiente para consolidar o método, criar sua reserva de emergência e colher os frutos da organização o ano inteiro.",
+                r: "No Plano Anual você garante a menor parcela (12x de R$ 29,16) e tem tempo suficiente para consolidar o método, criar sua reserva de emergência e colher os frutos da organização o ano inteiro.",
               },
               {
                 p: "Meus dados financeiros estão seguros?",

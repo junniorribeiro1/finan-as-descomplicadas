@@ -129,7 +129,7 @@ export const PLANS_REGISTRY: Record<CanonicalPlanCode, PlanMetadata> = {
     durationMonths: 12,
     recurring: true,
     commercial: true,
-    description: "1 ano completo com maior economia (menos de R$ 1,00/dia).",
+    description: "1 ano completo com a maior economia anual.",
     checkoutUrl: "https://pay.hotmart.com/I107907116E?off=6takcxq1&checkoutMode=6&bid=1791324435263",
     installments: { count: 12, value: "R$ 29,16" },
   },
