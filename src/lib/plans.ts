@@ -43,6 +43,7 @@ export interface PlanMetadata {
   lifetime?: boolean;
   description?: string;
   checkoutUrl?: string;
+  aiCreditsMonthly?: number;
   installments?: {
     count: number;
     value: string;
@@ -66,6 +67,7 @@ export const PLANS_REGISTRY: Record<CanonicalPlanCode, PlanMetadata> = {
     durationMonths: null,
     recurring: false,
     commercial: false,
+    aiCreditsMonthly: 10,
     description: "Acesso inicial com funcionalidades essenciais.",
   },
 
@@ -82,6 +84,7 @@ export const PLANS_REGISTRY: Record<CanonicalPlanCode, PlanMetadata> = {
     durationMonths: 1,
     recurring: true,
     commercial: true,
+    aiCreditsMonthly: 100,
     description: "Controle financeiro pessoal e familiar com renovação mensal.",
     checkoutUrl: "https://pay.hotmart.com/I107907116E?off=idhxulv7&checkoutMode=6",
   },
@@ -97,8 +100,9 @@ export const PLANS_REGISTRY: Record<CanonicalPlanCode, PlanMetadata> = {
     durationMonths: 3,
     recurring: true,
     commercial: true,
+    aiCreditsMonthly: 100,
     description: "Acesso por 3 meses para planejamento pessoal contínuo.",
-    checkoutUrl: "https://pay.hotmart.com/I107907116E?off=7cd2yal7&checkoutMode=6&bid=1791324379232",
+    checkoutUrl: "https://pay.hotmart.com/I107907116E?off=49sqt104",
     installments: { count: 3, value: "R$ 39,97" },
   },
   semestral_pf: {
@@ -113,8 +117,9 @@ export const PLANS_REGISTRY: Record<CanonicalPlanCode, PlanMetadata> = {
     durationMonths: 6,
     recurring: true,
     commercial: true,
+    aiCreditsMonthly: 100,
     description: "Histórico semestral e acompanhamento financeiro individual.",
-    checkoutUrl: "https://pay.hotmart.com/I107907116E?off=fg900m0d&checkoutMode=6&bid=1791324396598",
+    checkoutUrl: "https://pay.hotmart.com/I107907116E?off=1a2qztyt",
     installments: { count: 6, value: "R$ 34,98" },
   },
   anual_pf: {
@@ -129,8 +134,9 @@ export const PLANS_REGISTRY: Record<CanonicalPlanCode, PlanMetadata> = {
     durationMonths: 12,
     recurring: true,
     commercial: true,
+    aiCreditsMonthly: 300,
     description: "1 ano completo com a maior economia anual.",
-    checkoutUrl: "https://pay.hotmart.com/I107907116E?off=6takcxq1&checkoutMode=6&bid=1791324435263",
+    checkoutUrl: "https://pay.hotmart.com/I107907116E?off=1mo0aq9p",
     installments: { count: 12, value: "R$ 29,16" },
   },
 
@@ -147,6 +153,7 @@ export const PLANS_REGISTRY: Record<CanonicalPlanCode, PlanMetadata> = {
     durationMonths: 1,
     recurring: true,
     commercial: true,
+    aiCreditsMonthly: 100,
     description: "Fluxo de caixa empresarial, MEI e empresas com renovação mensal.",
     checkoutUrl: "https://pay.hotmart.com/I107907116E?off=kq33injc&checkoutMode=6&bid=1791324449801",
   },
@@ -162,8 +169,9 @@ export const PLANS_REGISTRY: Record<CanonicalPlanCode, PlanMetadata> = {
     durationMonths: 3,
     recurring: true,
     commercial: true,
+    aiCreditsMonthly: 100,
     description: "Gestão empresarial com contas a pagar, receber e conciliação.",
-    checkoutUrl: "https://pay.hotmart.com/I107907116E?off=c2uwbnuq&checkoutMode=6&bid=1791324460121",
+    checkoutUrl: "https://pay.hotmart.com/I107907116E?off=n8srt56g",
     installments: { count: 3, value: "R$ 49,96" },
   },
   semestral_pj: {
@@ -178,8 +186,9 @@ export const PLANS_REGISTRY: Record<CanonicalPlanCode, PlanMetadata> = {
     durationMonths: 6,
     recurring: true,
     commercial: true,
+    aiCreditsMonthly: 100,
     description: "Histórico semestral contínuo e relatórios gerenciais da empresa.",
-    checkoutUrl: "https://pay.hotmart.com/I107907116E?off=byf9ao05&checkoutMode=6&bid=1791324487732",
+    checkoutUrl: "https://pay.hotmart.com/I107907116E?off=k84k6u8s",
     installments: { count: 6, value: "R$ 38,31" },
   },
   anual_pj: {
@@ -194,8 +203,9 @@ export const PLANS_REGISTRY: Record<CanonicalPlanCode, PlanMetadata> = {
     durationMonths: 12,
     recurring: true,
     commercial: true,
+    aiCreditsMonthly: 300,
     description: "1 ano completo de blindagem e inteligência financeira PJ.",
-    checkoutUrl: "https://pay.hotmart.com/I107907116E?off=l6v3lamw&checkoutMode=6&bid=1791324511735",
+    checkoutUrl: "https://pay.hotmart.com/I107907116E?off=tyi3day5",
     installments: { count: 12, value: "R$ 30,82" },
   },
 
@@ -212,6 +222,7 @@ export const PLANS_REGISTRY: Record<CanonicalPlanCode, PlanMetadata> = {
     durationMonths: 1,
     recurring: true,
     commercial: true,
+    aiCreditsMonthly: 100,
     description: "Dois ambientes isolados: vida pessoal e empresa integradas.",
     checkoutUrl: "https://pay.hotmart.com/I107907116E?off=fy7e51sj&checkoutMode=6&bid=1791324523500",
   },
@@ -227,8 +238,9 @@ export const PLANS_REGISTRY: Record<CanonicalPlanCode, PlanMetadata> = {
     durationMonths: 3,
     recurring: true,
     commercial: true,
+    aiCreditsMonthly: 100,
     description: "Separação de patrimônio e pró-labore com histórico de 3 meses.",
-    checkoutUrl: "https://pay.hotmart.com/I107907116E?off=sge5gsav&checkoutMode=6&bid=1791324537562",
+    checkoutUrl: "https://pay.hotmart.com/I107907116E?off=qhgtoppg",
     installments: { count: 3, value: "R$ 73,30" },
   },
   semestral_pfj: {
@@ -243,8 +255,9 @@ export const PLANS_REGISTRY: Record<CanonicalPlanCode, PlanMetadata> = {
     durationMonths: 6,
     recurring: true,
     commercial: true,
+    aiCreditsMonthly: 100,
     description: "Visão consolidada PF + PJ com relatórios semestrais completos.",
-    checkoutUrl: "https://pay.hotmart.com/I107907116E?off=oq2ztv93&checkoutMode=6&bid=1791324561026",
+    checkoutUrl: "https://pay.hotmart.com/I107907116E?off=n853409j",
     installments: { count: 6, value: "R$ 66,65" },
   },
   anual_pfj: {
@@ -259,8 +272,9 @@ export const PLANS_REGISTRY: Record<CanonicalPlanCode, PlanMetadata> = {
     durationMonths: 12,
     recurring: true,
     commercial: true,
+    aiCreditsMonthly: 300,
     description: "Máxima economia para gerenciar a vida pessoal e empresarial por 1 ano.",
-    checkoutUrl: "https://pay.hotmart.com/I107907116E?off=wdat8f96&checkoutMode=6&bid=1791324575491",
+    checkoutUrl: "https://pay.hotmart.com/I107907116E?off=keaxzcq0",
     installments: { count: 12, value: "R$ 49,99" },
   },
 
@@ -278,6 +292,7 @@ export const PLANS_REGISTRY: Record<CanonicalPlanCode, PlanMetadata> = {
     recurring: false,
     commercial: false,
     lifetime: true,
+    aiCreditsMonthly: 300,
     description: "Acesso permanente sem data de expiração concedido exclusivamente pela administração.",
   },
 };
@@ -327,7 +342,39 @@ export function getPlanByCode(rawCode?: string | null): PlanMetadata {
     durationMonths: null,
     recurring: false,
     commercial: false,
+    aiCreditsMonthly: 10,
   };
+}
+
+/**
+ * Retorna a cota mensal de créditos do chat da assistente IA Samy de acordo com o plano:
+ * - Planos Mensal, Trimestral e Semestral: 100 créditos/mês
+ * - Planos Anuais e Vitalício: 300 créditos/mês
+ * - Plano Gratuito (Free) ou sem plano ativo: 10 créditos
+ */
+export function getPlanAiCreditsMonthly(rawCode?: string | null): number {
+  if (!rawCode) return 10;
+  const plan = getPlanByCode(rawCode);
+  if (plan && typeof plan.aiCreditsMonthly === "number") {
+    return plan.aiCreditsMonthly;
+  }
+  const cleaned = rawCode.toLowerCase().trim();
+  if (
+    cleaned.includes("anual") ||
+    cleaned === "vitalicio" ||
+    cleaned === "pro" ||
+    cleaned === "premium"
+  ) {
+    return 300;
+  }
+  if (
+    cleaned.includes("mensal") ||
+    cleaned.includes("trimestral") ||
+    cleaned.includes("semestral")
+  ) {
+    return 100;
+  }
+  return 10;
 }
 
 /**

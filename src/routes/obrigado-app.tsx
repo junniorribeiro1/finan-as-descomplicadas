@@ -239,11 +239,8 @@ export function ObrigadoAppPage() {
           </h2>
 
           <p className="mt-2 text-xs sm:text-sm text-stone-300 leading-relaxed">
-            Nós acabamos de enviar um e-mail de ativação para você.{" "}
-            <strong className="text-white font-bold">
-              Abra a sua Caixa de Entrada ou a pasta de Spam / Lixo Eletrônico
-            </strong>{" "}
-            do e-mail cadastrado na compra da Hotmart e clique no link para definir sua senha.
+            Acabamos de enviar o e-mail de ativação com remetente <strong className="text-white">Organiz.AI</strong> (<span className="text-orange-400 font-medium">suporte@nataliarodolfo.com.br</span>) e assunto <strong className="text-amber-300">"🎉 Seu acesso ao Organiz.AI está pronto!"</strong>.{" "}
+            Abra a sua Caixa de Entrada ou a pasta de Spam / Lixo Eletrônico e clique no link para definir sua senha.
           </p>
 
           {/* Exibição Destacada do E-mail Cadastrado (se presente) */}
@@ -519,20 +516,30 @@ export function ObrigadoAppPage() {
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-orange-500/15 border border-orange-500/30 text-orange-400 font-extrabold text-sm">
                 2
               </div>
-              <div>
+              <div className="flex-1 min-w-0">
                 <h4 className="text-xs sm:text-sm font-bold text-white flex items-center gap-1.5 flex-wrap">
-                  <span>Encontre o e-mail de definição de senha</span>
+                  <span>Encontre o e-mail de criação de senha</span>
                   <span className="rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] px-1.5 py-0.2 font-semibold">
                     Importante
                   </span>
                 </h4>
-                <p className="mt-1 text-xs text-stone-300 leading-relaxed">
-                  Procure pelo e-mail com o assunto <strong className="text-white">"Defina sua senha de acesso"</strong> ou <strong className="text-white">"Recuperação de Acesso"</strong>.
-                </p>
-                <div className="mt-2 rounded-lg bg-white/[0.04] border border-white/10 p-2.5 text-[11px] text-stone-300 flex items-start gap-2">
+
+                {/* Card de Identificação Exata do E-mail */}
+                <div className="mt-2.5 rounded-xl border border-orange-500/30 bg-black/60 p-3 text-xs space-y-1.5">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                    <span className="text-[10px] sm:text-[11px] font-bold text-stone-400 uppercase tracking-wider shrink-0">Remetente:</span>
+                    <span className="text-white font-semibold">Organiz.AI <span className="text-orange-400 font-normal text-[11px]">&lt;suporte@nataliarodolfo.com.br&gt;</span></span>
+                  </div>
+                  <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-2">
+                    <span className="text-[10px] sm:text-[11px] font-bold text-stone-400 uppercase tracking-wider shrink-0 sm:mt-0.5">Assunto:</span>
+                    <span className="text-amber-300 font-bold leading-snug">🎉 Seu acesso ao Organiz.AI está pronto!</span>
+                  </div>
+                </div>
+
+                <div className="mt-2.5 rounded-lg bg-white/[0.04] border border-white/10 p-2.5 text-[11px] text-stone-300 flex items-start gap-2">
                   <AlertTriangle className="h-3.5 w-3.5 text-amber-400 shrink-0 mt-0.5" />
                   <span>
-                    <strong>Dica essencial:</strong> Se não encontrar em 2 minutos, procure na pasta de <strong className="text-white">Spam</strong>, <strong className="text-white">Lixo Eletrônico</strong> ou na aba <strong className="text-white">Promoções</strong>.
+                    <strong>Dica essencial:</strong> Se não encontrar em 2 minutos na Caixa de Entrada, procure na pasta de <strong className="text-white">Spam</strong>, <strong className="text-white">Lixo Eletrônico</strong> ou na aba <strong className="text-white">Promoções</strong>.
                   </span>
                 </div>
               </div>

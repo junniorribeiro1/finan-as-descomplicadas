@@ -152,18 +152,18 @@ function ImersaoPage() {
       clearTimeout(safetyTimeout);
     };
   }, []);
-  // 4. Progressão dinâmica de vagas preenchidas (inicia em 4% e cresce gradualmente até 95%)
+  // 4. Progressão dinâmica de vagas preenchidas (reiniciada, inicia em 2% e cresce gradualmente até 95%)
   const [filledSpotsPercent] = useState(() => {
     const now = new Date();
     const year = now.getFullYear();
-    // Reinicia contagem de vagas preenchidas rumo a 01 de Novembro
-    const startDate = new Date(year, 8, 28, 0, 0, 0).getTime();
+    // Reinicia contagem de vagas preenchidas rumo a 01 de Novembro (data base: 11 de Outubro)
+    const startDate = new Date(year, 9, 11, 0, 0, 0).getTime();
     const diffDays = Math.max(0, Math.floor((now.getTime() - startDate) / (1000 * 60 * 60 * 24)));
-    const progression = [4, 14, 25, 38, 51, 64, 75, 83, 90, 95];
+    const progression = [2, 8, 16, 25, 36, 48, 59, 70, 79, 87, 92, 95];
 
-    if (diffDays <= 0) return 4;
+    if (diffDays <= 0) return 2;
     if (diffDays >= progression.length - 1) return 95;
-    return progression[diffDays] ?? 4;
+    return progression[diffDays] ?? 2;
   });
 
   // 5. FAQ Accordion State
@@ -197,8 +197,8 @@ function ImersaoPage() {
       {
         "@type": "Event",
         name: "IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ ao Vivo",
-        startDate: "2026-11-01T09:00:00-03:00",
-        endDate: "2026-11-01T18:00:00-03:00",
+        startDate: "2026-11-01T13:00:00-03:00",
+        endDate: "2026-11-01T17:30:00-03:00",
         eventAttendanceMode: "https://schema.org/OnlineEventAttendanceMode",
         eventStatus: "https://schema.org/EventScheduled",
         location: {
@@ -1080,7 +1080,7 @@ function ImersaoPage() {
               </span>
             </div>
             <span className="text-[0.65rem] font-bold text-stone-500 uppercase tracking-wider">
-              Tarde
+              AULA
             </span>
           </div>
 
@@ -1110,33 +1110,33 @@ function ImersaoPage() {
               </span>
             </div>
             <span className="text-[0.65rem] font-bold text-stone-500 uppercase tracking-wider">
-              Tarde
+              AULA
             </span>
           </div>
 
-          {/* 16h45 */}
+          {/* 16h30 */}
           <div className="flex flex-col sm:flex-row items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] p-4 transition-colors hover:border-emerald-500/30 hover:bg-white/[0.04] text-center sm:text-left gap-2 sm:gap-4">
             <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
               <span className="font-mono text-xs sm:text-sm font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-md sm:bg-transparent sm:p-0">
-                16h45
+                16h30
               </span>
               <span className="text-sm font-semibold text-white">
                 Plano de Saída do Vermelho & Reserva de Emergência
               </span>
             </div>
             <span className="text-[0.65rem] font-bold text-stone-500 uppercase tracking-wider">
-              Tarde
+              AULA
             </span>
           </div>
 
-          {/* 17h30 */}
+          {/* 17h00 */}
           <div className="flex flex-col sm:flex-row items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] p-4 transition-colors hover:border-amber-500/30 hover:bg-white/[0.04] text-center sm:text-left gap-2 sm:gap-4">
             <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
               <span className="font-mono text-xs sm:text-sm font-bold text-amber-400 bg-amber-500/10 px-2.5 py-0.5 rounded-md sm:bg-transparent sm:p-0">
-                17h30
+                17h00
               </span>
               <span className="text-sm font-semibold text-white">
-                Sessão de Mentorias, Dúvidas ao Vivo & Conclusão
+                Sessão de Tira Dúvidas & Encerramento
               </span>
             </div>
             <span className="text-[0.65rem] font-bold text-stone-500 uppercase tracking-wider">

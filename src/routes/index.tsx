@@ -131,17 +131,17 @@ function NataliaLinksPage() {
           <div className="group relative mb-4">
             <div className="absolute -inset-1 rounded-full bg-gradient-to-tr from-emerald-500/35 via-amber-400/30 to-emerald-400/30 opacity-75 blur-md transition-opacity duration-300 group-hover:opacity-100" />
 
-            <div className="relative flex h-28 w-28 md:h-32 md:w-32 items-center justify-center overflow-hidden rounded-full p-[2.5px] bg-gradient-to-b from-amber-400/70 via-emerald-950 to-emerald-600/50 ring-1 ring-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+            <div className="relative flex h-32 w-32 md:h-36 md:w-36 items-center justify-center overflow-hidden rounded-full p-[2.5px] bg-gradient-to-b from-amber-400/70 via-emerald-950 to-emerald-600/50 ring-1 ring-white/10 shadow-[0_12px_36px_rgba(0,0,0,0.55)]">
               <picture>
                 <source srcSet="/natalia-profile.webp" type="image/webp" />
                 <img
                   src="/natalia-profile.jpg"
                   alt="Natália Rodolfo"
-                  width={128}
-                  height={128}
+                  width={144}
+                  height={144}
                   fetchPriority="high"
                   decoding="async"
-                  className="h-full w-full rounded-full object-cover object-top transition-transform duration-500 group-hover:scale-105 ios-hardware-accel"
+                  className="h-full w-full rounded-full object-cover object-center transition-transform duration-500 group-hover:scale-105 ios-hardware-accel"
                 />
               </picture>
             </div>

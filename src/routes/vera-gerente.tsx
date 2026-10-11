@@ -653,7 +653,7 @@ function SamyGerente() {
       setCreditos((prev) => ({
         ...prev,
         mensagensEnviadas: novoEnviadas,
-        mensagensRestantes: Math.max(0, LIMITE_DIARIO_SAMY - novoEnviadas),
+        mensagensRestantes: Math.max(0, prev.limite - novoEnviadas),
         isBloqueado: Boolean(isBloqueado),
       }));
     }
@@ -729,7 +729,7 @@ function SamyGerente() {
                   </button>
                 </div>
 
-                {/* Badge de Créditos Diários */}
+                {/* Badge de Créditos Mensais */}
                 {isAdmin ? (
                   <div className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/40 bg-amber-500/15 px-3.5 py-1.5 text-xs font-bold text-amber-300 shadow-sm">
                     <ShieldCheck className="h-3.5 w-3.5 text-amber-400" />
@@ -741,7 +741,7 @@ function SamyGerente() {
                       "inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-medium shadow-sm transition-colors",
                       creditos.isBloqueado
                         ? "border-amber-500/40 bg-amber-500/15 text-amber-300"
-                        : creditos.mensagensRestantes <= 2
+                        : creditos.mensagensRestantes <= 5
                         ? "border-amber-500/30 bg-[#1f1d1a] text-amber-200"
                         : "border-purple-500/30 bg-[#1a1922] text-stone-300"
                     )}
@@ -753,11 +753,11 @@ function SamyGerente() {
                     )}
                     <span>
                       {creditos.isBloqueado ? (
-                        <strong>0 de {LIMITE_DIARIO_SAMY} créditos hoje</strong>
+                        <strong>0 de {creditos.limite} créditos mensais</strong>
                       ) : (
                         <>
                           <strong className="text-white">{creditos.mensagensRestantes}</strong> de{" "}
-                          {LIMITE_DIARIO_SAMY} créditos hoje
+                          {creditos.limite} créditos mensais
                         </>
                       )}
                     </span>
@@ -1007,16 +1007,16 @@ function SamyGerente() {
                   </form>
                 </>
               ) : (
-                /* Card de Bloqueio de Créditos Diários - Estilo ChatGPT */
+                /* Card de Bloqueio de Créditos Mensais - Estilo ChatGPT */
                 <div className="rounded-2xl border border-amber-500/25 bg-gradient-to-b from-[#1c1815] to-[#121214] p-5 shadow-2xl text-center animate-in fade-in zoom-in-95 duration-200">
                   <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-400 mb-3 shadow-md shadow-amber-950/40">
                     <Lock className="h-5 w-5" />
                   </div>
                   <h4 className="text-sm font-bold text-white tracking-tight sm:text-base">
-                    Limite diário de 10 mensagens atingido
+                    Limite mensal de {creditos.limite} mensagens atingido
                   </h4>
                   <p className="mx-auto mt-1.5 max-w-lg text-xs sm:text-sm text-stone-300 leading-relaxed">
-                    No <strong className="text-amber-300 font-semibold">Plano Free</strong>, cada usuário pode enviar até <strong className="text-white">10 mensagens diárias</strong> para a assistente Samy. Seus créditos serão renovados em:
+                    Você atingiu o limite de <strong className="text-white">{creditos.limite} créditos mensais</strong> do seu plano para a assistente Samy. Seus créditos serão renovados em:
                   </p>
 
                   <div className="mt-4 inline-flex flex-col sm:flex-row items-center gap-2.5 rounded-2xl border border-amber-500/20 bg-[#171518] px-5 py-3 shadow-inner">
@@ -1026,7 +1026,7 @@ function SamyGerente() {
                     </div>
                     <span className="hidden sm:inline text-stone-600">•</span>
                     <span className="text-[11px] sm:text-xs text-stone-400">
-                      (renovação diária às 06h, sem acúmulo de créditos)
+                      (renovação mensal, sem acúmulo de créditos)
                     </span>
                   </div>
 

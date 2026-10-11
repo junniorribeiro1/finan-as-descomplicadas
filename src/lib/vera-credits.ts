@@ -1,7 +1,10 @@
 import { supabase } from "./supabase";
 import type { UserProfile } from "./auth-context";
+import { getPlanAiCreditsMonthly } from "./plans";
 
 export const LIMITE_DIARIO_VERA = 10;
+export const LIMITE_MENSAL_PADRAO = 100;
+export const LIMITE_MENSAL_ANUAL = 300;
 
 export interface StatusCreditosVera {
   isAdmin: boolean;
@@ -16,8 +19,8 @@ export interface StatusCreditosVera {
 }
 
 /**
- * Retorna as informações do ciclo diário atual da Vera.
- * O ciclo diário de 24 horas inicia e renova pontualmente às 06:00 AM (horário local).
+ * Retorna as informações do ciclo mensal atual da Samy IA.
+ * O ciclo mensal renova pontualmente no 1º dia de cada mês às 00:00.
  */
 export function getCicloAtualVera(dataReferencia: Date = new Date()): {
   cicloId: string;
@@ -26,46 +29,29 @@ export function getCicloAtualVera(dataReferencia: Date = new Date()): {
   tempoRestanteTexto: string;
 } {
   const agora = new Date(dataReferencia);
-  const dataCiclo = new Date(agora);
-  const proximaRenovacao = new Date(agora);
+  const ano = agora.getFullYear();
+  const mesIdx = agora.getMonth(); // 0 a 11
+  const mesFormatado = String(mesIdx + 1).padStart(2, "0");
+  const cicloId = `${ano}-${mesFormatado}`;
 
-  if (agora.getHours() < 6) {
-    // Antes das 06:00: o ciclo atual iniciou ontem às 06:00 e renova HOJE às 06:00
-    dataCiclo.setDate(dataCiclo.getDate() - 1);
-    proximaRenovacao.setHours(6, 0, 0, 0);
-  } else {
-    // A partir das 06:00: o ciclo atual iniciou hoje às 06:00 e renova AMANHÃ às 06:00
-    proximaRenovacao.setDate(proximaRenovacao.getDate() + 1);
-    proximaRenovacao.setHours(6, 0, 0, 0);
-  }
+  // Próxima renovação: 1º dia do mês seguinte às 00:00
+  const proximaRenovacao = new Date(ano, mesIdx + 1, 1, 0, 0, 0);
 
-  const ano = dataCiclo.getFullYear();
-  const mes = String(dataCiclo.getMonth() + 1).padStart(2, "0");
-  const dia = String(dataCiclo.getDate()).padStart(2, "0");
-  const cicloId = `${ano}-${mes}-${dia}`;
-
-  // Formatar data de renovação
   const diaRenovacao = String(proximaRenovacao.getDate()).padStart(2, "0");
   const mesRenovacao = String(proximaRenovacao.getMonth() + 1).padStart(2, "0");
   const anoRenovacao = proximaRenovacao.getFullYear();
-  const horaRenovacao = String(proximaRenovacao.getHours()).padStart(2, "0");
-  const minRenovacao = String(proximaRenovacao.getMinutes()).padStart(2, "0");
+  const proximaRenovacaoFormatada = `${diaRenovacao}/${mesRenovacao}/${anoRenovacao} às 00:00`;
 
   const diffMs = Math.max(0, proximaRenovacao.getTime() - agora.getTime());
-  const horasRestantes = Math.floor(diffMs / (1000 * 60 * 60));
-  const minutosRestantes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-
-  const hojeMesmoDia =
-    agora.getDate() === proximaRenovacao.getDate() &&
-    agora.getMonth() === proximaRenovacao.getMonth();
-
-  const prefixoDia = hojeMesmoDia ? "hoje" : "amanhã";
-  const proximaRenovacaoFormatada = `${prefixoDia}, ${diaRenovacao}/${mesRenovacao}/${anoRenovacao} às ${horaRenovacao}:${minRenovacao}`;
+  const diasRestantes = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const horasRestantes = Math.floor(
+    (diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+  );
 
   const tempoRestanteTexto =
-    horasRestantes > 0
-      ? `${horasRestantes}h ${minutosRestantes}min`
-      : `${minutosRestantes}min`;
+    diasRestantes > 0
+      ? `${diasRestantes} dia${diasRestantes > 1 ? "s" : ""} e ${horasRestantes}h`
+      : `${horasRestantes}h`;
 
   return {
     cicloId,
@@ -76,7 +62,7 @@ export function getCicloAtualVera(dataReferencia: Date = new Date()): {
 }
 
 /**
- * Consulta o status de créditos do usuário para o ciclo atual
+ * Consulta o status de créditos do usuário para o ciclo mensal atual
  */
 export function obterStatusCreditosVera(
   userId?: string | null,
@@ -101,12 +87,18 @@ export function obterStatusCreditosVera(
     };
   }
 
+  // Determina o limite mensal de acordo com o plano:
+  // - Mensal / Trimestral / Semestral: 100 mensal
+  // - Anual / Vitalício: 300 mensal
+  // - Free / Sem plano: 10 mensal
+  const limite = getPlanAiCreditsMonthly(profile?.plan);
+
   if (!userId) {
     return {
       isAdmin: false,
-      limite: LIMITE_DIARIO_VERA,
+      limite,
       mensagensEnviadas: 0,
-      mensagensRestantes: LIMITE_DIARIO_VERA,
+      mensagensRestantes: limite,
       isBloqueado: false,
       proximaRenovacao,
       proximaRenovacaoFormatada,
@@ -137,12 +129,12 @@ export function obterStatusCreditosVera(
     enviadas = Math.max(enviadas, profile.vera_mensagens_hoje);
   }
 
-  const mensagensRestantes = Math.max(0, LIMITE_DIARIO_VERA - enviadas);
+  const mensagensRestantes = Math.max(0, limite - enviadas);
   const isBloqueado = mensagensRestantes <= 0;
 
   return {
     isAdmin: false,
-    limite: LIMITE_DIARIO_VERA,
+    limite,
     mensagensEnviadas: enviadas,
     mensagensRestantes,
     isBloqueado,
@@ -167,6 +159,7 @@ export async function registrarEnvioMensagemVera(
   }
 
   const statusAtual = obterStatusCreditosVera(userId, isAdmin, profile);
+  const limite = statusAtual.limite;
   const novoEnviadas = statusAtual.mensagensEnviadas + 1;
   const cicloId = statusAtual.cicloId;
 
@@ -200,12 +193,13 @@ export async function registrarEnvioMensagemVera(
 
   return {
     novoEnviadas,
-    isBloqueado: novoEnviadas >= LIMITE_DIARIO_VERA,
+    isBloqueado: novoEnviadas >= limite,
   };
 }
 
 // Aliases para transição da IA de Vera para Samy
 export const LIMITE_DIARIO_SAMY = LIMITE_DIARIO_VERA;
+export const LIMITE_MENSAL_SAMY = LIMITE_MENSAL_PADRAO;
 export const obterStatusCreditosSamy = obterStatusCreditosVera;
 export const registrarEnvioMensagemSamy = registrarEnvioMensagemVera;
 export const getCicloAtualSamy = getCicloAtualVera;

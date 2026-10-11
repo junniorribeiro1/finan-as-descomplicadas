@@ -38,9 +38,7 @@ export function ObrigadoImersaoPage() {
   const defaultWppGroupUrl =
     (typeof import.meta !== "undefined" &&
       import.meta.env?.VITE_WHATSAPP_IMERSAO_GROUP_URL) ||
-    `https://wa.me/${wppNumber}?text=${encodeURIComponent(
-      "Olá, Natália! Acabei de concluir minha compra da IMER$ÃO EDUCAÇÃO FINANCEIRA na Hotmart e quero entrar no grupo oficial de alunos do WhatsApp."
-    )}`;
+    "https://chat.whatsapp.com/KFnVJEj4TYm7ZKKhWEQ3uJ?s=cl&p=i&ilr=4&iam=2";
 
   const supportWppUrl = `https://wa.me/${wppNumber}?text=${encodeURIComponent(
     "Olá! Preciso de ajuda com a minha inscrição da IMER$ÃO EDUCAÇÃO FINANCEIRA feita na Hotmart."
@@ -209,7 +207,7 @@ export function ObrigadoImersaoPage() {
                   Dia &amp; Data
                 </span>
                 <span className="text-sm font-bold text-white">
-                  01 de Novembro (Sábado)
+                  01 de Novembro (Domingo)
                 </span>
               </div>
             </div>
@@ -224,7 +222,7 @@ export function ObrigadoImersaoPage() {
                   Horário
                 </span>
                 <span className="text-sm font-bold text-white">
-                  13h00 às 18h00 <span className="text-xs text-stone-400 font-normal">(Brasília)</span>
+                  13h00 às 17h30 <span className="text-xs text-stone-400 font-normal">(Horário de Brasília)</span>
                 </span>
               </div>
             </div>
@@ -244,17 +242,17 @@ export function ObrigadoImersaoPage() {
               </div>
             </div>
 
-            {/* Item 4: Certificado & Gravação */}
+            {/* Item 4: Certificação */}
             <div className="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-3.5">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400">
                 <Award className="h-5 w-5" />
               </div>
               <div className="min-w-0">
                 <span className="block text-[0.68rem] font-bold text-stone-400 uppercase tracking-wider">
-                  Certificação &amp; Gravação
+                  Certificação
                 </span>
                 <span className="text-sm font-bold text-white">
-                  Inclusos no seu Ingresso
+                  Inclusa no seu Ingresso
                 </span>
               </div>
             </div>

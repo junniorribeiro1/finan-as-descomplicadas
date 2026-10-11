@@ -67,7 +67,7 @@ const faqList: FaqItem[] = [
     id: "faq-4",
     pergunta: "Como a Samy funciona?",
     resposta:
-      "A Samy é sua assistente financeira com inteligência artificial. Ela analisa seus lançamentos no app, apoia no acompanhamento de gastos fixos, variáveis, cartões e cofrinhos, e tira dúvidas sobre o funcionamento da plataforma.\n\nRegras de Uso e Créditos Diários:\n• Plano Free: Cada usuário tem direito a 10 mensagens (créditos) enviadas por dia ao assistente.\n• Renovação Diária: Os créditos são renovados todos os dias pontualmente às 06h da manhã, sem acúmulo de créditos não utilizados.",
+      "A Samy é sua assistente financeira com inteligência artificial. Ela analisa seus lançamentos no app, apoia no acompanhamento de gastos fixos, variáveis, cartões e cofrinhos, e tira dúvidas sobre o funcionamento da plataforma.\n\nRegras de Uso e Créditos Mensais:\n• Planos Mensal, Trimestral e Semestral: 100 mensagens (créditos) mensais para interagir com a assistente.\n• Planos Anual: 300 mensagens (créditos) mensais para interagir com a assistente.\n• Renovação Mensal: Os créditos são renovados no primeiro dia de cada mês, sem acúmulo de créditos não utilizados.",
   },
   {
     id: "faq-5",
