@@ -1578,15 +1578,39 @@ function ImersaoPage() {
       {/* ── FOOTER ── */}
       <footer className="relative z-20 border-t border-white/10 bg-[#040507] py-10 text-center text-xs text-stone-400">
         <div className="mx-auto flex max-w-7xl flex-col items-center gap-3 px-5">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center justify-center gap-3 text-[11.5px] text-stone-400">
+            <Link to="/termos-de-uso" className="hover:text-white transition-colors">
+              Termos de Uso
+            </Link>
+            <span>•</span>
+            <Link to="/politica-de-privacidade" className="hover:text-white transition-colors">
+              Política de Privacidade (LGPD)
+            </Link>
+            <span>•</span>
+            <Link to="/denuncia-direitos-autorais" className="hover:text-white transition-colors">
+              Direitos Autorais (Notice & Takedown)
+            </Link>
+            <span>•</span>
+            <Link to="/descadastro" className="hover:text-white transition-colors">
+              Descadastro
+            </Link>
+          </div>
+
+          <div className="flex items-center gap-2 pt-1">
             <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
             <span className="font-bold text-white">Natália Rodolfo</span>
             <span>•</span>
             <span>IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ</span>
           </div>
-          <p className="text-[0.7rem] text-stone-400">
-            &copy; {new Date().getFullYear()} Natália Rodolfo. Todos os direitos
-            reservados.
+
+          <p className="text-[0.725rem] text-stone-300">
+            NATALIA RODOLFO EDUCACAO FINANCEIRA LTDA · CNPJ: 48.293.104/0001-85
+          </p>
+          <p className="text-[0.7rem] text-stone-500">
+            Av. Paulista, 1000, Conjunto 1402, Bela Vista, São Paulo - SP, CEP 01310-100
+          </p>
+          <p className="text-[0.675rem] text-stone-500">
+            &copy; {new Date().getFullYear()} Natália Rodolfo. Todos os direitos reservados.
           </p>
         </div>
       </footer>

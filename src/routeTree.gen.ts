@@ -19,6 +19,8 @@ import { Route as CategoriasRouteImport } from './routes/categorias'
 import { Route as CofrinhosRouteImport } from './routes/cofrinhos'
 import { Route as ControleFinanceiroRouteImport } from './routes/controle-financeiro'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as DenunciaDireitosAutoraisRouteImport } from './routes/denuncia-direitos-autorais'
+import { Route as DescadastroRouteImport } from './routes/descadastro'
 import { Route as GastosFixosRouteImport } from './routes/gastos-fixos'
 import { Route as GastosVariaveisRouteImport } from './routes/gastos-variaveis'
 import { Route as ImersaoefpfjRouteImport } from './routes/imersaoefpfj'
@@ -85,6 +87,17 @@ const ControleFinanceiroRoute = ControleFinanceiroRouteImport.update({
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DenunciaDireitosAutoraisRoute =
+  DenunciaDireitosAutoraisRouteImport.update({
+    id: '/denuncia-direitos-autorais',
+    path: '/denuncia-direitos-autorais',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DescadastroRoute = DescadastroRouteImport.update({
+  id: '/descadastro',
+  path: '/descadastro',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GastosFixosRoute = GastosFixosRouteImport.update({
@@ -184,6 +197,8 @@ export interface FileRoutesByFullPath {
   '/cofrinhos': typeof CofrinhosRoute
   '/controle-financeiro': typeof ControleFinanceiroRoute
   '/dashboard': typeof DashboardRoute
+  '/denuncia-direitos-autorais': typeof DenunciaDireitosAutoraisRoute
+  '/descadastro': typeof DescadastroRoute
   '/gastos-fixos': typeof GastosFixosRoute
   '/gastos-variaveis': typeof GastosVariaveisRoute
   '/imersaoefpfj': typeof ImersaoefpfjRoute
@@ -213,6 +228,8 @@ export interface FileRoutesByTo {
   '/cofrinhos': typeof CofrinhosRoute
   '/controle-financeiro': typeof ControleFinanceiroRoute
   '/dashboard': typeof DashboardRoute
+  '/denuncia-direitos-autorais': typeof DenunciaDireitosAutoraisRoute
+  '/descadastro': typeof DescadastroRoute
   '/gastos-fixos': typeof GastosFixosRoute
   '/gastos-variaveis': typeof GastosVariaveisRoute
   '/imersaoefpfj': typeof ImersaoefpfjRoute
@@ -243,6 +260,8 @@ export interface FileRoutesById {
   '/cofrinhos': typeof CofrinhosRoute
   '/controle-financeiro': typeof ControleFinanceiroRoute
   '/dashboard': typeof DashboardRoute
+  '/denuncia-direitos-autorais': typeof DenunciaDireitosAutoraisRoute
+  '/descadastro': typeof DescadastroRoute
   '/gastos-fixos': typeof GastosFixosRoute
   '/gastos-variaveis': typeof GastosVariaveisRoute
   '/imersaoefpfj': typeof ImersaoefpfjRoute
@@ -274,6 +293,8 @@ export interface FileRouteTypes {
     | '/cofrinhos'
     | '/controle-financeiro'
     | '/dashboard'
+    | '/denuncia-direitos-autorais'
+    | '/descadastro'
     | '/gastos-fixos'
     | '/gastos-variaveis'
     | '/imersaoefpfj'
@@ -303,6 +324,8 @@ export interface FileRouteTypes {
     | '/cofrinhos'
     | '/controle-financeiro'
     | '/dashboard'
+    | '/denuncia-direitos-autorais'
+    | '/descadastro'
     | '/gastos-fixos'
     | '/gastos-variaveis'
     | '/imersaoefpfj'
@@ -332,6 +355,8 @@ export interface FileRouteTypes {
     | '/cofrinhos'
     | '/controle-financeiro'
     | '/dashboard'
+    | '/denuncia-direitos-autorais'
+    | '/descadastro'
     | '/gastos-fixos'
     | '/gastos-variaveis'
     | '/imersaoefpfj'
@@ -362,6 +387,8 @@ export interface RootRouteChildren {
   CofrinhosRoute: typeof CofrinhosRoute
   ControleFinanceiroRoute: typeof ControleFinanceiroRoute
   DashboardRoute: typeof DashboardRoute
+  DenunciaDireitosAutoraisRoute: typeof DenunciaDireitosAutoraisRoute
+  DescadastroRoute: typeof DescadastroRoute
   GastosFixosRoute: typeof GastosFixosRoute
   GastosVariaveisRoute: typeof GastosVariaveisRoute
   ImersaoefpfjRoute: typeof ImersaoefpfjRoute
@@ -451,6 +478,20 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/denuncia-direitos-autorais': {
+      id: '/denuncia-direitos-autorais'
+      path: '/denuncia-direitos-autorais'
+      fullPath: '/denuncia-direitos-autorais'
+      preLoaderRoute: typeof DenunciaDireitosAutoraisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/descadastro': {
+      id: '/descadastro'
+      path: '/descadastro'
+      fullPath: '/descadastro'
+      preLoaderRoute: typeof DescadastroRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/gastos-fixos': {
@@ -586,6 +627,8 @@ const rootRouteChildren: RootRouteChildren = {
   CofrinhosRoute: CofrinhosRoute,
   ControleFinanceiroRoute: ControleFinanceiroRoute,
   DashboardRoute: DashboardRoute,
+  DenunciaDireitosAutoraisRoute: DenunciaDireitosAutoraisRoute,
+  DescadastroRoute: DescadastroRoute,
   GastosFixosRoute: GastosFixosRoute,
   GastosVariaveisRoute: GastosVariaveisRoute,
   ImersaoefpfjRoute: ImersaoefpfjRoute,

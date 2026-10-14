@@ -100,6 +100,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "google-site-verification", content: "google-site-verification-token" },
+      {
+        httpEquiv: "Content-Security-Policy",
+        content: "font-src 'self' data:; default-src 'self' 'unsafe-inline' 'unsafe-eval' https: blob: data:;",
+      },
     ],
     links: [
       { rel: "manifest", href: "/manifest.json" },
@@ -131,7 +135,7 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="pt-BR">
       <head>
         <HeadContent />
-        {/* Meta Pixel Code */}
+        {/* Meta Pixel Code com consentimento revogado por padrão (LGPD) */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -143,6 +147,7 @@ function RootShell({ children }: { children: ReactNode }) {
               t.src=v;s=b.getElementsByTagName(e)[0];
               s.parentNode.insertBefore(t,s)}(window, document,'script',
               'https://connect.facebook.net/en_US/fbevents.js');
+              fbq('consent', 'revoke');
               fbq('init', '${META_PIXEL_ID}');
               fbq('track', 'PageView');
             `,

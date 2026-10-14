@@ -87,6 +87,18 @@ const faqList: FaqItem[] = [
     resposta:
       "Você pode tirar dúvidas instantâneas com a Samy (nossa assistente com inteligência artificial) no menu 'Samy | Assistente IA' ou falar diretamente com nossa equipe pelo WhatsApp (77) 98138-1477 ou pelo e-mail suporte@nataliarodolfo.com.br.",
   },
+  {
+    id: "faq-8",
+    pergunta: "Como funciona a renovação de assinatura e o aviso prévio?",
+    resposta:
+      "Todas as assinaturas do Organiz.AI possuem regras transparentes de renovação conforme o CDC. Você recebe um aviso prévio por e-mail 15 dias antes da data de renovação. O cancelamento pode ser efetuado a qualquer momento sem custos adicionais pelo painel ou na Hotmart.",
+  },
+  {
+    id: "faq-9",
+    pergunta: "Como denunciar violação de direitos autorais ou solicitar remoção de conteúdo?",
+    resposta:
+      "Disponibilizamos um canal formal de Notice & Takedown em cumprimento ao Marco Civil da Internet (Lei 12.965/14) e à Lei de Direitos Autorais (Lei 9.610/98). Acesse a página '/denuncia-direitos-autorais' ou contate copyright@nataliarodolfo.com.br para análise em até 48 horas.",
+  },
 ];
 
 function CentralAjuda() {
@@ -398,6 +410,18 @@ function CentralAjuda() {
                 >
                   @nataliafinancas
                 </a>
+              </div>
+
+              <div className="rounded-xl border border-orange-500/20 bg-orange-500/[0.03] p-3.5">
+                <h4 className="text-xs font-semibold text-white">Direitos Autorais (Notice & Takedown)</h4>
+                <Link
+                  to="/denuncia-direitos-autorais"
+                  onClick={() => setModalSuporte(false)}
+                  className="text-xs text-orange-400 hover:text-orange-300 underline underline-offset-2 mt-1 inline-block transition-colors font-medium"
+                >
+                  Canal de Notificação e Remoção de Conteúdo
+                </Link>
+                <p className="text-[11px] text-neutral-500 mt-0.5">Prazo legal de resposta: 24h a 48h úteis</p>
               </div>
             </div>
 

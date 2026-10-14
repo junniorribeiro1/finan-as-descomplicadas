@@ -929,6 +929,34 @@ export function AppShell({
 
         {/* Conteúdo Principal */}
         <main className="mx-auto max-w-[1600px] px-4 pt-6 pb-[calc(2.5rem+env(safe-area-inset-bottom,0px))] sm:px-6 lg:px-8">
+          {/* Aviso Prévio Obrigatório de Renovação (CDC Art. 6º, III e Art. 39) */}
+          {infoAcesso.diasRestantes !== null && infoAcesso.diasRestantes <= 15 && infoAcesso.diasRestantes > 0 && (
+            <div className="mb-6 rounded-2xl border border-amber-500/30 bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-transparent p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg shadow-orange-950/20 animate-in fade-in slide-in-from-top-2">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-400">
+                  <Clock className="h-5 w-5" />
+                </div>
+                <div>
+                  <h4 className="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
+                    <span>Aviso Prévio de Renovação de Assinatura</span>
+                    <span className="rounded-full bg-amber-500/20 border border-amber-500/40 px-2 py-0.5 text-[10px] text-amber-300 font-semibold">
+                      Conforme CDC
+                    </span>
+                  </h4>
+                  <p className="text-xs text-stone-300 mt-0.5 leading-snug">
+                    Seu plano <strong>{planoAtual.name}</strong> encerra em <strong>{infoAcesso.diasRestantes} {infoAcesso.diasRestantes === 1 ? "dia" : "dias"}</strong> ({infoAcesso.dataExpiracaoFormatada}). Se não houver renovação paga contratada, seu acesso será finalizado sem cobranças automáticas indesejadas.
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setModalPlanosAberto(true)}
+                className="shrink-0 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 px-4 py-2 text-xs font-bold text-white shadow-md hover:brightness-110 transition-all cursor-pointer"
+              >
+                Ver Planos para Renovar
+              </button>
+            </div>
+          )}
           {children}
         </main>
       </div>

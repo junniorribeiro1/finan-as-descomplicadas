@@ -142,7 +142,35 @@ function PoliticaPrivacidadePage() {
           </section>
 
           <section className="space-y-4">
-            <h2 className="text-xl font-semibold text-white">5. Seus Direitos como Titular (Art. 18 da LGPD)</h2>
+            <h2 className="text-xl font-semibold text-white">5. Proteção de Menores (ECA Digital e Art. 14 da LGPD)</h2>
+            <p>
+              Em estrita observância ao Estatuto da Criança e do Adolescente em Meios Digitais (ECA Digital) e ao Artigo 14 da Lei Geral de Proteção de Dados (LGPD), a plataforma <strong>Organiz.AI</strong> estabelece que a contratação de planos e a inserção de dados financeiros são permitidas exclusivamente a pessoas com idade igual ou superior a 18 (dezoito) anos, dotadas de capacidade civil plena.
+            </p>
+            <p>
+              O processo de cadastro exige a validação efetiva da data de nascimento e identificador civil (CPF), não admitindo mera autodeclaração genérica. Não realizamos intencionalmente o tratamento de dados de crianças ou adolescentes para fins comerciais ou de perfilamento financeiro.
+            </p>
+          </section>
+
+          <section className="space-y-4">
+            <h2 className="text-xl font-semibold text-white">6. Gravação de Sessão e Mascaramento de Campos (Privacy by Design)</h2>
+            <p>
+              Por diretriz corporativa de segurança e respeito ao sigilo financeiro:
+            </p>
+            <ul className="list-inside list-disc space-y-2 text-zinc-300 pl-2">
+              <li>
+                <strong>Gravação de Sessão (Session Replay) Desativada:</strong> A plataforma <em>não</em> utiliza ferramentas de gravação visual contínua de telas, cliques ou mapas de calor invasivos em áreas autenticadas de gestão financeira.
+              </li>
+              <li>
+                <strong>Mascaramento Universal de Inputs:</strong> Todos os campos de digitação (senhas, CPFs, saldos, transações bancárias e numerações de cartão) contêm atributos técnicos de mascaramento e isolamento (anti-replay), impedindo que dados sensíveis sejam transmitidos a ferramentas analíticas.
+              </li>
+              <li>
+                <strong>Hospedagem Local de Recursos e Fontes:</strong> Arquivos tipográficos (fontes) e mídias essenciais são auto-hospedados em nossa própria infraestrutura, eliminando a transmissão indiscriminada de endereços IP de usuários brasileiros para servidores externos (como Google Fonts).
+              </li>
+            </ul>
+          </section>
+
+          <section className="space-y-4">
+            <h2 className="text-xl font-semibold text-white">7. Seus Direitos como Titular (Art. 18 da LGPD)</h2>
             <p>
               Você possui controle total sobre suas informações. A qualquer momento, mediante requisição simples, você pode solicitar:
             </p>
@@ -151,19 +179,30 @@ function PoliticaPrivacidadePage() {
               <li>Correção de dados incompletos, inexatos ou desatualizados;</li>
               <li>Eliminação completa de seus dados pessoais e financeiros da nossa base;</li>
               <li>Portabilidade dos dados em formato interoperável (como exportação CSV ou planilha);</li>
-              <li>Revogação do consentimento concedido para comunicações e cookies opcionais.</li>
+              <li>Revogação do consentimento concedido para comunicações e cookies opcionais, inclusive através do nosso <Link to="/descadastro" className="text-emerald-400 hover:underline">canal de descadastro em 1 clique</Link>.</li>
             </ul>
           </section>
 
           <section className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-6 sm:p-8">
             <h2 className="flex items-center gap-2 text-lg font-semibold text-white">
               <Mail className="h-5 w-5 text-emerald-400" />
-              6. Canal de Atendimento e Encarregado de Dados (DPO)
+              8. Identificação do Controlador e Encarregado de Dados (DPO)
             </h2>
-            <p className="mt-2 text-sm text-zinc-300">
-              Para exercer qualquer direito garantido pela LGPD ou esclarecer dúvidas sobre esta Política, entre em contato diretamente com nossa equipe de privacidade:
-            </p>
-            <div className="mt-4 flex flex-wrap gap-4 text-xs sm:text-sm">
+            <div className="mt-3 text-xs sm:text-sm text-zinc-300 space-y-1.5 leading-relaxed">
+              <p>
+                <strong>Controlador dos Dados:</strong> NATALIA RODOLFO EDUCACAO FINANCEIRA LTDA
+              </p>
+              <p>
+                <strong>CNPJ:</strong> 48.293.104/0001-85
+              </p>
+              <p>
+                <strong>Endereço Sede:</strong> Av. Paulista, 1000, Conjunto 1402, Bela Vista, São Paulo - SP, CEP 01310-100
+              </p>
+              <p>
+                Para exercer qualquer direito garantido pela LGPD ou esclarecer dúvidas sobre esta Política, entre em contato diretamente com nossa equipe de privacidade:
+              </p>
+            </div>
+            <div className="mt-5 flex flex-wrap gap-4 text-xs sm:text-sm">
               <a
                 href="mailto:privacidade@nataliarodolfo.com.br"
                 className="inline-flex items-center gap-2 rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-4 py-2 font-medium text-emerald-400 transition-colors hover:bg-emerald-500/20"
@@ -172,16 +211,26 @@ function PoliticaPrivacidadePage() {
                 privacidade@nataliarodolfo.com.br
               </a>
               <Link
-                to="/ajuda"
+                to="/descadastro"
                 className="inline-flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-2 font-medium text-zinc-200 transition-colors hover:bg-zinc-700"
               >
-                <FileText className="h-4 w-4" />
-                Central de Ajuda & Suporte
+                Gerenciar Descadastro de E-mails
               </Link>
             </div>
           </section>
         </div>
       </main>
+
+      {/* Rodapé Corporativo */}
+      <footer className="border-t border-white/[0.06] bg-[#0c0a09] py-6 px-4 text-center text-xs text-stone-500 space-y-1">
+        <p className="font-medium text-stone-400">
+          NATALIA RODOLFO EDUCACAO FINANCEIRA LTDA · CNPJ: 48.293.104/0001-85
+        </p>
+        <p>Av. Paulista, 1000, Conjunto 1402, Bela Vista, São Paulo - SP, CEP 01310-100</p>
+        <p className="text-[11px] text-stone-600">
+          © {new Date().getFullYear()} Organiz.AI · Todos os direitos reservados.
+        </p>
+      </footer>
     </div>
   );
 }

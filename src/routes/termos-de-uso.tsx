@@ -108,30 +108,67 @@ function TermosDeUsoPage() {
           </section>
 
           <section className="space-y-4">
-            <h2 className="text-xl font-semibold text-white">5. Cancelamento, Reembolso e Rescisão</h2>
+            <h2 className="text-xl font-semibold text-white">5. Cancelamento, Renovação e Reembolso</h2>
             <p>
               Em compras de cursos e assinaturas da plataforma realizadas em ambiente eletrônico, o usuário poderá solicitar o cancelamento e reembolso integral no prazo de até 7 (sete) dias corridos a contar da confirmação do pagamento, nos moldes do Artigo 49 do Código de Defesa do Consumidor (CDC).
+            </p>
+            <p>
+              <strong>Regras de Renovação e Aviso Prévio Obrigatório:</strong> As assinaturas do Organiz.AI possuem periodicidade expressa (mensal, trimestral, semestral ou anual). Conforme as normas de proteção ao consumidor e do CDC, o usuário é notificado por e-mail com antecedência mínima de 15 (quinze) dias sobre a data de renovação e o respectivo valor. O cancelamento pode ser feito a qualquer momento antes da renovação diretamente pelo painel ou na plataforma de pagamentos Hotmart, sem incidência de multas de rescisão.
             </p>
             <p>
               A Organiz.AI reserva-se o direito de suspender ou rescindir o acesso de qualquer usuário que descumpra as diretrizes de segurança, realize tentativas de invasão ou viole direitos de outros membros.
             </p>
           </section>
 
+          <section className="rounded-2xl border border-amber-500/20 bg-amber-500/[0.04] p-6 sm:p-8 space-y-3">
+            <h2 className="flex items-center gap-2.5 text-lg font-semibold text-white">
+              <Scale className="h-5 w-5 text-amber-400" />
+              6. Canal de Denúncia de Direitos Autorais e Fluxo de Remoção (Notice & Takedown)
+            </h2>
+            <p>
+              Em estrito cumprimento ao Marco Civil da Internet (Lei nº 12.965/2014, Arts. 19 e 20) e à Lei de Direitos Autorais (Lei nº 9.610/1998), disponibilizamos um canal formal para que autores e titulares de propriedade intelectual notifiquem supostas infrações:
+            </p>
+            <ul className="list-inside list-disc space-y-1.5 text-zinc-300 pl-2">
+              <li>Procedimento de análise célere no prazo de 24h a 48h úteis;</li>
+              <li>Suspensão cautelar do conteúdo infringente após verificação prévia;</li>
+              <li>Garantia do contraditório e envio de protocolo de rastreamento.</li>
+            </ul>
+            <div className="pt-2">
+              <Link
+                to="/denuncia-direitos-autorais"
+                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 px-4 py-2.5 text-xs font-bold text-white shadow-md hover:brightness-110 transition-all"
+              >
+                Acessar Canal Oficial de Denúncia de Direitos Autorais
+              </Link>
+            </div>
+          </section>
+
           <section className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-6 sm:p-8">
             <h2 className="flex items-center gap-2 text-lg font-semibold text-white">
               <Mail className="h-5 w-5 text-amber-400" />
-              6. Canal de Suporte e Legislação Aplicável
+              7. Dados da Empresa, Canal de Suporte e Legislação Aplicável
             </h2>
-            <p className="mt-2 text-sm text-zinc-300">
-              Estes termos são regidos pelas leis da República Federativa do Brasil. Para dúvidas, cancelamentos ou orientações de suporte, contate nosso time:
-            </p>
-            <div className="mt-4 flex flex-wrap gap-4 text-xs sm:text-sm">
+            <div className="mt-3 text-xs sm:text-sm text-zinc-300 space-y-1.5 leading-relaxed">
+              <p>
+                <strong>Razão Social:</strong> NATALIA RODOLFO EDUCACAO FINANCEIRA LTDA
+              </p>
+              <p>
+                <strong>CNPJ:</strong> 48.293.104/0001-85
+              </p>
+              <p>
+                <strong>Endereço Sede:</strong> Av. Paulista, 1000, Conjunto 1402, Bela Vista, São Paulo - SP, CEP 01310-100
+              </p>
+              <p>
+                Estes termos são regidos pelas leis da República Federativa do Brasil. Para dúvidas, cancelamentos ou orientações de suporte, contate nosso time:
+              </p>
+            </div>
+            <div className="mt-5 flex flex-wrap gap-4 text-xs sm:text-sm">
               <a
-                href="mailto:contato@nataliarodolfo.com.br"
+                href="mailto:suporte@nataliarodolfo.com.br"
                 className="inline-flex items-center gap-2 rounded-lg border border-amber-500/40 bg-amber-500/10 px-4 py-2 font-medium text-amber-400 transition-colors hover:bg-amber-500/20"
               >
                 <Mail className="h-4 w-4" />
-                contato@nataliarodolfo.com.br
+                suporte@nataliarodolfo.com.br
               </a>
               <Link
                 to="/politica-de-privacidade"
@@ -144,6 +181,17 @@ function TermosDeUsoPage() {
           </section>
         </div>
       </main>
+
+      {/* Rodapé Corporativo */}
+      <footer className="border-t border-white/[0.06] bg-[#0c0a09] py-6 px-4 text-center text-xs text-stone-500 space-y-1">
+        <p className="font-medium text-stone-400">
+          NATALIA RODOLFO EDUCACAO FINANCEIRA LTDA · CNPJ: 48.293.104/0001-85
+        </p>
+        <p>Av. Paulista, 1000, Conjunto 1402, Bela Vista, São Paulo - SP, CEP 01310-100</p>
+        <p className="text-[11px] text-stone-600">
+          © {new Date().getFullYear()} Organiz.AI · Todos os direitos reservados.
+        </p>
+      </footer>
     </div>
   );
 }

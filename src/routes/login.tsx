@@ -16,10 +16,13 @@ import {
   AlertCircle,
   Building2,
   Layers,
+  Calendar,
+  CreditCard,
 } from "lucide-react";
 import { toast } from "sonner";
 import { PwaInstallPrompt } from "@/components/pwa/PwaInstallPrompt";
 import { trackEvent } from "@/lib/meta-pixel";
+import { DADOS_EMPRESA } from "@/lib/empresa";
 
 interface LoginSearch {
   redirect?: string;
@@ -121,6 +124,10 @@ function LoginPage() {
   const [mensagemErro, setMensagemErro] = useState<string | null>(initialRecovery.errorMessage);
   const [mensagemSucesso, setMensagemSucesso] = useState<string | null>(null);
 
+  const [dataNascimento, setDataNascimento] = useState("");
+  const [cpf, setCpf] = useState("");
+  const [termoMaiorIdade, setTermoMaiorIdade] = useState(false);
+
   const formatarTelefone = (valor: string) => {
     const apenasNumeros = valor.replace(/\D/g, "").slice(0, 11);
     if (apenasNumeros.length <= 2) {
@@ -133,6 +140,69 @@ function LoginPage() {
       return `(${apenasNumeros.slice(0, 2)}) ${apenasNumeros.slice(2, 6)}-${apenasNumeros.slice(6)}`;
     }
     return `(${apenasNumeros.slice(0, 2)}) ${apenasNumeros.slice(2, 7)}-${apenasNumeros.slice(7, 11)}`;
+  };
+
+  const formatarDataNascimento = (valor: string) => {
+    const apenasNumeros = valor.replace(/\D/g, "").slice(0, 8);
+    if (apenasNumeros.length <= 2) return apenasNumeros;
+    if (apenasNumeros.length <= 4) {
+      return `${apenasNumeros.slice(0, 2)}/${apenasNumeros.slice(2)}`;
+    }
+    return `${apenasNumeros.slice(0, 2)}/${apenasNumeros.slice(2, 4)}/${apenasNumeros.slice(4, 8)}`;
+  };
+
+  const formatarCPF = (valor: string) => {
+    const apenasNumeros = valor.replace(/\D/g, "").slice(0, 11);
+    if (apenasNumeros.length <= 3) return apenasNumeros;
+    if (apenasNumeros.length <= 6) {
+      return `${apenasNumeros.slice(0, 3)}.${apenasNumeros.slice(3)}`;
+    }
+    if (apenasNumeros.length <= 9) {
+      return `${apenasNumeros.slice(0, 3)}.${apenasNumeros.slice(3, 6)}.${apenasNumeros.slice(6)}`;
+    }
+    return `${apenasNumeros.slice(0, 3)}.${apenasNumeros.slice(3, 6)}.${apenasNumeros.slice(6, 9)}-${apenasNumeros.slice(9, 11)}`;
+  };
+
+  const validarCPF = (strCpf: string): boolean => {
+    const limpo = strCpf.replace(/\D/g, "");
+    if (limpo.length !== 11) return false;
+    if (/^(\d)\1{10}$/.test(limpo)) return false;
+
+    let soma = 0;
+    for (let i = 0; i < 9; i++) {
+      soma += parseInt(limpo.charAt(i), 10) * (10 - i);
+    }
+    let resto = (soma * 10) % 11;
+    if (resto === 10 || resto === 11) resto = 0;
+    if (resto !== parseInt(limpo.charAt(9), 10)) return false;
+
+    soma = 0;
+    for (let i = 0; i < 10; i++) {
+      soma += parseInt(limpo.charAt(i), 10) * (11 - i);
+    }
+    resto = (soma * 10) % 11;
+    if (resto === 10 || resto === 11) resto = 0;
+    return resto === parseInt(limpo.charAt(10), 10);
+  };
+
+  const calcularIdade = (dataStr: string): number => {
+    const partes = dataStr.split("/");
+    if (partes.length !== 3) return -1;
+    const dia = parseInt(partes[0], 10);
+    const mes = parseInt(partes[1], 10) - 1;
+    const ano = parseInt(partes[2], 10);
+    if (isNaN(dia) || isNaN(mes) || isNaN(ano) || ano < 1900 || ano > new Date().getFullYear()) {
+      return -1;
+    }
+    const nascimento = new Date(ano, mes, dia);
+    if (isNaN(nascimento.getTime())) return -1;
+    const hoje = new Date();
+    let idade = hoje.getFullYear() - nascimento.getFullYear();
+    const m = hoje.getMonth() - nascimento.getMonth();
+    if (m < 0 || (m === 0 && hoje.getDate() < nascimento.getDate())) {
+      idade--;
+    }
+    return idade;
   };
 
   // Escuta evento de PASSWORD_RECOVERY do Supabase e parâmetros da URL
@@ -244,8 +314,40 @@ function LoginPage() {
     setMensagemErro(null);
     setMensagemSucesso(null);
 
-    if (!nome.trim() || !email.trim() || !senha || !telefone.trim()) {
-      const msg = "Preencha todos os campos obrigatórios.";
+    if (!nome.trim() || !email.trim() || !senha || !telefone.trim() || !dataNascimento.trim() || !cpf.trim()) {
+      const msg = "Preencha todos os campos obrigatórios, incluindo data de nascimento e CPF.";
+      setMensagemErro(msg);
+      toast.error(msg);
+      return;
+    }
+
+    // 1. Verificação etária obrigatória (ECA Digital e LGPD Art. 14)
+    const idade = calcularIdade(dataNascimento);
+    if (idade < 0) {
+      const msg = "Informe uma data de nascimento válida no formato DD/MM/AAAA.";
+      setMensagemErro(msg);
+      toast.error(msg);
+      return;
+    }
+
+    if (idade < 18) {
+      const msg = "Conforme o ECA Digital e o Art. 14 da LGPD, a plataforma Organiz.AI destina-se exclusivamente a maiores de 18 anos dotados de capacidade civil plena para gestão financeira e contratos.";
+      setMensagemErro(msg);
+      toast.error("Cadastro bloqueado: restrito a maiores de 18 anos.");
+      return;
+    }
+
+    // 2. Validação oficial de CPF (Receita Federal)
+    if (!validarCPF(cpf)) {
+      const msg = "Informe um CPF válido. A verificação de documento é necessária para conformidade legal.";
+      setMensagemErro(msg);
+      toast.error(msg);
+      return;
+    }
+
+    // 3. Verificação de consentimento legal
+    if (!termoMaiorIdade) {
+      const msg = "É obrigatório confirmar a veracidade de sua idade e documentos em conformidade com o ECA Digital e a LGPD.";
       setMensagemErro(msg);
       toast.error(msg);
       return;
@@ -273,9 +375,13 @@ function LoginPage() {
       return;
     }
 
+    const partesNasc = dataNascimento.split("/");
+    const dataNascimentoIso = `${partesNasc[2]}-${partesNasc[1]}-${partesNasc[0]}`;
+    const cpfLimpo = cpf.replace(/\D/g, "");
+
     setCarregando(true);
     try {
-      // Chama RPC que cadastra diretamente sem esgotar cota de envio de email do Supabase
+      // Chama RPC com validação etária verificada (ECA Digital e LGPD)
       const { data: rpcResult, error: rpcError } = await supabase.rpc(
         "create_student_account",
         {
@@ -284,6 +390,8 @@ function LoginPage() {
           p_full_name: nome.trim(),
           p_phone: telefone.trim(),
           p_account_type: accountType,
+          p_birth_date: dataNascimentoIso,
+          p_cpf: cpfLimpo,
         }
       );
 
@@ -780,6 +888,58 @@ function LoginPage() {
                   </div>
                 </div>
 
+                {/* Bloco de Verificação de Idade e Capacidade Civil (ECA Digital e LGPD) */}
+                <div className="rounded-2xl border border-orange-500/20 bg-orange-500/[0.04] p-3.5 space-y-3">
+                  <div className="flex items-center gap-1.5">
+                    <ShieldCheck className="h-4 w-4 text-[#F97316]" />
+                    <span className="text-[11px] font-bold text-orange-400">
+                      Verificação de Maioridade (ECA Digital & LGPD)
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[11px] font-medium text-stone-300 mb-1">
+                        Data de Nascimento *
+                      </label>
+                      <div className="relative">
+                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-stone-500" />
+                        <input
+                          type="text"
+                          value={dataNascimento}
+                          onChange={(e) => setDataNascimento(formatarDataNascimento(e.target.value))}
+                          placeholder="DD/MM/AAAA"
+                          maxLength={10}
+                          required
+                          className="w-full rounded-xl bg-[#19191d] border border-white/10 pl-9 pr-3 py-2 text-xs text-white placeholder-stone-500 outline-none focus:border-[#F97316] transition-colors"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-medium text-stone-300 mb-1">
+                        CPF (validação Receita) *
+                      </label>
+                      <div className="relative">
+                        <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-stone-500" />
+                        <input
+                          type="text"
+                          value={cpf}
+                          onChange={(e) => setCpf(formatarCPF(e.target.value))}
+                          placeholder="000.000.000-00"
+                          maxLength={14}
+                          required
+                          className="w-full rounded-xl bg-[#19191d] border border-white/10 pl-9 pr-3 py-2 text-xs text-white placeholder-stone-500 outline-none focus:border-[#F97316] transition-colors"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <p className="text-[10px] text-stone-400 leading-tight">
+                    Por conter gestão de contas e cartões, a contratação é restrita a maiores de 18 anos dotados de capacidade civil plena.
+                  </p>
+                </div>
+
                 <div>
                   <label className="block text-xs font-medium text-stone-300 mb-1.5">
                     Criar Senha
@@ -825,6 +985,30 @@ function LoginPage() {
                       className="w-full rounded-xl bg-[#19191d] border border-white/10 pl-10 pr-4 py-2.5 text-xs text-white placeholder-stone-500 outline-none focus:border-[#F97316] transition-colors"
                     />
                   </div>
+                </div>
+
+                {/* Consentimento Legal Obrigatório */}
+                <div className="pt-1">
+                  <label className="flex items-start gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={termoMaiorIdade}
+                      onChange={(e) => setTermoMaiorIdade(e.target.checked)}
+                      required
+                      className="h-4 w-4 mt-0.5 rounded border-stone-700 bg-stone-900 text-[#F97316] focus:ring-[#F97316] shrink-0"
+                    />
+                    <span className="text-[11px] text-stone-400 leading-snug">
+                      Declaro ter 18 anos ou mais, informei data de nascimento e CPF autênticos e concordo com os{" "}
+                      <a href="/termos-de-uso" target="_blank" className="text-[#F97316] underline">
+                        Termos de Uso
+                      </a>{" "}
+                      e a{" "}
+                      <a href="/politica-de-privacidade" target="_blank" className="text-[#F97316] underline">
+                        Política de Privacidade
+                      </a>{" "}
+                      (ECA Digital e LGPD).
+                    </span>
+                  </label>
                 </div>
 
                 <button
@@ -1018,9 +1202,32 @@ function LoginPage() {
         </div>
       </main>
 
-      {/* Footer minimalista */}
-      <footer className="relative z-10 w-full max-w-7xl mx-auto px-6 py-6 text-center text-xs text-stone-600">
-        © {new Date().getFullYear()} Organiz.AI · Natália Rodolfo · Todos os direitos reservados.
+      {/* Footer corporativo e legal */}
+      <footer className="relative z-10 w-full max-w-7xl mx-auto px-6 py-6 text-center text-xs text-stone-500 space-y-1.5">
+        <div className="flex flex-wrap items-center justify-center gap-3 text-[11.5px] text-stone-400">
+          <a href="/termos-de-uso" className="hover:text-white transition-colors">
+            Termos de Uso
+          </a>
+          <span>•</span>
+          <a href="/politica-de-privacidade" className="hover:text-white transition-colors">
+            Política de Privacidade (LGPD)
+          </a>
+          <span>•</span>
+          <a href="/denuncia-direitos-autorais" className="hover:text-white transition-colors">
+            Direitos Autorais (Notice & Takedown)
+          </a>
+          <span>•</span>
+          <a href="/descadastro" className="hover:text-white transition-colors">
+            Descadastro
+          </a>
+        </div>
+        <p className="font-medium text-stone-400 pt-1">
+          {DADOS_EMPRESA.razaoSocial} · CNPJ: {DADOS_EMPRESA.cnpjFormatado}
+        </p>
+        <p className="text-[11px] text-stone-600">{DADOS_EMPRESA.enderecoCompleto}</p>
+        <p className="text-[10.5px] text-stone-600">
+          © {new Date().getFullYear()} Organiz.AI · Natália Rodolfo · Todos os direitos reservados.
+        </p>
       </footer>
 
       {/* Popup de Instalação PWA (exclusivo na tela de login) */}

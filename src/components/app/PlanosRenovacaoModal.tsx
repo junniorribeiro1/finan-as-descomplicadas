@@ -266,8 +266,33 @@ export function PlanosRenovacaoModal({
                     </p>
                   </div>
 
+                  {/* Quadro Transparente de Regras CDC: Preço, Periodicidade e Renovação */}
+                  <div className="mt-4 rounded-xl border border-white/10 bg-black/40 p-2.5 text-[10.5px] space-y-1.5 text-stone-300">
+                    <div className="flex items-center justify-between text-white font-semibold">
+                      <span>Periodicidade:</span>
+                      <span className="text-orange-400">
+                        {plano.durationMonths === 1
+                          ? "Cobrança Mensal"
+                          : plano.durationMonths === 3
+                          ? "A cada 3 meses"
+                          : plano.durationMonths === 6
+                          ? "A cada 6 meses"
+                          : "Cobrança Anual (12 meses)"}
+                      </span>
+                    </div>
+
+                    <p className="text-[10px] leading-tight text-stone-400">
+                      <strong>Regra de Renovação:</strong> Renovação automática ao fim do ciclo. Cancele quando quiser diretamente no painel ou na Hotmart sem multas.
+                    </p>
+
+                    <p className="text-[9.5px] leading-tight text-emerald-400/90 font-medium">
+                      ✓ Aviso prévio por e-mail 15 dias antes da renovação.<br />
+                      ✓ Garantia legal de 7 dias (CDC Art. 49).
+                    </p>
+                  </div>
+
                   {/* Botão de Ação / Checkout Hotmart */}
-                  <div className="mt-5 pt-3 border-t border-white/[0.08]">
+                  <div className="mt-3 pt-2 border-t border-white/[0.08]">
                     {plano.checkoutUrl ? (
                       <a
                         href={plano.checkoutUrl}

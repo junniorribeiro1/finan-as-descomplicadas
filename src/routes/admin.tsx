@@ -40,6 +40,8 @@ import {
   Calendar,
   CalendarPlus,
   ShieldAlert,
+  Scale,
+  ExternalLink,
 } from "lucide-react";
 import { toast } from "sonner";
 import { brl } from "@/lib/mock-data";
@@ -122,6 +124,55 @@ function AdminPage() {
 
   const [notasEdicao, setNotasEdicao] = useState("");
   const [salvandoNotas, setSalvandoNotas] = useState(false);
+
+  // Gestão de Direitos Autorais (Notice & Takedown)
+  const [secaoAtiva, setSecaoAtiva] = useState<"alunos" | "copyright">("alunos");
+  const [denunciasCopyright, setDenunciasCopyright] = useState<any[]>([]);
+  const [carregandoDenuncias, setCarregandoDenuncias] = useState(false);
+
+  const carregarDenunciasCopyright = async () => {
+    setCarregandoDenuncias(true);
+    try {
+      const { data, error } = await supabase
+        .from("copyright_reports")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (!error && data) {
+        setDenunciasCopyright(data);
+      }
+    } catch (err) {
+      console.warn("Erro ao carregar denúncias de copyright:", err);
+    } finally {
+      setCarregandoDenuncias(false);
+    }
+  };
+
+  const atualizarStatusDenuncia = async (
+    id: string,
+    novoStatus: "em_analise" | "removido" | "rejeitado",
+    actionDesc?: string
+  ) => {
+    try {
+      const { error } = await supabase
+        .from("copyright_reports")
+        .update({
+          status: novoStatus,
+          action_taken: actionDesc || `Ação executada: ${novoStatus}`,
+          resolved_at: novoStatus === "removido" || novoStatus === "rejeitado" ? new Date().toISOString() : null,
+        })
+        .eq("id", id);
+
+      if (error) throw error;
+      toast.success(`Notificação atualizada para ${novoStatus.toUpperCase()}`);
+      carregarDenunciasCopyright();
+    } catch (err: any) {
+      toast.error("Erro ao atualizar notificação: " + err.message);
+    }
+  };
+
+  useEffect(() => {
+    carregarDenunciasCopyright();
+  }, []);
 
   // Redireciona se não for admin
   useEffect(() => {
@@ -1020,6 +1071,48 @@ function AdminPage() {
           </div>
         </div>
 
+        {/* Alternador de Abas Principais: Alunos vs Direitos Autorais */}
+        <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-[#141417] border border-white/[0.08] w-fit">
+          <button
+            type="button"
+            onClick={() => setSecaoAtiva("alunos")}
+            className={cn(
+              "px-4 py-2 text-xs font-bold rounded-xl transition-all flex items-center gap-2 cursor-pointer",
+              secaoAtiva === "alunos"
+                ? "bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-md shadow-orange-950/40"
+                : "text-stone-400 hover:text-white"
+            )}
+          >
+            <Users className="h-4 w-4" />
+            <span>Gestão de Alunos & Finanças ({metricas.total})</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setSecaoAtiva("copyright");
+              carregarDenunciasCopyright();
+            }}
+            className={cn(
+              "px-4 py-2 text-xs font-bold rounded-xl transition-all flex items-center gap-2 cursor-pointer",
+              secaoAtiva === "copyright"
+                ? "bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-md shadow-orange-950/40"
+                : "text-stone-400 hover:text-white"
+            )}
+          >
+            <Scale className="h-4 w-4" />
+            <span>Direitos Autorais (Notice & Takedown)</span>
+            {denunciasCopyright.filter((d) => d.status === "pendente").length > 0 && (
+              <span className="rounded-full bg-rose-500 text-white text-[10px] px-2 py-0.5 font-black">
+                {denunciasCopyright.filter((d) => d.status === "pendente").length}
+              </span>
+            )}
+          </button>
+        </div>
+
+        {/* SEÇÃO 1: ALUNOS & FINANÇAS */}
+        {secaoAtiva === "alunos" && (
+          <div className="space-y-8">
         {/* Grade de KPIs Globais */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
           {/* Total Alunos */}
@@ -1492,6 +1585,189 @@ function AdminPage() {
             </table>
           </div>
         </div>
+      </div>
+      )}
+
+        {/* SEÇÃO 2: DIREITOS AUTORAIS & TAKEDOWN */}
+        {secaoAtiva === "copyright" && (
+          <div className="rounded-3xl border border-white/[0.08] bg-[#121215] p-6 sm:p-8 shadow-xl space-y-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-white/[0.08]">
+              <div>
+                <div className="flex items-center gap-2 text-xs font-bold text-orange-400 uppercase tracking-wider mb-1">
+                  <Scale className="h-4 w-4" />
+                  Marco Civil da Internet & Lei nº 9.610/98
+                </div>
+                <h2 className="text-xl font-bold text-white">
+                  Notificações de Violação de Direitos Autorais (Notice & Takedown)
+                </h2>
+                <p className="text-xs text-stone-400 mt-1 max-w-2xl">
+                  Canal de recebimento e gestão de notificações de infração. Execute a remoção cautelar ou encerre os procedimentos conforme o contraditório legal.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3 shrink-0">
+                <a
+                  href="/denuncia-direitos-autorais"
+                  target="_blank"
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-xs font-semibold text-stone-300 hover:text-white hover:bg-white/[0.08]"
+                >
+                  <ExternalLink className="h-3.5 w-3.5" />
+                  <span>Ver Canal Público</span>
+                </a>
+
+                <button
+                  type="button"
+                  onClick={carregarDenunciasCopyright}
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 px-3.5 py-2 text-xs font-bold text-white shadow-md hover:brightness-110 cursor-pointer"
+                >
+                  <RefreshCw className={`h-3.5 w-3.5 ${carregandoDenuncias ? "animate-spin" : ""}`} />
+                  <span>Atualizar</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Tabela de Notificações */}
+            {denunciasCopyright.length === 0 ? (
+              <div className="text-center py-12 rounded-2xl border border-white/[0.06] bg-black/20">
+                <CheckCircle2 className="h-10 w-10 text-emerald-400 mx-auto mb-2" />
+                <h3 className="text-sm font-bold text-white">Nenhuma notificação de copyright pendente</h3>
+                <p className="text-xs text-stone-400 mt-1">
+                  Não há relatórios de infração de direitos autorais registrados no momento.
+                </p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs text-stone-300">
+                  <thead className="border-b border-white/[0.08] text-[11px] font-bold uppercase tracking-wider text-stone-400">
+                    <tr>
+                      <th className="py-3 px-3">Protocolo / Data</th>
+                      <th className="py-3 px-3">Notificante</th>
+                      <th className="py-3 px-3">Obra Protegida</th>
+                      <th className="py-3 px-3">Conteúdo Denunciado</th>
+                      <th className="py-3 px-3">Status</th>
+                      <th className="py-3 px-3 text-right">Ações de Remoção</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/[0.04]">
+                    {denunciasCopyright.map((denuncia) => {
+                      const proto = `CR-${(denuncia.id || "").slice(0, 8).toUpperCase()}`;
+                      const dataFormatada = new Date(denuncia.created_at).toLocaleDateString("pt-BR");
+
+                      return (
+                        <tr key={denuncia.id} className="hover:bg-white/[0.02]">
+                          <td className="py-3 px-3">
+                            <span className="font-mono font-bold text-white block">{proto}</span>
+                            <span className="text-[10px] text-stone-500">{dataFormatada}</span>
+                          </td>
+
+                          <td className="py-3 px-3">
+                            <span className="font-semibold text-white block">{denuncia.notifier_name}</span>
+                            <span className="text-[11px] text-stone-400 block">{denuncia.notifier_email}</span>
+                            {denuncia.notifier_document && (
+                              <span className="text-[10px] text-stone-500 block">Doc: {denuncia.notifier_document}</span>
+                            )}
+                          </td>
+
+                          <td className="py-3 px-3 max-w-[220px]">
+                            <p className="truncate text-stone-300" title={denuncia.original_work_description}>
+                              {denuncia.original_work_description}
+                            </p>
+                            {denuncia.proof_url && (
+                              <a
+                                href={denuncia.proof_url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-[11px] text-orange-400 hover:underline inline-flex items-center gap-1 mt-0.5"
+                              >
+                                <span>Ver Prova de Titularidade</span>
+                                <ExternalLink className="h-3 w-3" />
+                              </a>
+                            )}
+                          </td>
+
+                          <td className="py-3 px-3 max-w-[220px]">
+                            <p className="truncate text-stone-300" title={denuncia.infringing_url_or_content}>
+                              {denuncia.infringing_url_or_content}
+                            </p>
+                          </td>
+
+                          <td className="py-3 px-3">
+                            {denuncia.status === "pendente" && (
+                              <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 text-[10px] font-bold text-amber-400">
+                                Pendente
+                              </span>
+                            )}
+                            {denuncia.status === "em_analise" && (
+                              <span className="inline-flex items-center gap-1 rounded-full bg-cyan-500/15 border border-cyan-500/30 px-2 py-0.5 text-[10px] font-bold text-cyan-400">
+                                Em Análise
+                              </span>
+                            )}
+                            {denuncia.status === "removido" && (
+                              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 text-[10px] font-bold text-emerald-400">
+                                Conteúdo Removido
+                              </span>
+                            )}
+                            {denuncia.status === "rejeitado" && (
+                              <span className="inline-flex items-center gap-1 rounded-full bg-rose-500/15 border border-rose-500/30 px-2 py-0.5 text-[10px] font-bold text-rose-400">
+                                Rejeitado
+                              </span>
+                            )}
+                          </td>
+
+                          <td className="py-3 px-3 text-right">
+                            <div className="flex items-center justify-end gap-1.5">
+                              {denuncia.status === "pendente" && (
+                                <button
+                                  type="button"
+                                  onClick={() => atualizarStatusDenuncia(denuncia.id, "em_analise", "Iniciada apuração jurídica")}
+                                  className="rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-2.5 py-1 text-[11px] font-bold text-cyan-300 hover:bg-cyan-500/20 cursor-pointer"
+                                >
+                                  Analisar
+                                </button>
+                              )}
+
+                              {denuncia.status !== "removido" && (
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    atualizarStatusDenuncia(
+                                      denuncia.id,
+                                      "removido",
+                                      "Takedown executado: conteúdo cautelarmente desativado e partes notificadas"
+                                    )
+                                  }
+                                  className="rounded-lg bg-rose-600 hover:bg-rose-500 px-2.5 py-1 text-[11px] font-bold text-white shadow-sm cursor-pointer"
+                                >
+                                  Remover Conteúdo (Takedown)
+                                </button>
+                              )}
+
+                              {denuncia.status !== "rejeitado" && denuncia.status !== "removido" && (
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    atualizarStatusDenuncia(
+                                      denuncia.id,
+                                      "rejeitado",
+                                      "Rejeitado por ausência de comprovação de titularidade ou verossimilhança"
+                                    )
+                                  }
+                                  className="rounded-lg border border-white/10 hover:bg-white/5 px-2 py-1 text-[11px] text-stone-400 hover:text-white cursor-pointer"
+                                >
+                                  Rejeitar
+                                </button>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
       </main>
 
       {/* Modal / Gaveta do Raio-X Financeiro do Aluno */}
