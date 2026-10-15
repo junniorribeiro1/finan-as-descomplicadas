@@ -1,11 +1,14 @@
 /**
  * Utilitário de rastreamento para o Meta Pixel (Facebook / Instagram Ads)
- * ID padrão: 939058608879666
+ * ID padrão: 1962122691122129
  */
 
+const envPixelId =
+  typeof import.meta !== "undefined" ? import.meta.env?.VITE_META_PIXEL_ID : undefined;
+
 export const META_PIXEL_ID =
-  (typeof import.meta !== "undefined" && import.meta.env?.VITE_META_PIXEL_ID) ||
-  "939058608879666";
+  (envPixelId && envPixelId !== "939058608879666" ? envPixelId : undefined) ||
+  "1962122691122129";
 
 declare global {
   interface Window {

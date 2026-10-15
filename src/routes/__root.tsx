@@ -135,7 +135,7 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="pt-BR">
       <head>
         <HeadContent />
-        {/* Meta Pixel Code com consentimento revogado por padrão (LGPD) */}
+        {/* Meta Pixel Code */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -147,7 +147,6 @@ function RootShell({ children }: { children: ReactNode }) {
               t.src=v;s=b.getElementsByTagName(e)[0];
               s.parentNode.insertBefore(t,s)}(window, document,'script',
               'https://connect.facebook.net/en_US/fbevents.js');
-              fbq('consent', 'revoke');
               fbq('init', '${META_PIXEL_ID}');
               fbq('track', 'PageView');
             `,
