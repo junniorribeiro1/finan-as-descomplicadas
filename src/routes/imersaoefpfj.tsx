@@ -832,7 +832,7 @@ function ImersaoPage() {
 
 
       {/* ═══════════════════════════════════════════════
-          DOBRA 6 — CRONOGRAMA DA IMERSÃO (01 DE NOVEMBRO)
+          DOBRA 5 — CRONOGRAMA DA IMERSÃO (01 DE NOVEMBRO)
       ═══════════════════════════════════════════════ */}
       <section id="cronograma" className="reveal-on-scroll section-defer-render relative z-20 mx-auto w-full max-w-5xl px-5 py-16 md:px-8">
         <div className="text-center max-w-2xl mx-auto mb-12">
