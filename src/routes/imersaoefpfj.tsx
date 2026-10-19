@@ -15,7 +15,6 @@ import {
   Check,
   MessageCircle,
   Lock,
-  Star,
   Flame,
   ArrowUpRight,
   BadgeCheck,
@@ -32,7 +31,7 @@ export const Route = createFileRoute("/imersaoefpfj")({
       {
         name: "description",
         content:
-          "Participe da IMER$ÃO EDUCAÇÃO FINANCEIRA para Pessoas Física e Jurídica com Natália Rodolfo. Aprenda a organizar suas finanças, sair do vermelho e ter fluxo de caixa previsível. 01 de Novembro, 100% ao vivo no Meet.",
+          "Participe da IMER$ÃO EDUCAÇÃO FINANCEIRA para Pessoas Física e Jurídica com Natália Rodolfo. Aprenda a organizar suas finanças, sair do vermelho e ter fluxo de caixa previsível. 01 de Novembro, 100% ao vivo no Meet por apenas R$ 9,90.",
       },
       {
         property: "og:title",
@@ -41,7 +40,7 @@ export const Route = createFileRoute("/imersaoefpfj")({
       {
         property: "og:description",
         content:
-          "Método definitivo para organizar as contas pessoais e da sua empresa. 01 de Novembro ao vivo no Meet com certificado oficial. Ingressos do Lote 1 por R$ 27,00.",
+          "Método definitivo para organizar as contas pessoais e da sua empresa. 01 de Novembro ao vivo no Meet com certificado oficial por apenas R$ 9,90.",
       },
       { property: "og:image", content: "/imersao-banner.png" },
       { property: "og:url", content: "https://nataliarodolfo.com.br/imersaoefpfj" },
@@ -67,21 +66,17 @@ function ImersaoPage() {
   const checkoutUrl = "https://pay.hotmart.com/X107567504O?checkoutMode=10&bid=1791256041440";
   const wppNumber = "5577981381477";
   const defaultWppUrl = `https://wa.me/${wppNumber}?text=${encodeURIComponent(
-    "Olá, Natália! Gostaria de garantir minha vaga no 1º Lote (R$ 27,00) da IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ."
+    "Olá, Natália! Gostaria de garantir minha vaga (R$ 9,90) na IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ."
   )}`;
   const supportWppUrl = `https://wa.me/${wppNumber}?text=${encodeURIComponent(
     "Olá! Tenho uma dúvida sobre a IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ."
   )}`;
 
-  // 2. Estado do lote selecionado
-  const [selectedLot, setSelectedLot] = useState<number>(1);
-
   const handleCheckoutClick = () => {
     trackEvent("InitiateCheckout", {
       content_name: "IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ",
-      value: selectedLot === 1 ? 27 : selectedLot === 2 ? 57 : 97,
+      value: 9.9,
       currency: "BRL",
-      lot: selectedLot,
     });
   };
 
@@ -152,19 +147,8 @@ function ImersaoPage() {
       clearTimeout(safetyTimeout);
     };
   }, []);
-  // 4. Progressão dinâmica de vagas preenchidas (reiniciada, inicia em 2% e cresce gradualmente até 95%)
-  const [filledSpotsPercent] = useState(() => {
-    const now = new Date();
-    const year = now.getFullYear();
-    // Reinicia contagem de vagas preenchidas rumo a 01 de Novembro (data base: 11 de Outubro)
-    const startDate = new Date(year, 9, 11, 0, 0, 0).getTime();
-    const diffDays = Math.max(0, Math.floor((now.getTime() - startDate) / (1000 * 60 * 60 * 24)));
-    const progression = [2, 8, 16, 25, 36, 48, 59, 70, 79, 87, 92, 95];
-
-    if (diffDays <= 0) return 2;
-    if (diffDays >= progression.length - 1) return 95;
-    return progression[diffDays] ?? 2;
-  });
+  // 4. Vagas preenchidas (17% fixo conforme solicitado)
+  const [filledSpotsPercent] = useState<number>(17);
 
   // 5. FAQ Accordion State
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -188,10 +172,10 @@ function ImersaoPage() {
         offers: {
           "@type": "Offer",
           category: "Paid",
-          price: "27.00",
+          price: "9.90",
           priceCurrency: "BRL",
           availability: "https://schema.org/InStock",
-          url: "https://pay.hotmart.com/X107567504O?checkoutMode=10&bid=1791256041440",
+          url: checkoutUrl,
         },
       },
       {
@@ -307,8 +291,8 @@ function ImersaoPage() {
               01 DE NOVEMBRO • 100% AO VIVO NO MEET
             </span>
             <span>•</span>
-            <span className="rounded bg-stone-950 px-2 py-0.5 text-[0.65rem] font-bold text-amber-300">
-              LOTE 1 ATIVO: R$ 27,00
+            <span className="rounded bg-stone-950 px-2.5 py-0.5 text-[0.65rem] font-black text-amber-300">
+              INGRESSO PROMOCIONAL: APENAS R$ 9,90
             </span>
             <span>•</span>
             <span>VAGAS LIMITADAS COM CERTIFICAÇÃO OFICIAL</span>
@@ -324,8 +308,8 @@ function ImersaoPage() {
               01 DE NOVEMBRO • 100% AO VIVO NO MEET
             </span>
             <span>•</span>
-            <span className="rounded bg-stone-950 px-2 py-0.5 text-[0.65rem] font-bold text-amber-300">
-              LOTE 1 ATIVO: R$ 27,00
+            <span className="rounded bg-stone-950 px-2.5 py-0.5 text-[0.65rem] font-black text-amber-300">
+              INGRESSO PROMOCIONAL: APENAS R$ 9,90
             </span>
             <span>•</span>
             <span>VAGAS LIMITADAS COM CERTIFICAÇÃO OFICIAL</span>
@@ -348,8 +332,8 @@ function ImersaoPage() {
               01 DE NOVEMBRO • 100% AO VIVO NO MEET
             </span>
             <span>•</span>
-            <span className="rounded bg-stone-950 px-2 py-0.5 text-[0.65rem] font-bold text-amber-300">
-              LOTE 1 ATIVO: R$ 27,00
+            <span className="rounded bg-stone-950 px-2.5 py-0.5 text-[0.65rem] font-black text-amber-300">
+              INGRESSO PROMOCIONAL: APENAS R$ 9,90
             </span>
             <span>•</span>
             <span>VAGAS LIMITADAS COM CERTIFICAÇÃO OFICIAL</span>
@@ -365,8 +349,8 @@ function ImersaoPage() {
               01 DE NOVEMBRO • 100% AO VIVO NO MEET
             </span>
             <span>•</span>
-            <span className="rounded bg-stone-950 px-2 py-0.5 text-[0.65rem] font-bold text-amber-300">
-              LOTE 1 ATIVO: R$ 27,00
+            <span className="rounded bg-stone-950 px-2.5 py-0.5 text-[0.65rem] font-black text-amber-300">
+              INGRESSO PROMOCIONAL: APENAS R$ 9,90
             </span>
             <span>•</span>
             <span>VAGAS LIMITADAS COM CERTIFICAÇÃO OFICIAL</span>
@@ -459,99 +443,65 @@ function ImersaoPage() {
                 e construir uma vida financeira leve e consciente.
               </p>
 
-              {/* 3 LOTES NO HERO (APENAS OS LOTES, SEM TEXTO SELECIONE) */}
-              <div className="mt-1 w-full max-w-sm sm:max-w-md mx-auto lg:mx-0">
-                <div className="grid grid-cols-3 gap-2">
-                  {/* Lote 1 Ativo - R$ 27,00 */}
-                  <button
-                    type="button"
-                    onClick={() => setSelectedLot(1)}
-                    className={`relative flex flex-col items-center justify-center p-2 rounded-xl border transition-all text-center ${
-                      selectedLot === 1
-                        ? "border-amber-400 bg-amber-500/15 shadow-[0_0_16px_rgba(245,158,11,0.2)] ring-2 ring-amber-400/60"
-                        : "border-white/10 bg-white/[0.02] hover:bg-white/[0.05]"
-                    }`}
-                  >
-                    <div className="absolute top-0 right-0 w-5 h-5 bg-amber-400/10 rounded-full blur-sm pointer-events-none" />
-                    <span className="font-mono text-[0.6rem] sm:text-[0.65rem] font-bold text-amber-400 uppercase tracking-widest mb-0.5">
-                      LOTE 1
-                    </span>
-                    <span className="text-xs sm:text-sm font-black text-white tracking-tight leading-tight">
-                      R$ 27,00
-                    </span>
-                    <span className="inline-flex items-center gap-1 text-[0.58rem] font-extrabold text-emerald-400 mt-0.5">
-                      <span className="h-1 w-1 rounded-full bg-emerald-400 animate-pulse" />
-                      Ativo
-                    </span>
-                  </button>
+              {/* CARD DE INGRESSO OFICIAL - R$ 9,90 */}
+              <div className="mt-1 w-full max-w-lg lg:max-w-xl mx-auto lg:mx-0">
+                <div className="relative overflow-hidden rounded-2xl border border-amber-400/50 bg-gradient-to-r from-amber-500/15 via-[#18120a] to-amber-950/30 p-3 sm:p-3.5 backdrop-blur-md shadow-[0_0_24px_rgba(245,158,11,0.2)]">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex flex-col text-left">
+                      <div className="flex items-center gap-1.5">
+                        <span className="inline-flex items-center gap-1 rounded bg-amber-500/20 border border-amber-400/40 px-2 py-0.5 text-[0.65rem] font-extrabold text-amber-300 uppercase tracking-wider">
+                          <Sparkles className="h-3 w-3 text-amber-400" />
+                          Ingresso Oficial
+                        </span>
+                        <span className="text-[0.7rem] text-stone-400 line-through">
+                          De R$ 197,00
+                        </span>
+                      </div>
+                      <span className="text-xs sm:text-sm font-black text-white mt-1">
+                        Pagamento Único • Acesso Imediato
+                      </span>
+                    </div>
 
-                  {/* Lote 2 - R$ 57,00 */}
-                  <button
-                    type="button"
-                    onClick={() => setSelectedLot(2)}
-                    className={`relative flex flex-col items-center justify-center p-2 rounded-xl border transition-all text-center opacity-75 ${
-                      selectedLot === 2
-                        ? "border-amber-400 bg-amber-500/15 ring-2 ring-amber-400/60 opacity-100"
-                        : "border-white/10 bg-white/[0.02]"
-                    }`}
-                  >
-                    <span className="font-mono text-[0.6rem] sm:text-[0.65rem] font-medium text-stone-400 uppercase tracking-widest mb-0.5">
-                      LOTE 2
-                    </span>
-                    <span className="text-xs sm:text-sm font-bold text-stone-300 tracking-tight leading-tight">
-                      R$ 57,00
-                    </span>
-                    <span className="text-[0.58rem] text-stone-500 mt-0.5">
-                      Em breve
-                    </span>
-                  </button>
-
-                  {/* Lote 3 - R$ 97,00 */}
-                  <button
-                    type="button"
-                    onClick={() => setSelectedLot(3)}
-                    className={`relative flex flex-col items-center justify-center p-2 rounded-xl border transition-all text-center opacity-65 ${
-                      selectedLot === 3
-                        ? "border-amber-400 bg-amber-500/15 ring-2 ring-amber-400/60 opacity-100"
-                        : "border-white/10 bg-white/[0.02]"
-                    }`}
-                  >
-                    <span className="font-mono text-[0.6rem] sm:text-[0.65rem] font-medium text-stone-400 uppercase tracking-widest mb-0.5">
-                      LOTE 3
-                    </span>
-                    <span className="text-xs sm:text-sm font-bold text-stone-300 tracking-tight leading-tight">
-                      R$ 97,00
-                    </span>
-                    <span className="text-[0.58rem] text-stone-500 mt-0.5">Final</span>
-                  </button>
+                    <div className="text-right flex flex-col items-end">
+                      <div className="flex items-baseline gap-0.5">
+                        <span className="text-[0.7rem] font-bold text-amber-400">R$</span>
+                        <span className="text-2xl sm:text-3xl font-black text-amber-300">9</span>
+                        <span className="text-sm sm:text-base font-bold text-amber-400">,90</span>
+                      </div>
+                      <span className="text-[0.58rem] font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1">
+                        <span className="h-1 w-1 rounded-full bg-emerald-400 animate-pulse" />
+                        Disponível
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              {/* BOTÕES DE AÇÃO HERO */}
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-2.5 pt-1 w-full max-w-sm sm:max-w-md mx-auto lg:mx-0">
+              {/* BOTÕES DE AÇÃO HERO (SEM QUEBRA DE LINHA) */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-3 pt-1.5 w-full max-w-lg lg:max-w-xl mx-auto lg:mx-0">
                 <a
                   href={checkoutUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={handleCheckoutClick}
-                  className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-orange-400 px-6 py-3 text-xs sm:text-sm font-extrabold text-stone-950 shadow-[0_4px_24px_rgba(245,158,11,0.3)] transition-all duration-300 hover:scale-105 active:scale-95"
+                  className="group relative inline-flex items-center justify-center gap-2.5 overflow-hidden rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-orange-400 px-6 sm:px-8 py-3.5 sm:py-4 text-xs sm:text-sm md:text-base font-black uppercase tracking-wide text-stone-950 shadow-[0_4px_28px_rgba(245,158,11,0.4)] transition-all duration-300 hover:scale-[1.03] active:scale-95 whitespace-nowrap shrink-0"
                 >
-                  <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
-                  <span>Garantir meu ingresso</span>
-                  <ArrowRight className="h-4 w-4 stroke-[2.5] transition-transform group-hover:translate-x-1" />
+                  <div className="absolute inset-0 bg-white/25 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 pointer-events-none" />
+                  <span className="whitespace-nowrap">Garantir meu ingresso</span>
+                  <ArrowRight className="h-4 w-4 stroke-[3] transition-transform group-hover:translate-x-1 shrink-0" />
                 </a>
 
                 <a
                   href="#virada"
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-5 py-3 text-xs sm:text-sm font-semibold text-stone-300 backdrop-blur-md transition-colors hover:bg-white/10 hover:text-white"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-5 sm:px-6 py-3.5 sm:py-4 text-xs sm:text-sm font-semibold text-stone-300 backdrop-blur-md transition-colors hover:bg-white/10 hover:text-white whitespace-nowrap shrink-0"
                 >
-                  <span>Saiba mais</span>
-                  <ChevronDown className="h-4 w-4 text-stone-400" />
+                  <span className="whitespace-nowrap">Saiba mais</span>
+                  <ChevronDown className="h-4 w-4 text-stone-400 shrink-0" />
                 </a>
               </div>
 
-              {/* BARRA DE PROGRESSO DE VAGAS */}
-              <div className="flex flex-col gap-1 w-full max-w-sm sm:max-w-md mx-auto lg:mx-0 pt-0.5">
+              {/* BARRA DE PROGRESSO DE VAGAS (17%) */}
+              <div className="flex flex-col gap-1 w-full max-w-lg lg:max-w-xl mx-auto lg:mx-0 pt-0.5">
                 <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10 border border-white/5">
                   <div
                     className="h-full rounded-full bg-gradient-to-r from-amber-500 to-emerald-400 shadow-[0_0_10px_#f59e0b] transition-all duration-1000"
@@ -561,10 +511,10 @@ function ImersaoPage() {
                 <div className="flex items-center justify-between text-[0.68rem] text-stone-400">
                   <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
-                    {filledSpotsPercent}% das vagas preenchidas no 1º Lote
+                    {filledSpotsPercent}% das vagas preenchidas
                   </span>
-                  <span className="font-mono text-stone-500">
-                    {filledSpotsPercent >= 85 ? "Últimas vagas" : "Vagas limitadas"}
+                  <span className="font-mono text-stone-400 font-medium">
+                    Vagas limitadas
                   </span>
                 </div>
               </div>
@@ -954,36 +904,14 @@ function ImersaoPage() {
                 </div>
               </div>
 
-              {/* CARD DESTAQUE VIP: 10 PRIMEIRAS PESSOAS */}
-              <div className="mt-6 w-full rounded-2xl border border-amber-400/50 bg-gradient-to-r from-amber-500/20 via-orange-500/15 to-amber-950/30 p-4 sm:p-5 backdrop-blur-md shadow-[0_4px_30px_rgba(245,158,11,0.2)] relative overflow-hidden text-left">
-                <div className="pointer-events-none absolute -top-8 -right-8 h-28 w-28 rounded-full bg-amber-400/20 blur-xl" />
-                <div className="flex items-start gap-3.5 relative z-10">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/25 border border-amber-400/50 text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.35)] mt-0.5">
-                    <Star className="h-5 w-5 fill-amber-400 text-amber-300" />
-                  </div>
-                  <div className="flex flex-col">
-                    <div className="flex items-center gap-2 flex-wrap mb-1">
-                      <span className="font-mono text-[0.65rem] sm:text-[0.7rem] font-black uppercase tracking-wider text-amber-200 bg-amber-500/30 px-2.5 py-0.5 rounded-full border border-amber-400/40 flex items-center gap-1.5">
-                        <Flame className="h-3 w-3 text-amber-300 fill-amber-400" />
-                        Apenas para os 10 Primeiros
-                      </span>
-                    </div>
-                    <h3 className="text-sm sm:text-base font-extrabold text-white leading-snug">
-                      Consultoria Individual de 30 Minutos Gratuita!
-                    </h3>
-                    <p className="mt-1 text-xs sm:text-sm text-stone-300 leading-relaxed">
-                      As <strong className="text-amber-300 font-bold">10 primeiras pessoas</strong> que adquirirem o App <strong className="text-white">Organiz.AI</strong> durante a 1ª Imersão Educação Financeira, terão uma <strong className="text-white font-semibold">consultoria agendada/individual de 30 minutos gratuita</strong> com nossa equipe de suporte para alinhamento e dúvidas gerais.
-                    </p>
-                  </div>
-                </div>
-              </div>
+
 
               <div className="mt-6 flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-5 border-t border-white/10 w-full text-center">
                 <span className="font-mono text-xs text-stone-500 line-through uppercase">
                   Vendido separadamente por R$ 197,00
                 </span>
                 <span className="rounded-full bg-emerald-500/20 border border-emerald-500/40 px-3.5 py-1 text-xs font-bold text-emerald-300">
-                  100% Gratuito para Inscritos no Lote 1
+                  100% Gratuito para Participantes da Imersão
                 </span>
               </div>
             </div>
@@ -1241,17 +1169,16 @@ function ImersaoPage() {
               Risco Zero para a sua Inscrição
             </h3>
             <p className="text-xs sm:text-sm text-stone-300 mt-1 leading-relaxed">
-              Participe da imersão. Se você se arrepender até antes da data da
-              imersão e achar que o método não agrega em sua organização
-              financeira, basta enviar uma mensagem e devolveremos 100% do valor
-              do seu ingresso. Sem letras miúdas.
+              Participe da imersão. Se você se arrepender até antes da data da imersão e achar que o
+              método não agrega em sua organização financeira, basta enviar uma mensagem e devolveremos
+              100% do valor do seu ingresso (R$ 9,90). Sem letras miúdas.
             </p>
           </div>
         </div>
       </section>
 
       {/* ═══════════════════════════════════════════════
-          DOBRA 8 — OFERTA / PREÇO (VALORES: 27,00 | 57,00 | 97,00)
+          DOBRA 8 — OFERTA / PREÇO (VALOR ÚNICO: R$ 9,90)
       ═══════════════════════════════════════════════ */}
       <section id="preco" className="reveal-on-scroll section-defer-render relative z-20 mx-auto w-full max-w-5xl px-5 py-16 md:px-8">
         <div className="rounded-3xl border border-amber-500/40 bg-gradient-to-b from-[#18120a] via-[#0f0c07] to-[#080808] p-8 md:p-14 shadow-[0_10px_60px_rgba(245,158,11,0.2)]">
@@ -1300,22 +1227,13 @@ function ImersaoPage() {
                 </li>
               </ul>
 
-              {/* Comparativo dos 3 Lotes na Dobra de Oferta */}
-              <div className="mt-4 grid grid-cols-3 gap-2 border-t border-white/10 pt-4 max-w-sm mx-auto lg:mx-0 w-full">
-                <div className="flex flex-col p-2 rounded-lg bg-amber-500/10 border border-amber-400/30 text-center">
-                  <span className="font-mono text-[0.65rem] text-amber-400 font-bold uppercase">Lote 1</span>
-                  <span className="text-sm font-black text-white">R$ 27,00</span>
-                  <span className="text-[0.6rem] text-emerald-400 font-bold">Ativo</span>
-                </div>
-                <div className="flex flex-col p-2 rounded-lg bg-white/[0.02] border border-white/5 text-center opacity-60">
-                  <span className="font-mono text-[0.65rem] text-stone-400 font-bold uppercase">Lote 2</span>
-                  <span className="text-sm font-bold text-stone-300">R$ 57,00</span>
-                  <span className="text-[0.6rem] text-stone-500">Em breve</span>
-                </div>
-                <div className="flex flex-col p-2 rounded-lg bg-white/[0.02] border border-white/5 text-center opacity-50">
-                  <span className="font-mono text-[0.65rem] text-stone-400 font-bold uppercase">Lote 3</span>
-                  <span className="text-sm font-bold text-stone-300">R$ 97,00</span>
-                  <span className="text-[0.6rem] text-stone-500">Final</span>
+              {/* Informação de Preço Sem Alterações Futuras */}
+              <div className="mt-4 border-t border-white/10 pt-4 max-w-lg mx-auto lg:mx-0 w-full text-center lg:text-left">
+                <div className="inline-flex items-center gap-2 rounded-xl bg-amber-500/10 border border-amber-400/30 px-3.5 py-2 text-xs text-amber-200">
+                  <Sparkles className="h-4 w-4 text-amber-400 shrink-0" />
+                  <span>
+                    <strong className="text-white font-bold">Preço Único de R$ 9,90:</strong> Sem mensalidades, sem taxas adicionais e sem alteração futura de preço.
+                  </span>
                 </div>
               </div>
             </div>
@@ -1323,20 +1241,20 @@ function ImersaoPage() {
             {/* Box de Preço e CTA */}
             <div className="lg:col-span-5 flex flex-col items-center text-center rounded-2xl border border-white/10 bg-black/60 p-6 backdrop-blur-xl">
               <div className="inline-flex items-center gap-1 rounded-full bg-amber-500/10 border border-amber-500/30 px-3 py-0.5 text-xs font-bold text-amber-300 uppercase tracking-wider mb-2">
-                <span>1º Lote Ativo</span>
+                <span>Ingresso Oficial</span>
               </div>
 
               <span className="text-xs text-stone-400 line-through">
                 De R$ 197,00 por apenas
               </span>
 
-              {/* Valor do Lote 1 Oficial: 27,00 */}
+              {/* Valor Oficial: R$ 9,90 */}
               <div className="flex items-baseline justify-center gap-1 my-2 text-white">
                 <span className="text-xl font-bold text-stone-400">R$</span>
                 <span className="text-5xl sm:text-6xl font-black tracking-tight text-white">
-                  27
+                  9
                 </span>
-                <span className="text-lg font-bold text-stone-400">,00</span>
+                <span className="text-lg font-bold text-stone-400">,90</span>
               </div>
 
               <span className="text-xs text-emerald-400 font-semibold mb-5">
@@ -1348,7 +1266,7 @@ function ImersaoPage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={handleCheckoutClick}
-                className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-orange-400 px-6 py-4 text-sm sm:text-base font-black uppercase tracking-wider text-stone-950 shadow-[0_4px_24px_rgba(245,158,11,0.35)] transition-all hover:scale-[1.02] active:scale-95"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-orange-400 px-6 py-4 text-sm sm:text-base font-black uppercase tracking-wider text-stone-950 shadow-[0_4px_24px_rgba(245,158,11,0.35)] transition-all hover:scale-[1.02] active:scale-95 whitespace-nowrap"
               >
                 <span>GARANTIR MINHA VAGA!</span>
                 <ArrowRight className="h-4 w-4 stroke-[3]" />
@@ -1356,7 +1274,7 @@ function ImersaoPage() {
 
               <div className="mt-4 flex items-center gap-2 text-[0.7rem] text-stone-400">
                 <Lock className="h-3.5 w-3.5 text-emerald-400" />
-                <span>Compra 100% segura e protegida</span>
+                <span>Compra 100% segura e protegida via Hotmart</span>
               </div>
             </div>
           </div>
@@ -1497,11 +1415,11 @@ function ImersaoPage() {
             },
             {
               q: "Quando e como acontece a Imersão?",
-              a: "A imersão será no dia 01 de Novembro, 100% online e ao vivo pelo Meet. Ao confirmar sua inscrição, você receberá o link exclusivo de acesso e as instruções no seu e-mail e WhatsApp.",
+              a: "A imersão será no dia 01 de Novembro, 100% online e ao vivo pelo Meet. Ao confirmar sua inscrição por R$ 9,90, você receberá o link exclusivo de acesso e as instruções no seu e-mail e WhatsApp.",
             },
             {
               q: "E se eu não puder assistir ao vivo em algum horário?",
-              a: "Aconselhamos a participação ao vivo para aproveitar a sessão de mentoria e dúvidas, mas caso você tenha adquirido o módulo gravado, terá acesso às orientações, materiais e resumo completo do evento assim que disponível.",
+              a: "Aconselhamos a participação ao vivo para aproveitar a sessão de mentoria e dúvidas em tempo real. No grupo do WhatsApp enviaremos avisos, resumos e orientações para que você não perca nenhum conteúdo.",
             },
             {
               q: "Serve tanto para quem é pessoa física quanto para PJ/MEI?",
@@ -1509,7 +1427,7 @@ function ImersaoPage() {
             },
             {
               q: "Como funciona a garantia incondicional de 7 dias?",
-              a: "Se você se arrepender até antes da data da imersão e achar que o método não agrega em sua organização financeira, basta enviar uma mensagem e devolveremos 100% do valor do seu ingresso. Sem letras miúdas.",
+              a: "Se você se arrepender até antes da data da imersão e achar que o método não agrega em sua organização financeira, basta enviar uma mensagem e devolveremos 100% do valor do seu ingresso (R$ 9,90). Sem letras miúdas.",
             },
           ].map((item, idx) => (
             <div
@@ -1615,7 +1533,7 @@ function ImersaoPage() {
         </div>
       </footer>
 
-      {/* ── STICKY BAR INFERIOR (SURGE NO SCROLL - LOTE 1: R$ 27,00) ── */}
+      {/* ── STICKY BAR INFERIOR (SURGE NO SCROLL - R$ 9,90) ── */}
       <div
         className={`fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom,0px))] left-1/2 -translate-x-1/2 z-40 w-[94vw] max-w-md rounded-full border border-white/15 bg-black/90 p-2 pl-4 backdrop-blur-xl shadow-[0_10px_40px_rgba(0,0,0,0.8)] transition-all duration-500 flex items-center justify-between ${
           showStickyBar
@@ -1628,7 +1546,7 @@ function ImersaoPage() {
             Imersão 01 de Novembro
           </span>
           <span className="text-[0.65rem] text-emerald-400 font-semibold">
-            Lote 1: Apenas R$ 27,00
+            Apenas R$ 9,90
           </span>
         </div>
         <a
@@ -1636,7 +1554,7 @@ function ImersaoPage() {
           target="_blank"
           rel="noopener noreferrer"
           onClick={handleCheckoutClick}
-          className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 px-4 py-2.5 text-xs font-black uppercase tracking-wider text-stone-950 shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-transform hover:scale-105 active:scale-95"
+          className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 px-4 py-2.5 text-xs font-black uppercase tracking-wider text-stone-950 shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-transform hover:scale-105 active:scale-95 whitespace-nowrap"
         >
           <span>Garantir Vaga</span>
           <ArrowRight className="h-3 w-3 stroke-[3]" />

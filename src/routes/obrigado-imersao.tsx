@@ -37,7 +37,7 @@ export function ObrigadoImersaoPage() {
   const wppNumber = "5577981381477";
   const defaultWppGroupUrl =
     (typeof import.meta !== "undefined" &&
-      import.meta.env?.VITE_WHATSAPP_IMERSAO_GROUP_URL) ||
+      import.meta.env?.["VITE_WHATSAPP_IMERSAO_GROUP_URL"]) ||
     "https://chat.whatsapp.com/KFnVJEj4TYm7ZKKhWEQ3uJ?s=cl&p=i&ilr=4&iam=2";
 
   const supportWppUrl = `https://wa.me/${wppNumber}?text=${encodeURIComponent(
@@ -49,7 +49,7 @@ export function ObrigadoImersaoPage() {
     trackEvent("Purchase", {
       content_name: "IMER$ÃO EDUCAÇÃO FINANCEIRA PF e PJ",
       currency: "BRL",
-      value: 27.0,
+      value: 9.9,
       content_type: "product",
     });
 
