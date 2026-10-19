@@ -158,7 +158,7 @@ export function ObrigadoImersaoPage() {
                 <Video className="h-3.5 w-3.5" />
               </div>
               <p className="text-[0.78rem] text-stone-300 leading-snug">
-                <strong className="text-emerald-300 font-semibold">O link da sala do Google Meet</strong>, avisos importantes e os materiais de apoio serão enviados <strong className="text-white">exclusivamente por dentro do grupo</strong>!
+                <strong className="text-emerald-300 font-semibold">O link da sala do Google Meet</strong> e avisos importantes serão enviados <strong className="text-white">exclusivamente por dentro do grupo</strong>!
               </p>
             </div>
           </div>

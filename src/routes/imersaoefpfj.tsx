@@ -245,24 +245,6 @@ function ImersaoPage() {
         .ticker-track:hover {
           animation-play-state: paused;
         }
-
-        /* ── CELULAR 3D ISOMÉTRICO (BÔNUS EXCLUSIVO) ── */
-        .phone-3d-perspective {
-          perspective: 1200px;
-        }
-        .phone-3d-chassis {
-          transform-style: preserve-3d;
-          transform: rotateY(-15deg) rotateX(7deg) rotateZ(1deg);
-          transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s ease;
-        }
-        .phone-3d-container:hover .phone-3d-chassis {
-          transform: rotateY(-6deg) rotateX(3deg) rotateZ(0deg) scale(1.02);
-        }
-        @media (max-width: 1023px) {
-          .phone-3d-chassis {
-            transform: rotateY(-8deg) rotateX(4deg) rotateZ(0.5deg);
-          }
-        }
       `}</style>
 
       {/* ── BARRA DE PROGRESSO DE SCROLL NO TOPO ── */}
@@ -848,118 +830,6 @@ function ImersaoPage() {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════
-          DOBRA 5 — BÔNUS EXCLUSIVOS (COM CELULAR 3D E VÍDEO DO APP)
-      ═══════════════════════════════════════════════ */}
-      <section className="reveal-on-scroll section-defer-render relative z-20 mx-auto w-full max-w-6xl px-4 sm:px-6 py-12 md:px-8">
-        <div className="relative overflow-hidden rounded-3xl border border-amber-500/30 bg-gradient-to-br from-[#1a120b] via-[#0d0a06] to-[#070503] p-6 sm:p-8 md:p-12 shadow-[0_20px_60px_rgba(245,158,11,0.15)]">
-          {/* Luzes de Aurora de Fundo */}
-          <div className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full bg-amber-500/20 blur-[90px]" />
-          <div className="pointer-events-none absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-emerald-500/20 blur-[90px]" />
-
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
-            {/* Coluna da Esquerda: Informações do Bônus & Destaque dos 10 Primeiros */}
-            <div className="lg:col-span-7 flex flex-col items-center text-center lg:items-start lg:text-left">
-              <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/40 bg-amber-500/15 px-3.5 py-1 text-xs font-bold text-amber-300 uppercase tracking-wider mb-4 mx-auto lg:mx-0">
-                <Sparkles className="h-3.5 w-3.5" />
-                <span>Bônus Exclusivo da 1ª Edição</span>
-              </div>
-
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white max-w-xl mx-auto lg:mx-0 text-center lg:text-left">
-                Acesso Exclusivo ao Organiz.AI
-                <br />
-                por 7 dias gratuitamente
-              </h2>
-              <p className="mt-3 text-sm sm:text-base text-stone-300 max-w-2xl leading-relaxed mx-auto lg:mx-0 text-center lg:text-left">
-                Você não vai sair da imersão apenas com anotações e teoria. Você
-                receberá o acesso ao nosso App Organiz.AI, a plataforma
-                completa de inteligência e gestão para organizar suas finanças
-                pessoais e jurídicas com máxima praticidade.
-              </p>
-
-              <div className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-2.5 w-full">
-                <div className="flex items-center gap-2.5 rounded-xl border border-white/10 bg-black/40 p-3 text-left">
-                  <CheckCircle2 className="h-4 w-4 text-amber-400 shrink-0" />
-                  <span className="text-xs text-stone-200">
-                    Separação Prática
-                    <br />
-                    PF vs PJ
-                  </span>
-                </div>
-                <div className="flex items-center gap-2.5 rounded-xl border border-white/10 bg-black/40 p-3 text-left">
-                  <CheckCircle2 className="h-4 w-4 text-amber-400 shrink-0" />
-                  <span className="text-xs text-stone-200">
-                    Fluxo de
-                    <br />
-                    Caixa e Gastos
-                  </span>
-                </div>
-                <div className="flex items-center gap-2.5 rounded-xl border border-white/10 bg-black/40 p-3 text-left">
-                  <CheckCircle2 className="h-4 w-4 text-amber-400 shrink-0" />
-                  <span className="text-xs text-stone-200">
-                    Metas, Diagnóstico
-                    <br />
-                    & Pró-labore
-                  </span>
-                </div>
-              </div>
-
-
-
-              <div className="mt-6 flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-5 border-t border-white/10 w-full text-center">
-                <span className="font-mono text-xs text-stone-500 line-through uppercase">
-                  Vendido separadamente por R$ 197,00
-                </span>
-                <span className="rounded-full bg-emerald-500/20 border border-emerald-500/40 px-3.5 py-1 text-xs font-bold text-emerald-300">
-                  100% Gratuito para Participantes da Imersão
-                </span>
-              </div>
-            </div>
-
-            {/* Coluna da Direita: Smartphone 3D Meio de Lado com o Vídeo da Tela do App (/NR1.mp4) */}
-            <div className="lg:col-span-5 flex flex-col items-center justify-center pt-4 lg:pt-0">
-              <div className="phone-3d-container phone-3d-perspective relative flex items-center justify-center py-4">
-                {/* Glow de base sob o smartphone */}
-                <div className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 h-20 w-56 rounded-full bg-amber-500/25 blur-3xl" />
-
-                {/* Chassis do Smartphone com rotação 3D isométrica/meio de lado */}
-                <div className="phone-3d-chassis relative rounded-[44px] sm:rounded-[48px] p-2.5 sm:p-3 bg-gradient-to-b from-[#2b2c33] via-[#1a1b20] to-[#0f1013] border border-white/20 shadow-[-22px_24px_45px_rgba(0,0,0,0.85),0_0_35px_rgba(245,158,11,0.22)]">
-                  {/* Tela interna com proporção de smartphone moderna */}
-                  <div className="relative rounded-[36px] sm:rounded-[40px] overflow-hidden bg-black aspect-[9/19] w-[230px] sm:w-[260px] md:w-[280px] border border-white/10 shadow-inner">
-                    {/* Dynamic Island / Câmera Frontal */}
-                    <div className="pointer-events-none absolute top-2.5 left-1/2 -translate-x-1/2 z-30 h-4 sm:h-4.5 w-20 sm:w-24 rounded-full bg-black border border-white/15 flex items-center justify-end pr-2 gap-1 shadow-md">
-                      <div className="h-1.5 w-1.5 rounded-full bg-[#111122] border border-white/20" />
-                    </div>
-
-                    {/* Vídeo da Tela do App NR1.mp4 */}
-                    <video
-                      src="/NR1.mp4"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      preload="metadata"
-                      className="w-full h-full object-cover object-top select-none"
-                    />
-
-                    {/* Reflexo de Vidro Diagonal */}
-                    <div className="pointer-events-none absolute inset-0 z-20 bg-gradient-to-tr from-white/[0.08] via-transparent to-transparent" />
-                  </div>
-
-                  {/* Badge Flutuante Inferior */}
-                  <div className="absolute -bottom-3.5 left-1/2 -translate-x-1/2 z-30 whitespace-nowrap rounded-full border border-amber-500/40 bg-black/95 px-3.5 py-1 text-[0.68rem] sm:text-xs font-bold text-amber-300 shadow-[0_4px_16px_rgba(0,0,0,0.7)] backdrop-blur-md flex items-center gap-1.5">
-                    <span className="relative flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                    </span>
-                    <span>App Organiz.AI em Uso</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* ═══════════════════════════════════════════════
           DOBRA 6 — CRONOGRAMA DA IMERSÃO (01 DE NOVEMBRO)
@@ -1210,19 +1080,7 @@ function ImersaoPage() {
                 <li className="flex items-center gap-2.5">
                   <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
                   <span>
-                    Acesso de 7 dias Exclusivo ao App Organiz.AI
-                  </span>
-                </li>
-                <li className="flex items-center gap-2.5">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
-                  <span>
                     Sessão ao vivo de tira-dúvidas com Natália Rodolfo
-                  </span>
-                </li>
-                <li className="flex items-center gap-2.5">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
-                  <span>
-                    Material de apoio em PDF
                   </span>
                 </li>
               </ul>
