@@ -43,10 +43,7 @@ export function gerarRodapeEmailMarketingHtml(options?: EmailFooterOptions): str
 
       <div style="font-size: 11px; color: #9ca3af; margin-top: 14px; padding-top: 12px; border-top: 1px dashed #e5e7eb;">
         <p style="margin: 0 0 4px 0; font-weight: 600; color: #4b5563;">
-          ${DADOS_EMPRESA.razaoSocial} · CNPJ: ${DADOS_EMPRESA.cnpjFormatado}
-        </p>
-        <p style="margin: 0 0 4px 0;">
-          Endereço: ${DADOS_EMPRESA.enderecoCompleto}
+          ${DADOS_EMPRESA.razaoSocial}
         </p>
         <p style="margin: 0;">
           Dúvidas ou direitos LGPD: <a href="mailto:${DADOS_EMPRESA.canais.privacidadeDpo}" style="color: #6b7280;">${DADOS_EMPRESA.canais.privacidadeDpo}</a> · 
@@ -70,8 +67,7 @@ export function gerarRodapeEmailMarketingTexto(options?: EmailFooterOptions): st
 Descadastro: Caso não deseje mais receber nossas mensagens, acesse:
 ${urlDescadastro}
 
-${DADOS_EMPRESA.razaoSocial} | CNPJ: ${DADOS_EMPRESA.cnpjFormatado}
-Endereço: ${DADOS_EMPRESA.enderecoCompleto}
+${DADOS_EMPRESA.razaoSocial}
 Encarregado de Dados (DPO): ${DADOS_EMPRESA.canais.privacidadeDpo}
 Suporte: ${DADOS_EMPRESA.canais.suporteGeral}
 --------------------------------------------------

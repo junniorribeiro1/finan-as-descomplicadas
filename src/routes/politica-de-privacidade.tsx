@@ -190,13 +190,7 @@ function PoliticaPrivacidadePage() {
             </h2>
             <div className="mt-3 text-xs sm:text-sm text-zinc-300 space-y-1.5 leading-relaxed">
               <p>
-                <strong>Controlador dos Dados:</strong> NATALIA RODOLFO EDUCACAO FINANCEIRA LTDA
-              </p>
-              <p>
-                <strong>CNPJ:</strong> 48.293.104/0001-85
-              </p>
-              <p>
-                <strong>Endereço Sede:</strong> Av. Paulista, 1000, Conjunto 1402, Bela Vista, São Paulo - SP, CEP 01310-100
+                <strong>Controlador dos Dados:</strong> Natália Rodolfo Educação Financeira
               </p>
               <p>
                 Para exercer qualquer direito garantido pela LGPD ou esclarecer dúvidas sobre esta Política, entre em contato diretamente com nossa equipe de privacidade:
@@ -204,11 +198,11 @@ function PoliticaPrivacidadePage() {
             </div>
             <div className="mt-5 flex flex-wrap gap-4 text-xs sm:text-sm">
               <a
-                href="mailto:privacidade@nataliarodolfo.com.br"
+                href="mailto:suporte@nataliarodolfo.com.br"
                 className="inline-flex items-center gap-2 rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-4 py-2 font-medium text-emerald-400 transition-colors hover:bg-emerald-500/20"
               >
                 <Mail className="h-4 w-4" />
-                privacidade@nataliarodolfo.com.br
+                suporte@nataliarodolfo.com.br
               </a>
               <Link
                 to="/descadastro"
@@ -223,12 +217,8 @@ function PoliticaPrivacidadePage() {
 
       {/* Rodapé Corporativo */}
       <footer className="border-t border-white/[0.06] bg-[#0c0a09] py-6 px-4 text-center text-xs text-stone-500 space-y-1">
-        <p className="font-medium text-stone-400">
-          NATALIA RODOLFO EDUCACAO FINANCEIRA LTDA · CNPJ: 48.293.104/0001-85
-        </p>
-        <p>Av. Paulista, 1000, Conjunto 1402, Bela Vista, São Paulo - SP, CEP 01310-100</p>
         <p className="text-[11px] text-stone-600">
-          © {new Date().getFullYear()} Organiz.AI · Todos os direitos reservados.
+          © {new Date().getFullYear()} Natália Rodolfo · Todos os direitos reservados.
         </p>
       </footer>
     </div>

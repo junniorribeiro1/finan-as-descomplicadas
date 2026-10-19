@@ -97,7 +97,7 @@ const faqList: FaqItem[] = [
     id: "faq-9",
     pergunta: "Como denunciar violação de direitos autorais ou solicitar remoção de conteúdo?",
     resposta:
-      "Disponibilizamos um canal formal de Notice & Takedown em cumprimento ao Marco Civil da Internet (Lei 12.965/14) e à Lei de Direitos Autorais (Lei 9.610/98). Acesse a página '/denuncia-direitos-autorais' ou contate copyright@nataliarodolfo.com.br para análise em até 48 horas.",
+      "Disponibilizamos um canal formal de Notice & Takedown em cumprimento ao Marco Civil da Internet (Lei 12.965/14) e à Lei de Direitos Autorais (Lei 9.610/98). Acesse a página '/denuncia-direitos-autorais' ou contate suporte@nataliarodolfo.com.br para análise em até 48 horas.",
   },
 ];
 

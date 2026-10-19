@@ -1221,11 +1221,7 @@ function LoginPage() {
             Descadastro
           </a>
         </div>
-        <p className="font-medium text-stone-400 pt-1">
-          {DADOS_EMPRESA.razaoSocial} · CNPJ: {DADOS_EMPRESA.cnpjFormatado}
-        </p>
-        <p className="text-[11px] text-stone-600">{DADOS_EMPRESA.enderecoCompleto}</p>
-        <p className="text-[10.5px] text-stone-600">
+        <p className="text-[10.5px] text-stone-600 pt-1">
           © {new Date().getFullYear()} Organiz.AI · Natália Rodolfo · Todos os direitos reservados.
         </p>
       </footer>

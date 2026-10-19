@@ -150,13 +150,7 @@ function TermosDeUsoPage() {
             </h2>
             <div className="mt-3 text-xs sm:text-sm text-zinc-300 space-y-1.5 leading-relaxed">
               <p>
-                <strong>Razão Social:</strong> NATALIA RODOLFO EDUCACAO FINANCEIRA LTDA
-              </p>
-              <p>
-                <strong>CNPJ:</strong> 48.293.104/0001-85
-              </p>
-              <p>
-                <strong>Endereço Sede:</strong> Av. Paulista, 1000, Conjunto 1402, Bela Vista, São Paulo - SP, CEP 01310-100
+                <strong>Responsável:</strong> Natália Rodolfo Educação Financeira
               </p>
               <p>
                 Estes termos são regidos pelas leis da República Federativa do Brasil. Para dúvidas, cancelamentos ou orientações de suporte, contate nosso time:
@@ -184,12 +178,8 @@ function TermosDeUsoPage() {
 
       {/* Rodapé Corporativo */}
       <footer className="border-t border-white/[0.06] bg-[#0c0a09] py-6 px-4 text-center text-xs text-stone-500 space-y-1">
-        <p className="font-medium text-stone-400">
-          NATALIA RODOLFO EDUCACAO FINANCEIRA LTDA · CNPJ: 48.293.104/0001-85
-        </p>
-        <p>Av. Paulista, 1000, Conjunto 1402, Bela Vista, São Paulo - SP, CEP 01310-100</p>
         <p className="text-[11px] text-stone-600">
-          © {new Date().getFullYear()} Organiz.AI · Todos os direitos reservados.
+          © {new Date().getFullYear()} Natália Rodolfo · Todos os direitos reservados.
         </p>
       </footer>
     </div>

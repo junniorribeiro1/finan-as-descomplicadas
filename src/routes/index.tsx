@@ -592,12 +592,6 @@ function NataliaLinksPage() {
             <span className="text-stone-400">Educação Financeira PF e PJ</span>
           </div>
 
-          <p className="text-[0.725rem] text-stone-400">
-            NATALIA RODOLFO EDUCACAO FINANCEIRA LTDA · CNPJ: 48.293.104/0001-85
-          </p>
-          <p className="text-[0.7rem] text-stone-500">
-            Av. Paulista, 1000, Conjunto 1402, Bela Vista, São Paulo - SP, CEP 01310-100
-          </p>
           <p className="text-[0.675rem] text-stone-600 tracking-tight">
             &copy; {new Date().getFullYear()} Natália Rodolfo · Todos os direitos reservados.
           </p>

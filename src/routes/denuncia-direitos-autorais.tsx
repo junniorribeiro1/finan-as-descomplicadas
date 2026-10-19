@@ -417,14 +417,10 @@ function DenunciaDireitosAutoraisPage() {
         </div>
       </main>
 
-      {/* Footer corporativo com CNPJ */}
+      {/* Footer */}
       <footer className="border-t border-white/[0.06] bg-[#0c0a09] py-6 px-4 text-center text-xs text-stone-500 space-y-1">
-        <p className="font-medium text-stone-400">
-          {DADOS_EMPRESA.razaoSocial} · CNPJ: {DADOS_EMPRESA.cnpjFormatado}
-        </p>
-        <p>{DADOS_EMPRESA.enderecoCompleto}</p>
         <p className="text-[11px] text-stone-600">
-          © {new Date().getFullYear()} Organiz.AI · Todos os direitos reservados.
+          © {new Date().getFullYear()} Natália Rodolfo · Todos os direitos reservados.
         </p>
       </footer>
     </div>
